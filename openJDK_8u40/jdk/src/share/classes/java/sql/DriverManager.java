@@ -98,6 +98,7 @@ public class DriverManager {
      * jdbc.properties and then use the {@code ServiceLoader} mechanism
      */
     static {
+        //从这个方法进去就可以看到如何通过ServiceLoader去加载驱动的了(使用了线程上下文类加载器去加载)
         loadInitialDrivers();
         println("JDBC DriverManager initialized");
     }
@@ -205,6 +206,17 @@ public class DriverManager {
     public static Connection getConnection(String url,
         java.util.Properties info) throws SQLException {
 
+        /*
+        # Reflection.getCallerClass()此方法的调用者必须有权限，需要什么样的权限呢？
+          1.由bootstrap class loader加载的类可以调用
+          2.由extension class loader加载的类可以调用
+          3.都知道用户路径的类加载都是由 application class loader进行加载的，换句话说就是用户自定义的一些类中无法调用此方法
+
+          Reflection.getCallerClass()方法调用所在的方法必须用@CallerSensitive进行注解，通过此方法获取class时会跳过链路上所有的有@CallerSensitive注解的方法的类，
+          直到遇到第一个未使用该注解的类，避免了用Reflection.getCallerClass(int n) 这个过时方法来自己做判断。
+
+          作用：获得到调用这个方法的类
+         */
         return (getConnection(url, info, Reflection.getCallerClass()));
     }
 
@@ -641,6 +653,15 @@ public class DriverManager {
         synchronized(DriverManager.class) {
             // synchronize loading of the correct classloader.
             if (callerCL == null) {
+              /*
+                因为mysql 驱动是由应用程序类加载器加载的，故这里也需要从应用程序类加载器中取出驱动类来对mysql进行操作
+                (破坏了双亲委派模型)
+                给自己看的:
+                   线程上下文类加载器并不是将启动类加载器/拓展类加载器通过Thread.setContextClassLoader方法缓存起来，
+                   需要的时候取出去加载类或者是取类出来使用。而是直接通过线程上下文类加载器(应用程序类加载器/其他手动这是进去的类加载器
+                    因为类似于驱动这些，存在于用户程序目录下，应用程序类加载器&拓展类加载器无法加载到，只能通过应用程序类加载器
+                    /其他用户自定义类加载器去加载)去加载/取出类
+               */
                 callerCL = Thread.currentThread().getContextClassLoader();
             }
         }
