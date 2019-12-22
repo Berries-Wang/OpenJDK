@@ -279,7 +279,7 @@ public class LambdaMetafactory {
      *                   arguments prepended to the invocation arguments) at
      *                   invocation time.
      * @param instantiatedMethodType The signature and return type that should
-     *                               be enforced dynamically at invocation time.
+     *                               be enforced(强迫的，强制的，强制执行) dynamically(动态的) at invocation time.
      *                               This may be the same as {@code samMethodType},
      *                               or may be a specialization of it.
      * @return a CallSite whose target can be used to perform capture, generating

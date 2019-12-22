@@ -26,7 +26,8 @@
 package java.lang.invoke;
 
 /**
- * A {@code ConstantCallSite} is a {@link CallSite} whose target is permanent, and can never be changed.
+ * A {@code ConstantCallSite} is a {@link CallSite} whose target is permanent(永久的),
+ * and can never be changed.
  * An {@code invokedynamic} instruction linked to a {@code ConstantCallSite} is permanently
  * bound to the call site's target.
  * @author John Rose, JSR 292 EG

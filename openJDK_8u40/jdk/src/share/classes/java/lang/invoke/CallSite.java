@@ -86,7 +86,7 @@ abstract
 public class CallSite {
     static { MethodHandleImpl.initStatics(); }
 
-    // The actual payload of this call site:
+    // The actual payload of this call site:(此调用点的实际负荷)
     /*package-private*/
     MethodHandle target;    // Note: This field is known to the JVM.  Do not change.
 
