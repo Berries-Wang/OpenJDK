@@ -320,9 +320,13 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
     /**
      * The main pool control state, ctl, is an atomic integer packing
      * two conceptual fields
-     *   workerCount, indicating the effective number of threads
-     *   runState,    indicating whether running, shutting down etc
+     *   workerCount, indicating(表明) the effective number of threads (记录有效的线程数量)
+     *   runState,    indicating whether running, shutting down etc(标识线程是否正在运行，停止等)
      *
+     *
+     * 为了使他们(runState和workerCount)能够使用一个int来表示，我们限制workerCount的大小为(2^29)-1而不是(2^31)-1。
+     * 如果这个限制在未来是一个问题，我们可以将这个类型调整为AtomicLong类型,位移/掩码可以随之调整
+     * 但是到目前为止，这个代码使用int更快更简单
      * In order to pack them into one int, we limit workerCount to
      * (2^29)-1 (about 500 million) threads rather than (2^31)-1 (2
      * billion) otherwise representable. If this is ever an issue in
@@ -331,30 +335,38 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      * arises, this code is a bit faster and simpler using an int.
      *
      * The workerCount is the number of workers that have been
-     * permitted to start and not permitted to stop.  The value may be
-     * transiently different from the actual number of live threads,
+     * permitted(允许) to start and not permitted to stop.  The value may be
+     * transiently(暂时性的) different from the actual number of live threads,
      * for example when a ThreadFactory fails to create a thread when
      * asked, and when exiting threads are still performing
      * bookkeeping before terminating. The user-visible pool size is
      * reported as the current size of the workers set.
      *
-     * The runState provides the main lifecycle control, taking on values:
      *
-     *   RUNNING:  Accept new tasks and process queued tasks
-     *   SHUTDOWN: Don't accept new tasks, but process queued tasks
+     * taking on values:采用的值
+     * The runState provides the main lifecycle(生命周期) control, taking on values:
+     *
+     *   RUNNING:  Accept new tasks and process queued tasks：接受新的任务并且处理排队的任务
+     *   SHUTDOWN: Don't accept new tasks, but process queued tasks：不接受新的任务，并且处理正在排队的任务
      *   STOP:     Don't accept new tasks, don't process queued tasks,
-     *             and interrupt in-progress tasks
+     *             and interrupt in-progress tasks：既不接受新的任务，且不处理正在排队的任务而且中断正在进行中的任务
+     *             是中断？还是杀死？
      *   TIDYING:  All tasks have terminated, workerCount is zero,
      *             the thread transitioning to state TIDYING
      *             will run the terminated() hook method
-     *   TERMINATED: terminated() has completed
+     *             运行terminated()钩子方法，所有的任务都将被终止，workerCount被置为0,这个线程会被过渡到TIDYING状态
+     *   TERMINATED: terminated() has completed  terminated方法执行完成
      *
-     * The numerical order among these values matters, to allow
-     * ordered comparisons. The runState monotonically increases over
+     * The numerical(数字的，用数字表示的) order among(在...中) these values matters, to allow
+     * ordered comparisons(比较; 对比; 相比;). The runState monotonically increases over
      * time, but need not hit each state. The transitions are:
+     *这些值之间的数字顺序很重要，为了允许有序比较，运行状态会随着时间的推移单调地增加，
+     * 但不必触及每个状态。数值间的转换为(状态间的过渡)
+     *
      *
      * RUNNING -> SHUTDOWN
-     *    On invocation of shutdown(), perhaps implicitly in finalize()
+     *    On invocation(调用) of shutdown(), perhaps implicitly in finalize()
+     *    调用shutdown方法或者隐式的调用finalize方法
      * (RUNNING or SHUTDOWN) -> STOP
      *    On invocation of shutdownNow()
      * SHUTDOWN -> TIDYING
@@ -366,33 +378,69 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
      *
      * Threads waiting in awaitTermination() will return when the
      * state reaches TERMINATED.
+     * awaitTermination方法将在线程池的状态到达TERMINATED时返回
      *
-     * Detecting the transition from SHUTDOWN to TIDYING is less
-     * straightforward than you'd like because the queue may become
+     * Detecting(检测) the transition from SHUTDOWN to TIDYING is less
+     * straightforward(直截了当) than you'd like because the queue may become
      * empty after non-empty and vice versa during SHUTDOWN state, but
      * we can only terminate if, after seeing that it is empty, we see
-     * that workerCount is 0 (which sometimes entails a recheck -- see
+     * that workerCount is 0 (which sometimes entails(需要) a recheck -- see
      * below).
+     *
+     * 检测SHUTDOWN to TIDYING的状态过滤并不是直截了当的，因为在SHUTDOWN状态下，队列会从非空变为空，反之亦然。
+     * 我们只能在看到他是空的状态下才能终止，即workerCount为0(有时候需要重新检测) ？ 注意，需要重新检测，后面的代码会告诉为什么
+     */
+
+
+    /**
+     * 使用ctl的高位来存放runState,如下代码，使用高三位来存放runState
+     * 使用ctl的低位来存放workerCount,如下代码，使用低29位来记录workerCount
      */
     private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
-    private static final int COUNT_BITS = Integer.SIZE - 3;
+    /**
+     * 线程个数掩码
+     */
+    private static final int COUNT_BITS = Integer.SIZE - 3; //  Integer.SIZE = 32
+    /**
+     * 线程容量
+     */
     private static final int CAPACITY   = (1 << COUNT_BITS) - 1;
 
     // runState is stored in the high-order bits
-    private static final int RUNNING    = -1 << COUNT_BITS;
+    private static final int RUNNING    = -1 << COUNT_BITS; // 将-1向左移动COUNT_BITS位
     private static final int SHUTDOWN   =  0 << COUNT_BITS;
     private static final int STOP       =  1 << COUNT_BITS;
     private static final int TIDYING    =  2 << COUNT_BITS;
     private static final int TERMINATED =  3 << COUNT_BITS;
 
-    // Packing and unpacking ctl
+    // Packing and unpacking ctl,ctl的包装和开箱
+
+    /**
+     * 取数值c的高三位，用于获取线程池的状态
+     * @param c
+     * @return
+     */
     private static int runStateOf(int c)     { return c & ~CAPACITY; }
+
+    /**
+     * 取数字c的低29位，即获取线程池中线程的数量
+     * @param c
+     * @return
+     */
     private static int workerCountOf(int c)  { return c & CAPACITY; }
+
+    /**
+     * rs和wc做或运算,计算ctl新值,即用于将线程池的状态和线程数量进行或运算，使得可以用一个变量来表示
+     * @param rs
+     * @param wc
+     * @return
+     */
     private static int ctlOf(int rs, int wc) { return rs | wc; }
 
     /*
-     * Bit field accessors that don't require unpacking ctl.
+     * Bit field accessors that don't require unpacking ctl. // 位字段访问器不需要开箱操作
      * These depend on the bit layout and on workerCount being never negative.
+     * 这取决于位布局和workerCount从不为负数
      */
 
     private static boolean runStateLessThan(int c, int s) {
