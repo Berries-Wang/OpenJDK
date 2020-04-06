@@ -378,20 +378,34 @@ public abstract class AbstractQueuedSynchronizer
      * on the design of this class.
      */
     static final class Node {
-        /** Marker to indicate a node is waiting in shared mode */
+        /** Marker to indicate a node is waiting in shared mode
+         * 表示线程以共享的模式等待锁
+         * */
         static final Node SHARED = new Node();
-        /** Marker to indicate a node is waiting in exclusive mode */
+        /** Marker to indicate a node is waiting in exclusive mode
+         * 表示线程正在以独占的方式等待锁
+         * */
         static final Node EXCLUSIVE = null;
 
-        /** waitStatus value to indicate thread has cancelled */
+        /** waitStatus value to indicate thread has cancelled
+         *  为1，表示线程获取锁的请求已经取消了
+         * */
         static final int CANCELLED =  1;
-        /** waitStatus value to indicate successor's thread needs unparking */
+        /** waitStatus value to indicate successor's thread needs unparking
+         * 为-1，表示线程已经准备好了，就等资源释放了
+         * */
         static final int SIGNAL    = -1;
-        /** waitStatus value to indicate thread is waiting on condition */
+        /** waitStatus value to indicate thread is waiting on condition
+         * 为-2，表示节点在等待队列中，节点线程等待唤醒
+         *  Q:
+         *    1. 这里的等待队列代表什么？是等待某个条件的队列吗？
+         * */
         static final int CONDITION = -2;
         /**
          * waitStatus value to indicate the next acquireShared should
          * unconditionally propagate
+         *
+         * 为-3，当前线程处在SHARED情况下，该字段才会使用
          */
         static final int PROPAGATE = -3;
 
@@ -418,7 +432,7 @@ public abstract class AbstractQueuedSynchronizer
          *               doReleaseShared to ensure propagation
          *               continues, even if other operations have
          *               since intervened.
-         *   0:          None of the above
+         *   0:          None of the above (当一个Node被初始化的时候的默认值)
          *
          * The values are arranged numerically to simplify use.
          * Non-negative values mean that a node doesn't need to
@@ -428,6 +442,9 @@ public abstract class AbstractQueuedSynchronizer
          * The field is initialized to 0 for normal sync nodes, and
          * CONDITION for condition nodes.  It is modified using CAS
          * (or when possible, unconditional volatile writes).
+         */
+        /**
+         * 当前节点在队列中的状态
          */
         volatile int waitStatus;
 
@@ -441,6 +458,7 @@ public abstract class AbstractQueuedSynchronizer
          * head only as a result of successful acquire. A
          * cancelled thread never succeeds in acquiring, and a thread only
          * cancels itself, not any other node.
+         * 前驱节点
          */
         volatile Node prev;
 
@@ -456,12 +474,15 @@ public abstract class AbstractQueuedSynchronizer
          * double-check.  The next field of cancelled nodes is set to
          * point to the node itself instead of null, to make life
          * easier for isOnSyncQueue.
+         *
+         * 后继节点
          */
         volatile Node next;
 
         /**
          * The thread that enqueued this node.  Initialized on
          * construction and nulled out after use.
+         * 表示处于该节点的线程
          */
         volatile Thread thread;
 
@@ -474,6 +495,8 @@ public abstract class AbstractQueuedSynchronizer
          * re-acquire. And because conditions can only be exclusive,
          * we save a field by using special value to indicate shared
          * mode.
+         *
+         * 只想下一个处于CONDITION状态的节点
          */
         Node nextWaiter;
 
@@ -488,7 +511,7 @@ public abstract class AbstractQueuedSynchronizer
          * Returns previous node, or throws NullPointerException if null.
          * Use when predecessor cannot be null.  The null check could
          * be elided, but is present to help the VM.
-         *
+         * 返回前驱节点，没有的话抛出npe
          * @return the predecessor of this node
          */
         final Node predecessor() throws NullPointerException {
@@ -529,6 +552,9 @@ public abstract class AbstractQueuedSynchronizer
 
     /**
      * The synchronization state.
+     *
+     * state意为同步状态，是由Volatile修饰的，用于展示当前临界资源的获锁情况
+     * 理解：所有多线程存在的问题，都是对临界资源的操作。这里只是使用线程对临界资源的操作(获取、修改等)来对线程们进行管理
      */
     private volatile int state;
 
@@ -536,6 +562,7 @@ public abstract class AbstractQueuedSynchronizer
      * Returns the current value of synchronization state.
      * This operation has memory semantics of a {@code volatile} read.
      * @return current state value
+     * 获取state的值
      */
     protected final int getState() {
         return state;
@@ -544,6 +571,7 @@ public abstract class AbstractQueuedSynchronizer
     /**
      * Sets the value of synchronization state.
      * This operation has memory semantics of a {@code volatile} write.
+     * 设置state的值
      * @param newState the new state value
      */
     protected final void setState(int newState) {
@@ -556,10 +584,14 @@ public abstract class AbstractQueuedSynchronizer
      * This operation has memory semantics of a {@code volatile} read
      * and write.
      *
+     * memory semantics:内存语义，即使用volatile修饰的变量所带来的可见性(读一个volatile变量之前，首先需要使相应的本地缓存失效，这样就
+     * 必须到贮存中读取最新值。写一个volatile变量时，会先写入到工作内存并立即刷入主内存之中。即保证了被volatile修饰的变量在修改之后各个线程可见)
      * @param expect the expected value
      * @param update the new value
      * @return {@code true} if successful. False return indicates that the actual
      *         value was not equal to the expected value.
+     *
+     * 使用CAS方式更新State
      */
     protected final boolean compareAndSetState(int expect, int update) {
         // See below for intrinsics setup to support this
@@ -572,6 +604,7 @@ public abstract class AbstractQueuedSynchronizer
      * The number of nanoseconds for which it is faster to spin
      * rather than to use timed park. A rough estimate suffices
      * to improve responsiveness with very short timeouts.
+     * 线程自旋等待的时间
      */
     static final long spinForTimeoutThreshold = 1000L;
 
@@ -579,14 +612,21 @@ public abstract class AbstractQueuedSynchronizer
      * Inserts node into queue, initializing if necessary. See picture above.
      * @param node the node to insert
      * @return node's predecessor
+     *
+     * 将node插入到队列中(使用了自旋锁，总而言之，一定会将该节点插入到队列中)
      */
     private Node enq(final Node node) {
+        // 这里使用了自旋锁，当node成功插入到队列中的时候就会返回(返回node插入之间的tail指向的节点)
         for (;;) {
             Node t = tail;
+            // tail 为null，则需要初始化该双端队列
             if (t == null) { // Must initialize
+                // 注意，这里设置head的值为new Node(),这是因为双端队列的头结点是一个虚节点，不存储数据。
                 if (compareAndSetHead(new Node()))
                     tail = head;
             } else {
+                // 因为自旋锁，此时tail不为null，可以将node入队
+                // 这里可以借助画图和队列的特性来理解
                 node.prev = t;
                 if (compareAndSetTail(t, node)) {
                     t.next = node;
@@ -603,16 +643,29 @@ public abstract class AbstractQueuedSynchronizer
      * @return the new node
      */
     private Node addWaiter(Node mode) {
+
+        // 以当前的线程以及给定的模式(独占/共享)构建一个Node
         Node node = new Node(Thread.currentThread(), mode);
         // Try the fast path of enq; backup to full enq on failure
         Node pred = tail;
+        /**
+         * 这里为什么通过判断tail是否为空来进行操作呢？
+         *
+         * pred == null,即说明等待队列中没有元素
+         * 或者 pred与tail指向的位置不同，则说明被别的线程修改了
+         */
         if (pred != null) {
+            /**
+             * 当pred!=null (即tail！=null)，将node添加到双向队列的尾部，并且更新AQS中的tail的值
+             * 这一部分可以借助画图和双向队列的特性来理解
+             */
             node.prev = pred;
             if (compareAndSetTail(pred, node)) {
                 pred.next = node;
                 return node;
             }
         }
+        // 当tail为null，调用enq方法
         enq(node);
         return node;
     }
@@ -1185,14 +1238,26 @@ public abstract class AbstractQueuedSynchronizer
     /**
      * Acquires in exclusive mode, ignoring interrupts.  Implemented
      * by invoking at least once {@link #tryAcquire},
-     * returning on success.  Otherwise the thread is queued, possibly
-     * repeatedly blocking and unblocking, invoking {@link
+     * returning on success.  Otherwise the thread is queued, possibly(可能地，也许，大概)
+     * repeatedly(重复) blocking and unblocking, invoking {@link
      * #tryAcquire} until success.  This method can be used
      * to implement method {@link Lock#lock}.
      *
-     * @param arg the acquire argument.  This value is conveyed to
+     * 以独占模式获取，忽略掉中断。
+     *
+     * @param arg the acquire argument.  This value is conveyed（传达） to
      *        {@link #tryAcquire} but is otherwise uninterpreted and
      *        can represent anything you like.
+     *
+     *
+     */
+
+    /**
+     * 内部流程：
+     *   1. 调用线程协作工具类实现的tryAcquire方法来尝试获取对连接资源的锁
+     *   2. 若获取成功，则不进行任何操作。即方法执行完毕
+     *   3.
+     * @param arg
      */
     public final void acquire(int arg) {
         if (!tryAcquire(arg) &&
@@ -2282,6 +2347,9 @@ public abstract class AbstractQueuedSynchronizer
 
     /**
      * CAS head field. Used only by enq.
+     *
+     * 使用CAS设置head，
+     *
      */
     private final boolean compareAndSetHead(Node update) {
         return unsafe.compareAndSwapObject(this, headOffset, null, update);
@@ -2289,6 +2357,13 @@ public abstract class AbstractQueuedSynchronizer
 
     /**
      * CAS tail field. Used only by enq.
+     * 使用cas方式设置tail
+     *
+     * CAS是CPU指令，我们只能通过JNI与操作系统交互，关于CAS的方法都在sun.misc包下Unsafe的类里，
+     * java.util.concurrent.atomic包下的原子类等通过CAS来实现原子操作
+     *
+     * CAS的目标：实现原子操作
+     *
      */
     private final boolean compareAndSetTail(Node expect, Node update) {
         return unsafe.compareAndSwapObject(this, tailOffset, expect, update);
