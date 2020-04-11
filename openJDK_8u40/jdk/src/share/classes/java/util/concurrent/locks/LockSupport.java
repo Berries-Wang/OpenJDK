@@ -168,11 +168,24 @@ public class LockSupport {
      * @param blocker the synchronization object responsible for this
      *        thread parking
      * @since 1.6
+     *
+     * 为了线程调度，在许可可用之前禁用当前线程。
+     * 如果许可可用，则使用该许可，并且该调用立即返回；否则，为线程调度禁用当前线程，并在发生以下三种情况之一前，使其处于休眠状态：
+     *
+     *1、其他某个线程调用将当前线程作为目标调用 unpark；或者
+     *2、其他某个线程中断当前线程；或者
+     *3、该调用不合逻辑地（即毫无理由地）返回。
+     *此方法不报告是哪个线程导致该方法返回。调用者应该重新检查最先导致线程暂停的条件。调用者还可以确定返回时该线程的中断状态。
+     *
+     *
      */
     public static void park(Object blocker) {
         Thread t = Thread.currentThread();
+        // 调用park阻塞当前线程之前，先记录当前线程的blocker
         setBlocker(t, blocker);
+        // 调用park阻塞当前线程
         UNSAFE.park(false, 0L);
+        // 当线程可以继续执行下去时，再将parkBlocker设置为null
         setBlocker(t, null);
     }
 
