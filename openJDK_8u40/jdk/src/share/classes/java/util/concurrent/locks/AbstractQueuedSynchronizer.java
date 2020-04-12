@@ -702,6 +702,7 @@ public abstract class AbstractQueuedSynchronizer
 
     /**
      * Wakes up node's successor, if one exists.
+     * 唤醒node的后继节点
      *
      * @param node the node
      */
@@ -711,8 +712,11 @@ public abstract class AbstractQueuedSynchronizer
          * to clear in anticipation of signalling.  It is OK if this
          * fails or if status is changed by waiting thread.
          */
+        // 获取到node的等待状态
         int ws = node.waitStatus;
         if (ws < 0)
+            // Node.waitStatus == 0 : 当一个Node被初始化的时候的默认值.为什么?
+            // 在cancelAcquire方法中，node的waitStatus被设置为了Node.CANCELLED
             compareAndSetWaitStatus(node, ws, 0);
 
         /*
@@ -721,13 +725,17 @@ public abstract class AbstractQueuedSynchronizer
          * traverse backwards from tail to find the actual
          * non-cancelled successor.
          */
+        // 获取node的后继节点
         Node s = node.next;
+        // 当node的后继节点为空或者后继节点的waitStatus > 0.则
         if (s == null || s.waitStatus > 0) {
             s = null;
+            // 从尾节点开始查找，找到最后一个可以被唤醒的节点
             for (Node t = tail; t != null && t != node; t = t.prev)
                 if (t.waitStatus <= 0)
                     s = t;
         }
+        // 当node的后继节点为一个可以被唤醒的节点，则进行唤醒操作。可以被唤醒指的是：节点不为null且waitStatus  <= 0
         if (s != null)
             LockSupport.unpark(s.thread);
     }
@@ -805,46 +813,67 @@ public abstract class AbstractQueuedSynchronizer
 
     /**
      * Cancels an ongoing attempt to acquire.
+     * static final int CANCELLED = 1; 表示线程获取锁的请求已经取消了。Q:
+     * 1.线程获取锁的请求取消了，就代表该线程可以被中止了吗?
+     * 2.以下所有的操作都是对next指针进行了操作，而没有对prev指针进行操作。为什么？且在什么情况下会对prev指针进行操作
+     * ------>a.执行cancelAcquire的时候，当前节点的前置节点可能已经从队列中出去了(已经执行过了try代码块中的shouldPardAfterFailedAcquire方法了)
+     * ，若此时修改prev指针，可能会导致prev指针指向另一个已经移除队列的node，因此这块变化prev指针不安全
+     * ----->b.shouldParkAfterFailedAcquire方法中，会执行如下代码，其实就是在处理prev指针，就是将waitStatus == Node.CANCELLED的节点从队列中移除，
+     * ，shouldParkAfterFailedAcquire是获取锁失败的情况下才会执行，进入该方法后，说明共享资源已被获取，
+     * 当前节点之前的节点都不会出现变化，因此这个时候变更Prev指针比较安全。
      *
      * @param node the node
      */
     private void cancelAcquire(Node node) {
         // Ignore if node doesn't exist
+        // 当node为null时，直接忽略掉
         if (node == null)
             return;
-
+        // 将node中的thread属性置为null.但是为什么?设置该节点不关联任何线程，也就是虚节点
         node.thread = null;
 
         // Skip cancelled predecessors
         Node pred = node.prev;
+        // waitStatus > 0 就代表该节点的获取锁的请求被取消了
         while (pred.waitStatus > 0)
             node.prev = pred = pred.prev;
+        // 上面的循环结束，node.prev就不是一个取消节点了。
 
         // predNext is the apparent node to unsplice. CASes below will
         // fail if not, in which case, we lost race vs another cancel
         // or signal, so no further action is necessary.
+        // 请注意，AQS中维护的是一个双向链表。在这里node.prev == pred , 但是pred.next != node
+        // 保存node前驱节点中的后继节点，但是为什么？在进行乐观锁(CAS)时候会用到
         Node predNext = pred.next;
 
         // Can use unconditional write instead of CAS here.
         // After this atomic step, other Nodes can skip past us.
         // Before, we are free of interference from other threads.
+        // 将node节点的等待状态设置为Node.CANCELLED
         node.waitStatus = Node.CANCELLED;
 
         // If we are the tail, remove ourselves.
+        // 如果node是尾节点，并且将pred(waitStatus != Node.CANCELLED)设置为尾节点成功
         if (node == tail && compareAndSetTail(node, pred)) {
+            // 此时，pred就是尾节点了，需要将他的next设置为null.这里有意跳过node节点(舍弃掉了node?)
             compareAndSetNext(pred, predNext, null);
         } else {
             // If successor needs signal, try to set pred's next-link
             // so it will get one. Otherwise wake it up to propagate.
+            // 当node不是尾节点或者设置为尾节点失败了
             int ws;
+            // 当node的前置节点pred不是头结点且（前置节点的等待状态为Node.SIGNAL 或 前置节点不是取消状态且将前置节点
+            // 的等待状态设置为Node.SIGNAL成功）且前置节点拥有线程(即thread属性不为null)
             if (pred != head &&
                     ((ws = pred.waitStatus) == Node.SIGNAL ||
                             (ws <= 0 && compareAndSetWaitStatus(pred, ws, Node.SIGNAL))) &&
                     pred.thread != null) {
                 Node next = node.next;
+                // 设置node的前驱节点的next属性为node.next。这里也有意跳过node节点(舍弃掉了node?)
                 if (next != null && next.waitStatus <= 0)
                     compareAndSetNext(pred, predNext, next);
             } else {
+                // 唤醒node的后继节点
                 unparkSuccessor(node);
             }
 
@@ -951,6 +980,7 @@ public abstract class AbstractQueuedSynchronizer
                 }
 
                 // 当node不是队首元素，也没有获取到锁，则判断当前线程是否需要被阻塞，若是，则挂起当前线程，直到线程被唤醒(unpark)，线程才会继续往下执行
+                // 进入到这里，表明锁获取失败了，换句话说，就是共享资源已经被获取了(被其他线程)，当前节点之前的节点都不会发生变化。
                 if (shouldParkAfterFailedAcquire(p, node) &&
                         parkAndCheckInterrupt())
                     interrupted = true;
