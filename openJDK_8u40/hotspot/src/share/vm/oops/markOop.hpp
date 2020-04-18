@@ -27,17 +27,17 @@
 
 #include "oops/oop.hpp"
 
-// The markOop describes the header of an object.
+// The markOop describes the header of an object.(markOop是用于描述对象头的)
 //
 // Note that the mark is not a real oop but just a word.
 // It is placed in the oop hierarchy for historical reasons.
 //
 // Bit-format of an object header (most significant first, big endian layout below):
-//
+//  对象头的位格式，采用大端布局
 //  32 bits:
 //  --------
-//             hash:25 ------------>| age:4    biased_lock:1 lock:2 (normal object)
-//             JavaThread*:23 epoch:2 age:4    biased_lock:1 lock:2 (biased object)
+//             hash:25 ------------>| age:4    biased_lock(偏向锁):1 lock:2 (normal object)
+//             JavaThread*:23 epoch:2 age:4    biased_lock(偏向锁):1 lock:2 (biased object)
 //             size:32 ------------------------------------------>| (CMS free block)
 //             PromotedObject*:29 ---------->| promo_bits:3 ----->| (CMS promoted object)
 //
@@ -107,13 +107,21 @@ class markOopDesc: public oopDesc {
   uintptr_t value() const { return (uintptr_t) this; }
 
  public:
-  // Constants
-  enum { age_bits                 = 4,
+  // Constants(一下均为64位平台)
+  enum {
+         // 年龄位，占4位
+         age_bits                 = 4,
+         // 锁标志位，占2位
          lock_bits                = 2,
+         // 是否偏向锁，占1位
          biased_lock_bits         = 1,
+         // BitsPerWord定义于hotspot/src/share/vm/utilities/globalDefinitions.hpp，值为64，则max_hash_bits为54
          max_hash_bits            = BitsPerWord - age_bits - lock_bits - biased_lock_bits,
+         // 哈希位， 值为31
          hash_bits                = max_hash_bits > 31 ? 31 : max_hash_bits,
+         // 提供给CMS收集器使用？？？
          cms_bits                 = LP64_ONLY(1) NOT_LP64(0),
+         // 保存偏向时间戳
          epoch_bits               = 2
   };
 
