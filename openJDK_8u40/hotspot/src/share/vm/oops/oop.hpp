@@ -56,12 +56,12 @@ class CMSIsAliveClosure;
 class PSPromotionManager;
 class ParCompactionManager;
 
+// 对象头
 class oopDesc {
   friend class VMStructs;
  private:
-   // 对象头
   volatile markOop  _mark;
-  // 执行类的元数据的指针
+  // 指向类的元数据的指针
   union _metadata {
     // 未开启指针压缩时使用
     Klass*      _klass;

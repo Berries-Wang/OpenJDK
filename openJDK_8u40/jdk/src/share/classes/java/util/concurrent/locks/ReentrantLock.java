@@ -144,7 +144,7 @@ public class ReentrantLock implements Lock, java.io.Serializable {
                     return true;
                 }
             } else if (current == getExclusiveOwnerThread()) {  // 当临界资源还被线程锁住的时候,判断是否被当前线程锁住
-                // 对当前临界资源（state）和acquires的值进行求和(前提是当前线程获取了该临界资源)，这也就是ReentrantLock可重入锁的实现方式
+                // 对当前临界资源（state）和acquires的值进行求和(前提是当前线程获取了该临界资源)，<这也就是ReentrantLock可重入锁的实现方式>
                 int nextc = c + acquires;
                 if (nextc < 0) // overflow
                     throw new Error("Maximum lock count exceeded");
@@ -155,16 +155,33 @@ public class ReentrantLock implements Lock, java.io.Serializable {
             return false;
         }
 
+        /**
+         * 尝试释放资源
+         *
+         * @param releases 释放的资源的数量(当AQS中的state = 0 的时候，表示没有线程获得锁),从源代码来看，值为1
+         * @return 返回的结果是：当前线程是否完全释放该锁
+         */
         protected final boolean tryRelease(int releases) {
+            // 减少state，ReentrantLock是可重入锁，涉及到多次加锁和多次解锁。
             int c = getState() - releases;
-            if (Thread.currentThread() != getExclusiveOwnerThread())
+            // 判断当前线程是否是拥有锁的线程，即是不是该线程拥有锁
+            if (Thread.currentThread() != getExclusiveOwnerThread()) {
+                // 如果不是当前线程拥有该锁，则抛出异常
                 throw new IllegalMonitorStateException();
+            }
+
+            // 表示该临界资源是否被完全释放
             boolean free = false;
+            // 判断该线程是否完全释放该锁。
             if (c == 0) {
+                // 该线程已经完全释放了该锁，将free置为true
                 free = true;
+                // 将独占线程置为NULL
                 setExclusiveOwnerThread(null);
             }
+            // 更新临界资源state
             setState(c);
+            // 返回执行结果
             return free;
         }
 
@@ -220,6 +237,7 @@ public class ReentrantLock implements Lock, java.io.Serializable {
                 setExclusiveOwnerThread(Thread.currentThread());
             } else {
                 // 锁获取失败，则调用acquire方法。
+                // acquire 方法为AbstractQueuedSynchronizer类的方法，他会调用实现者的tryAcquire方法
                 acquire(1);
             }
 
@@ -227,6 +245,7 @@ public class ReentrantLock implements Lock, java.io.Serializable {
 
         /**
          * 尝试获取锁
+         *
          * @param acquires 该参数的数值的大小取决于线程协作工具实现者
          * @return 是否成功获取到锁
          */
@@ -464,6 +483,7 @@ public class ReentrantLock implements Lock, java.io.Serializable {
 
     /**
      * Attempts to release this lock.
+     * 尝试释放锁
      *
      * <p>If the current thread is the holder of this lock then the hold
      * count is decremented.  If the hold count is now zero then the lock
@@ -474,6 +494,11 @@ public class ReentrantLock implements Lock, java.io.Serializable {
      *                                      hold this lock
      */
     public void unlock() {
+        /**
+         *  调用同步器的release方法，但是这里的同步器没有重写该方法，
+         *  故这里调用的是AbstractQueuedSynchronizer类的release方法,在AbstractQueuedSynchronizer中的release方法会回调继承者的
+         *  tryRelease方法
+         */
         sync.release(1);
     }
 

@@ -547,9 +547,10 @@ public abstract class AbstractQueuedSynchronizer
 
     /**
      * Head of the wait queue, lazily initialized.  Except for
-     * initialization, it is modified only via method setHead.  Note:
-     * If head exists, its waitStatus is guaranteed not to be
-     * CANCELLED.
+     * initialization, it is modified only via method setHead.
+     * Note: If head exists, its waitStatus is guaranteed not to be CANCELLED.
+     * <p>
+     * 备注: 如果head存在，那么他的waitStatus一定不是CANCELLED
      */
     private transient volatile Node head;
 
@@ -564,6 +565,8 @@ public abstract class AbstractQueuedSynchronizer
      * <p>
      * state意为同步状态，是由Volatile修饰的，用于展示当前临界资源的获锁情况
      * 理解：所有多线程存在的问题，都是对临界资源的操作。这里只是使用线程对临界资源的操作(获取、修改等)来对线程们进行管理
+     * <p>
+     * 在高并发的情况下，需要锁住的就是临界资源。即：获得了临界资源，就是获取到了锁。
      */
     private volatile int state;
 
@@ -703,19 +706,26 @@ public abstract class AbstractQueuedSynchronizer
     /**
      * Wakes up node's successor, if one exists.
      * 唤醒node的后继节点
+     * <p>
+     * 注：
+     * 1. 分析时是从方法release开始的
      *
-     * @param node the node
+     * @param node 执行完成，并释放了锁的线程对应的Node(release方法中调用的)
      */
     private void unparkSuccessor(Node node) {
         /*
-         * If status is negative (i.e., possibly needing signal) try
+         * If status is negative（负数） (i.e., possibly needing signal) try
          * to clear in anticipation of signalling.  It is OK if this
          * fails or if status is changed by waiting thread.
+         */
+
+        /**
+         * 唤醒后继节点为什么要将当前节点的waitStatus置为初始化状态？
          */
         // 获取到node的等待状态
         int ws = node.waitStatus;
         if (ws < 0)
-            // Node.waitStatus == 0 : 当一个Node被初始化的时候的默认值.为什么?
+            // Node.waitStatus == 0 : 当一个Node被初始化的时候的默认值.为什么?参考release方法
             // 在cancelAcquire方法中，node的waitStatus被设置为了Node.CANCELLED
             compareAndSetWaitStatus(node, ws, 0);
 
@@ -736,8 +746,11 @@ public abstract class AbstractQueuedSynchronizer
                     s = t;
         }
         // 当node的后继节点为一个可以被唤醒的节点，则进行唤醒操作。可以被唤醒指的是：节点不为null且waitStatus  <= 0
-        if (s != null)
+        if (s != null) {
+            // 唤醒线程，被唤醒的线程会从LockSupport.park方法被调用处继续执行
             LockSupport.unpark(s.thread);
+        }
+
     }
 
     /**
@@ -882,6 +895,8 @@ public abstract class AbstractQueuedSynchronizer
     }
 
     /**
+     * 通过前置节点来判断当前线程是否应该被阻塞
+     * <p>
      * Checks and updates status for a node that failed to acquire.(当获取锁失败时为Node校验和更新waitStatus)
      * Returns true if thread should block. This is the main signal
      * control in all acquire loops.  Requires that pred == node.prev.
@@ -971,7 +986,10 @@ public abstract class AbstractQueuedSynchronizer
                 final Node p = node.predecessor();
                 // 如果p为头结点，那么说明node在队首，则尝试获取锁
                 if (p == head && tryAcquire(arg)) {
-                    // 获取锁成功，将指针指向当前node
+                    /**
+                     * 获取锁成功，将指针指向当前node(设置头结点)
+                     * 当线程获取到锁的时候，会将获取到锁的线程对应的Node设置为头结点
+                     */
                     setHead(node);
                     p.next = null; // help GC
                     failed = false;
@@ -979,11 +997,19 @@ public abstract class AbstractQueuedSynchronizer
                     return interrupted;
                 }
 
-                // 当node不是队首元素，也没有获取到锁，则判断当前线程是否需要被阻塞，若是，则挂起当前线程，直到线程被唤醒(unpark)，线程才会继续往下执行
-                // 进入到这里，表明锁获取失败了，换句话说，就是共享资源已经被获取了(被其他线程)，当前节点之前的节点都不会发生变化。
+                /**
+                 * 当node不是队首元素，也没有获取到锁，则判断当前线程是否需要被阻塞，若是，则挂起当前线程，直到线程被唤醒(unpark)，线程才会继续往下执行
+                 *
+                 * 进入到这里，表明锁获取失败了，换句话说，就是共享资源已经被获取了(被其他线程)，当前节点之前的节点都不会发生变化。
+                 *
+                 * parkAndCheckInterrupt 会调用LockSupport.park方法将当前线程挂起，当调用LockSupprt.unPark方法时，
+                 * 该线程会从这里开始执行
+                 */
                 if (shouldParkAfterFailedAcquire(p, node) &&
-                        parkAndCheckInterrupt())
+                        parkAndCheckInterrupt()) {
                     interrupted = true;
+                }
+
             }
         } finally {
             /**
@@ -1317,10 +1343,7 @@ public abstract class AbstractQueuedSynchronizer
      * @param arg the acquire argument.  This value is conveyed（传达） to
      *        {@link #tryAcquire} but is otherwise uninterpreted and
      *        can represent anything you like.
-     *
-     *
      */
-
     /**
      * 内部流程：
      * 1. 调用线程协作工具类实现的tryAcquire方法来尝试获取对连接资源的锁
@@ -1392,13 +1415,35 @@ public abstract class AbstractQueuedSynchronizer
      *            can represent anything you like.
      * @return the value returned from {@link #tryRelease}
      */
+    /**
+     * 释放锁
+     *
+     * @param arg 临界资源所需释放的数量
+     * @return 同tryRelease
+     * <p>
+     * tryRelease 当 当前线程完全释放锁的时候，返回true；反之，返回false；
+     */
     public final boolean release(int arg) {
+        //  尝试释放锁
         if (tryRelease(arg)) {
+            // 当当前线程完全释放了该临界资源(state =0，即当前线程完全释放了该锁)，关于head的理解，阅读一下acquireQueued方法的代码
             Node h = head;
-            if (h != null && h.waitStatus != 0)
+            /**
+             * 为什么这样判断？
+             * 1. h == null, head还没有初始化。初始化的情况下，head == null，第一个节点入队，head会被初始为一个虚节点。故如果还没来得及入队
+             *   就会出现h == null的情况
+             * 2. h ！= null && waitStatus ==0,表明后继结点对应的线程人在运行中，不需要被唤醒。为什么？参考unparkSuccessor方法
+             * 3. h != null && waitStatus < 0 , 表明后继节点可能被阻塞了，需要唤醒。
+             *
+             * 关于第2、3点 ， 可以再去看一下shouldParkAfterFailedAcquire方法
+             *
+             */
+            if (h != null && h.waitStatus != 0) {
                 unparkSuccessor(h);
+            }
             return true;
         }
+        // 当锁没有完全释放成功(即当前线程还占用着这把锁),返回false
         return false;
     }
 
