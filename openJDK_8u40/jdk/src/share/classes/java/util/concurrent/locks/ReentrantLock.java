@@ -268,19 +268,36 @@ public class ReentrantLock implements Lock, java.io.Serializable {
          * Fair version of tryAcquire.  Don't grant access unless
          * recursive call or no waiters or is first.
          */
+        /**
+         * 尝试获取临界资源(即尝试获取锁)
+         *
+         * @param acquires
+         * @return
+         */
         protected final boolean tryAcquire(int acquires) {
             final Thread current = Thread.currentThread();
+            // 获取临界资源
             int c = getState();
+            // 当临界资源没有被获取，即锁还没有被获取
             if (c == 0) {
+                /**
+                 * hasQueuedPredecessors 用来判断当前线程是否有前置节点(公平锁，根据入队的顺序来获取锁)
+                 * compareAndSetState方法会在没有前置节点的情况下执行，去尝试获取锁
+                 */
                 if (!hasQueuedPredecessors() &&
                         compareAndSetState(0, acquires)) {
+                    // 成功，则将当前线程设置为独占线程，即该线程可以继续执行
                     setExclusiveOwnerThread(current);
                     return true;
                 }
+                // 判断当前获取锁的线程是否是当前线程，因为ReentrantLock是可重入锁
             } else if (current == getExclusiveOwnerThread()) {
                 int nextc = c + acquires;
-                if (nextc < 0)
+
+                if (nextc < 0) {
                     throw new Error("Maximum lock count exceeded");
+                }
+                // 更新临界资源的值
                 setState(nextc);
                 return true;
             }
@@ -498,6 +515,8 @@ public class ReentrantLock implements Lock, java.io.Serializable {
          *  调用同步器的release方法，但是这里的同步器没有重写该方法，
          *  故这里调用的是AbstractQueuedSynchronizer类的release方法,在AbstractQueuedSynchronizer中的release方法会回调继承者的
          *  tryRelease方法
+         *
+         *  请注意： 公平锁 和 非公平锁 都是调用Sync的release方法
          */
         sync.release(1);
     }

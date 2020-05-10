@@ -1690,6 +1690,12 @@ public abstract class AbstractQueuedSynchronizer
      * is at the head of the queue or the queue is empty
      * @since 1.7
      */
+
+    /**
+     * 判断当前队列中是否有有效的Node
+     *
+     * @return 队列中存在有效的Node?true:false;
+     */
     public final boolean hasQueuedPredecessors() {
         // The correctness of this depends on head being initialized
         // before tail and on head.next being accurate if the current

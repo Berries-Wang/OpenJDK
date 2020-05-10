@@ -954,6 +954,11 @@ public class Thread implements Runnable {
      * @return <code>true</code> if this thread is alive;
      * <code>false</code> otherwise.
      */
+    /**
+     * isAlive：活动状态，即线程已经启动且尚未终止，线程处于正在运行或者准备开始运行的状态
+     *
+     * @return
+     */
     public final native boolean isAlive();
 
     /**
