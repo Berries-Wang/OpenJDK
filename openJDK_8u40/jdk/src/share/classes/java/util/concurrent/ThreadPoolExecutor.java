@@ -818,7 +818,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
 
             // 若工作线程的数量不为0
             if (workerCountOf(c) != 0) { // Eligible(有资格的; 合格的; 具备条件的) to terminate
-                //中断一个空闲线程，为什么仅中断一个？？？
+                //中断一个空闲线程，为什么仅中断一个？？？这里使用了自旋锁，会中断所有的线程
                 interruptIdleWorkers(ONLY_ONE);
                 return;
             }
@@ -1210,7 +1210,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
         int c = ctl.get();
         // 若线程池依旧在运行
         if (runStateLessThan(c, STOP)) {
-            // 以为异常(此时的异常是task导致的)导致线程退出
+            // 因为异常(此时的异常是task导致的)导致线程退出
             if (!completedAbruptly) {
                 int min = allowCoreThreadTimeOut ? 0 : corePoolSize;
                 if (min == 0 && !workQueue.isEmpty()) {
