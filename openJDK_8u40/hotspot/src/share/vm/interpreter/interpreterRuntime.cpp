@@ -146,9 +146,16 @@ IRT_END
 
 //------------------------------------------------------------------------------------------------------------------------
 // Allocation
-
+/**
+* 这里的_new对应着Java里面的new关键字
+* 目标：
+*    1. 找到《深入理解JVM》中对象创建每个步骤的源代码
+*    2. 分析对象内存分配的方式(如何解决并发安全问题，是否优先在Eden区域分配对象内存)
+*/
 IRT_ENTRY(void, InterpreterRuntime::_new(JavaThread* thread, ConstantPool* pool, int index))
+  // klass_at方法在constantPool.hpp文件中
   Klass* k_oop = pool->klass_at(index, CHECK);
+  // hotspot/src/share/vm/runtime/handles.hpp
   instanceKlassHandle klass (THREAD, k_oop);
 
   // Make sure we are not instantiating an abstract klass
