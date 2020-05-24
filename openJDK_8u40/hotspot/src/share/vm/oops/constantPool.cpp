@@ -186,6 +186,15 @@ int ConstantPool::cp_to_object_index(int cp_index) {
   return (i < 0) ? _no_index_sentinel : i;
 }
 
+/**
+ *
+ * Desc:
+ *
+ * @param:
+ * @return:
+ * @editor: Wei.Wang
+ * @date: 2020/5/24 9:32
+ */
 Klass* ConstantPool::klass_at_impl(constantPoolHandle this_oop, int which, TRAPS) {
   // A resolved constantPool entry will contain a Klass*, otherwise a Symbol*.
   // It is not safe to rely on the tag bit's here, since we don't have a lock, and the entry and
