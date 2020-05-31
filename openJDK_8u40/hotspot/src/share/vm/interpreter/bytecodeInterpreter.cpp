@@ -2158,6 +2158,9 @@ run:
           UPDATE_PC_AND_TOS_AND_CONTINUE(3, count);
         }
 
+      /**
+      * JVM如何加载类的，存放在哪里，为什么这里通过这样的判断就能知道类是否加载了
+      */
       CASE(_new): {
         u2 index = Bytes::get_Java_u2(pc+1);
         ConstantPool* constants = istate->method()->constants();
@@ -2182,7 +2185,7 @@ run:
 #ifndef CC_INTERP_PROFILE
             if (result == NULL) {
               need_zero = true;
-              // Try allocate in shared eden
+              // Try allocate in shared eden(尝试在Eden区分配内存)
             retry:
               HeapWord* compare_to = *Universe::heap()->top_addr();
               HeapWord* new_top = compare_to + obj_size;

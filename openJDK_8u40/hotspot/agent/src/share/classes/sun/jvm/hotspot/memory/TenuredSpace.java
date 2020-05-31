@@ -26,10 +26,21 @@ package sun.jvm.hotspot.memory;
 
 import sun.jvm.hotspot.debugger.*;
 
-/** No additional functionality for now */
+/**
+ * No additional functionality for now
+ */
 
+/**
+ *
+ * Desc: 老年代
+ *
+ * @param:
+ * @return:
+ * @editor: Wei.Wang
+ * @date: 2020/5/31 9:01
+ */
 public class TenuredSpace extends OffsetTableContigSpace {
-  public TenuredSpace(Address addr) {
-    super(addr);
-  }
+    public TenuredSpace(Address addr) {
+        super(addr);
+    }
 }

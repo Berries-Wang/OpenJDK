@@ -43,10 +43,22 @@
 
 //
 // A Klass provides:
-//  1: language level class object (method dictionary etc.)
-//  2: provide vm dispatch behavior for the object
+//  1: language level class object (method dictionary etc.)(用于表示Java类，Klass中保存了一个Java对象的类型信息，包括类名，限定符，常量，方法字典等)
+//  2: provide vm dispatch behavior for the object(实现方法的动态分派，即实现Java对象的分发功能)
 // Both functions are combined into one C++ class.
 
+
+/**
+ * 对于OOPS对象来说，主要只能在于表示对象的实例数据，没必要持有任何虚函数。而在描述Java类的Klass对象中含有VTBL(继承于Klass父类Klass_vtbl)
+ * 那么Klass就能根据Java对象的实际类型进行C++的分发，这样，OOPS对象只需要通过相应的Klass就可以找到所有的虚函数，避免了在每个对象中都分配一个C++
+ * VTBL指针。
+ */
+
+/**
+ * OOP 全称是Ordinary Object Pointer，即普通对象指针。在JVM中，oop对应的类是oopDesc，每new一个Java实例就会创建一个oopDesc，oopDesc包含了两部分信息，_mark 和 _metadata,markword是用来
+ * 存储对象的锁信息和分代年龄用的，_metadata就是指向Klass的一个指针，通过指针可以拿到这个类的数据
+ * 即《深入理解JVM》中的Mark Work(存储对象自身的运行时的数据，包括hashCode，GC分代年龄，锁状态标识，线程持有锁，偏向线程id，偏向时间戳等)  和类型指针(指向其类型元数据的指针)
+ */
 // One reason for the oop/klass dichotomy in the implementation is
 // that we don't want a C++ vtbl pointer in every object.  Thus,
 // normal oops don't have any virtual functions.  Instead, they
@@ -55,8 +67,14 @@
 // actual type.  (See oop.inline.hpp for some of the forwarding code.)
 // ALL FUNCTIONS IMPLEMENTING THIS DISPATCH ARE PREFIXED WITH "oop_"!
 
+/**
+ *实现oop/Klass二分法(拆分，Jvm将对象分为两部分来存储)法的原因是为了不在每个对象中都保存一个C++虚函数表，因此，普通的oop不需要拥有任何虚函数，
+ * 而是将所有虚函数调用通过虚函数表以及他们的实际类型动态分派到他们的Klass上
+ *
+ */
+
 //  Klass layout:
-//    [C++ vtbl ptr  ] (contained in Metadata)
+//    [C++ vtbl ptr  ] (contained in Metadata),在哪里？
 //    [layout_helper ]
 //    [super_check_offset   ] for fast subtype checks
 //    [name          ]
@@ -97,24 +115,37 @@ class Klass : public Metadata {
  protected:
   // note: put frequently-used fields together at start of klass structure
   // for better cache behavior (may not make much of a difference but sure won't hurt)
+  /*
+  * 在Klass接口的起始处将常用字段放在一起，以获取更好的缓存效果(虽然可能不会有太大的区别，但可以肯定不会造成伤害)
+  */
   enum { _primary_super_limit = 8 };
 
-  // The "layout helper" is a combined descriptor of object layout.
-  // For klasses which are neither instance nor array, the value is zero.
+  // The "layout helper" is a combined descriptor of object layout.layout helper是对象布局的组合描述符
+  // For klasses which are neither instance nor array, the value is zero. 表示对象时，既不是对象实例也不是数组，他的值为零
   //
+
+  /**
+   * 对于对象而言,layout helper是一个正数，这个对象实例的大小。这个大小已经通过align_object_size传递并缩放到字节
+   * 如果不能使用fastpath分配该类的实例，则设置低阶位。
+   *
+   */
   // For instances, layout helper is a positive number, the instance size.
   // This size is already passed through align_object_size and scaled to bytes.
   // The low order bit is set if instances of this class cannot be
   // allocated using the fastpath.
-  //
+  /**
+   *
+   *  对于数据而言，layout helper是一个负数，包含四个不同的位
+   */
   // For arrays, layout helper is a negative number, containing four
   // distinct bytes, as follows:
   //    MSB:[tag, hsz, ebt, log2(esz)]:LSB
   // where:
-  //    tag is 0x80 if the elements are oops, 0xC0 if non-oops
-  //    hsz is array header size in bytes (i.e., offset of first element)
-  //    ebt is the BasicType of the elements
-  //    esz is the element size in bytes
+  //    tag is 0x80 if the elements are oops, 0xC0 if non-oops(1个字节，若值为0x80，表示数组元素的类型是OOP；值为0xC0,则表示数组
+  // 元素的类型为Java基本类型)
+  //    hsz is array header size in bytes (i.e., offset of first element)(数组头部大小，以字节为单位，表示第一个元素的偏移)
+  //    ebt is the BasicType of the elements，基本类型的元素
+  //    esz is the element size in bytes 元素大小，以字节为单位
   // This packed word is arranged so as to be quickly unpacked by the
   // various fast paths that use the various subfields.
   //
@@ -128,7 +159,7 @@ class Klass : public Metadata {
   jint        _layout_helper;
 
   // The fields _super_check_offset, _secondary_super_cache, _secondary_supers
-  // and _primary_supers all help make fast subtype checks.  See big discussion
+  // and _primary_supers all help make fast subtype checks(都是为了快速进行子类型的检查).  See big discussion
   // in doc/server_compiler/checktype.txt
   //
   // Where to look to observe a supertype (it is &_secondary_super_cache for
@@ -137,6 +168,10 @@ class Klass : public Metadata {
 
   // Class name.  Instance classes: java/lang/String, etc.  Array classes: [I,
   // [Ljava/lang/String;, etc.  Set to zero for all other kinds of classes.
+  /**
+   *类名
+   * Symbol 定义于hotspot/src/share/vm/oops/symbol.hpp
+   */
   Symbol*     _name;
 
   // Cache of last observed secondary supertype
@@ -146,26 +181,55 @@ class Klass : public Metadata {
   // Ordered list of all primary supertypes
   Klass*      _primary_supers[_primary_super_limit];
   // java/lang/Class instance mirroring this class
+  /**
+   * hotspot/src/share/vm/oops/oopsHierarchy.hpp
+   * oopDesc指针，此类对应的java/lang/Class实例，可以据此访问类静态属性
+   */
   oop       _java_mirror;
   // Superclass
+  /**
+   * Klass指针，父类
+   */
   Klass*      _super;
   // First subclass (NULL if none); _subklass->next_sibling() is next one
+  /**
+   *
+   * Klass指针，该类的子类，但是为什么需要保存自己的子类?
+   */
   Klass*      _subklass;
+  /**
+   *
+   * Klass 指针，该类的下一个子类
+   */
   // Sibling link (or NULL); links all subklasses of a klass
   Klass*      _next_sibling;
 
   // All klasses loaded by a class loader are chained through these links
+  /**
+   * 由加载该类的类加载器去加载的所有的类。以链表的形式存储
+   *
+   */
   Klass*      _next_link;
 
   // The VM's representation of the ClassLoader used to load this class.
   // Provide access the corresponding instance java.lang.ClassLoader.
+  /**
+   *ClassLoaderData指针，加载该类的ClassLoader
+   * 提供相对应实例java.lang.ClassLoader的访问
+   */
   ClassLoaderData* _class_loader_data;
 
+  /**
+   *修改标识，Class.getModifiers使用
+   */
   jint        _modifier_flags;  // Processed access flags, for use by Class.getModifiers.
+  /**
+   * 获取类的修饰符，如private类访问控制，final，static，abstract ，native等
+   */
   AccessFlags _access_flags;    // Access flags. The class/interface distinction is stored here.
 
-  // Biased locking implementation and statistics
-  // (the 64-bit chunk goes first, to avoid some fragmentation)
+  // Biased locking implementation and statistics(偏向锁的实现和统计)
+  // (the 64-bit chunk goes first, to avoid some fragmentation)(64位块优先，避免碎片)
   jlong    _last_biased_lock_bulk_revocation_time;
   markOop  _prototype_header;   // Used when biased locking is both enabled and disabled for this type
   jint     _biased_lock_revocation_count;

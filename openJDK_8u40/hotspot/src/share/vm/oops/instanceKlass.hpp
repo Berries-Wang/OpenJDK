@@ -40,6 +40,18 @@
 #include "utilities/macros.hpp"
 #include "trace/traceMacros.hpp"
 
+/**
+ *
+ * 1.JVM在运行的时候，需要一种用来表示Java内部类型的机制，在HotSpot中的解决方案是: 为每一个一家在的Java类创建一个instanceKlass对象，
+ *用来在JVM层表示Java类。他的所有成员可以包含虚拟机内部运行一个Java类所需要的多有信息，这些成员变量在类解析阶段完成赋值，如图：note/InstanceKlass内部布局.png
+ * 即：Java Class 在JVM中的存储形式
+ *
+ * @param:
+ * @return:
+ * @editor: Wei.Wang
+ * @date: 2020/5/30 17:04
+ */
+
 // An InstanceKlass is the VM level representation of a Java class.
 // It contains all information needed for at class at execution runtime.
 
@@ -187,6 +199,9 @@ class InstanceKlass: public Klass {
   // Array classes holding elements of this class.
   Klass*          _array_klasses;
   // Constant pool for this class.
+  /**
+   * 该类的常量池
+   */
   ConstantPool* _constants;
   // The InnerClasses attribute and EnclosingMethod attribute. The
   // _inner_classes is an array of shorts. If the class has InnerClasses
@@ -270,14 +285,26 @@ class InstanceKlass: public Klass {
   NOT_PRODUCT(int _verify_count;)  // to avoid redundant verifies
 
   // Method array.
+  /**
+   * 描述类拥有的方法列表
+   */
   Array<Method*>* _methods;
   // Default Method Array, concrete methods inherited from interfaces
   Array<Method*>* _default_methods;
   // Interface (Klass*s) this class declares locally to implement.
+  /**
+   * 该类实现的接口
+   */
   Array<Klass*>* _local_interfaces;
   // Interface (Klass*s) this class implements transitively.
+  /**
+   * 该类继承而来的接口
+   */
   Array<Klass*>* _transitive_interfaces;
   // Int array containing the original order of method in the class file (for JVMTI).
+  /**
+   * 方法的顺序，在Class文件中的顺序
+   */
   Array<int>*     _method_ordering;
   // Int array containing the vtable_indices for default_methods
   // offset matches _default_methods offset
@@ -296,6 +323,9 @@ class InstanceKlass: public Klass {
   //     [generic signature index]
   //     [generic signature index]
   //     ...
+  /**
+   * 域
+   */
   Array<u2>*      _fields;
 
   // embedded Java vtable follows here
