@@ -791,7 +791,7 @@ char* Universe::preferred_heap_base(size_t heap_size, size_t alignment, NARROW_O
 }
 
 /**
- * 初始化堆,根据虚拟机的选项来选择堆的实现方式
+ * 重要，这个涉及到java堆的创建。初始化堆,根据虚拟机的选项来选择堆的实现方式。
  */ 
 jint Universe::initialize_heap() {
 

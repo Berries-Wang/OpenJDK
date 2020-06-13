@@ -167,6 +167,7 @@ jint GenCollectedHeap::initialize() {
    */ 
   for (i = 0; i < _n_gens; i++) {
     ReservedSpace this_rs = heap_rs.first_part(_gen_specs[i]->max_size(), false, false);
+    // 初始化代内存空间
     _gens[i] = _gen_specs[i]->init(this_rs, i, rem_set());
     heap_rs = heap_rs.last_part(_gen_specs[i]->max_size());
   }

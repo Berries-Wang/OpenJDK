@@ -193,6 +193,7 @@ DefNewGeneration::DefNewGeneration(ReservedSpace rs,
                 (HeapWord*)_virtual_space.high());
   Universe::heap()->barrier_set()->resize_covered_region(cmr);
 
+   //has_soft_ended_eden方法的返回值取决于属性CMSIncrementalMode，默认为false
   if (GenCollectedHeap::heap()->collector_policy()->has_soft_ended_eden()) {
     _eden_space = new ConcEdenSpace(this);
   } else {
@@ -201,6 +202,7 @@ DefNewGeneration::DefNewGeneration(ReservedSpace rs,
   _from_space = new ContiguousSpace();
   _to_space   = new ContiguousSpace();
 
+  // 分配失败，则抛出异常
   if (_eden_space == NULL || _from_space == NULL || _to_space == NULL)
     vm_exit_during_initialization("Could not allocate a new gen space");
 
@@ -209,7 +211,9 @@ DefNewGeneration::DefNewGeneration(ReservedSpace rs,
   // These values are exported as performance counters.
   uintx alignment = GenCollectedHeap::heap()->collector_policy()->space_alignment();
   uintx size = _virtual_space.reserved_size();
+  // 计算survivor区的大小
   _max_survivor_size = compute_survivor_size(size, alignment);
+  // 计算eden区内存大小，计算公式为 新生代总内存大小 - 2*survivor区大小
   _max_eden_size = size - (2*_max_survivor_size);
 
   // allocate the performance counters

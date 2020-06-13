@@ -147,6 +147,10 @@ protected:
   // Return the size of a survivor space if this generation were of size
   // gen_size.
   size_t compute_survivor_size(size_t gen_size, size_t alignment) const {
+    /**
+     * SurvivorRatio 默认值为8
+     * 即：From区和To区分别占新生代内存的 1/(2 + SurvivorRatio)
+     */ 
     size_t n = gen_size / (SurvivorRatio + 2);
     return n > alignment ? align_size_down(n, alignment) : alignment;
   }
