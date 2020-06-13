@@ -27,6 +27,9 @@
 
 #include "memory/allocation.hpp"
 
+/**
+ * ReservedSpace 是一个保存一个连续的内存地址的数据结构
+ */ 
 // ReservedSpace is a data structure for reserving a contiguous address range.
 
 class ReservedSpace VALUE_OBJ_CLASS_SPEC {

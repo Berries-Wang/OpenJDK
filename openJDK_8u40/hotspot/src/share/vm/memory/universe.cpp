@@ -790,6 +790,9 @@ char* Universe::preferred_heap_base(size_t heap_size, size_t alignment, NARROW_O
   return (char*)base; // also return NULL (don't care) for 32-bit VM
 }
 
+/**
+ * 初始化堆,根据虚拟机的选项来选择堆的实现方式
+ */ 
 jint Universe::initialize_heap() {
 
   if (UseParallelGC) {
@@ -916,25 +919,37 @@ jint Universe::initialize_heap() {
 }
 
 
+/**
+ * 给Java堆分配一块连续的内存地址
+ */
 // Reserve the Java heap, which is now the same for all GCs.
 ReservedSpace Universe::reserve_heap(size_t heap_size, size_t alignment) {
+  // 参数校验
   assert(alignment <= Arguments::conservative_max_heap_alignment(),
       err_msg("actual alignment "SIZE_FORMAT" must be within maximum heap alignment "SIZE_FORMAT,
           alignment, Arguments::conservative_max_heap_alignment()));
+  //heap_size取整
   size_t total_reserved = align_size_up(heap_size, alignment);
+  /**
+   * 使用指针压缩的时候堆空间不能超过OopEncodingHeapMax(在64位Linux Server上OopEncodingHeapMax为32GB)
+   * UseCompressedOops 表示使用指针压缩,jdk1.8默认开启(64位Linux Server)
+   */ 
   assert(!UseCompressedOops || (total_reserved <= (OopEncodingHeapMax - os::vm_page_size())),
       "heap size is too big for compressed oops");
 
+ //是否使用大内存页，UseLargePages默认是false(64位 Linux Server)
   bool use_large_pages = UseLargePages && is_size_aligned(alignment, os::large_page_size());
   assert(!UseLargePages
       || UseParallelGC
       || use_large_pages, "Wrong alignment to use large pages");
 
+  // 计算java堆的基地址
   char* addr = Universe::preferred_heap_base(total_reserved, alignment, Universe::UnscaledNarrowOop);
-
+  // 在执行构造方法的时候会向操作系统申请一段连续的内存空间
   ReservedHeapSpace total_rs(total_reserved, alignment, use_large_pages, addr);
 
   if (UseCompressedOops) {
+    // 如果申请失败，即该地址已经被分配了。则需要重新申请，每次申请时NarrowOop(指针压缩的模式)不一样
     if (addr != NULL && !total_rs.is_reserved()) {
       // Failed to reserve at specified address - the requested memory
       // region is taken already, for example, by 'java' launcher.
@@ -944,6 +959,7 @@ ReservedSpace Universe::reserve_heap(size_t heap_size, size_t alignment) {
       ReservedHeapSpace total_rs0(total_reserved, alignment,
           use_large_pages, addr);
 
+      // 继续重试
       if (addr != NULL && !total_rs0.is_reserved()) {
         // Failed to reserve at specified address again - give up.
         addr = Universe::preferred_heap_base(total_reserved, alignment, Universe::HeapBasedNarrowOop);
@@ -958,6 +974,7 @@ ReservedSpace Universe::reserve_heap(size_t heap_size, size_t alignment) {
     }
   }
 
+   // 重试失败，抛出异常。
   if (!total_rs.is_reserved()) {
     vm_exit_during_initialization(err_msg("Could not reserve enough space for " SIZE_FORMAT "KB object heap", total_reserved/K));
     return total_rs;
@@ -966,6 +983,7 @@ ReservedSpace Universe::reserve_heap(size_t heap_size, size_t alignment) {
   if (UseCompressedOops) {
     // Universe::initialize_heap() will reset this to NULL if unscaled
     // or zero-based narrow oops are actually used.
+    //设置压缩指针的基地址
     address base = (address)(total_rs.base() - os::vm_page_size());
     Universe::set_narrow_oop_base(base);
   }

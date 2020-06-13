@@ -1,0 +1,30 @@
+Determining if the C compiler works failed with the following output:
+Change Dir: G:/Study_WorkSpace/openjdk/openJDK_8u40/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):E:/浏览器下载/x86_64-8.1.0-release-win32-seh-rt_v6-rev0/mingw64/bin/mingw32-make.exe cmTC_001ce/fast && E:/浏览器下载/x86_64-8.1.0-release-win32-seh-rt_v6-rev0/mingw64/bin/mingw32-make.exe -f CMakeFiles\cmTC_001ce.dir\build.make CMakeFiles/cmTC_001ce.dir/build
+mingw32-make.exe[1]: Entering directory 'G:/Study_WorkSpace/openjdk/openJDK_8u40/cmake-build-debug/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_001ce.dir/testCCompiler.c.obj
+E:\娴忚鍣ㄤ笅杞絓x86_64-8.1.0-release-win32-seh-rt_v6-rev0\mingw64\bin\gcc.exe    -o CMakeFiles\cmTC_001ce.dir\testCCompiler.c.obj   -c G:\Study_WorkSpace\openjdk\openJDK_8u40\cmake-build-debug\CMakeFiles\CMakeTmp\testCCompiler.c
+process_begin: CreateProcess(NULL, E:\娴忚鍣ㄤ笅杞絓x86_64-8.1.0-release-win32-seh-rt_v6-rev0\mingw64\bin\gcc.exe -o CMakeFiles\cmTC_001ce.dir\testCCompiler.c.obj -c G:\Study_WorkSpace\openjdk\openJDK_8u40\cmake-build-debug\CMakeFiles\CMakeTmp\testCCompiler.c, ...) failed.
+make (e=2): 系统找不到指定的文件。
+mingw32-make.exe[1]: *** [CMakeFiles\cmTC_001ce.dir\build.make:65: CMakeFiles/cmTC_001ce.dir/testCCompiler.c.obj] Error 2
+mingw32-make.exe[1]: Leaving directory 'G:/Study_WorkSpace/openjdk/openJDK_8u40/cmake-build-debug/CMakeFiles/CMakeTmp'
+mingw32-make.exe: *** [Makefile:120: cmTC_001ce/fast] Error 2
+
+
+
+Determining if the C compiler works failed with the following output:
+Change Dir: G:/Study_WorkSpace/openjdk/openJDK_8u40/cmake-build-debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):E:/浏览器下载/x86_64-8.1.0-release-win32-seh-rt_v6-rev0/mingw64/bin/mingw32-make.exe cmTC_68d36/fast && E:/浏览器下载/x86_64-8.1.0-release-win32-seh-rt_v6-rev0/mingw64/bin/mingw32-make.exe -f CMakeFiles\cmTC_68d36.dir\build.make CMakeFiles/cmTC_68d36.dir/build
+mingw32-make.exe[1]: Entering directory 'G:/Study_WorkSpace/openjdk/openJDK_8u40/cmake-build-debug/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_68d36.dir/testCCompiler.c.obj
+E:\娴忚鍣ㄤ笅杞絓x86_64-8.1.0-release-win32-seh-rt_v6-rev0\mingw64\bin\gcc.exe    -o CMakeFiles\cmTC_68d36.dir\testCCompiler.c.obj   -c G:\Study_WorkSpace\openjdk\openJDK_8u40\cmake-build-debug\CMakeFiles\CMakeTmp\testCCompiler.c
+process_begin: CreateProcess(NULL, E:\娴忚鍣ㄤ笅杞絓x86_64-8.1.0-release-win32-seh-rt_v6-rev0\mingw64\bin\gcc.exe -o CMakeFiles\cmTC_68d36.dir\testCCompiler.c.obj -c G:\Study_WorkSpace\openjdk\openJDK_8u40\cmake-build-debug\CMakeFiles\CMakeTmp\testCCompiler.c, ...) failed.
+make (e=2): 系统找不到指定的文件。
+mingw32-make.exe[1]: *** [CMakeFiles\cmTC_68d36.dir\build.make:65: CMakeFiles/cmTC_68d36.dir/testCCompiler.c.obj] Error 2
+mingw32-make.exe[1]: Leaving directory 'G:/Study_WorkSpace/openjdk/openJDK_8u40/cmake-build-debug/CMakeFiles/CMakeTmp'
+mingw32-make.exe: *** [Makefile:120: cmTC_68d36/fast] Error 2
+
+
+

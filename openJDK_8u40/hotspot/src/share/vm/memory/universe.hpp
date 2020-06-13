@@ -345,6 +345,7 @@ class Universe: AllStatic {
   // The particular choice of collected heap.
   static CollectedHeap* heap() { return _collectedHeap; }
 
+  // 指针压缩的三种模式
   // For UseCompressedOops
   // Narrow Oop encoding mode:
   // 0 - Use 32-bits oops without encoding when
@@ -353,8 +354,20 @@ class Universe: AllStatic {
   //     NarrowOopHeapBaseMin + heap_size < 32Gb
   // 2 - Use compressed oops with heap base + encoding.
   enum NARROW_OOP_MODE {
+    /**
+     * 当整个GC堆所预留的虚拟地址范围的最高的地址在4GB以下的时候，
+     * 使用"zero based Compressed Oops, 32-bits Oops"模式，也就是基地址为0、shift也为0；
+     */ 
     UnscaledNarrowOop  = 0,
+    /**
+     * 当GC堆的最高地址超过了4GB，但在32GB以下的时候，使用"zero based Compressed Oops"模式，
+     * 也就是基地址为0、shift为 LogMinObjAlignmentInBytes (默认为3)的模式；
+     */ 
     ZeroBasedNarrowOop = 1,
+    /**
+     *当GC堆的最高地址超过了32GB，但整个GC堆的大小仍然在32GB以下的时候，
+     * 使用非零基地址、shift为 LogMinObjAlignmentInBytes (默认为3)的模式。 
+     */ 
     HeapBasedNarrowOop = 2
   };
   static NARROW_OOP_MODE narrow_oop_mode();

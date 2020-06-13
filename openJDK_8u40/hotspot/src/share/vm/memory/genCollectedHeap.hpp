@@ -32,6 +32,10 @@
 
 class SubTasksDone;
 
+/**
+ * GenCollectedHeap 是一种基于分代管理的内存堆管理器实现，他一方面负责java对象的内存分配，一方面负责垃圾对象的回收。而GC策略CollectorPolicy则是他的核心组件。
+ *
+ */
 // A "GenCollectedHeap" is a SharedHeap that uses generational
 // collection.  It is represented with a sequence of Generation's.
 class GenCollectedHeap : public SharedHeap {
@@ -62,11 +66,14 @@ public:
   static GenCollectedHeap* _gch;
 
  private:
+ // 包含的Generation的个数
   int _n_gens;
   Generation* _gens[max_gens];
+  // 用来初始化Generation的GenerationSpec数组
   GenerationSpec** _gen_specs;
 
   // The generational collector policy.
+  // 垃圾回收策略
   GenCollectorPolicy* _gen_policy;
 
   // Indicates that the most recent previous incremental collection failed.

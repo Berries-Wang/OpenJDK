@@ -230,6 +230,10 @@ friend class TestGenCollectorPolicy;
   // time. When using large pages they can differ.
   size_t _gen_alignment;
 
+    /**
+     *
+     *
+     */
   GenerationSpec **_generations;
 
   // Return true if an allocation should be attempted in the older

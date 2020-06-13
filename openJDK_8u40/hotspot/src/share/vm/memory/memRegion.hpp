@@ -29,6 +29,9 @@
 #include "utilities/debug.hpp"
 #include "utilities/globalDefinitions.hpp"
 
+/**
+ * 一种非常简单的数据结构，用来表示连续的内存空间
+ */ 
 // A very simple data structure representing a contigous region
 // region of address space.
 
@@ -40,10 +43,17 @@
 
 class MetaWord;
 
+/** 
+ * #define VALUE_OBJ_CLASS_SPEC    : public _ValueObj
+ * 
+ * 因此，类定义等价于  class MemRegion:public _ValueObj
+ */ 
 class MemRegion VALUE_OBJ_CLASS_SPEC {
   friend class VMStructs;
 private:
+  // [猜测] 内存基地址
   HeapWord* _start;
+  // [猜测] 内存大小
   size_t    _word_size;
 
 public:

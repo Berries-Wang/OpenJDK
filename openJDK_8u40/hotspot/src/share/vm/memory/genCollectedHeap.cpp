@@ -86,6 +86,10 @@ jint GenCollectedHeap::initialize() {
   CollectedHeap::pre_initialize();
 
   int i;
+  /**
+   * 从垃圾回收策略中获取到堆的分代数量(CMS垃圾收集器的回收策略继承自TwoGenerationCollectorPolicy
+   * (定义于文件hotspot/src/share/vm/memory/collectorPolicy.hpp)),在该类中，number_of_generations方法返回固定值2.
+   */
   _n_gens = gen_policy()->number_of_generations();
 
   // While there are no constraints in the GC code that HeapWordSize
@@ -96,33 +100,52 @@ jint GenCollectedHeap::initialize() {
   guarantee(HeapWordSize == wordSize, "HeapWordSize must equal wordSize");
 
   // The heap must be at least as aligned as generations.
+  /**
+   *  每代的大小是基于GenGrain大小对齐的。
+   * Generation::GenGrain 是一个常量，定义于文件hotspot/src/share/vm/memory/generation.hpp中(非ARM平台为2^16,即64Kb)
+   */
   size_t gen_alignment = Generation::GenGrain;
 
+/**
+ *
+ * 返回的是：GenCollectorPolicy(hotspot/src/share/vm/memory/collectorPolicy.hpp)内的_generations;但是初始化方式由具体的垃圾收集器的收集策略自己实现。
+ * 通过代码hotspot/src/share/vm/gc_implementation/concurrentMarkSweep/cmsCollectorPolicy.cpp里面的方法ConcurrentMarkSweepPolicy::initialize_generations
+ *
+ */
   _gen_specs = gen_policy()->generations();
 
+  /**
+   * 内存对齐
+   */
   // Make sure the sizes are all aligned.
   for (i = 0; i < _n_gens; i++) {
     _gen_specs[i]->align(gen_alignment);
   }
 
-  // Allocate space for the heap.
-
+  // space for the heap.  为堆分配内存，间接说明在初始化垃圾回收策略的时候，new GenerationSpec 并没有分配内存
+  // java 堆的起始地址
   char* heap_address;
+  // 堆内存大小(包括老年代和年轻代),详见allocate方法
   size_t total_reserved = 0;
+  // 堆的区域数
   int n_covered_regions = 0;
   ReservedSpace heap_rs;
 
+  // Allocate space for the heap.  为堆分配内存，间接说明在初始化垃圾回收策略的时候，new GenerationSpec 并没有分配内存
   size_t heap_alignment = collector_policy()->heap_alignment();
 
+  // 调用方法，分配连续的堆内存，返回内存的基地址
   heap_address = allocate(heap_alignment, &total_reserved,
                           &n_covered_regions, &heap_rs);
 
+  // 如果没有分配到足够的内存，则抛出异常 
   if (!heap_rs.is_reserved()) {
     vm_shutdown_during_initialization(
       "Could not reserve enough space for object heap");
     return JNI_ENOMEM;
   }
 
+ // 初始分配的空间封装在MemRegion类的实例中，_reserved是一个成员属性
   _reserved = MemRegion((HeapWord*)heap_rs.base(),
                         (HeapWord*)(heap_rs.base() + heap_rs.size()));
 
@@ -138,6 +161,10 @@ jint GenCollectedHeap::initialize() {
 
   _gch = this;
 
+  /**
+   * 调用heap_rs的的first_part()，依次为新生代和老年代分配空间并调用各代管理器的init()
+   * 将其初始化为Generation空间，最后为永久代分配空间和进行初始化
+   */ 
   for (i = 0; i < _n_gens; i++) {
     ReservedSpace this_rs = heap_rs.first_part(_gen_specs[i]->max_size(), false, false);
     _gens[i] = _gen_specs[i]->init(this_rs, i, rem_set());
@@ -165,21 +192,33 @@ char* GenCollectedHeap::allocate(size_t alignment,
   const char overflow_msg[] = "The size of the object heap + VM data exceeds "
     "the maximum representable size";
 
-  // Now figure out the total size.
+  // Now figure out(figure out 算出) the total size.
+  // java堆总内存大小，包括年轻代和老年代
   size_t total_reserved = 0;
   int n_covered_regions = 0;
+  /**
+   * 内存页的大小将根据虚拟机是否配置UseLargePages而不同，large_page_size在不同平台上表现不同，
+   * x86使用 2/4M(物理地址扩展模式)的页大小，
+   * AMD64使用2M，
+   * Linux默认内存页大小只有4KB
+   */
+  // 内存页大小
   const size_t pageSize = UseLargePages ?
       os::large_page_size() : os::vm_page_size();
 
+  // 对齐大小必须是内存页的整数倍
   assert(alignment % pageSize == 0, "Must be");
 
   for (int i = 0; i < _n_gens; i++) {
     total_reserved += _gen_specs[i]->max_size();
+    // 防止内存大小为负数
     if (total_reserved < _gen_specs[i]->max_size()) {
       vm_exit_during_initialization(overflow_msg);
     }
+    // 更新堆内存区域数
     n_covered_regions += _gen_specs[i]->n_covered_regions();
   }
+  // 要求，堆的总大小必须是对齐参数的整数倍
   assert(total_reserved % alignment == 0,
          err_msg("Gen size; total_reserved=" SIZE_FORMAT ", alignment="
                  SIZE_FORMAT, total_reserved, alignment));
@@ -191,7 +230,11 @@ char* GenCollectedHeap::allocate(size_t alignment,
   *_total_reserved = total_reserved;
   *_n_covered_regions = n_covered_regions;
 
+  /**
+   * 给java堆分配一块连续的内存空间
+  */
   *heap_rs = Universe::reserve_heap(total_reserved, alignment);
+  // 返回内存的基地址
   return heap_rs->base();
 }
 
