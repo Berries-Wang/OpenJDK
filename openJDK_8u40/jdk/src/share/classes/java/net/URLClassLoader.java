@@ -71,7 +71,11 @@ import sun.security.util.SecurityConstants;
  * @since   1.2
  */
 public class URLClassLoader extends SecureClassLoader implements Closeable {
-    /* The search path for classes and resources */
+    /**
+     * The search path for classes and resources 
+     * 会将由该类加载器加载的所有的类所在的ClassPath保存起来，见note/images/UrlClassPath.png
+     * 然后找文件(资源或者class文件)都会去ClassPath下去寻找。
+     */
     private final URLClassPath ucp;
 
     /* The context to be used when loading classes and resources */
@@ -562,6 +566,11 @@ public class URLClassLoader extends SecureClassLoader implements Closeable {
     public URL findResource(final String name) {
         /*
          * The same restriction to finding classes applies to resources
+         */
+        /**
+         * AccessController.doPrivileged是一个在AccessController类中的静态方法，
+         * 允许在一个类实例中的代码通知这个AccessController：它的代码主体是享受"privileged(特权的)"，
+         * 它单独负责对它的可得的资源的访问请求，而不管这个请求是由什么代码所引发的。
          */
         URL url = AccessController.doPrivileged(
             new PrivilegedAction<URL>() {

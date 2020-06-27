@@ -402,7 +402,7 @@ public abstract class ClassLoader {
         throws ClassNotFoundException
     {
         synchronized (getClassLoadingLock(name)) {
-            // First, check if the class has already been loaded
+            // First, check if the class has already been loaded(首先,判断这个类有没有被加载)
             Class<?> c = findLoadedClass(name);
             if (c == null) {
                 long t0 = System.nanoTime();
@@ -413,10 +413,15 @@ public abstract class ClassLoader {
                         c = findBootstrapClassOrNull(name);
                     }
                 } catch (ClassNotFoundException e) {
-                    // ClassNotFoundException thrown if class not found
-                    // from the non-null parent class loader
+                    /**
+                     * ClassNotFoundException thrown if class not found  from the non-null parent class loader
+                     * 如果父类加载器抛出了ClassNotFoundException异常,则表明父类加载器无法加载该类
+                     */
                 }
 
+                /**
+                 * 如果还没有找到,则调用findClass方法来加载这个类
+                 */
                 if (c == null) {
                     // If still not found, then invoke findClass in order
                     // to find the class.
@@ -430,6 +435,7 @@ public abstract class ClassLoader {
                 }
             }
             if (resolve) {
+                // 解析Class对象
                 resolveClass(c);
             }
             return c;
@@ -525,6 +531,14 @@ public abstract class ClassLoader {
      *          If the class could not be found
      *
      * @since  1.2
+     */
+    /**
+     * 根据类的全限定名,加载该类
+     * @param name 类的全限定名
+     * @return 类对应的Class对象
+     * @throws ClassNotFoundException
+     * 
+     * 由ClassLoader类的loadClass方法可知,在实现自定义的ClassLoader的时候,实现该方法即可。
      */
     protected Class<?> findClass(String name) throws ClassNotFoundException {
         throw new ClassNotFoundException(name);

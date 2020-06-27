@@ -82,6 +82,10 @@ public class DriverManager {
 
 
     // List of registered JDBC drivers
+     /**
+         *   这里注册驱动的行为不在JDK中，而是在SPI的包中.即数据库的驱动的注册是发生在mysql-connector-java-xxx.jar包下的,
+         *   见图片note/images/MysqlDriverRegister.png
+    */
     private final static CopyOnWriteArrayList<DriverInfo> registeredDrivers = new CopyOnWriteArrayList<>();
     private static volatile int loginTimeout = 0;
     private static volatile java.io.PrintWriter logWriter = null;
@@ -598,7 +602,7 @@ public class DriverManager {
                 ServiceLoader<Driver> loadedDrivers = ServiceLoader.load(Driver.class);
                 Iterator<Driver> driversIterator = loadedDrivers.iterator();
 
-                /* Load these drivers, so that they can be instantiated.
+                /* Load these drivers, so that they can be instantiated(实例化).
                  * It may be the case that the driver class may not be there
                  * i.e. there may be a packaged driver with the service class
                  * as implementation of java.sql.Driver but the actual class
@@ -679,7 +683,10 @@ public class DriverManager {
         // Walk through the loaded registeredDrivers attempting to make a connection.
         // Remember the first exception that gets raised so we can reraise it.
         SQLException reason = null;
-
+        /**
+         *   这里注册驱动的行为不在JDK中，而是在SPI的包中.即数据库的驱动的注册是发生在mysql-connector-java-xxx.jar包下的,
+         *   见图片note/images/MysqlDriverRegister.png
+         */
         for(DriverInfo aDriver : registeredDrivers) {
             // If the caller does not have permission to load the driver then
             // skip it.

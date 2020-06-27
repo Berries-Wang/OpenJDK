@@ -186,6 +186,7 @@ public class URLClassPath {
         int[] cache = getLookupCache(name);
         for (int i = 0; (loader = getNextLoader(cache, i)) != null; i++) {
             URL url = loader.findResource(name, check);
+            // 找到了就返回,不会继续向下寻找。
             if (url != null) {
                 return url;
             }

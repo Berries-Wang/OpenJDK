@@ -163,7 +163,7 @@ void KlassScanClosure::do_klass(Klass* klass) {
 }
 
 ScanWeakRefClosure::ScanWeakRefClosure(DefNewGeneration* g) :
-  _g(g)
+  _g(g) 
 {
   assert(_g->level() == 0, "Optimized for youngest generation");
   _boundary = _g->reserved().end();
