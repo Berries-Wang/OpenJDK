@@ -1128,7 +1128,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
                     mainLock.unlock();
                 }
                 if (workerAdded) {
-                    // 启动线程
+                    // 启动线程,这里启动，是执行Thread.start , 里面是执行Runable.run , 这个Runable就是Worker实例，因此执行任务需要看Worker.run方法。这也就是线程池的线程为什么可以运行完一个任务之后可以运行下一个任务
                     t.start();
                     workerStarted = true;
                 }
