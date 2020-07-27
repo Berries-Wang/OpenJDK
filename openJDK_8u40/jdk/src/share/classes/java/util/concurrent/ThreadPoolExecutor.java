@@ -1603,7 +1603,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
          * the pool shut down since entry into this method. So we
          * recheck state and if necessary roll back the enqueuing if
          * stopped, or start a new thread if there are none.
-         * 2. 如果任务能够成功入队,我们仍然需要做一个双重验证.这样做是因为现有的线程可能在上次检查后死亡,或者线程池在进入此方法后关闭。因此，我们会重新检查状态，如果停止队列，必要时回滚队列。如果没有线程，则启动一个新线程。
+         * 2. 如果任务能够成功入队,我们仍然需要做一个双重验证.这样做是因为现有的线程可能在上次检查后死亡,或者线程池在进入此方法后关闭。因此，我们会重新检查状态，如果停止队列，必要时回滚队列。如果都不是以上的几种情况，则启动一个新线程。
          *
          * 3. If we cannot queue task, then we try to add a new
          * thread.  If it fails, we know we are shut down or saturated
