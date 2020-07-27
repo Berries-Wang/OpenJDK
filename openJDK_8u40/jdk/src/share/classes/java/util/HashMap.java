@@ -624,33 +624,57 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                    boolean evict) {
         Node<K,V>[] tab; Node<K,V> p; int n, i;
-        if ((tab = table) == null || (n = tab.length) == 0)
+        // 当表的还没创建或者长度为空,则新创建一个数组(将该数据元素视为桶,因为这个桶可能是联调的表头，也可能是红黑树的根)
+        if ((tab = table) == null || (n = tab.length) == 0){
             n = (tab = resize()).length;
-        if ((p = tab[i = (n - 1) & hash]) == null)
-            tab[i] = newNode(hash, key, value, null);
-        else {
+        } 
+        if ((p = tab[i = (n - 1) & hash]) == null){
+           /**
+             * 通过Key的哈希值来计算该元素应该被分配到数据的什么位置
+             * 计算公式:
+             * 当x=2^n(n为自然数)时  ===>>>>  a % x = a & (x  - 1 ),使用&操作效率也会更高
+             * 请注意:
+             *    1. n是什么?为什么要n-1? 为什么是&操作? n为什么需要是2的整数次幂?
+             * 所以：n是容量，也是HashMap中的数组大小。n之所以是2的整数次幂，是因为在这里方便进行&操作，提供效率。之所以要n-1是为了取余操作。
+             *   
+            **/
+            tab[i] = newNode(hash, key, value, null);  
+        }else {
             Node<K,V> e; K k;
             if (p.hash == hash &&
-                ((k = p.key) == key || (key != null && key.equals(k))))
-                e = p;
-            else if (p instanceof TreeNode)
-                e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
-            else {
+                ((k = p.key) == key || (key != null && key.equals(k)))){
+                e = p; 
+            }else if (p instanceof TreeNode){
+                /**
+                * 即当该桶已经变为了红黑树，则以不同的方式添加元素
+                **/
+                 e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value);
+            }else {
+                /**
+                *  当该桶还是链表的时候，则需要在链表尾部添加元素.为什么链表的插入还需要遍历整个联调呢?是因为
+                *   1. 当链表的长度达到一定限度(8),则需要将链表转为红黑树
+                **/
                 for (int binCount = 0; ; ++binCount) {
                     if ((e = p.next) == null) {
                         p.next = newNode(hash, key, value, null);
-                        if (binCount >= TREEIFY_THRESHOLD - 1) // -1 for 1st
-                            treeifyBin(tab, hash);
+                        if (binCount >= TREEIFY_THRESHOLD - 1) {// -1 for 1st
+                           // 将指定的桶由链表转为红黑树,这里是先将key-value添加到链表尾部,再进行判断是否满足转换为红黑树的要求,若满足，则进行转换.
+                           treeifyBin(tab, hash);
+                        }      
                         break;
                     }
+                    // 当这个key已经存在,则进行value的替换.
                     if (e.hash == hash &&
-                        ((k = e.key) == key || (key != null && key.equals(k))))
-                        break;
+                        ((k = e.key) == key || (key != null && key.equals(k)))){
+                            break; 
+                        }
                     p = e;
                 }
             }
+            // 当key已经存在了,则进行value的替换
             if (e != null) { // existing mapping for key
                 V oldValue = e.value;
+                // onlyIfAbsent 见注释
                 if (!onlyIfAbsent || oldValue == null)
                     e.value = value;
                 afterNodeAccess(e);
@@ -658,8 +682,9 @@ public class HashMap<K,V> extends AbstractMap<K,V>
             }
         }
         ++modCount;
-        if (++size > threshold)
+        if (++size > threshold){
             resize();
+        }   
         afterNodeInsertion(evict);
         return null;
     }
