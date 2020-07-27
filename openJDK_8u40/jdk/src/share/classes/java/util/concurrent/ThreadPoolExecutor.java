@@ -1594,6 +1594,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
          * task.  The call to addWorker atomically checks runState and
          * workerCount, and so prevents false alarms that would add
          * threads when it shouldn't, by returning false.
+         * 1. 如果正在运行的线程(工作线程)小于核心线程数，则尝试使用给定的服务创建一个新的线程。对addWorker的调用会自动检查runState和workerCount，从而通过返回false防止在不应该添加线程的情况下添加线程的错误警报。
          *
          * 2. If a task can be successfully queued, then we still need
          * to double-check whether we should have added a thread
