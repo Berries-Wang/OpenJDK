@@ -624,13 +624,13 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
                    boolean evict) {
         Node<K,V>[] tab; Node<K,V> p; int n, i;
-        // 当表的还没创建或者长度为空,则新创建一个数组(将该数据元素视为桶,因为这个桶可能是联调的表头，也可能是红黑树的根)
+        // 当表的还没创建或者长度为空,则新创建一个数组(将该数据元素视为桶,因为这个桶可能是链表的表头，也可能是红黑树的根)
         if ((tab = table) == null || (n = tab.length) == 0){
             n = (tab = resize()).length;
         } 
         if ((p = tab[i = (n - 1) & hash]) == null){
            /**
-             * 通过Key的哈希值来计算该元素应该被分配到数据的什么位置
+             * 通过Key的哈希值来计算该元素应该被分配到数组的什么位置
              * 计算公式:
              * 当x=2^n(n为自然数)时  ===>>>>  a % x = a & (x  - 1 ),使用&操作效率也会更高
              * 请注意:
