@@ -1594,7 +1594,8 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
          * task.  The call to addWorker atomically checks runState and
          * workerCount, and so prevents false alarms that would add
          * threads when it shouldn't, by returning false.
-         * 1. 如果正在运行的线程(工作线程)小于核心线程数，则尝试使用给定的服务创建一个新的线程。对addWorker的调用会自动检查runState和workerCount，从而通过返回false防止在不应该添加线程的情况下添加线程的错误警报。
+         * 1. 如果正在运行的线程(工作线程)小于核心线程数，则尝试使用给定的任务创建一个新的线程(这时候会使用到核心线程)。对addWorker的调用会自动检查runState和workerCount，
+         *    从而通过返回false防止在不应该添加线程的情况下添加线程的错误警报。
          *
          * 2. If a task can be successfully queued, then we still need
          * to double-check whether we should have added a thread
@@ -1602,7 +1603,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
          * the pool shut down since entry into this method. So we
          * recheck state and if necessary roll back the enqueuing if
          * stopped, or start a new thread if there are none.
-         * 2. 如果任务能够成功入队,我们仍然需要做一个双重验证.这样做是因为现有的线程在上次检查后死亡,或者线程池在进入此方法后关闭。因此，我们会重新检查状态，如果停止队列，必要时回滚队列。如果没有线程，则启动一个新线程。
+         * 2. 如果任务能够成功入队,我们仍然需要做一个双重验证.这样做是因为现有的线程可能在上次检查后死亡,或者线程池在进入此方法后关闭。因此，我们会重新检查状态，如果停止队列，必要时回滚队列。如果没有线程，则启动一个新线程。
          *
          * 3. If we cannot queue task, then we try to add a new
          * thread.  If it fails, we know we are shut down or saturated
