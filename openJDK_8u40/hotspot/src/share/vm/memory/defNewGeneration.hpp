@@ -37,9 +37,12 @@ class ContiguousSpace;
 class ScanClosure;
 class STWGCTimer;
 
-// DefNewGeneration is a young generation containing eden, from- and
-// to-space.
 
+/**
+ * DefNewGeneration is a young generation containing eden, from- and to-space.
+ * 
+ * DefNewGeneration 是年轻代垃圾收集器，包含了eden区，from区以及to区
+ */ 
 class DefNewGeneration: public Generation {
   friend class VMStructs;
 
@@ -47,7 +50,10 @@ protected:
   Generation* _next_gen;
   uint        _tenuring_threshold;   // Tenuring threshold for next collection.
   ageTable    _age_table;
-  // Size of object to pretenure in words; command line provides bytes
+  /**
+   * Size of object to pretenure in words; command line provides bytes
+   * PretenureSizeThreshold字节，当对象大小大于该阈值，则在老年代分配,注释在hotspot\src\share\vm\runtime\globals.hpp文件中
+   */ 
   size_t      _pretenure_size_threshold_words;
 
   ageTable*   age_table() { return &_age_table; }

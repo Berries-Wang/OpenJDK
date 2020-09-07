@@ -1,0 +1,3 @@
+JVM参数SurvivorRatio的代码分析
+-XX:SurvivorRatio=8
+在文件 openJDK_8u40\hotspot\src\share\vm\memory\defNewGeneration.hpp 中搜索SurvivorRatio即可发现该JVM参数的用途

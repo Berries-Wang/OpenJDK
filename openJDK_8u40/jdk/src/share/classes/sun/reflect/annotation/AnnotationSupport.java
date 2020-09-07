@@ -85,7 +85,7 @@ public final class AnnotationSupport {
     /**
      * Finds and returns all annotations matching the given {@code annoClass}
      * indirectly present in {@code annotations}.
-     *
+     *p
      * @param annotations annotations to search indexed by their types
      * @param annoClass the type of annotation to search for
      *

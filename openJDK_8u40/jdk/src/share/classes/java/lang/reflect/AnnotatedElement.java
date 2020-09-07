@@ -254,13 +254,19 @@ public interface AnnotatedElement {
      * @throws NullPointerException if the given annotation class is null
      * @since 1.5
      */
+    /**
+     * 判断元素上是否有对应类型的注解
+     * 
+     * @param annotationClass 注解的类型
+     * @return 如果该元素上有annotationClass类型的注解,返回true;反之,返回false;
+     */
     default boolean isAnnotationPresent(Class<? extends Annotation> annotationClass) {
         return getAnnotation(annotationClass) != null;
     }
 
    /**
      * Returns this element's annotation for the specified type if
-     * such an annotation is <em>present</em>, else null.
+     * such an annotation is <em>present(存在,当前的)</em>, else null.
      *
      * @param <T> the type of the annotation to query for and return if present
      * @param annotationClass the Class object corresponding to the
@@ -269,6 +275,11 @@ public interface AnnotatedElement {
      *     present on this element, else null
      * @throws NullPointerException if the given annotation class is null
      * @since 1.5
+     */
+    /**
+     * 根据注解的类型获取元素上的注解信息
+     * @param annotationClass 注解类型
+     * @return 如果元素上有annotationClass类型的注解，则返回注解信息；反之，则返回null
      */
     <T extends Annotation> T getAnnotation(Class<T> annotationClass);
 
@@ -284,10 +295,14 @@ public interface AnnotatedElement {
      * @return annotations present on this element
      * @since 1.5
      */
+    /**
+     * 返回元素上所有的注解信息
+     * @return 返回该元素所有的注解信息
+     */
     Annotation[] getAnnotations();
 
     /**
-     * Returns annotations that are <em>associated</em> with this element.
+     * Returns annotations that are <em>associated(有关联的; 相关的; 有联系的; )</em> with this element.
      *
      * If there are no annotations <em>associated</em> with this element, the return
      * value is an array of length 0.
@@ -321,6 +336,12 @@ public interface AnnotatedElement {
      * @throws NullPointerException if the given annotation class is null
      * @since 1.8
      */
+    /**
+     * 根据注解的类型来获取与该元素有关联的注解信息
+     * @param <T> 注解类型
+     * @param annotationClass 注解类型
+     * @return 如果有，则返回注解信息；反之，返回长度为0的数组
+     */
     default <T extends Annotation> T[] getAnnotationsByType(Class<T> annotationClass) {
          /*
           * Definition of associated: directly or indirectly present OR
@@ -331,9 +352,9 @@ public interface AnnotatedElement {
           */
          T[] result = getDeclaredAnnotationsByType(annotationClass);
 
-         if (result.length == 0 && // Neither directly nor indirectly present
+         if (result.length == 0 && // Neither directly nor indirectly present (直接存在于该元素上的和间接存在该元素上的情况都不存在)
              this instanceof Class && // the element is a class
-             AnnotationType.getInstance(annotationClass).isInherited()) { // Inheritable
+             AnnotationType.getInstance(annotationClass).isInherited()) { // Inheritable ,判断该注解是否可以被继承，如果可以被继承，则从父类上获取指定类型的注解信息。
              Class<?> superClass = ((Class<?>) this).getSuperclass();
              if (superClass != null) {
                  // Determine if the annotation is associated with the
@@ -365,6 +386,11 @@ public interface AnnotatedElement {
      * @throws NullPointerException if the given annotation class is null
      * @since 1.8
      */
+    /**
+     * 根据注解类型来获取直接存在(忽略inherited的注解)元素上的注解信息
+     * @param annotationClass 注解的类型
+     * @return 注解信息
+     */
     default <T extends Annotation> T getDeclaredAnnotation(Class<T> annotationClass) {
          Objects.requireNonNull(annotationClass);
          // Loop over all directly-present annotations looking for a matching one
@@ -379,9 +405,12 @@ public interface AnnotatedElement {
      }
 
     /**
+     * either... or...  或者....或者...
+     * neither... nor...  既不....也不.....
+     * 
      * Returns this element's annotation(s) for the specified type if
      * such annotations are either <em>directly present</em> or
-     * <em>indirectly present</em>. This method ignores inherited
+     * <em>indirectly(间接地) present</em>. This method ignores inherited(继承)
      * annotations.
      *
      * If there are no specified annotations directly or indirectly
@@ -422,6 +451,14 @@ public interface AnnotatedElement {
      * @throws NullPointerException if the given annotation class is null
      * @since 1.8
      */
+    /**
+     * 间接的是什么意思?
+     * 
+     *  根据注解的类型获取直接存在于或者间接存在于该元素上的注解,该方法会忽略继承而来的注解
+     * @param <T> 注解类型
+     * @param annotationClass 注解类型
+     * @return 如果存在，则返回一个注解信息集合；反之，则返回一个长度为0的空数组
+     */
     default <T extends Annotation> T[] getDeclaredAnnotationsByType(Class<T> annotationClass) {
         Objects.requireNonNull(annotationClass);
         return AnnotationSupport.
@@ -445,6 +482,10 @@ public interface AnnotatedElement {
      *
      * @return annotations directly present on this element
      * @since 1.5
+     */
+    /**
+     * 返回直接存在于该元素上的所有注解
+     * @return  该元素的注解信息(直接存在于该元素上的,不包含inherited的注解)
      */
     Annotation[] getDeclaredAnnotations();
 }

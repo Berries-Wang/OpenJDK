@@ -1,0 +1,2 @@
+文件:hotspot\src\share\vm\runtime\globals.hpp 保留这jvm参数的注释
+该参数在DefNewGeneration::should_allocate方法中用到

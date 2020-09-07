@@ -2172,6 +2172,7 @@ run:
           assert(k_entry->oop_is_instance(), "Should be InstanceKlass");
           InstanceKlass* ik = (InstanceKlass*) k_entry;
           if ( ik->is_initialized() && ik->can_be_fastpath_allocated() ) {
+            // 对象大小
             size_t obj_size = ik->size_helper();
             oop result = NULL;
             // If the TLAB isn't pre-zeroed then we'll have to do it
