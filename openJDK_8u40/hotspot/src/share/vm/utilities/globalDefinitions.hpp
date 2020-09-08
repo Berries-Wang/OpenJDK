@@ -140,16 +140,22 @@ const int SerializePageShiftCount = 4;
 const int SerializePageShiftCount = 3;
 #endif
 
-// An opaque struct of heap-word width, so that HeapWord* can be a generic
-// pointer into the heap.  We require that object sizes be measured in
-// units of heap words, so that that
-//   HeapWord* hw;
-//   hw += oop(hw)->foo();
-// works, where foo is a method (like size or scavenge) that returns the
-// object size.
+/**
+ * An opaque struct of heap-word width, so that HeapWord* can be a generic
+ * pointer into the heap.  We require that object sizes be measured in
+ * units of heap words, so that that
+ *   HeapWord* hw;
+ *   hw += oop(hw)->foo();
+ * works, where foo is a method (like size or scavenge) that returns the
+ * object size.
+ * 指向空闲块的开始地址
+ */
 class HeapWord {
   friend class VMStructs;
  private:
+ /**
+  * 一个char*指针，在32位系统里该指针大小位4字节，在64位系统的大小为8字节
+  */
   char* i;
 #ifndef PRODUCT
  public:
@@ -165,7 +171,9 @@ class MetaWord {
   char* i;
 };
 
-// HeapWordSize must be 2^LogHeapWordSize.
+/**
+ * HeapWord类的大小
+ */
 const int HeapWordSize        = sizeof(HeapWord);
 #ifdef _LP64
 // 64位系统上LogHeapWordSize为3
