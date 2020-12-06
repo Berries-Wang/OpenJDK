@@ -29,9 +29,11 @@ Simple Build Instructions:
 
   2. Configure the build:
        bash ./configure
+      (注意,需要将该代码版本回退到init commit) ./configure --with-debug-level=slowdebug --with-boot-jdk="/home/wei/oracleJdk/jdk1.7.0_80"  --with-boot-jdk-jvmargs="-Dfile.encoding=UTF-8" --with-freetype-include=/usr/include/freetype2 --with-freetype-lib=/usr/lib/x86_64-linux-gnu
   
   3. Build the OpenJDK:
        make all
+        (注意,需要将该代码版本回退到init commit)  make all ZIP_DEBUGINFO=0 DISABLE_HOTSPOT_OS_VERSION_CHECK=OK CONF=linux-x86_64-normal-server-slowdebug
      The resulting JDK image should be found in build/*/images/j2sdk-image
 
 where make is GNU make 3.81 or newer, /usr/bin/make on Linux usually
