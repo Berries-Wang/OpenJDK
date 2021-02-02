@@ -1395,7 +1395,10 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
                         thrown = x;
                         throw new Error(x);
                     } finally {
-                        // 钩子函数，目前是一个空函数
+                        /**
+                         * 钩子函数，目前是一个空函数
+                         * 该行代码在finally中，不论什么情况都会调用。在实现线程池的时候需要实现该方法，不然子线程中的异常无法捕捉
+                         */
                         afterExecute(task, thrown);
                     }
                 } finally {
