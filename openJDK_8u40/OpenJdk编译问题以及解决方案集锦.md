@@ -1,4 +1,8 @@
 # OpenJdk8编译问题
+## 准备
++ --with-boot-jdk: /home/wei/workspace/Temp/jdk7/jdk1.7.0_80 , 不能包含中文路径，否则一直报错，即问题2，只要比编译的jdk版本打一个大的版本号就行。即对于jdk8，使用jdk7来作为boot jdk,至于是jdk7的那个小版本，这无所谓
++ gcc: gcc version 4.7.4 (Ubuntu/Linaro 4.7.4-3ubuntu12) , 对于该版本使用4.7版本即可，高版本不兼容
++ g++:  gcc version 4.7.4 (Ubuntu/Linaro 4.7.4-3ubuntu12), 同gcc
 ## 问题1： OS问题
 + 错误信息: *** This OS is not supported: Linux Wang 5.8.0-45-generic #51~20.04.1-Ubuntu SMP Tue Feb 23 13:46:31 UTC 2021 x86_64 x86_64 x86_64 GNU/Linux
 + 处理： hotspot/make/linux/Makefile 文件，将：
@@ -12,4 +16,5 @@
 + 解决方案: 修改文件: hotspot/make/linux/makefiles/gcc.make , 将WARNINGS_ARE_ERRORS=-Werror 修改为 WARNINGS_ARE_ERRORS=-Wno-error
 
 ## 问题4： openJDK_8u40/hotspot/agent/src/share/classes/sun/jvm/hotspot/memory/TenuredSpace.java:35: 错误: 编码ascii的不可映射字符
-+ 暂时没有法子
++ 问题出现原因： 代码中有中文注释
++ 暂时没有法子解决
