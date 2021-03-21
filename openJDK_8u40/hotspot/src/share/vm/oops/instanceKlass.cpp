@@ -1193,6 +1193,7 @@ Method* InstanceKlass::class_initializer() {
 }
 
 void InstanceKlass::call_class_initializer_impl(instanceKlassHandle this_oop, TRAPS) {
+  
   if (ReplayCompiles &&
       (ReplaySuppressInitializers == 1 ||
        ReplaySuppressInitializers >= 2 && this_oop->class_loader() != NULL)) {
