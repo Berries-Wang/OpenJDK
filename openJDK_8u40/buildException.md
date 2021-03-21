@@ -6,3 +6,10 @@
 
 ## 问题2： Error occurred during initialization of VM
 + 这个是由脚本common/autoconf/generated-configure.sh抛出的问题,该问题出现的原因是: --with-boot-jdk 的jdk路径上有中文。
+
+## 问题3:
++ 异常信息: cc1plus: all warnings being treated as errors
++ 解决方案: 修改文件: hotspot/make/linux/makefiles/gcc.make , 将WARNINGS_ARE_ERRORS=-Werror 修改为 WARNINGS_ARE_ERRORS=-Wno-error
+
+## 问题4： openJDK_8u40/hotspot/agent/src/share/classes/sun/jvm/hotspot/memory/TenuredSpace.java:35: 错误: 编码ascii的不可映射字符
++ 暂时没有法子
