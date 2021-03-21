@@ -1,3 +1,6 @@
 .vscode
 .idea
 *.iml
+build/*
+config.log
+a.out
