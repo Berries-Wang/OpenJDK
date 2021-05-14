@@ -42,8 +42,8 @@
 
 /**
  *
- * 1.JVM在运行的时候，需要一种用来表示Java内部类型的机制，在HotSpot中的解决方案是: 为每一个一家在的Java类创建一个instanceKlass对象，
- *用来在JVM层表示Java类。他的所有成员可以包含虚拟机内部运行一个Java类所需要的多有信息，这些成员变量在类解析阶段完成赋值，如图：note/InstanceKlass内部布局.png
+ * 1.JVM在运行的时候，需要一种用来表示Java内部类型的机制，在HotSpot中的解决方案是: 为每一个Java类创建一个instanceKlass对象，
+ *用来在JVM层表示Java类。他的所有成员可以包含虚拟机内部运行一个Java类所需要的所有信息，这些成员变量在类解析阶段完成赋值，如图：note/InstanceKlass内部布局.png
  * 即：Java Class 在JVM中的存储形式
  *
  * @param:
@@ -178,7 +178,7 @@ class InstanceKlass: public Klass {
   InstanceKlass() { assert(DumpSharedSpaces || UseSharedSpaces, "only for CDS"); }
 
   // See "The Java Virtual Machine Specification" section 2.16.2-5 for a detailed description
-  // of the class loading & initialization procedure, and the use of the states.
+  // of the class loading & initialization procedure（程序、手續、步骤）, and the use of the states.
   enum ClassState {
     allocated,                          // allocated (but not yet linked)
     loaded,                             // loaded and inserted in class hierarchy (but not linked yet)
