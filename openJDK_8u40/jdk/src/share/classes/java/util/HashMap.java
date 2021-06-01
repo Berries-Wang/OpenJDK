@@ -171,6 +171,14 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * programming practices that are already so slow that this makes
      * little difference.)
      *
+     * 
+     * TreeNodes占用空间是普通Nodes的两倍，所以只有当bin包含足够多的节点时才会转成TreeNodes，
+     * 而是否足够多就是由TREEIFY_THRESHOLD的值决定的。当bin中节点数变少时，又会转成普通的bin。
+     * 并且我们查看源码的时候发现，链表长度达到8就转成红黑树，当长度降到6就转成普通bin
+     * 
+     * 当hashCode离散性很好的时候，树型bin用到的概率非常小，因为数据均匀分布在每个bin中，几乎不会有bin中链表长度会达到阈值。但是在随机hashCode下，
+     * 离散性可能会变差，然而JDK又不能阻止用户实现这种不好的hash算法，因此就可能导致不均匀的数据分布。不过理想情况下随机hashCode算法下所有bin中节点的分布频率会遵循泊松分布，
+     * 我们可以看到，一个bin中链表长度达到8个元素的概率为0.00000006，几乎是不可能事件。所以，之所以选择8，不是拍拍屁股决定的，而是根据概率统计决定的。
      * Because TreeNodes are about twice the size of regular nodes, we
      * use them only when bins contain enough nodes to warrant use
      * (see TREEIFY_THRESHOLD). And when they become too small (due to
@@ -243,6 +251,13 @@ public class HashMap<K,V> extends AbstractMap<K,V>
 
     /**
      * The load factor used when none specified in constructor.
+     * 
+     * 负载因子是0.75的时候，这是时间和空间的权衡，空间利用率比较高，而且避免了相当多的Hash冲突，使得底层的链表或者是红黑树的高度也比较低，提升了空间效率。
+     * 
+     * 即太大会造成大量的Hash冲突，查询效率低，空间利用率高
+     * 太小则会造成hash冲突降低，查询效率高，但是空间利用率太低
+     * 
+     * 最终的结果就是： 空间和时间的权衡
      */
     static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
@@ -257,7 +272,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
     static final int TREEIFY_THRESHOLD = 8;
 
     /**
-     * The bin count threshold for untreeifying a (split) bin during a
+     * The bin count threshold（阈值） for untreeifying a (split) bin during a
      * resize operation. Should be less than TREEIFY_THRESHOLD, and at
      * most 6 to mesh with shrinkage detection under removal.
      */
@@ -268,6 +283,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * (Otherwise the table is resized if too many nodes in a bin.)
      * Should be at least 4 * TREEIFY_THRESHOLD to avoid conflicts
      * between resizing and treeification thresholds.
+     * 
+     * 猜测： 使用空间换时间的一个想法
      */
     static final int MIN_TREEIFY_CAPACITY = 64;
 
@@ -334,6 +351,12 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * never be used in index calculations because of table bounds.
      */
     static final int hash(Object key) {
+        /**
+         * 
+         * 由于和(length-1)进行运算,length的长度多数情况下小于2^16,始终是hashcode的低16位参与运算,甚至更低,要是让高16位也参与运算那么下标就会更加散列.
+         * 
+         * & | 的运算结果会让结果偏向于0和1,没有更加均匀(相比于异或运算)
+         */
         int h;
         return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
     }
@@ -373,6 +396,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
 
     /**
      * Returns a power of two size for the given target capacity.
+     * 
+     * 返回大于等于输入参数且最小的为2的n次幂的数
      */
     static final int tableSizeFor(int cap) {
         int n = cap - 1;
@@ -418,7 +443,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * The next size value at which to resize (capacity * load factor).
      *
      * @serial
-     */
+    */
     // (The javadoc description is true upon serialization.
     // Additionally, if the table array has not been allocated, this
     // field holds the initial array capacity, or zero signifying
@@ -642,7 +667,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
         }else {
             Node<K,V> e; K k;
             if (p.hash == hash &&
-                ((k = p.key) == key || (key != null && key.equals(k)))){
+                ((k = p.key) == key || (key != null && key.equals(k)))){ // 当根就是此时put的元素，此时不用管元素具体的数据类型了。
                 e = p; 
             }else if (p instanceof TreeNode){
                 /**
@@ -652,7 +677,8 @@ public class HashMap<K,V> extends AbstractMap<K,V>
             }else {
                 /**
                 *  当该桶还是链表的时候，则需要在链表尾部添加元素.为什么链表的插入还需要遍历整个联调呢?是因为
-                *   1. 当链表的长度达到一定限度(8),则需要将链表转为红黑树
+                *   1. 当链表的长度达到一定限度(8),则需要将链表转为红黑树，仅仅这样还不够，还需要阅读一下方法treeifyBin，即：
+                *       当链表的长度达到一定限度并且桶的长度达到了64就转为红黑树
                 **/
                 for (int binCount = 0; ; ++binCount) {
                     if ((e = p.next) == null) {
@@ -682,6 +708,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
             }
         }
         ++modCount;
+        // 当元素个数大于 容量 * 负载因子 时进行扩容
         if (++size > threshold){
             resize();
         }   
@@ -778,8 +805,10 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      */
     final void treeifyBin(Node<K,V>[] tab, int hash) {
         int n, index; Node<K,V> e;
-        if (tab == null || (n = tab.length) < MIN_TREEIFY_CAPACITY)
+        // 当桶的长度还是小于(MIN_TREEIFY_CAPACITY： 64)的时候，还是扩容，并不是转为红黑树
+        if (tab == null || (n = tab.length) < MIN_TREEIFY_CAPACITY){
             resize();
+        }  
         else if ((e = tab[index = (n - 1) & hash]) != null) {
             TreeNode<K,V> hd = null, tl = null;
             do {

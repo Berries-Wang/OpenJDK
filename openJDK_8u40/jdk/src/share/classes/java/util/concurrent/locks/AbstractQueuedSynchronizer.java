@@ -677,10 +677,11 @@ public abstract class AbstractQueuedSynchronizer
              */
             node.prev = pred;
             /**
-             * compareAndSetTail使用了CAS技术即乐观锁技术。
+             * compareAndSetTail使用了CAS技术即乐观锁技术。错误了!!! “CAS是无锁编程”
              * 在这里，当队列尾节点的元素被其他线程更新了的话(即乐观锁失败)，会执行到enq方法（乐观锁失败的处理机制）
              */
             if (compareAndSetTail(pred, node)) {
+                // 将新线程推送到队尾
                 pred.next = node;
                 return node;
             }
@@ -710,7 +711,7 @@ public abstract class AbstractQueuedSynchronizer
      * 注：
      * 1. 分析时是从方法release开始的
      *
-     * @param node 执行完成，并释放了锁的线程对应的Node(release方法中调用的)
+     * @param node 执行完成，并释放了锁的线程对应的Node(release方法中调用的)，传进来的是head节点
      */
     private void unparkSuccessor(Node node) {
         /*
@@ -725,6 +726,12 @@ public abstract class AbstractQueuedSynchronizer
         // 获取到node的等待状态
         int ws = node.waitStatus;
         if (ws < 0)
+            /***
+             * 
+             *  将node的waitStatus重置为0，是为了不影响其他函数的判断。
+             *  如下： t.waitStatus <= 0 
+             * 
+             */
             // Node.waitStatus == 0 : 当一个Node被初始化的时候的默认值.为什么?参考release方法
             // 在cancelAcquire方法中，node的waitStatus被设置为了Node.CANCELLED
             compareAndSetWaitStatus(node, ws, 0);
@@ -956,6 +963,12 @@ public abstract class AbstractQueuedSynchronizer
     private final boolean parkAndCheckInterrupt() {
         // LockSupport.park调用之后，是否线程就被挂起不会执行了?是的，当线程执行了LockSupport.park方法，线程就被挂起了，不会往下执行了
         LockSupport.park(this);
+        /**
+         * 
+         * Thread.interrupted()返回线程是否中断(如果中断，再次调用interrupted方法时就会置位)
+         * 
+         * 这行代码是为了当线程
+         */
         return Thread.interrupted();
     }
 
@@ -1007,6 +1020,8 @@ public abstract class AbstractQueuedSynchronizer
                  */
                 if (shouldParkAfterFailedAcquire(p, node) &&
                         parkAndCheckInterrupt()) {
+                    // 结合方法parkAndCheckInterrupt看，将这个中断状态返回到外层方法，即让线程处于等待队列中时无法响应外部的中断请求。因为当中断时，
+                    // 调用LockSupport.park(x)方法时不会产生中断异常。
                     interrupted = true;
                 }
 
@@ -1354,8 +1369,9 @@ public abstract class AbstractQueuedSynchronizer
      */
     public final void acquire(int arg) {
         if (!tryAcquire(arg) &&
-                acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
-            selfInterrupt();
+                acquireQueued(addWaiter(Node.EXCLUSIVE), arg)){
+                    selfInterrupt();
+                } 
     }
 
     /**
@@ -1426,6 +1442,11 @@ public abstract class AbstractQueuedSynchronizer
     public final boolean release(int arg) {
         //  尝试释放锁
         if (tryRelease(arg)) {
+            /**
+             * 
+             * 当释放锁成功，那么就需要唤醒其他的线程
+             * 
+             */
             // 当当前线程完全释放了该临界资源(state =0，即当前线程完全释放了该锁)，关于head的理解，阅读一下acquireQueued方法的代码
             Node h = head;
             /**

@@ -310,6 +310,7 @@ public class ThreadLocal<T> {
             Object value;
 
             Entry(ThreadLocal<?> k, Object v) {
+                // 请注意，这里的K才会是WeakReference(虚引用)，而V并不是，点进去看一下这个super方法的注释，你会豁然开朗
                 super(k);
                 value = v;
             }

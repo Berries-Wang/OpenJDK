@@ -117,7 +117,7 @@ class markOopDesc: public oopDesc {
          biased_lock_bits         = 1,
          // BitsPerWord定义于hotspot/src/share/vm/utilities/globalDefinitions.hpp，值为64，则max_hash_bits为54
          max_hash_bits            = BitsPerWord - age_bits - lock_bits - biased_lock_bits,
-         // 哈希位， 值为31
+         // 哈希位， 值为31  ， 一致性哈希相关
          hash_bits                = max_hash_bits > 31 ? 31 : max_hash_bits,
          // 提供给CMS收集器使用？？？
          cms_bits                 = LP64_ONLY(1) NOT_LP64(0),

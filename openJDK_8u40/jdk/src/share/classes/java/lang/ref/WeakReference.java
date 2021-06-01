@@ -48,8 +48,9 @@ package java.lang.ref;
 public class WeakReference<T> extends Reference<T> {
 
     /**
-     * Creates a new weak reference that refers to the given object.  The new
-     * reference is not registered with any queue.
+     * Creates a new weak reference that refers to the given object. 请注意这一行注释，即给指定的对象创建一个虚引用
+     *
+     * The new reference is not registered with any queue.
      *
      * @param referent object the new weak reference will refer to
      */

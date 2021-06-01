@@ -27,6 +27,10 @@ package java.lang.ref;
 
 
 /**
+ * discretion(n. 自由裁量权；谨慎；判断力；判定；考虑周到)
+ * 
+ * at the discretion of 任凭 ; 听凭处理 ; 任意处置
+ * 
  * Soft reference objects, which are cleared at the discretion of the garbage
  * collector in response to memory demand.  Soft references are most often used
  * to implement memory-sensitive caches.
