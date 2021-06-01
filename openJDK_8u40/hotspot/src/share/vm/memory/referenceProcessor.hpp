@@ -217,7 +217,7 @@ class ReferenceProcessor : public CHeapObj<mtGC> {
   // Compatibility with pre-4965777 JDK's
   static bool _pending_list_uses_discovered_field;
 
-  // The SoftReference master timestamp clock
+  // The SoftReference master timestamp clock // SoftReference主时间戳时钟
   static jlong _soft_ref_timestamp_clock;
 
   MemRegion   _span;                    // (right-open) interval of heap

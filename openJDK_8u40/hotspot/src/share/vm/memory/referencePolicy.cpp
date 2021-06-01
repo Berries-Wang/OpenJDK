@@ -35,6 +35,7 @@ LRUCurrentHeapPolicy::LRUCurrentHeapPolicy() {
 
 // Capture state (of-the-VM) information needed to evaluate the policy
 void LRUCurrentHeapPolicy::setup() {
+   // SoftRefLRUPolicyMSPerMB  定义于globals.hpp，值为1000
   _max_interval = (Universe::get_heap_free_at_last_gc() / M) * SoftRefLRUPolicyMSPerMB;
   assert(_max_interval >= 0,"Sanity check");
 }
@@ -43,10 +44,15 @@ void LRUCurrentHeapPolicy::setup() {
 // the object the SoftReference points to.
 bool LRUCurrentHeapPolicy::should_clear_reference(oop p,
                                                   jlong timestamp_clock) {
+  /**
+   * timestamp_clock:  java.lang.ref.SoftReference#clock
+   * java_lang_ref_SoftReference::timestamp(p): java.lang.ref.SoftReference#timestamp
+   */ 
   jlong interval = timestamp_clock - java_lang_ref_SoftReference::timestamp(p);
   assert(interval >= 0, "Sanity check");
 
   // The interval will be zero if the ref was accessed since the last scavenge/gc.
+  // 如果上次清除/gc之后访问了ref，那么时间间隔将为零
   if(interval <= _max_interval) {
     return false;
   }
@@ -66,6 +72,7 @@ void LRUMaxHeapPolicy::setup() {
   max_heap -= Universe::get_heap_used_at_last_gc();
   max_heap /= M;
 
+   // SoftRefLRUPolicyMSPerMB  定义于globals.hpp，值为1000
   _max_interval = max_heap * SoftRefLRUPolicyMSPerMB;
   assert(_max_interval >= 0,"Sanity check");
 }
