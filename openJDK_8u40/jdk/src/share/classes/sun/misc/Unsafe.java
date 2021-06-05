@@ -1028,6 +1028,9 @@ public final class Unsafe {
     /**
      * Fetches a reference value from a given Java variable, with volatile
      * load semantics. Otherwise identical to {@link #getObject(Object, long)}
+     * 
+     * 此方法和上面的getObject功能类似，不过附加了'volatile'加载语义，也就是强制从主存中获取属性值。类似的方法有getIntVolatile、getDoubleVolatile等等。
+     * 这个方法要求被使用的属性被volatile修饰，否则功能和getObject方法相同
      */
     public native Object getObjectVolatile(Object o, long offset);
 

@@ -1391,6 +1391,8 @@ public final class Integer extends Number implements Comparable<Integer> {
      *     of the specified {@code int} value, or 32 if the value
      *     is equal to zero.
      * @since 1.5
+     * 
+     * 计算首部0的个数，就是从左边第一个位开始累加0的个数，直到遇到一个非零值
      */
     public static int numberOfLeadingZeros(int i) {
         // HD, Figure 5-6
