@@ -754,7 +754,7 @@ public class ConcurrentHashMap<K, V> extends AbstractMap<K, V> implements Concur
      * <pre>
      * 控制表的初始化或者扩容/缩容： 
      * 1. 当为负数： 
-     *     a. -1:表正在初始化 
+     *     a. -1:表正在初始化,这个也是基于基数的
      *     b. -(1 + the number of active resizing threads) 正在扩容 , 其实并不是这样(这里的注释有问题)，还需要与 "resizeStamp(n) << RESIZE_STAMP_SHIFT" 生成的基数做运算。  
      *          即： sizeCtl = (基数 + ( 1+ nthread))
      * 2. 其他情况 
