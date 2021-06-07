@@ -928,7 +928,7 @@ public abstract class AbstractQueuedSynchronizer
              * Predecessor was cancelled. Skip over predecessors and
              * indicate retry.
              *
-             * 这里的操作不会有线程安全问题吗？
+             * 这里的操作不会有线程安全问题吗?不会的，这里并不是发现一个移除一个
              */
             do {
                 node.prev = pred = pred.prev;
@@ -939,6 +939,7 @@ public abstract class AbstractQueuedSynchronizer
              * waitStatus must be 0 or PROPAGATE.  Indicate that we
              * need a signal, but don't park yet.  Caller will need to
              * retry to make sure it cannot acquire before parking.
+             * 状态可能是CONDITION(-2),PROPAGATE(-3),修改此类Node的状态
              */
             // 设置前置节点的等待状态为SIGNAL
             compareAndSetWaitStatus(pred, ws, Node.SIGNAL);
@@ -998,7 +999,7 @@ public abstract class AbstractQueuedSynchronizer
             for (; ; ) {
                 // 获取node的前驱节点，若为null则会抛NPE
                 final Node p = node.predecessor();
-                // 如果p为头结点，那么说明node在队首，则尝试获取锁
+                // 如果p为头结点，那么说明node在队首，则尝试获取锁,即再尝试获取锁，因为可能其他线程执行完毕并释放了锁,当前线程有获取锁的机会
                 if (p == head && tryAcquire(arg)) {
                     /**
                      * 获取锁成功，将指针指向当前node(设置头结点)
@@ -1012,6 +1013,8 @@ public abstract class AbstractQueuedSynchronizer
                 }
 
                 /**
+                 * =====>>>>  因为当前线程没有获取到锁，所以他需要将当前CPU的执行权让出来，给到其他的线程去执行
+                 *
                  * 当node不是队首元素，也没有获取到锁，则判断当前线程是否需要被阻塞，若是，则挂起当前线程，直到线程被唤醒(unpark)，线程才会继续往下执行
                  *
                  * 进入到这里，表明锁获取失败了，换句话说，就是共享资源已经被获取了(被其他线程)，当前节点之前的节点都不会发生变化。
