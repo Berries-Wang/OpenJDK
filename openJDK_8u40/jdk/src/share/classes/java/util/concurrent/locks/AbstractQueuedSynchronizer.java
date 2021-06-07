@@ -984,6 +984,7 @@ public abstract class AbstractQueuedSynchronizer
     /**
      * Acquires in exclusive uninterruptible mode for thread already in queue.
      * Used by condition wait methods as well as acquire.
+     * 以排他不中断模式获取已经在队列中的线程。由条件等待方法和acquire方法使用。
      *
      * @param node the node
      * @param arg  the acquire argument
