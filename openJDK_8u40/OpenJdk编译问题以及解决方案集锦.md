@@ -22,5 +22,5 @@
 + 问题出现原因： 代码中有中文注释
 + 解决方案：[点击进入](https://blog.csdn.net/BDX_Hadoop_Opt/article/details/29209829)
    -  全文件搜索-encoding ascii，将-encoding ascii删除掉。如
-       1.  JAVACFLAGS += -encoding ascii 修改为  # JAVACFLAGS += -encoding ascii ，即注释掉，或者将ascii改为utf-8
-       2.  JAVAC_FLAGS=-g -encoding ascii 修改为 JAVAC_FLAGS=-g 即去掉-encoding ascii，或者将ascii改为utf-8
+       1.  JAVAC_FLAGS += -encoding ascii 修改为  JAVAC_FLAGS = -g -encoding utf-8 ，即ascii改为utf-8
+       2.  JAVAC_FLAGS=-g -encoding ascii 修改为 JAVAC_FLAGS = -g -encoding utf-8 即ascii改为utf-8
