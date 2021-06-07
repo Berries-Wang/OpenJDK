@@ -699,7 +699,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
          * @param firstTask the first task (null if none)
          */
         Worker(Runnable firstTask) {
-            setState(-1); // inhibit interrupts until runWorker
+            setState(-1); // inhibit(vt. 抑制；禁止) interrupts until runWorker
             this.firstTask = firstTask;
             this.thread = getThreadFactory().newThread(this);
         }
