@@ -3,7 +3,7 @@
 #语言选项，这个必须设置，否则编译好后会出现一个HashTable的NPE错
 export LANG=C
 
-export JAVA_TOOL_OPTIONS=-Dfile.encoding=GBK
+export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8
 #Bootstrap JDK的安装路径。必须设置
 export ALT_BOOTDIR=/home/wei/workspace/Temp/jdk7/jdk1.7.0_80
 #允许自动下载依赖

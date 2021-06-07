@@ -2,3 +2,5 @@
 */.iml
 */*/*.iml
 */buildDir
+*/build
+.idea

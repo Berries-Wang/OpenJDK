@@ -18,6 +18,9 @@
    - 或者 os_linux.inline.hpp:127:18: error: 'int readdir_r(DIR*, dirent*, dirent**)' is deprecated [-Werror=deprecated-declarations]
 + 解决方案: 修改文件: hotspot/make/linux/makefiles/gcc.make , 将WARNINGS_ARE_ERRORS=-Werror 修改为 WARNINGS_ARE_ERRORS=-Wno-error
 
-## 问题4： openJDK_8u40/hotspot/agent/src/share/classes/sun/jvm/hotspot/memory/TenuredSpace.java:35: 错误: 编码ascii的不可映射字符
+## 问题4： openJDK_8u40/hotspot/agent/src/share/classes/sun/jvm/hotspot/memory/TenuredSpace.java:35: 错误: 编码ascii的不可映射字符 (unmappable character for encoding ascii)
 + 问题出现原因： 代码中有中文注释
-+ 暂时没有法子解决
++ 解决方案：[点击进入](https://blog.csdn.net/BDX_Hadoop_Opt/article/details/29209829)
+   -  全文件搜索-encoding ascii，将-encoding ascii删除掉。如
+       1.  JAVACFLAGS += -encoding ascii 修改为  # JAVACFLAGS += -encoding ascii ，即注释掉，或者将ascii改为utf-8
+       2.  JAVAC_FLAGS=-g -encoding ascii 修改为 JAVAC_FLAGS=-g 即去掉-encoding ascii，或者将ascii改为utf-8
