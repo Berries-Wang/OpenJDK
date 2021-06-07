@@ -2215,7 +2215,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
 
     /**
      * 
-     * 以抛出异常的方式来决绝目前的task
+     * 以抛出异常的方式来拒绝目前的task
      * 
      * A handler for rejected tasks that throws a
      * {@code RejectedExecutionException}.
