@@ -999,7 +999,7 @@ public abstract class AbstractQueuedSynchronizer
             for (; ; ) {
                 // 获取node的前驱节点，若为null则会抛NPE
                 final Node p = node.predecessor();
-                // 如果p为头结点，那么说明node在队首，则尝试获取锁,即再尝试获取锁，因为可能其他线程执行完毕并释放了锁,当前线程有获取锁的机会
+                // 如果p为头结点(p==head这个条件注意一下)，那么说明node在队首，则尝试获取锁,即再尝试获取锁，因为可能其他线程执行完毕并释放了锁,当前线程有获取锁的机会
                 if (p == head && tryAcquire(arg)) {
                     /**
                      * 获取锁成功，将指针指向当前node(设置头结点)
@@ -1032,7 +1032,7 @@ public abstract class AbstractQueuedSynchronizer
             }
         } finally {
             /**
-             * failed表示什么？即：线程尝试获取锁一直失败，直到node前驱节点为null。即当前线程无法获取到锁
+             * failed表示什么？即：线程尝试获取锁一直失败，直到node前驱节点为null。即之前的节点均获得CPU的执行机会了
              */
             if (failed)
                 // 将Node的状态设置为CANCELLED。
