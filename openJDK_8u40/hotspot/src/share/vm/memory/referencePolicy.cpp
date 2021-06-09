@@ -35,7 +35,8 @@ LRUCurrentHeapPolicy::LRUCurrentHeapPolicy() {
 
 // Capture state (of-the-VM) information needed to evaluate the policy
 void LRUCurrentHeapPolicy::setup() {
-   // SoftRefLRUPolicyMSPerMB  定义于globals.hpp，值为1000
+  // LRU: Least Recently Used的缩写，即最近最少使用
+   // SoftRefLRUPolicyMSPerMB  定义于globals.hpp，值为1000，意为Number of milliseconds per MB of free space in the heap（即 堆中每MB空闲空间允许存活的毫秒数）
   _max_interval = (Universe::get_heap_free_at_last_gc() / M) * SoftRefLRUPolicyMSPerMB;
   assert(_max_interval >= 0,"Sanity check");
 }
@@ -45,8 +46,8 @@ void LRUCurrentHeapPolicy::setup() {
 bool LRUCurrentHeapPolicy::should_clear_reference(oop p,
                                                   jlong timestamp_clock) {
   /**
-   * timestamp_clock:  java.lang.ref.SoftReference#clock
-   * java_lang_ref_SoftReference::timestamp(p): java.lang.ref.SoftReference#timestamp
+   * timestamp_clock:  java.lang.ref.SoftReference#clock , 即上次GC的时间
+   * java_lang_ref_SoftReference::timestamp(p): java.lang.ref.SoftReference#timestamp , 即最近使用的时间
    */ 
   jlong interval = timestamp_clock - java_lang_ref_SoftReference::timestamp(p);
   assert(interval >= 0, "Sanity check");
