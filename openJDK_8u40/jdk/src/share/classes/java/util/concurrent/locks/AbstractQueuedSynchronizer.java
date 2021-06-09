@@ -554,7 +554,7 @@ public abstract class AbstractQueuedSynchronizer
      * 
      * 从方法java.util.concurrent.locks.AbstractQueuedSynchronizer#enq中可以看出,head是一个虚拟头节点,这个head节点不与任何线程相关联的。
      * 从方法java.util.concurrent.locks.AbstractQueuedSynchronizer#shouldParkAfterFailedAcquire中可以看出(将CANCELLED状态的Node全部移除这一步)，如果head允许为CANCELLED状态，
-     * 在这一步也会被移除了，这就导致AQS不可用了
+     * 在这一步也会被移除了，这就导致AQS不可用了(可能其他线程获得执行权却发现head为null,其实在shouldParkAfterFailedAcquire如果head节点允许是CANCELLED状态，会报NPE异常的，详细可以查看源代码)
      */
     private transient volatile Node head;
 
