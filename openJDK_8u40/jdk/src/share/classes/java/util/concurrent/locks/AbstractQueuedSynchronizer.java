@@ -550,7 +550,11 @@ public abstract class AbstractQueuedSynchronizer
      * initialization, it is modified only via method setHead.
      * Note: If head exists, its waitStatus is guaranteed not to be CANCELLED.
      * <p>
-     * 备注: 如果head存在，那么他的waitStatus一定不是CANCELLED
+     * 备注: 如果head存在，那么他的waitStatus一定不是CANCELLED.那为什么head的状态一定不能是CANCELLED呢?
+     * 
+     * 从方法java.util.concurrent.locks.AbstractQueuedSynchronizer#enq中可以看出,head是一个虚拟头节点,这个head节点不与任何线程相关联的。
+     * 从方法java.util.concurrent.locks.AbstractQueuedSynchronizer#shouldParkAfterFailedAcquire中可以看出(将CANCELLED状态的Node全部移除这一步)，如果head允许为CANCELLED状态，
+     * 在这一步也会被移除了，这就导致AQS不可用了
      */
     private transient volatile Node head;
 
