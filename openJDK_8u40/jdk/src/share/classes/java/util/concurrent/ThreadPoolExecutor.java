@@ -2214,7 +2214,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
     }
 
     /**
-     * 
+     * TemplateInterpreterGeneratorTemplateInterpreterGenerator
      * 以抛出异常的方式来拒绝目前的task
      * 
      * A handler for rejected tasks that throws a

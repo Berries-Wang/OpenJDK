@@ -30,9 +30,8 @@
 
 #ifndef CC_INTERP
 
-class TemplateInterpreterGenerator: public AbstractInterpreterGenerator {
- protected:
-
+class TemplateInterpreterGenerator : public AbstractInterpreterGenerator {
+protected:
   // entry points for shared code sequence
   address _unimplemented_bytecode;
   address _illegal_bytecode_sequence;
@@ -41,32 +40,40 @@ class TemplateInterpreterGenerator: public AbstractInterpreterGenerator {
   // Converter for native abi result to tosca result
   address generate_result_handler_for(BasicType type);
   address generate_slow_signature_handler();
-  address generate_error_exit(const char* msg);
+  address generate_error_exit(const char *msg);
   address generate_StackOverflowError_handler();
-  address generate_exception_handler(const char* name, const char* message) {
+  address generate_exception_handler(const char *name, const char *message) {
     return generate_exception_handler_common(name, message, false);
   }
-  address generate_klass_exception_handler(const char* name) {
+  address generate_klass_exception_handler(const char *name) {
     return generate_exception_handler_common(name, NULL, true);
   }
-  address generate_exception_handler_common(const char* name, const char* message, bool pass_oop);
+  address generate_exception_handler_common(const char *name,
+                                            const char *message, bool pass_oop);
   address generate_ClassCastException_handler();
-  address generate_ArrayIndexOutOfBounds_handler(const char* name);
+  address generate_ArrayIndexOutOfBounds_handler(const char *name);
   address generate_continuation_for(TosState state);
-  address generate_return_entry_for(TosState state, int step, size_t index_size);
+  address generate_return_entry_for(TosState state, int step,
+                                    size_t index_size);
   address generate_earlyret_entry_for(TosState state);
   address generate_deopt_entry_for(TosState state, int step);
   address generate_safept_entry_for(TosState state, address runtime_entry);
-  void    generate_throw_exception();
+  void generate_throw_exception();
 
   // entry point generator
-//   address generate_method_entry(AbstractInterpreter::MethodKind kind);
+  //   address generate_method_entry(AbstractInterpreter::MethodKind kind);
 
   // Instruction generation
-  void generate_and_dispatch (Template* t, TosState tos_out = ilgl);
-  void set_vtos_entry_points (Template* t, address& bep, address& cep, address& sep, address& aep, address& iep, address& lep, address& fep, address& dep, address& vep);
-  void set_short_entry_points(Template* t, address& bep, address& cep, address& sep, address& aep, address& iep, address& lep, address& fep, address& dep, address& vep);
-  void set_wide_entry_point  (Template* t, address& wep);
+  void generate_and_dispatch(Template *t, TosState tos_out = ilgl);
+  void set_vtos_entry_points(Template *t, address &bep, address &cep,
+                             address &sep, address &aep, address &iep,
+                             address &lep, address &fep, address &dep,
+                             address &vep);
+  void set_short_entry_points(Template *t, address &bep, address &cep,
+                              address &sep, address &aep, address &iep,
+                              address &lep, address &fep, address &dep,
+                              address &vep);
+  void set_wide_entry_point(Template *t, address &wep);
 
   void set_entry_points(Bytecodes::Code code);
   void set_unimplemented(int i);
@@ -74,35 +81,33 @@ class TemplateInterpreterGenerator: public AbstractInterpreterGenerator {
   void set_safepoints_for_all_bytes();
 
   // Helpers for generate_and_dispatch
-  address generate_trace_code(TosState state)   PRODUCT_RETURN0;
-  void count_bytecode()                         PRODUCT_RETURN;
-  void histogram_bytecode(Template* t)          PRODUCT_RETURN;
-  void histogram_bytecode_pair(Template* t)     PRODUCT_RETURN;
-  void trace_bytecode(Template* t)              PRODUCT_RETURN;
-  void stop_interpreter_at()                    PRODUCT_RETURN;
+  address generate_trace_code(TosState state) PRODUCT_RETURN0;
+  void count_bytecode() PRODUCT_RETURN;
+  void histogram_bytecode(Template *t) PRODUCT_RETURN;
+  void histogram_bytecode_pair(Template *t) PRODUCT_RETURN;
+  void trace_bytecode(Template *t) PRODUCT_RETURN;
+  void stop_interpreter_at() PRODUCT_RETURN;
 
   void generate_all();
 
- public:
-  TemplateInterpreterGenerator(StubQueue* _code);
+public:
+  TemplateInterpreterGenerator(StubQueue *_code);
 
 #ifdef TARGET_ARCH_x86
-# include "templateInterpreterGenerator_x86.hpp"
+#include "templateInterpreterGenerator_x86.hpp"
 #endif
 #ifdef TARGET_ARCH_sparc
-# include "templateInterpreterGenerator_sparc.hpp"
+#include "templateInterpreterGenerator_sparc.hpp"
 #endif
 #ifdef TARGET_ARCH_zero
-# include "templateInterpreterGenerator_zero.hpp"
+#include "templateInterpreterGenerator_zero.hpp"
 #endif
 #ifdef TARGET_ARCH_arm
-# include "templateInterpreterGenerator_arm.hpp"
+#include "templateInterpreterGenerator_arm.hpp"
 #endif
 #ifdef TARGET_ARCH_ppc
-# include "templateInterpreterGenerator_ppc.hpp"
+#include "templateInterpreterGenerator_ppc.hpp"
 #endif
-
-
 };
 
 #endif // !CC_INTERP
