@@ -19,22 +19,24 @@ README:
 
 Simple Build Instructions:
   
-  0. Get the necessary system software/packages installed on your system, see
-     http://hg.openjdk.java.net/jdk8/jdk8/raw-file/tip/README-builds.html
+  0. 安装系统软件包，详见： http://hg.openjdk.java.net/jdk8/jdk8/raw-file/tip/README-builds.html
+     (原文: Get the necessary system software/packages installed on your system, see
+     http://hg.openjdk.java.net/jdk8/jdk8/raw-file/tip/README-builds.html)
 
-  1. If you don't have a jdk7u7 or newer jdk, download and install it from
+  1. 准备Bootstrap JDK 
+     (原文: If you don't have a jdk7u7 or newer jdk, download and install it from
      http://java.sun.com/javase/downloads/index.jsp
      Add the /bin directory of this installation to your PATH environment
-     variable.
+     variable.)
 
-  2. Configure the build:
-       bash ./configure
-      (注意,需要将该代码版本回退到init commit) ./configure --with-debug-level=slowdebug --with-boot-jdk="/home/wei/oracleJdk/jdk1.7.0_80"  --with-boot-jdk-jvmargs="-Dfile.encoding=UTF-8" --with-freetype-include=/usr/include/freetype2 --with-freetype-lib=/usr/lib/x86_64-linux-gnu
+  2. 执行./configure，检测平台的目标特征(即软件包是否都已经安装了)
+      原文:  Configure the build: 
+              bash ./configure
   
-  3. Build the OpenJDK:
-       make all
-        (注意,需要将该代码版本回退到init commit)  make all ZIP_DEBUGINFO=0 DISABLE_HOTSPOT_OS_VERSION_CHECK=OK CONF=linux-x86_64-normal-server-slowdebug
-     The resulting JDK image should be found in build/*/images/j2sdk-image
+  3. 构建openJdk: 
+     原文: Build the OpenJDK:
+            make all
+          The resulting JDK image should be found in build/*/images/j2sdk-image
 
 where make is GNU make 3.81 or newer, /usr/bin/make on Linux usually
 is 3.81 or newer. Note that on Solaris, GNU make is called "gmake".
