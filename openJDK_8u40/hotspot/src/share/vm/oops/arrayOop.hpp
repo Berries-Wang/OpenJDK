@@ -38,7 +38,6 @@
 //  Klass*    // 32 bits if compressed but declared 64 in LP64.
 //  length    // shares klass memory or allocated after declared fields.
 
-
 class arrayOopDesc : public oopDesc {
   friend class VMStructs;
 
@@ -49,24 +48,25 @@ class arrayOopDesc : public oopDesc {
   // Returns the aligned header_size_in_bytes.  This is not equivalent to
   // sizeof(arrayOopDesc) which should not appear in the code.
   static int header_size_in_bytes() {
-    size_t hs = align_size_up(length_offset_in_bytes() + sizeof(int),
-                              HeapWordSize);
+    size_t hs =
+        align_size_up(length_offset_in_bytes() + sizeof(int), HeapWordSize);
 #ifdef ASSERT
     // make sure it isn't called before UseCompressedOops is initialized.
     static size_t arrayoopdesc_hs = 0;
-    if (arrayoopdesc_hs == 0) arrayoopdesc_hs = hs;
+    if (arrayoopdesc_hs == 0)
+      arrayoopdesc_hs = hs;
     assert(arrayoopdesc_hs == hs, "header size can't change");
 #endif // ASSERT
     return (int)hs;
   }
 
- public:
+public:
   // The _length field is not declared in C++.  It is allocated after the
   // declared nonstatic fields in arrayOopDesc if not compressed, otherwise
   // it occupies the second half of the _klass field in oopDesc.
   static int length_offset_in_bytes() {
-    return UseCompressedClassPointers ? klass_gap_offset_in_bytes() :
-                               sizeof(arrayOopDesc);
+    return UseCompressedClassPointers ? klass_gap_offset_in_bytes()
+                                      : sizeof(arrayOopDesc);
   }
 
   // Returns the offset of the first element.
@@ -75,20 +75,25 @@ class arrayOopDesc : public oopDesc {
   }
 
   // Returns the address of the first element.
-  void* base(BasicType type) const {
-    return (void*) (((intptr_t) this) + base_offset_in_bytes(type));
+  void *base(BasicType type) const {
+    return (void *)(((intptr_t)this) + base_offset_in_bytes(type));
   }
 
   // Tells whether index is within bounds.
-  bool is_within_bounds(int index) const        { return 0 <= index && index < length(); }
+  bool is_within_bounds(int index) const {
+    return 0 <= index && index < length();
+  }
 
   // Accessors for instance variable which is not a C++ declared nonstatic
   // field.
+  /**
+   * 注意一下length的计算方式
+   */
   int length() const {
-    return *(int*)(((intptr_t)this) + length_offset_in_bytes());
+    return *(int *)(((intptr_t)this) + length_offset_in_bytes());
   }
   void set_length(int length) {
-    *(int*)(((intptr_t)this) + length_offset_in_bytes()) = length;
+    *(int *)(((intptr_t)this) + length_offset_in_bytes()) = length;
   }
 
   // Should only be called with constants as argument
@@ -98,8 +103,8 @@ class arrayOopDesc : public oopDesc {
   static int header_size(BasicType type) {
     size_t typesize_in_bytes = header_size_in_bytes();
     return (int)(Universe::element_type_should_be_aligned(type)
-      ? align_object_offset(typesize_in_bytes/HeapWordSize)
-      : typesize_in_bytes/HeapWordSize);
+                     ? align_object_offset(typesize_in_bytes / HeapWordSize)
+                     : typesize_in_bytes / HeapWordSize);
   }
 
   // Return the maximum length of an array of BasicType.  The length can passed
@@ -110,10 +115,10 @@ class arrayOopDesc : public oopDesc {
     assert(type >= 0 && type < T_CONFLICT, "wrong type");
     assert(type2aelembytes(type) != 0, "wrong type");
 
-    const size_t max_element_words_per_size_t =
-      align_size_down((SIZE_MAX/HeapWordSize - header_size(type)), MinObjAlignment);
+    const size_t max_element_words_per_size_t = align_size_down(
+        (SIZE_MAX / HeapWordSize - header_size(type)), MinObjAlignment);
     const size_t max_elements_per_size_t =
-      HeapWordSize * max_element_words_per_size_t / type2aelembytes(type);
+        HeapWordSize * max_element_words_per_size_t / type2aelembytes(type);
     if ((size_t)max_jint < max_elements_per_size_t) {
       // It should be ok to return max_jint here, but parts of the code
       // (CollectedHeap, Klass::oop_oop_iterate(), and more) uses an int for

@@ -60,8 +60,9 @@ class ParCompactionManager;
 class oopDesc {
   friend class VMStructs;
  private:
+  // Mark Word，存储对象自身的运行时数据，如哈希码，GC分代年龄，锁状态标志，线程持有的锁，偏向线程ID，偏向时间戳等
   volatile markOop  _mark;
-  // 指向类的元数据的指针
+  // 类型指针，即对象指向他的类型元数据的指针，java虚拟机通过这个指针来确定该对象是哪个类的实例
   union _metadata {
     // 未开启指针压缩时使用
     Klass*      _klass;

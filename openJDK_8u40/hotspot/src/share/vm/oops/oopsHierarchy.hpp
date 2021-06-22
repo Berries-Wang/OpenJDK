@@ -42,11 +42,11 @@ typedef class   markOopDesc*                markOop;
 
 #ifndef CHECK_UNHANDLED_OOPS
 
-typedef class oopDesc*                            oop;
-typedef class   instanceOopDesc*            instanceOop;
-typedef class   arrayOopDesc*                    arrayOop;
-typedef class     objArrayOopDesc*            objArrayOop;
-typedef class     typeArrayOopDesc*            typeArrayOop;
+typedef class oopDesc*                            oop; // Oop抽象基类
+typedef class   instanceOopDesc*            instanceOop;  // 描述Java类的实例
+typedef class   arrayOopDesc*                    arrayOop; // 描述数组的抽象基类
+typedef class     objArrayOopDesc*            objArrayOop; // 描述元素类型为对象的数组
+typedef class     typeArrayOopDesc*            typeArrayOop; // 描述元素类型是基本类型的数组
 
 #else
 
@@ -204,13 +204,13 @@ class   CompiledICHolder;
 
 // The klass hierarchy is separate from the oop hierarchy.
 
-class Klass;
-class   InstanceKlass;
-class     InstanceMirrorKlass;
-class     InstanceClassLoaderKlass;
-class     InstanceRefKlass;
-class   ArrayKlass;
-class     ObjArrayKlass;
-class     TypeArrayKlass;
+class Klass; // KlassOop的一部分，用来描述语言层的类型(Klass继承体系的最高父类)
+class   InstanceKlass; // 在虚拟机层面描述一个Java类
+class     InstanceMirrorKlass;  // 专有instanceKlass，表示java.lang.Class实例的Klass
+class     InstanceClassLoaderKlass; // 主要用于遍历ClassLoader继承体系
+class     InstanceRefKlass; // 专有instanceKlass，表示java.lang.ref.Reference子类的Klass
+class   ArrayKlass; // 表示所有array类型的抽象基类
+class     ObjArrayKlass; // 表示objArrayOopDesc的Klass
+class     TypeArrayKlass; // 表示typeArrayOopDesc的Klass
 
 #endif // SHARE_VM_OOPS_OOPSHIERARCHY_HPP
