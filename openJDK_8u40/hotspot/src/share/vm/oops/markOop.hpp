@@ -87,7 +87,8 @@
 //    [JavaThread* | epoch | age | 1 | 01]       lock is biased toward given thread
 //    [0           | epoch | age | 1 | 01]       lock is anonymously biased
 //
-//  - the two lock bits are used to describe three states: locked/unlocked and monitor.
+// 
+//  - the two lock bits are used to describe three states: locked/unlocked and monitor.(这表示锁状态的两个bit被用于描述三种状态: 锁定/未锁定 和 monitor)
 //
 //    [ptr             | 00]  locked             ptr points to real header on stack
 //    [header      | 0 | 01]  unlocked           regular object header
@@ -107,7 +108,7 @@ class markOopDesc: public oopDesc {
   uintptr_t value() const { return (uintptr_t) this; }
 
  public:
-  // Constants(一下均为64位平台)
+  // Constants(以下均为64位平台)
   enum {
          // 年龄位，占4位
          age_bits                 = 4,

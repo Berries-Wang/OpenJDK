@@ -47,7 +47,7 @@
 //  etc.)(用于表示Java类，Klass中保存了一个Java对象的类型信息，包括类名，限定符，常量，方法字典等)
 //  2: provide vm dispatch behavior for the
 //  object(实现方法的动态分派，即实现Java对象的分发功能)
-// Both functions are combined into one C++ class.
+// Both functions are combined into one C++ class. // 注意这句注释，即将所有的函数都合并到一个C++类中
 
 /**
  * 对于OOPS对象来说，主要只能在于表示对象的实例数据，没必要持有任何虚函数。而在描述Java类的Klass对象中含有VTBL(继承于Klass父类Klass_vtbl)
