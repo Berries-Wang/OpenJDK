@@ -204,8 +204,8 @@ protected:
   Annotations *_annotations;
   // Array classes holding elements of this class.
   Klass *_array_klasses;
-  // Constant pool for this class.
-  /**
+
+  /**Constant pool for this class.
    * 该类的常量池
    */
   ConstantPool *_constants;

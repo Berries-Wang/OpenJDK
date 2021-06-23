@@ -198,6 +198,12 @@ class Ticks;
   /*end*/
 
 
+/***
+ * 
+ * 系统字典，记录了系统加载的所有的类。
+ * 
+ * 
+ */ 
 class SystemDictionary : AllStatic {
   friend class VMStructs;
   friend class SystemDictionaryHandles;
