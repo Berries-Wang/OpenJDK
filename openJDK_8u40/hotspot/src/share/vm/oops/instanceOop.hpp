@@ -27,8 +27,8 @@
 
 #include "oops/oop.hpp"
 
-// An instanceOop is an instance of a Java Class
-// Evaluating "new HashTable()" will create an instanceOop.
+// An instanceOop is an instance of a Java Class (一个instanceOop代表着一个Java Class对象实例)
+// Evaluating "new HashTable()" will create an instanceOop. (执行 new HashTable()将会创建一个instanceOop,即创建instanceOop的时机，即在创建Java Class实例的时候就会创建instanceOop)
 
 class instanceOopDesc : public oopDesc {
  public:

@@ -182,6 +182,10 @@ protected:
   /**
    *类名
    * Symbol 定义于hotspot/src/share/vm/oops/symbol.hpp
+   * 
+   * 如: 
+   *  1. instance类型: java/lang/String
+   *  2. 数组类型:[Ljava/lang/String
    */
   Symbol *_name;
 
@@ -202,23 +206,22 @@ protected:
    * Klass指针，父类
    */
   Klass *_super;
-  // First subclass (NULL if none); _subklass->next_sibling() is next one
+
   /**
-   *
-   * Klass指针，该类的子类，但是为什么需要保存自己的子类?
+   *First subclass (NULL if none); _subklass->next_sibling() is next one
+   * 指向第一个子类，若没有，则为NULL
    */
   Klass *_subklass;
+
   /**
-   *
-   * Klass 指针，该类的下一个子类
+   *Sibling link (or NULL); links all subklasses of a klass
+   * _next_sibling 指向的是下一个兄弟节点
    */
-  // Sibling link (or NULL); links all subklasses of a klass
   Klass *_next_sibling;
 
-  // All klasses loaded by a class loader are chained through these links
   /**
+   * All klasses loaded by a class loader are chained through these links
    * 由加载该类的类加载器去加载的所有的类。以链表的形式存储
-   *
    */
   Klass *_next_link;
 
