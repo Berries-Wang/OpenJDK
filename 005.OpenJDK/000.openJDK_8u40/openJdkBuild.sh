@@ -45,4 +45,4 @@ export ALT_OUTPUTDIR=/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/000.ope
 #事情"，Makefile脚本检查到有这2个变量就会提示警告）
 unset JAVA_HOME
 unset CLASSPATH
-make all 2>&1|tee $ALT_OUTPUTDIR/build.log
+make all 2>&1|tee $ALT_OUTPUTDIR/build.log/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/000.openJDK_8u40/build
