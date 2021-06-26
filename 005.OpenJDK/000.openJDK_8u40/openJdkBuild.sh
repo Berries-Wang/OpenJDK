@@ -1,4 +1,10 @@
+# Step1. 清除之前构建的
+make clean 
+
+# Step2. 运行configure
 ./configure  --with-debug-level=slowdebug  --with-boot-jdk=/home/wei/workspace/Temp/jdk7/jdk1.7.0_80  --with-freetype-include=/usr/include/freetype2 --with-freetype-lib=/usr/lib/x86_64-linux-gnu/
+
+# Step3. 构建OpenJdk
 
 #语言选项，这个必须设置，否则编译好后会出现一个HashTable的NPE错
 export LANG=C
@@ -34,7 +40,7 @@ BUILD_DEPLOY=false
 #但即便不build出它也已经能得到完整的JDK映像，所以还是别build它好了
 BUILD_INSTALL=false
 #编译结果所存放的路径
-export ALT_OUTPUTDIR=/home/wei/workspace/SOURCE_CODE/OpenJdk/openJDK_8u40/buildDir
+export ALT_OUTPUTDIR=/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/000.openJDK_8u40/build
 #这两个环境变量必须去掉，不然会有很诡异的事情发生（我没有具体查过这些"诡异的
 #事情"，Makefile脚本检查到有这2个变量就会提示警告）
 unset JAVA_HOME
