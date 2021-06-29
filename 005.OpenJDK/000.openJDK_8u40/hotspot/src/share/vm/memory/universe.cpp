@@ -818,7 +818,7 @@ jint Universe::initialize_heap() {
     fatal("UseG1GC not supported in java kernel vm.");
 #endif // INCLUDE_ALL_GCS
 
-  } else {
+  } else { // 这里就是分代收集了
     GenCollectorPolicy *gc_policy;
 
     if (UseSerialGC) {
