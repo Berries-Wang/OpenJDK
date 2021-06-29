@@ -1,4 +1,5 @@
 建议使用Virtual Studio Code来阅读源代码
+以下为官方提供的构建步骤，但实际操作有许多问题，可以参考:《OpenJdk编译问题以及解决方案集锦.md》、《OpenJdk代码调试解决方案.md》、《openJdkBuild.sh》
 README:
   This file should be located at the top of the OpenJDK Mercurial root
   repository. A full OpenJDK repository set (forest) should also include
