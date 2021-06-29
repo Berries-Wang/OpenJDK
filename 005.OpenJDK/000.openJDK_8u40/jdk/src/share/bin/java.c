@@ -350,6 +350,11 @@ JLI_Launch(int argc, char ** argv,              /* main argc, argc */
         } \
     } while (JNI_FALSE)
 
+/**
+ * 
+ * 
+ * 
+ **/
 int JNICALL
 JavaMain(void * _args)
 {
@@ -2004,6 +2009,12 @@ ContinueInNewThread(InvocationFunctions* ifn, jlong threadStackSize,
       args.what = what;
       args.ifn = *ifn;
 
+      /**
+       * ContinueInNewThread0 第一个参数是一个函数指针，函数原型: 
+       * int ContinueInNewThread0(int (JNICALL *continuation)(void *), jlong stack_size, void * args)
+       * 
+       * 所以，继续分析只需要分析JavaMain方法即可
+       * */
       rslt = ContinueInNewThread0(JavaMain, threadStackSize, (void*)&args);
       /* If the caller has deemed there is an error we
        * simply return that, otherwise we return the value of

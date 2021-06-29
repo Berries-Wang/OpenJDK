@@ -884,9 +884,18 @@ LoadJavaVM(const char *jvmpath, InvocationFunctions *ifn)
         JLI_ReportErrorMessage(DLL_ERROR2, jvmpath, dlerror());
         return JNI_FALSE;
     }
-
+    // 即： 创建JVM的程序模块
+    /**
+     * 通过man手册可以看到，dlsym： The  function  dlsym() takes a "handle" of a dynamic loaded shared object returned by dlopen(3) along with a null-terminated symbol name, 
+     * and returns the address where that symbol is loaded into memory
+     * 即： 　dlopen以指定模式打开指定的动态连接库文件，并返回一个句柄给调用进程，dlerror返回出现的错误，dlsym通过句柄和连接符名称获取函数名或者变量名，dlclose来卸载打开的库
+     * 
+     * 
+     * 所以分析JVM启动需要分析JNI_CreateJavaVM(005.OpenJDK/000.openJDK_8u40/hotspot/src/share/vm/prims/jni.h)函数了,
+     */ 
     ifn->CreateJavaVM = (CreateJavaVM_t)
         dlsym(libjvm, "JNI_CreateJavaVM");
+
     if (ifn->CreateJavaVM == NULL) {
         JLI_ReportErrorMessage(DLL_ERROR2, jvmpath, dlerror());
         return JNI_FALSE;

@@ -101,6 +101,12 @@ jint init_globals() {
   VM_Version_init();
   os_init_globals();
   stubRoutines_init1();
+  
+  /**
+   * 
+   *  JVM内存初始化
+   * 
+   */ 
   jint status = universe_init();  // dependent on codeCache_init and
                                   // stubRoutines_init1 and metaspace_init.
   if (status != JNI_OK)
