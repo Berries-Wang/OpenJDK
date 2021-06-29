@@ -20,7 +20,7 @@ BUILDOUTPUTDIR=`pwd`/build
              --with-boot-jdk=${BOOTJDK}  \
              --with-freetype-include=${FREETYPEINCLUDE} \
              --with-freetype-lib=${FREETYPELIB} \
-             --enable-debug-symbols ZIP_DEBUGINFO_FILES=0 \ 
+             --enable-debug-symbols ZIP_DEBUGINFO_FILES=0  
              #--with-native-debug-symbols=internal \  无效选项,执行configure时会报错
 
 # Step3. 构建OpenJdk
@@ -54,4 +54,5 @@ export ALT_OUTPUTDIR=${BUILDOUTPUTDIR}
 #这两个环境变量必须去掉，不然会有很诡异的事情发生，Makefile脚本检查到有这2个变量就会提示警告）
 unset JAVA_HOME
 unset CLASSPATH
-make all 2>&1|tee $ALT_OUTPUTDIR/build.log
+# ZIP_DEBUGINFO_FILES=0 参数很重要，即不对debuginfo进行压缩，只有不进行压缩，才可以进行源码调试
+make all ZIP_DEBUGINFO_FILES=0  2>&1|tee $ALT_OUTPUTDIR/build.log
