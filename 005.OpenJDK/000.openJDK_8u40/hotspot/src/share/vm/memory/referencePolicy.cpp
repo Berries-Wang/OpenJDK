@@ -67,7 +67,7 @@ LRUMaxHeapPolicy::LRUMaxHeapPolicy() {
   setup();
 }
 
-// Capture state (of-the-VM) information needed to evaluate the policy
+// Capture state (of-the-VM) information needed to evaluate the policy(默认垃圾收集器启动时会执行这个方法)
 void LRUMaxHeapPolicy::setup() {
   size_t max_heap = MaxHeapSize;
   max_heap -= Universe::get_heap_used_at_last_gc();

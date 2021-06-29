@@ -846,6 +846,7 @@ void PSParallelCompact::post_initialize() {
   assert(heap->kind() == CollectedHeap::ParallelScavengeHeap, "Sanity");
 
   MemRegion mr = heap->reserved_region();
+  // 值得看一下，里面有软应用处理策略
   _ref_processor =
     new ReferenceProcessor(mr,            // span
                            ParallelRefProcEnabled && (ParallelGCThreads > 1), // mt processing
