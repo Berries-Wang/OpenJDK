@@ -15,13 +15,13 @@ BOOTJDK='/home/wei/workspace/Temp/jdk7/jdk1.7.0_80'
 # 构建文件输出目录
 BUILDOUTPUTDIR=`pwd`/build
 
-# Step2. 运行configure
-./configure  --with-debug-level=slowdebug   \
+# Step2. 运行configure,可能会缺依赖，缺什么就装什么
+./configure  --with-debug-level=slowdebug   \  # 指定可以生成最多的调试信息
              --with-boot-jdk=${BOOTJDK}  \
              --with-freetype-include=${FREETYPEINCLUDE} \
              --with-freetype-lib=${FREETYPELIB} \
-             --enable-debug-symbols ZIP_DEBUGINFO_FILES=0  
-             #--with-native-debug-symbols=internal \  无效选项,执行configure时会报错
+             --enable-debug-symbols ZIP_DEBUGINFO_FILES=0 \ # ZIP_DEBUGINFO_FILES：生成调试的符号信息，并且不压缩,这样才可以进行源码调试； 
+             --with-target-bits=64 #指定编译64位系统的JDK；
 
 # Step3. 构建OpenJdk
 #语言选项，这个必须设置，否则编译好后会出现一个HashTable的NPE错
