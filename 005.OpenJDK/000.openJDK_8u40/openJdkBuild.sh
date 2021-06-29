@@ -1,17 +1,33 @@
+# build之前，需要安装freetype,使用如下命令安装
+# sudo apt-get install libpng12-dev zlib1g-dev
+# sudo apt-get install libpng-dev
+# sudo apt-get install libx11-dev libxext-dev libxrender-dev libxtst-dev libxt-dev
+# sudo apt-get install libfreetype6-dev
+
 # Step1. 清除之前构建的
 make clean 
 
+# freetype路径配置
+FREETYPEINCLUDE='/usr/include/freetype2'
+FREETYPELIB='/usr/lib/x86_64-linux-gnu/'
+# BootJDK配置
+BOOTJDK='/home/wei/workspace/Temp/jdk7/jdk1.7.0_80'
+# 构建文件输出目录
+BUILDOUTPUTDIR=`pwd`/build
+
 # Step2. 运行configure
-./configure  --with-debug-level=slowdebug  --with-boot-jdk=/home/wei/workspace/Temp/jdk7/jdk1.7.0_80  --with-freetype-include=/usr/include/freetype2 --with-freetype-lib=/usr/lib/x86_64-linux-gnu/
+./configure  --with-debug-level=slowdebug   \
+             --with-boot-jdk=${BOOTJDK}  \
+             --with-freetype-include=${FREETYPEINCLUDE} \
+             --with-freetype-lib=${FREETYPELIB}
 
 # Step3. 构建OpenJdk
-
 #语言选项，这个必须设置，否则编译好后会出现一个HashTable的NPE错
 export LANG=C
-
+# java文件编码设置
 export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8
 #Bootstrap JDK的安装路径。必须设置
-export ALT_BOOTDIR=/home/wei/workspace/Temp/jdk7/jdk1.7.0_80
+export ALT_BOOTDIR=${BOOTJDK}
 #允许自动下载依赖
 export ALLOW_DOWNLOADS=true
 #并行编译的线程数，设置为和CPU内核数量一致即可
@@ -25,24 +41,15 @@ export SKIP_COMPARE_IMAGES=true
 export USE_PRECOMPILED_HEADER=true
 #要编译的内容
 export BUILD_LANGTOOLS=true
-#export BUILD_JAXP=false
-#export BUILD_JAXWS=false
-#export BUILD_CORBA=false
 export BUILD_HOTSPOT=true
 export BUILD_JDK=true
-#要编译的版本
-#export SKIP_DEBUG_BUILD=false
-#export SKIP_FASTDEBUG_BUILD=true
-#export DEBUG_NAME=debug
 #把它设置为false可以避开javaws和浏览器Java插件之类的部分的build
 BUILD_DEPLOY=false
-#把它设置为false就不会build出安装包。因为安装包里有些奇怪的依赖，
-#但即便不build出它也已经能得到完整的JDK映像，所以还是别build它好了
+#把它设置为false就不会build出安装包。因为安装包里有些奇怪的依赖，但即便不build出它也已经能得到完整的JDK映像，所以还是别build它好了
 BUILD_INSTALL=false
 #编译结果所存放的路径
-export ALT_OUTPUTDIR=/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/000.openJDK_8u40/build
-#这两个环境变量必须去掉，不然会有很诡异的事情发生（我没有具体查过这些"诡异的
-#事情"，Makefile脚本检查到有这2个变量就会提示警告）
+export ALT_OUTPUTDIR=${BUILDOUTPUTDIR}
+#这两个环境变量必须去掉，不然会有很诡异的事情发生，Makefile脚本检查到有这2个变量就会提示警告）
 unset JAVA_HOME
 unset CLASSPATH
 make all 2>&1|tee $ALT_OUTPUTDIR/build.log
