@@ -19,7 +19,9 @@ BUILDOUTPUTDIR=`pwd`/build
 ./configure  --with-debug-level=slowdebug   \
              --with-boot-jdk=${BOOTJDK}  \
              --with-freetype-include=${FREETYPEINCLUDE} \
-             --with-freetype-lib=${FREETYPELIB}
+             --with-freetype-lib=${FREETYPELIB} \
+             --enable-debug-symbols ZIP_DEBUGINFO_FILES=0 \ 
+             #--with-native-debug-symbols=internal \  无效选项,执行configure时会报错
 
 # Step3. 构建OpenJdk
 #语言选项，这个必须设置，否则编译好后会出现一个HashTable的NPE错
