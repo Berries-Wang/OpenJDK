@@ -1,7 +1,7 @@
 # OpenJdk
 
 ## 介绍
-分析JDK源代码，深入理解JVM(以书本为驱动，进行相应的源代码分析，深入理解),因代码中的中文注释，导致编译JDK时报错(error: unmappable character for encoding ascii),目前已初步解决，详见文档： 《OpenJdk编译问题以及解决方案集锦.md》
+&nbsp;&nbsp;分析JDK源代码，深入理解JVM(以书本为驱动，进行相应的源代码分析，深入理解),因代码中的中文注释，导致编译JDK时报错(error: unmappable character for encoding ascii),目前已初步解决，详见文档： 《OpenJdk编译问题以及解决方案集锦.md》.构建&调试见文件《005.OpenJDK/000.openJDK_8u40/OpenJdk代码调试解决方案.md》、《005.OpenJDK/000.openJDK_8u40/OpenJdk代码调试解决方案.md》
 
 ## 打好基本功
 
