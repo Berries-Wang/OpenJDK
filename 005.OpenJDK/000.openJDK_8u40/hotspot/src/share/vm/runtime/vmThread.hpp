@@ -84,12 +84,17 @@ class VMOperationQueue : public CHeapObj<mtInternal> {
 };
 
 
-//
-// A single VMThread (the primordial thread) spawns all other threads
-// and is itself used by other threads to offload heavy vm operations
-// like scavenge, garbage_collect etc.
-//
-
+/**
+ * spawns: n. [动] 卵（spawn的复数）；产卵数目   vt. 产卵（spawn的第三人称单数）
+ * offload:  vt. 卸下；卸货  adj. 卸载的
+ * primordial: adj. 原始的；根本的；原生的
+ * 
+ * A single VMThread (the primordial thread) spawns all other threads 
+ * and is itself used by other threads to offload heavy vm operations like scavenge, garbage_collect etc.
+ * 
+ * 单例的VMThread(原始线程)会生成所有其他线程，并被其他线程用来卸载繁重的虚拟机操作，如scavenge, garbage_collect等。
+ * 
+ */ 
 class VMThread: public NamedThread {
  private:
   static ThreadPriority _current_priority;
