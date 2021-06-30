@@ -37,7 +37,7 @@
 // A "CollectedHeap" is an implementation of a java heap for HotSpot.  This
 // is an abstract class: there may be many different kinds of heaps.  This
 // class defines the functions that a heap must implement, and contains
-// infrastructure common to all heaps.
+// infrastructure(n. 基础设施；公共建设；下部构造) common to all heaps.
 
 class AdaptiveSizePolicy;
 class BarrierSet;
@@ -71,6 +71,10 @@ public:
 };
 
 /**
+ *
+ * Collected:
+ * v. 收集；收藏；聚集；聚积；去领取；募捐；赢得；（使）集中；接；领取（工资等）；推断；（使）马以受衔姿势跑；（非正式）和……互撞（collect 的过去式及过去分词）
+ * adj. （人）镇静的；收成全集的；合订的；（马奔跑时）步态稳健的
  *
  * 继承关系
  * CollectedHeap
@@ -509,7 +513,10 @@ protected:
   // Return the AdaptiveSizePolicy for the heap.
   virtual AdaptiveSizePolicy *size_policy() = 0;
 
-  // Return the CollectorPolicy for the heap
+  /**
+   * Return the CollectorPolicy for the heap
+   * 堆对应的垃圾回收策略
+   */
   virtual CollectorPolicy *collector_policy() const = 0;
 
   void oop_iterate_no_header(OopClosure *cl);
