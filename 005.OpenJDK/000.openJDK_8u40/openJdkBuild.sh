@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # build之前，需要安装freetype,使用如下命令安装
 # sudo apt-get install libpng12-dev zlib1g-dev
 # sudo apt-get install libpng-dev
@@ -15,13 +17,20 @@ BOOTJDK='/home/wei/workspace/Temp/jdk7/jdk1.7.0_80'
 # 构建文件输出目录
 BUILDOUTPUTDIR=`pwd`/build
 
-# Step2. 运行configure,可能会缺依赖，缺什么就装什么
-./configure  --with-debug-level=slowdebug   \  # 指定可以生成最多的调试信息
-             --with-boot-jdk=${BOOTJDK}  \
-             --with-freetype-include=${FREETYPEINCLUDE} \
-             --with-freetype-lib=${FREETYPELIB} \
-             --enable-debug-symbols ZIP_DEBUGINFO_FILES=0 \ # ZIP_DEBUGINFO_FILES：生成调试的符号信息，并且不压缩,这样才可以进行源码调试； 
-             --with-target-bits=64 #指定编译64位系统的JDK；
+# Step2. 运行configure,可能会缺依赖，缺什么就装什么.使用‘\’换行后，注意注释的写法
+./configure  --with-debug-level=slowdebug    `# 指定可以生成最多的调试信息` \
+    --with-boot-jdk=${BOOTJDK}  \
+    --with-freetype-include=${FREETYPEINCLUDE} \
+    --with-freetype-lib=${FREETYPELIB} \
+    --with-target-bits=64   `#指定编译64位系统的JDK；` \
+    --enable-debug-symbols ZIP_DEBUGINFO_FILES=0 `#ZIP_DEBUGINFO_FILES：生成调试的符号信息，并且不压缩,这样才可以进行源码调试；`
+
+# 判断一下configure的执行结果
+if [[ $? -ne 0 ]]; then
+    echo "configure 执行失败，即构建失败"
+    exit
+fi
+
 
 # Step3. 构建OpenJdk
 #语言选项，这个必须设置，否则编译好后会出现一个HashTable的NPE错
@@ -56,3 +65,12 @@ unset JAVA_HOME
 unset CLASSPATH
 # ZIP_DEBUGINFO_FILES=0 参数很重要，即不对debuginfo进行压缩，只有不进行压缩，才可以进行源码调试
 make all ZIP_DEBUGINFO_FILES=0  2>&1|tee $ALT_OUTPUTDIR/build.log
+
+# 判断一下构建结果
+if [[ $? -ne 0 ]]; then
+    echo "构建失败"
+    exit
+else
+    echo "构建成功"
+    exit
+fi
