@@ -196,9 +196,13 @@ JLI_Launch(int argc, char ** argv,              /* main argc, argc */
     char jrepath[MAXPATHLEN];
     char jvmcfg[MAXPATHLEN];
 
+    // 1.8.0-internal-debug-ei_2021_07_01_09_29-b00
     _fVersion = fullversion;
+    // 1.8
     _dVersion = dotversion;
+    // openjdk
     _launcher_name = lname;
+    // java
     _program_name = pname;
     _is_java_args = javaargs;
     _wc_enabled = cpwildcard;

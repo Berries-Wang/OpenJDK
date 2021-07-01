@@ -31,7 +31,6 @@ if [[ $? -ne 0 ]]; then
     exit
 fi
 
-
 # Step3. 构建OpenJdk
 #语言选项，这个必须设置，否则编译好后会出现一个HashTable的NPE错
 export LANG=C

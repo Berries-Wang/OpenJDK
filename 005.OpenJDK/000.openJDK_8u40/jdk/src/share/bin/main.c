@@ -89,8 +89,10 @@ WinMain(HINSTANCE inst, HINSTANCE previnst, LPSTR cmdline, int cmdshow)
     __initenv = _environ;
 
 #else /* JAVAW */
-int
-main(int argc, char **argv)
+/**
+ * Linux下JVM启动函数
+ */ 
+int main(int argc, char **argv)
 {
     int margc;
     char** margv;
