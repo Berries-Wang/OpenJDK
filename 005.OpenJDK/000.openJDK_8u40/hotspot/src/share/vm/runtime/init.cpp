@@ -92,6 +92,11 @@ void vm_init_globals() {
 }
 
 
+/***
+ * call constructors at startup (main Java thread)
+ * 
+ * 即Java主线程的构造函数
+ */ 
 jint init_globals() {
   HandleMark hm;
   management_init();

@@ -424,15 +424,15 @@ class os: AllStatic {
   static void block_on_serialize_page_trap();
 
   // threads
-
+  // 线程类型
   enum ThreadType {
-    vm_thread,
-    cgc_thread,        // Concurrent GC thread
-    pgc_thread,        // Parallel GC thread
-    java_thread,
-    compiler_thread,
-    watcher_thread,
-    os_thread
+    vm_thread,          // VM线程
+    cgc_thread,         // Concurrent GC thread ：并发GC线程
+    pgc_thread,         // Parallel GC thread：并行GC线程
+    java_thread,        // java 线程
+    compiler_thread,    // 编译线程
+    watcher_thread,     // watcher线程
+    os_thread           // OS线程
   };
 
   static bool create_thread(Thread* thread,

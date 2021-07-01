@@ -62,8 +62,9 @@ export ALT_OUTPUTDIR=${BUILDOUTPUTDIR}
 #这两个环境变量必须去掉，不然会有很诡异的事情发生，Makefile脚本检查到有这2个变量就会提示警告）
 unset JAVA_HOME
 unset CLASSPATH
+# 将make all修改为make images,不构建docs，减少构建时间
 # ZIP_DEBUGINFO_FILES=0 参数很重要，即不对debuginfo进行压缩，只有不进行压缩，才可以进行源码调试
-make all ZIP_DEBUGINFO_FILES=0  2>&1|tee $ALT_OUTPUTDIR/build.log
+make images ZIP_DEBUGINFO_FILES=0  2>&1|tee $ALT_OUTPUTDIR/build.log
 
 # 判断一下构建结果
 if [[ $? -ne 0 ]]; then

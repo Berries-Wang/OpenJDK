@@ -3413,7 +3413,10 @@ jint Threads::create_vm(JavaVMInitArgs* args, bool* canTryAgain) {
   // Initialize Java-Level synchronization subsystem
   ObjectMonitor::Initialize() ;
 
-  // Initialize global modules
+  /**
+   * Initialize global modules，Java主线程的构造函数
+   *  包括创建Java堆，堆垃圾回收策略....
+   */ 
   jint status = init_globals();
   if (status != JNI_OK) {
     delete main_thread;
@@ -3434,8 +3437,13 @@ jint Threads::create_vm(JavaVMInitArgs* args, bool* canTryAgain) {
   // real raw monitor. VM is setup enough here for raw monitor enter.
   JvmtiExport::transition_pending_onload_raw_monitors();
 
-  // Create the VMThread
-  { TraceTime timer("Start VMThread", TraceStartupTime);
+  /**
+   * 
+   * Create the VMThread 创建VMThread
+   * 
+   */ 
+  { 
+    TraceTime timer("Start VMThread", TraceStartupTime);
     VMThread::create();
     Thread* vmthread = VMThread::vm_thread();
 
