@@ -653,6 +653,7 @@ jint universe_init() {
   TraceTime timer("Genesis", TraceStartupTime);
   JavaClasses::compute_hard_coded_offsets();
 
+  // 初始化Java堆
   jint status = Universe::initialize_heap();
   if (status != JNI_OK) {
     return status;
@@ -801,6 +802,7 @@ char* Universe::preferred_heap_base(size_t heap_size, size_t alignment, NARROW_O
  */ 
 jint Universe::initialize_heap() {
 
+  // UseParallelGC默认是true
   if (UseParallelGC) {
 #if INCLUDE_ALL_GCS
     Universe::_collectedHeap = new ParallelScavengeHeap();
@@ -818,7 +820,7 @@ jint Universe::initialize_heap() {
     fatal("UseG1GC not supported in java kernel vm.");
 #endif // INCLUDE_ALL_GCS
 
-  } else { // 这里就是分代收集了
+  } else { 
     GenCollectorPolicy *gc_policy;
 
     if (UseSerialGC) {
@@ -843,6 +845,7 @@ jint Universe::initialize_heap() {
 
   ThreadLocalAllocBuffer::set_max_size(Universe::heap()->max_tlab_size());
 
+  // 初始化堆，注意，要看具体的堆实现
   jint status = Universe::heap()->initialize();
   if (status != JNI_OK) {
     return status;

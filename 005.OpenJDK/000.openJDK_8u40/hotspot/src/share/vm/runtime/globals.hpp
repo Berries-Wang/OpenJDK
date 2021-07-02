@@ -496,6 +496,12 @@ class CommandLineFlags {
 // Note that when there is a need to support develop flags to be writeable,
 // it can be done in the same way as product_rw.
 
+/***
+ * 宏展开: 
+ *  宏定义: #define M(x,y,z) (x+1) * (y) * (z)
+ *  源代码: M(1,2,3);  进行宏展开后(gcc -E参数) ->  (1 +1) * (2) * (3);
+ * 
+ */ 
 #define RUNTIME_FLAGS(develop, develop_pd, product, product_pd, diagnostic, experimental, notproduct, manageable, product_rw, lp64_product) \
                                                                             \
   lp64_product(bool, UseCompressedOops, false,                              \
@@ -1398,6 +1404,7 @@ class CommandLineFlags {
   product(bool, UseG1GC, false,                                             \
           "Use the Garbage-First garbage collector")                        \
                                                                             \
+  /*该版本默认的垃圾收集器.UseParallelGC这里定义的是false,但是后续代码会设置为true*/ \
   product(bool, UseParallelGC, false,                                       \
           "Use the Parallel Scavenge garbage collector")                    \
                                                                             \

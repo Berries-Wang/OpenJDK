@@ -22,21 +22,20 @@
  *
  */
 
-#include "precompiled.hpp"
+#include "runtime/init.hpp"
 #include "classfile/symbolTable.hpp"
 #include "code/icBuffer.hpp"
 #include "gc_interface/collectedHeap.hpp"
 #include "interpreter/bytecodes.hpp"
 #include "memory/universe.hpp"
+#include "precompiled.hpp"
 #include "prims/methodHandles.hpp"
 #include "runtime/handles.inline.hpp"
 #include "runtime/icache.hpp"
-#include "runtime/init.hpp"
 #include "runtime/safepoint.hpp"
 #include "runtime/sharedRuntime.hpp"
 #include "services/memTracker.hpp"
 #include "utilities/macros.hpp"
-
 
 // Initialization done by VM thread in vm_init_globals()
 void check_ThreadShadow();
@@ -51,16 +50,17 @@ void bytecodes_init();
 void classLoader_init();
 void codeCache_init();
 void VM_Version_init();
-void os_init_globals();        // depends on VM_Version_init, before universe_init
+void os_init_globals(); // depends on VM_Version_init, before universe_init
 void stubRoutines_init1();
-jint universe_init();          // depends on codeCache_init and stubRoutines_init
-void interpreter_init();       // before any methods loaded
+jint universe_init();    // depends on codeCache_init and stubRoutines_init
+void interpreter_init(); // before any methods loaded
 void invocationCounter_init(); // before any methods loaded
 void marksweep_init();
 void accessFlags_init();
 void templateTable_init();
 void InterfaceSupport_init();
-void universe2_init();  // dependent on codeCache_init and stubRoutines_init, loads primordial classes
+void universe2_init(); // dependent on codeCache_init and stubRoutines_init,
+                       // loads primordial classes
 void referenceProcessor_init();
 void jni_handles_init();
 void vmStructs_init();
@@ -72,8 +72,8 @@ void compilationPolicy_init();
 void compileBroker_init();
 
 // Initialization after compiler initialization
-bool universe_post_init();  // must happen after compiler_init
-void javaClasses_init();  // must happen after vtable initialization
+bool universe_post_init(); // must happen after compiler_init
+void javaClasses_init();   // must happen after vtable initialization
 void stubRoutines_init2(); // note: StubRoutines need 2-phase init
 
 // Do not disable thread-local-storage, as it is important for some
@@ -91,12 +91,11 @@ void vm_init_globals() {
   perfMemory_init();
 }
 
-
 /***
  * call constructors at startup (main Java thread)
- * 
+ *
  * 即Java主线程的构造函数
- */ 
+ */
 jint init_globals() {
   HandleMark hm;
   management_init();
@@ -106,25 +105,21 @@ jint init_globals() {
   VM_Version_init();
   os_init_globals();
   stubRoutines_init1();
-  
-  /**
-   * 
-   *  JVM内存初始化
-   * 
-   */ 
-  jint status = universe_init();  // dependent on codeCache_init and
-                                  // stubRoutines_init1 and metaspace_init.
+
+  // JVM内存初始化
+  jint status = universe_init(); // dependent on codeCache_init and
+                                 // stubRoutines_init1 and metaspace_init.
   if (status != JNI_OK)
     return status;
 
-  interpreter_init();  // before any methods loaded
-  invocationCounter_init();  // before any methods loaded
+  interpreter_init();       // before any methods loaded
+  invocationCounter_init(); // before any methods loaded
   marksweep_init();
   accessFlags_init();
   templateTable_init();
   InterfaceSupport_init();
   SharedRuntime::generate_stubs();
-  universe2_init();  // dependent on codeCache_init and stubRoutines_init1
+  universe2_init(); // dependent on codeCache_init and stubRoutines_init1
   referenceProcessor_init();
   jni_handles_init();
 #if INCLUDE_VM_STRUCTS
@@ -159,7 +154,6 @@ jint init_globals() {
   return JNI_OK;
 }
 
-
 void exit_globals() {
   static bool destructorsCalled = false;
   if (!destructorsCalled) {
@@ -177,15 +171,12 @@ void exit_globals() {
   }
 }
 
-
 static bool _init_completed = false;
 
-bool is_init_completed() {
-  return _init_completed;
-}
-
+bool is_init_completed() { return _init_completed; }
 
 void set_init_completed() {
-  assert(Universe::is_fully_initialized(), "Should have completed initialization");
+  assert(Universe::is_fully_initialized(),
+         "Should have completed initialization");
   _init_completed = true;
 }

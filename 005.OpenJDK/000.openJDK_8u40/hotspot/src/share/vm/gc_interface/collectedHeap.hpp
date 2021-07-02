@@ -334,10 +334,16 @@ protected:
   inline static void post_allocation_install_obj_klass(KlassHandle klass,
                                                        oop obj);
 
-  // Raw memory allocation facilities
-  // The obj and array allocate methods are covers for these methods.
-  // mem_allocate() should never be
-  // called to allocate TLABs, only individual objects.
+  
+  /**
+   * 
+   *   Raw memory allocation facilities
+   *   The obj and array allocate methods are covers for these methods.
+   *   mem_allocate() should never be
+   *   called to allocate TLABs, only individual objects.
+   * 
+   * 原始内存分配设施。obj和数组分配方法涵盖了这些方法。mem_allocate()不应该被调用来分配TLABs，只能分配单个对象。
+   */ 
   virtual HeapWord *mem_allocate(size_t size,
                                  bool *gc_overhead_limit_was_exceeded) = 0;
 

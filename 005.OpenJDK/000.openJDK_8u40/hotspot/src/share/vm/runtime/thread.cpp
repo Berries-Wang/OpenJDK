@@ -3333,6 +3333,7 @@ jint Threads::create_vm(JavaVMInitArgs* args, bool* canTryAgain) {
 
   os::init_before_ergo();
 
+  //  在这里，会有默认垃圾收集器的选择操作(默认垃圾收集器:UseParallelGC)
   jint ergo_result = Arguments::apply_ergo();
   if (ergo_result != JNI_OK) return ergo_result;
 
