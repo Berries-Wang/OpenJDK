@@ -1,7 +1,9 @@
-*/.idea
-*/.iml
-*/*/*.iml
-*/buildDir
-*/build
+**/.idea
+**/.iml
+**/**/*.iml
+**/buildDir
+**/build
 .idea
 .vscode
+**/target
+**/003.SourceCode/Design-Pattern/.project
