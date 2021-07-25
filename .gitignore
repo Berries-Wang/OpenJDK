@@ -7,3 +7,5 @@
 .vscode
 **/target
 **/003.SourceCode/Design-Pattern/.project
+**/.classpath
+**/.settings
