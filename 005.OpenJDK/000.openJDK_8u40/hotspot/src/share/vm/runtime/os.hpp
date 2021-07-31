@@ -429,7 +429,7 @@ class os: AllStatic {
     vm_thread,          // VM线程
     cgc_thread,         // Concurrent GC thread ：并发GC线程
     pgc_thread,         // Parallel GC thread：并行GC线程
-    java_thread,        // java 线程
+    java_thread,        // Java 线程
     compiler_thread,    // 编译线程
     watcher_thread,     // watcher线程
     os_thread           // OS线程
