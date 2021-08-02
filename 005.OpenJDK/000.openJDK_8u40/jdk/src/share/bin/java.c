@@ -362,6 +362,7 @@ JLI_Launch(int argc, char ** argv,              /* main argc, argc */
 int JNICALL
 JavaMain(void * _args)
 {
+    printf("Hell World by Wei.Wang");
     JavaMainArgs *args = (JavaMainArgs *)_args;
     int argc = args->argc;
     char **argv = args->argv;
@@ -1195,6 +1196,9 @@ ParseArguments(int *pargc, char ***pargv,
 /*
  * Initializes the Java Virtual Machine. Also frees options array when
  * finished.
+ * 
+ * 完成的功能:
+ * 1. 完成对vm和env指派接口函数
  */
 static jboolean
 InitializeJVM(JavaVM **pvm, JNIEnv **penv, InvocationFunctions *ifn)

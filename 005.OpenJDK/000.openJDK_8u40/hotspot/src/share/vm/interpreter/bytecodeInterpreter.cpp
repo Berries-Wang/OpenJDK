@@ -2222,7 +2222,7 @@ run:
             }
           }
         }
-        // Slow case allocation
+        // Slow case allocation,开始进行慢速分配
         CALL_VM(InterpreterRuntime::_new(THREAD, METHOD->constants(), index),
                 handle_exception);
         // Must prevent reordering of stores for object initialization
