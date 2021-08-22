@@ -333,9 +333,8 @@ protected:
   // the array. Only fields with generic signature attributes have the generic
   // signature data set in the array. The fields array looks like following:
   //
-  // f1: [access, name index, sig index, initial value index, low_offset,
-  // high_offset] f2: [access, name index, sig index, initial value index,
-  // low_offset, high_offset]
+  // f1: [access, name index, sig index, initial value index, low_offset,high_offset] 
+  // f2: [access, name index, sig index, initial value index,low_offset, high_offset]
   //      ...
   // fn: [access, name index, sig index, initial value index, low_offset,
   // high_offset]

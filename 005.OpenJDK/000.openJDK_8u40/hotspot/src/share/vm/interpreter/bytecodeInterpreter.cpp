@@ -1963,7 +1963,7 @@ run:
             cache = cp->entry_at(index);
           }
 
-#ifdef VM_JVMTI
+#ifdef VM_JVMTI // Java 虚拟机工具接口（Java Virtual Machine Tool Interface，JVMTI）提供了一种编程接口，允许软件开发人员创建软件代理以监视和控制 Java 编程语言应用程序
           if (_jvmti_interp_events) {
             int *count_addr;
             oop obj;
