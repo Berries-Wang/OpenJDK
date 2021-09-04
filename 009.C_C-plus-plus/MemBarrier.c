@@ -26,6 +26,8 @@ void thread1_run(){
     __asm__ __volatile__ ("mfence" : : : "memory");
 
      r = 2;
+
+     printf("Hello World\n");
 }
 
 
