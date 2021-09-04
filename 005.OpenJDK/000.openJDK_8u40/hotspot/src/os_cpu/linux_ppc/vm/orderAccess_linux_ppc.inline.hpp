@@ -35,7 +35,7 @@
 
 // Implementation of class OrderAccess.
 
-//
+// Machine barrier  即内存屏障
 // Machine barrier instructions:
 //
 // - sync            Two-way memory barrier, aka fence.
@@ -62,7 +62,21 @@
 //                          Store|Load
 //
 
+/**
+ * 其中__asm__，表示汇编代码的开始。volatile，之前分析过了，禁止编译器对代码进行优化。.最后的"memory"是编译器屏障的作用
+ * 
+ * Memory barrier 能够让CPU或编译器在内存访问上有序。一个 Memory barrier 之前的内存访问操作必定先于其之后的完成。
+ * 
+ * 
+ * eieio, sync 和isync 是上下文同步指令。“上下文同步”指的是：处理器内核包含着多个独立的执行单元，所以它能够并行的执行多个指令并且是乱序的。上下文同步指令用于需要严格秩序的地方，进行强制严格的指令顺序。
+ * eieio代表“强制按顺序执行IO”。在执行过程中，加载/存储单元等待前一个访问结束之后再开始运行加载/存储指令。eieio的目的就是为了防止执行过程中的随意加载和存储。在执行FIFO数据的读写变化时这可能是可取的。
+ * isync代表“指令同步”。这个指令等待所有的指令完成并放弃预读取指令，导致后续的指令需要从内存中重新读取。isync是上下文同步，它保证所有先前指令都到位并且刷新指令序列（这意味着指令序列中的所有指令需要被重新读取）。
+ * sync代表着内存同步指令。它延迟所有后续指令的执行直到先前指令完成，并且不会再产生异常以及直到先前的内存访问完全执行完毕；sync操作不会广播到总线接口。此外，先前指令发起的所有加载和存储高速缓存/总线活动完成。
+ * 
+ */ 
+// 多线程之间不能乱序
 #define inlasm_sync()     __asm__ __volatile__ ("sync"   : : : "memory");
+// 进程中不能对执行顺序优化
 #define inlasm_lwsync()   __asm__ __volatile__ ("lwsync" : : : "memory");
 #define inlasm_eieio()    __asm__ __volatile__ ("eieio"  : : : "memory");
 #define inlasm_isync()    __asm__ __volatile__ ("isync"  : : : "memory");

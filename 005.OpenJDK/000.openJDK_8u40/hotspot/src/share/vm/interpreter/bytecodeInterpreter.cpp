@@ -2171,12 +2171,14 @@ run:
           Klass* k_entry = (Klass*) entry;
           assert(k_entry->oop_is_instance(), "Should be InstanceKlass");
           InstanceKlass* ik = (InstanceKlass*) k_entry;
+          // 当类已经被解析了，使用快速分配 ，还有一个前置条件: " !constants->tag_at(index).is_unresolved_klass() "
           if ( ik->is_initialized() && ik->can_be_fastpath_allocated() ) {
             // 对象大小
             size_t obj_size = ik->size_helper();
             oop result = NULL;
             // If the TLAB isn't pre-zeroed then we'll have to do it
             bool need_zero = !ZeroTLAB;
+            // 是否使用TLAB来分配对象内存空间
             if (UseTLAB) {
               result = (oop) THREAD->tlab().allocate(obj_size);
             }
@@ -2186,7 +2188,7 @@ run:
 #ifndef CC_INTERP_PROFILE
             if (result == NULL) {
               need_zero = true;
-              // Try allocate in shared eden(尝试在Eden区分配内存)
+              // Try allocate in shared eden(在TLAB中分配失败，则尝试在Eden区分配内存，直到分配成功)
             retry:
               HeapWord* compare_to = *Universe::heap()->top_addr();
               HeapWord* new_top = compare_to + obj_size;
@@ -2199,7 +2201,7 @@ run:
             }
 #endif
             if (result != NULL) {
-              // Initialize object (if nonzero size and need) and then the header
+              // Initialize object (if nonzero size and need) and then the header。 判断是否需要给对象赋零值，如果需要，则进行赋零值操作
               if (need_zero ) {
                 HeapWord* to_zero = (HeapWord*) result + sizeof(oopDesc) / oopSize;
                 obj_size -= sizeof(oopDesc) / oopSize;
@@ -2207,6 +2209,7 @@ run:
                   memset(to_zero, 0, obj_size * HeapWordSize);
                 }
               }
+              // 设置Mark Word ， 需要判断是否启用偏向锁(1.6之后默认开启)
               if (UseBiasedLocking) {
                 result->set_mark(ik->prototype_header());
               } else {
@@ -2214,10 +2217,11 @@ run:
               }
               result->set_klass_gap(0);
               result->set_klass(k_entry);
-              // Must prevent reordering of stores for object initialization
-              // with stores that publish the new object.
+              // Must prevent reordering of stores for object initialization with stores that publish the new object.(内存屏障，见代码注释及 MemBarrier.c)
               OrderAccess::storestore();
+              // 设置栈顶对象引用
               SET_STACK_OBJECT(result, 0);
+              // 更新PC计数器，向下执行
               UPDATE_PC_AND_TOS_AND_CONTINUE(3, 1);
             }
           }
