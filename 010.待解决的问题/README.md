@@ -4,6 +4,7 @@
 + 乐观锁和悲观锁的区别？
 + 如何实现一个乐观锁？
 + AQS是如何唤醒下一个线程的？
+    - 见:[011.JDK细节集锦/000.JDK之锁/000.AQS是如何唤醒下一个线程.md](../011.JDK细节集锦/000.JDK之锁/000.AQS是如何唤醒下一个线程.md)
 + ReentrantLock如何实现公平和非公平锁是如何实现？
 + CountDownLatch和CyclicBarrier的区别？各自适用于什么场景？
 + 适用ThreadLocal时要注意什么？比如说内存泄漏?

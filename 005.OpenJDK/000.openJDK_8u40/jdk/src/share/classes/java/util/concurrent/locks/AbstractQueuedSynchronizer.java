@@ -287,6 +287,10 @@ import sun.misc.Unsafe;
  *
  * @author Doug Lea
  * @since 1.5
+ * 
+ * 
+ * 一个可以被关注的点：
+ * >>>1. head节点代表当前正在持有锁的节点。若当前节点的前置节点是head，那么该节点就开始自旋地获取锁。一旦head节点释放，当前节点就能第一时间获取到。
  */
 public abstract class AbstractQueuedSynchronizer
         extends AbstractOwnableSynchronizer
@@ -715,7 +719,13 @@ public abstract class AbstractQueuedSynchronizer
      * 注：
      * 1. 分析时是从方法release开始的
      *
-     * @param node 执行完成，并释放了锁的线程对应的Node(release方法中调用的)，传进来的是head节点
+     * @param node “执行完成，并释放了锁的线程对应的Node(release方法中调用的)，传进来的是head节点”
+     * 
+     * 注意
+     * >>> 1. 这个node就是方法java.util.concurrent.locks.AbstractQueuedSynchronizer#acquireQueued中的幸运儿，也就是获得了锁，获得了
+     * 操作共享资源的权限，并且被置为了head(即传进来的就是head节点)
+     * >>> 2. 基于第一点，到release方法被调用的时候，node的使命就已经完成了，这时候head只是作为一个占位的虚节点。所以首先需要将他的waitStatus置为0这个默认值，
+     * 才不会影响其他函数的判断
      */
     private void unparkSuccessor(Node node) {
         /*
@@ -729,16 +739,18 @@ public abstract class AbstractQueuedSynchronizer
          */
         // 获取到node的等待状态
         int ws = node.waitStatus;
-        if (ws < 0)
+        if (ws < 0){
             /***
              * 
              *  将node的waitStatus重置为0，是为了不影响其他函数的判断。
              *  如下： t.waitStatus <= 0 
              * 
+             * Node.waitStatus == 0 : 当一个Node被初始化的时候的默认值.为什么?参考release方法
+             * 在cancelAcquire方法中，node的waitStatus被设置为了Node.CANCELLED
              */
-            // Node.waitStatus == 0 : 当一个Node被初始化的时候的默认值.为什么?参考release方法
-            // 在cancelAcquire方法中，node的waitStatus被设置为了Node.CANCELLED
             compareAndSetWaitStatus(node, ws, 0);
+        }
+            
 
         /*
          * Thread to unpark is held in successor, which is normally
@@ -751,10 +763,22 @@ public abstract class AbstractQueuedSynchronizer
         // 当node的后继节点为空或者后继节点的waitStatus > 0.则
         if (s == null || s.waitStatus > 0) {
             s = null;
-            // 从尾节点开始查找，找到最后一个可以被唤醒的节点
-            for (Node t = tail; t != null && t != node; t = t.prev)
-                if (t.waitStatus <= 0)
-                    s = t;
+            /**
+             * 从尾节点开始查找，找到最靠近head节点的且可以被唤醒的节点
+             * 
+             * 为什么从尾节点开始寻找？
+             * 
+             * 和addWaiter方法中，前后两个节点建立连接的顺序有关：
+             * >>> 1. 后节点的pre指向前节点
+             * >>> 2. 前节点的next才会指向后节点
+             * 这两步操作在多线程环境下并不是原子的，也就是说如果唤醒是从前往后搜索，那么可能前节点的next还没有建立好，那么搜索可能会被中断。
+             */
+            for (Node t = tail; t != null && t != node; t = t.prev){
+                if (t.waitStatus <= 0){
+                      s = t;
+                }
+            }
+                
         }
         // 当node的后继节点为一个可以被唤醒的节点，则进行唤醒操作。可以被唤醒指的是：节点不为null且waitStatus  <= 0
         if (s != null) {
@@ -1440,7 +1464,7 @@ public abstract class AbstractQueuedSynchronizer
      * @return the value returned from {@link #tryRelease}
      */
     /**
-     * 释放锁
+     * 在独占模式下释放锁
      *
      * @param arg 临界资源所需释放的数量
      * @return 同tryRelease
@@ -1461,7 +1485,7 @@ public abstract class AbstractQueuedSynchronizer
              * 为什么这样判断？
              * 1. h == null, head还没有初始化。初始化的情况下，head == null，第一个节点入队，head会被初始为一个虚节点。故如果还没来得及入队
              *   就会出现h == null的情况
-             * 2. h ！= null && waitStatus ==0,表明后继结点对应的线程人在运行中，不需要被唤醒。为什么？参考unparkSuccessor方法
+             * 2. h ！= null && waitStatus ==0,表明后继结点对应的线程正在运行中，不需要被唤醒。为什么？参考unparkSuccessor方法
              * 3. h != null && waitStatus < 0 , 表明后继节点可能被阻塞了，需要唤醒。
              *
              * 关于第2、3点 ， 可以再去看一下shouldParkAfterFailedAcquire方法
