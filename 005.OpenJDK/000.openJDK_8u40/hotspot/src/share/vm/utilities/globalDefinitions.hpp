@@ -990,8 +990,8 @@ class RegisterMap;
 
 class Mutex;
 class Monitor;
-class BasicLock;
-class BasicObjectLock;
+class BasicLock; // 005.OpenJDK/000.openJDK_8u40/hotspot/src/share/vm/runtime/basicLock.hpp
+class BasicObjectLock; // 005.OpenJDK/000.openJDK_8u40/hotspot/src/share/vm/runtime/basicLock.hpp
 
 class PeriodicTask;
 

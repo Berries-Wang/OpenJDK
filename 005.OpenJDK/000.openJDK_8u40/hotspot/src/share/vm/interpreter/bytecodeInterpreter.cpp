@@ -1801,87 +1801,100 @@ run:
 
       /* monitorenter and monitorexit for locking/unlocking an object */
 
-      CASE(_monitorenter): {
+      CASE(_monitorenter) : {
         oop lockee = STACK_OBJECT(-1);
         // derefing's lockee ought to provoke implicit null check
         CHECK_NULL(lockee);
         // find a free monitor or one already allocated for this object
         // if we find a matching object then we need a new monitor
         // since this is recursive enter
-        BasicObjectLock* limit = istate->monitor_base();
-        BasicObjectLock* most_recent = (BasicObjectLock*) istate->stack_base();
-        BasicObjectLock* entry = NULL;
-        while (most_recent != limit ) {
-          if (most_recent->obj() == NULL) entry = most_recent;
-          else if (most_recent->obj() == lockee) break;
+        // 通过代码发现,“istate”类型是BytecodeInterpreter，即字节码解释器
+        BasicObjectLock *limit = istate->monitor_base();
+        BasicObjectLock *most_recent = (BasicObjectLock *)istate->stack_base();
+        BasicObjectLock *entry = NULL;
+        while (most_recent != limit) {
+          if (most_recent->obj() == NULL)
+            entry = most_recent;
+          else if (most_recent->obj() == lockee)
+            break;
           most_recent++;
         }
         if (entry != NULL) {
           entry->set_obj(lockee);
           int success = false;
-          uintptr_t epoch_mask_in_place = (uintptr_t)markOopDesc::epoch_mask_in_place;
+          uintptr_t epoch_mask_in_place =
+              (uintptr_t)markOopDesc::epoch_mask_in_place;
 
           markOop mark = lockee->mark();
-          intptr_t hash = (intptr_t) markOopDesc::no_hash;
+          intptr_t hash = (intptr_t)markOopDesc::no_hash;
           // implies UseBiasedLocking
           if (mark->has_bias_pattern()) {
             uintptr_t thread_ident;
             uintptr_t anticipated_bias_locking_value;
             thread_ident = (uintptr_t)istate->thread();
             anticipated_bias_locking_value =
-              (((uintptr_t)lockee->klass()->prototype_header() | thread_ident) ^ (uintptr_t)mark) &
-              ~((uintptr_t) markOopDesc::age_mask_in_place);
+                (((uintptr_t)lockee->klass()->prototype_header() |
+                  thread_ident) ^
+                 (uintptr_t)mark) &
+                ~((uintptr_t)markOopDesc::age_mask_in_place);
 
-            if  (anticipated_bias_locking_value == 0) {
+            if (anticipated_bias_locking_value == 0) {
               // already biased towards this thread, nothing to do
               if (PrintBiasedLockingStatistics) {
-                (* BiasedLocking::biased_lock_entry_count_addr())++;
+                (*BiasedLocking::biased_lock_entry_count_addr())++;
               }
               success = true;
-            }
-            else if ((anticipated_bias_locking_value & markOopDesc::biased_lock_mask_in_place) != 0) {
+            } else if ((anticipated_bias_locking_value &
+                        markOopDesc::biased_lock_mask_in_place) != 0) {
               // try revoke bias
               markOop header = lockee->klass()->prototype_header();
               if (hash != markOopDesc::no_hash) {
                 header = header->copy_set_hash(hash);
               }
-              if (Atomic::cmpxchg_ptr(header, lockee->mark_addr(), mark) == mark) {
+              if (Atomic::cmpxchg_ptr(header, lockee->mark_addr(), mark) ==
+                  mark) {
                 if (PrintBiasedLockingStatistics)
                   (*BiasedLocking::revoked_lock_entry_count_addr())++;
               }
-            }
-            else if ((anticipated_bias_locking_value & epoch_mask_in_place) !=0) {
+            } else if ((anticipated_bias_locking_value & epoch_mask_in_place) !=
+                       0) {
               // try rebias
-              markOop new_header = (markOop) ( (intptr_t) lockee->klass()->prototype_header() | thread_ident);
+              markOop new_header = (markOop)(
+                  (intptr_t)lockee->klass()->prototype_header() | thread_ident);
               if (hash != markOopDesc::no_hash) {
                 new_header = new_header->copy_set_hash(hash);
               }
-              if (Atomic::cmpxchg_ptr((void*)new_header, lockee->mark_addr(), mark) == mark) {
+              if (Atomic::cmpxchg_ptr((void *)new_header, lockee->mark_addr(),
+                                      mark) == mark) {
                 if (PrintBiasedLockingStatistics)
-                  (* BiasedLocking::rebiased_lock_entry_count_addr())++;
-              }
-              else {
-                CALL_VM(InterpreterRuntime::monitorenter(THREAD, entry), handle_exception);
+                  (*BiasedLocking::rebiased_lock_entry_count_addr())++;
+              } else {
+                CALL_VM(InterpreterRuntime::monitorenter(THREAD, entry),
+                        handle_exception);
               }
               success = true;
-            }
-            else {
+            } else {
               // try to bias towards thread in case object is anonymously biased
-              markOop header = (markOop) ((uintptr_t) mark & ((uintptr_t)markOopDesc::biased_lock_mask_in_place |
-                                                              (uintptr_t)markOopDesc::age_mask_in_place |
-                                                              epoch_mask_in_place));
+              markOop header =
+                  (markOop)((uintptr_t)mark &
+                            ((uintptr_t)markOopDesc::biased_lock_mask_in_place |
+                             (uintptr_t)markOopDesc::age_mask_in_place |
+                             epoch_mask_in_place));
               if (hash != markOopDesc::no_hash) {
                 header = header->copy_set_hash(hash);
               }
-              markOop new_header = (markOop) ((uintptr_t) header | thread_ident);
+              markOop new_header = (markOop)((uintptr_t)header | thread_ident);
               // debugging hint
-              DEBUG_ONLY(entry->lock()->set_displaced_header((markOop) (uintptr_t) 0xdeaddead);)
-              if (Atomic::cmpxchg_ptr((void*)new_header, lockee->mark_addr(), header) == header) {
+              DEBUG_ONLY(entry->lock()->set_displaced_header(
+                  (markOop)(uintptr_t)0xdeaddead);)
+              if (Atomic::cmpxchg_ptr((void *)new_header, lockee->mark_addr(),
+                                      header) == header) {
                 if (PrintBiasedLockingStatistics)
-                  (* BiasedLocking::anonymously_biased_lock_entry_count_addr())++;
-              }
-              else {
-                CALL_VM(InterpreterRuntime::monitorenter(THREAD, entry), handle_exception);
+                  (*BiasedLocking::
+                       anonymously_biased_lock_entry_count_addr())++;
+              } else {
+                CALL_VM(InterpreterRuntime::monitorenter(THREAD, entry),
+                        handle_exception);
               }
               success = true;
             }
@@ -1892,12 +1905,15 @@ run:
             markOop displaced = lockee->mark()->set_unlocked();
             entry->lock()->set_displaced_header(displaced);
             bool call_vm = UseHeavyMonitors;
-            if (call_vm || Atomic::cmpxchg_ptr(entry, lockee->mark_addr(), displaced) != displaced) {
+            if (call_vm || Atomic::cmpxchg_ptr(entry, lockee->mark_addr(),
+                                               displaced) != displaced) {
               // Is it simple recursive case?
-              if (!call_vm && THREAD->is_lock_owned((address) displaced->clear_lock_bits())) {
+              if (!call_vm && THREAD->is_lock_owned(
+                                  (address)displaced->clear_lock_bits())) {
                 entry->lock()->set_displaced_header(NULL);
               } else {
-                CALL_VM(InterpreterRuntime::monitorenter(THREAD, entry), handle_exception);
+                CALL_VM(InterpreterRuntime::monitorenter(THREAD, entry),
+                        handle_exception);
               }
             }
           }
