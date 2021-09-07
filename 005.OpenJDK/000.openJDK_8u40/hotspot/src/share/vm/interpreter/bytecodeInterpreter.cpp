@@ -1828,7 +1828,7 @@ run:
           markOop mark = lockee->mark();
           intptr_t hash = (intptr_t)markOopDesc::no_hash;
           // implies UseBiasedLocking
-          if (mark->has_bias_pattern()) {
+          if (mark->has_bias_pattern()) {  // 如果锁对象的mark word的状态是偏向模式
             uintptr_t thread_ident;
             uintptr_t anticipated_bias_locking_value;
             thread_ident = (uintptr_t)istate->thread();
