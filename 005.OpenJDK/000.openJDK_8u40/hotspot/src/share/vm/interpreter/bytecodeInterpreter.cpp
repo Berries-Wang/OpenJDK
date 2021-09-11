@@ -1825,6 +1825,7 @@ run:
           uintptr_t epoch_mask_in_place =
               (uintptr_t)markOopDesc::epoch_mask_in_place;
 
+          // 获取锁对象的对象头
           markOop mark = lockee->mark();
           intptr_t hash = (intptr_t)markOopDesc::no_hash;
           // implies UseBiasedLocking
