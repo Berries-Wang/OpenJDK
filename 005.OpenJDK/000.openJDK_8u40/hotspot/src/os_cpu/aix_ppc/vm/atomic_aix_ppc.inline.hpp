@@ -292,6 +292,11 @@ inline void* Atomic::xchg_ptr(void* exchange_value, volatile void* dest) {
   return (void*)xchg_ptr((intptr_t)exchange_value, (volatile intptr_t*)dest);
 }
 
+/**
+ * 
+ * CAS操作
+ * 
+ */ 
 inline jint Atomic::cmpxchg(jint exchange_value, volatile jint* dest, jint compare_value) {
 
   // Note that cmpxchg guarantees a two-way memory barrier across

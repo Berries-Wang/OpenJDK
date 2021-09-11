@@ -526,14 +526,27 @@ public:
 };
 
 
+/**
+ * @param obj
+ * @param attempt_rebias 是否尝试撤销重偏向
+ * @param TRAPS (#define TRAPS  Thread* THREAD) 
+ * 
+ * 
+ * 注意: 
+ * >>> 1. k->prototype_header 是什么
+ * >>> 2. k->prototype_header 与 对象头的关系
+ */ 
 BiasedLocking::Condition BiasedLocking::revoke_and_rebias(Handle obj, bool attempt_rebias, TRAPS) {
+
   assert(!SafepointSynchronize::is_at_safepoint(), "must not be called while at safepoint");
 
   // We can revoke the biases of anonymously-biased objects
   // efficiently enough that we should not cause these revocations to
   // update the heuristics because doing so may cause unwanted bulk
   // revocations (which are expensive) to occur.
+  // 拿到对象头部
   markOop mark = obj->mark();
+  // 是否是匿名重偏向(不仅仅只有JVM线程使用,还有VMThread、WorkThread.....)
   if (mark->is_biased_anonymously() && !attempt_rebias) {
     // We are probably trying to revoke the bias of this object due to
     // an identity hash code computation. Try to revoke the bias
@@ -547,7 +560,7 @@ BiasedLocking::Condition BiasedLocking::revoke_and_rebias(Handle obj, bool attem
     if (res_mark == biased_value) {
       return BIAS_REVOKED;
     }
-  } else if (mark->has_bias_pattern()) {
+  } else if (mark->has_bias_pattern()) { // 已经有线程持有偏向锁
     Klass* k = obj->klass();
     markOop prototype_header = k->prototype_header();
     if (!prototype_header->has_bias_pattern()) {
@@ -588,6 +601,7 @@ BiasedLocking::Condition BiasedLocking::revoke_and_rebias(Handle obj, bool attem
     }
   }
 
+  // 有/没有 线程持有偏向锁，对于偏向锁的优化
   HeuristicsResult heuristics = update_heuristics(obj(), attempt_rebias);
   if (heuristics == HR_NOT_BIASED) {
     return NOT_BIASED;

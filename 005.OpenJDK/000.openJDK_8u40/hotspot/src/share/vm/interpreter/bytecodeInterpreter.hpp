@@ -120,7 +120,7 @@ public:
 
 private:
     JavaThread*           _thread;        // the vm's java thread pointer
-    address               _bcp;           // instruction pointer
+    address               _bcp;           // instruction pointer  -> 程序计数器
     intptr_t*             _locals;        // local variable pointer
     ConstantPoolCache*    _constants;     // constant pool cache
     Method*               _method;        // method being executed

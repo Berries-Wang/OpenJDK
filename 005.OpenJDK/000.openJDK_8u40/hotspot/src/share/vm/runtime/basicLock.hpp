@@ -20,6 +20,7 @@
  * or visit www.oracle.com if you need additional information or have any
  * questions.
  *
+ * displace: vt. 取代；置换；转移；把…免职；排水
  */
 
 #ifndef SHARE_VM_RUNTIME_BASICLOCK_HPP
@@ -45,8 +46,8 @@ class BasicLock VALUE_OBJ_CLASS_SPEC {
   static int displaced_header_offset_in_bytes()       { return offset_of(BasicLock, _displaced_header); }
 };
 
-// A BasicObjectLock associates a specific Java object with a BasicLock.
-// It is currently embedded in an interpreter frame.
+// A BasicObjectLock associates a specific Java object with a BasicLock. It is currently embedded in an interpreter frame.
+// >>>>释义： BasicObjectLock将特定的Java对象与BasicLock关联起来。它目前被嵌入到解释器框架中。
 
 // Because some machines have alignment restrictions on the control stack,
 // the actual space allocated by the interpreter may include padding words
@@ -57,8 +58,8 @@ class BasicLock VALUE_OBJ_CLASS_SPEC {
 class BasicObjectLock VALUE_OBJ_CLASS_SPEC {
   friend class VMStructs;
  private:
-  BasicLock _lock;                                    // the lock, must be double word aligned
-  oop       _obj;                                     // object holds the lock;
+  BasicLock _lock;     // 真实的锁对象                               // the lock, must be double word aligned  
+  oop       _obj;                                     // object holds the lock; 持有锁的对象   oop 见 ：005.OpenJDK/000.openJDK_8u40/hotspot/src/share/vm/oops/oopsHierarchy.hpp
 
  public:
   // Manipulation

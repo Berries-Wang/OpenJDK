@@ -1802,23 +1802,29 @@ run:
       /* monitorenter and monitorexit for locking/unlocking an object */
 
       CASE(_monitorenter) : {
+        // 获取锁对象
         oop lockee = STACK_OBJECT(-1);
         // derefing's lockee ought to provoke implicit null check
         CHECK_NULL(lockee);
-        // find a free monitor or one already allocated for this object
-        // if we find a matching object then we need a new monitor
-        // since this is recursive enter
-        // 通过代码发现,“istate”类型是BytecodeInterpreter，即字节码解释器
+        /**
+         * find a free monitor or one already allocated for this object if we find a matching object then we need a new monitor since this is recursive(递归的；循环的) enter
+         * >>>释义：找到一个空间的或者早已分配给这个对象的monitor，如果我们找到了一个匹配的对象，那么就需要重新分配一个monitor，因为他已经被重新进入了
+         * 
+         * 通过代码发现,“istate”类型是BytecodeInterpreter，即字节码解释器
+         */ 
+        // 遍历栈中的Lock Record , 找到一个空闲的Lock Record(即可以使用的)
         BasicObjectLock *limit = istate->monitor_base();
         BasicObjectLock *most_recent = (BasicObjectLock *)istate->stack_base();
         BasicObjectLock *entry = NULL;
+        // 从栈底向栈顶遍历
         while (most_recent != limit) {
           if (most_recent->obj() == NULL)
-            entry = most_recent;
-          else if (most_recent->obj() == lockee)
+            entry = most_recent;  // 注意 entry的赋值
+          else if (most_recent->obj() == lockee) // 说明锁重入了，取最近一个为空的Lock Record
             break;
           most_recent++;
         }
+        // entry 不为null,表明存在可以使用的Lock Record
         if (entry != NULL) {
           entry->set_obj(lockee);
           int success = false;
@@ -1852,8 +1858,7 @@ run:
               if (hash != markOopDesc::no_hash) {
                 header = header->copy_set_hash(hash);
               }
-              if (Atomic::cmpxchg_ptr(header, lockee->mark_addr(), mark) ==
-                  mark) {
+              if (Atomic::cmpxchg_ptr(header, lockee->mark_addr(), mark) == mark) {
                 if (PrintBiasedLockingStatistics)
                   (*BiasedLocking::revoked_lock_entry_count_addr())++;
               }
@@ -1901,7 +1906,7 @@ run:
             }
           }
 
-          // traditional lightweight locking
+          // traditional lightweight locking(传统的轻量级锁)
           if (!success) {
             markOop displaced = lockee->mark()->set_unlocked();
             entry->lock()->set_displaced_header(displaced);

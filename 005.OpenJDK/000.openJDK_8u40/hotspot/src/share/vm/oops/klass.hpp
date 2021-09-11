@@ -248,8 +248,13 @@ protected:
   // (the 64-bit chunk goes first, to avoid some
   // fragmentation)(64位块优先，避免碎片)
   jlong _last_biased_lock_bulk_revocation_time;
-  markOop _prototype_header; // Used when biased locking is both enabled and
-                             // disabled for this type
+  /**
+   * Used when biased locking is both enabled and disabled for this type(当对该类型启用或禁用偏置锁定时使用)
+   * 
+   * 表示最干净的对象头部
+   * >>>> 对象是Klass的实例,对象是从Klass中fork出来的，所以该_prototype_header的值就是对象实例最原始最干净的对象头部
+   */ 
+  markOop _prototype_header;  
   jint _biased_lock_revocation_count;
 
   TRACE_DEFINE_KLASS_TRACE_ID;
