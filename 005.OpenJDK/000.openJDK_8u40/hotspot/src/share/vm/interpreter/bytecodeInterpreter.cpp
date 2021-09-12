@@ -1813,20 +1813,20 @@ run:
          * 通过代码发现,“istate”类型是BytecodeInterpreter，即字节码解释器
          */ 
         // 遍历栈中的Lock Record , 找到一个空闲的Lock Record(即可以使用的)
-        BasicObjectLock *limit = istate->monitor_base();
-        BasicObjectLock *most_recent = (BasicObjectLock *)istate->stack_base();
+        BasicObjectLock *limit = istate->monitor_base();  // 线程栈的栈顶
+        BasicObjectLock *most_recent = (BasicObjectLock *)istate->stack_base(); // 线程栈的栈底
         BasicObjectLock *entry = NULL;
         // 从栈底向栈顶遍历
         while (most_recent != limit) {
           if (most_recent->obj() == NULL)
             entry = most_recent;  // 注意 entry的赋值
-          else if (most_recent->obj() == lockee) // 说明锁重入了，取最近一个为空的Lock Record
+          else if (most_recent->obj() == lockee) // “说明锁重入了”(重入的原理)，取最近一个为空的Lock Record
             break;
           most_recent++;
         }
         // entry 不为null,表明存在可以使用的Lock Record
         if (entry != NULL) {
-          entry->set_obj(lockee);
+          entry->set_obj(lockee); // 设置锁被持有的对象
           int success = false;
           uintptr_t epoch_mask_in_place =
               (uintptr_t)markOopDesc::epoch_mask_in_place;
@@ -1835,25 +1835,35 @@ run:
           markOop mark = lockee->mark();
           intptr_t hash = (intptr_t)markOopDesc::no_hash;
           // implies UseBiasedLocking
-          if (mark->has_bias_pattern()) {  // 如果锁对象的mark word的状态是偏向模式
+          if (mark->has_bias_pattern()) {  // 如果锁对象处于偏向模式
             uintptr_t thread_ident;
             uintptr_t anticipated_bias_locking_value;
+            // 获取Java线程指针
             thread_ident = (uintptr_t)istate->thread();
+            /**
+             * 异或运算: 同0异1  
+             *
+             * 1. ((uintptr_t)lockee->klass()->prototype_header() | thread_ident): 将当前线程ID和类的prototype_header相或，得到的值:(当前线程id + prototype_header中的（epoch + 分代年龄 + 偏向锁标志 + 锁标志位)
+             * 2. ^ (uintptr_t)mark 将上面计算得到的结果与锁对象的markOop进行异或，相等的位全部被置为0，只剩下不相等的位
+             * 3. & ~((uintptr_t) markOopDesc::age_mask_in_place) markOopDesc::age_mask_in_place为...0001111000,取反后，变成了...1110000111,除了分代年龄那4位，其他位全为1；将取反后的结果再与上面的结果相与，将上面异或得到的结果中分代年龄给忽略掉。
+             */ 
             anticipated_bias_locking_value =
-                (((uintptr_t)lockee->klass()->prototype_header() |
-                  thread_ident) ^
-                 (uintptr_t)mark) &
-                ~((uintptr_t)markOopDesc::age_mask_in_place);
-
+                (((uintptr_t)lockee->klass()->prototype_header() | thread_ident) ^ (uintptr_t)mark) & ~((uintptr_t)markOopDesc::age_mask_in_place);
+            
+            // 当偏向的线程是当前线程且mark word的epoch等于class的epoch(epoch即偏向时间戳)
             if (anticipated_bias_locking_value == 0) {
-              // already biased towards this thread, nothing to do
+              // already biased towards this thread, nothing to do (偏向锁已经偏向了这个线程，什么都不用做)
               if (PrintBiasedLockingStatistics) {
                 (*BiasedLocking::biased_lock_entry_count_addr())++;
               }
               success = true;
-            } else if ((anticipated_bias_locking_value &
-                        markOopDesc::biased_lock_mask_in_place) != 0) {
-              // try revoke bias
+            } else if ((anticipated_bias_locking_value & markOopDesc::biased_lock_mask_in_place) != 0) { 
+              /**
+               * (anticipated_bias_locking_value & markOopDesc::biased_lock_mask_in_place) != 0
+               *  运行到这里，说明mark word中是偏向的，即101，这里！=0，表示prototype_header不是偏向模式(注意：这里是对后三位掩码做与运算)
+               *  说明了什么? >>> 如果偏向标记设置为不可偏向则需要撤销偏向
+               */ 
+              // try revoke bias(撤销偏向锁)
               markOop header = lockee->klass()->prototype_header();
               if (hash != markOopDesc::no_hash) {
                 header = header->copy_set_hash(hash);
@@ -1862,8 +1872,7 @@ run:
                 if (PrintBiasedLockingStatistics)
                   (*BiasedLocking::revoked_lock_entry_count_addr())++;
               }
-            } else if ((anticipated_bias_locking_value & epoch_mask_in_place) !=
-                       0) {
+            } else if ((anticipated_bias_locking_value & epoch_mask_in_place) != 0) {
               // try rebias
               markOop new_header = (markOop)(
                   (intptr_t)lockee->klass()->prototype_header() | thread_ident);

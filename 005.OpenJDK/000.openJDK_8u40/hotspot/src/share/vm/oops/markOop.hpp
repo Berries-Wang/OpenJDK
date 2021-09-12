@@ -139,10 +139,10 @@ class markOopDesc: public oopDesc {
   enum { lock_mask                = right_n_bits(lock_bits),
          lock_mask_in_place       = lock_mask << lock_shift,
          biased_lock_mask         = right_n_bits(lock_bits + biased_lock_bits),
-         biased_lock_mask_in_place= biased_lock_mask << lock_shift,
+         biased_lock_mask_in_place= biased_lock_mask << lock_shift, // 二进制: 111
          biased_lock_bit_in_place = 1 << biased_lock_shift,
          age_mask                 = right_n_bits(age_bits),
-         age_mask_in_place        = age_mask << age_shift,
+         age_mask_in_place        = age_mask << age_shift, // 二进制: 1111000
          epoch_mask               = right_n_bits(epoch_bits),
          epoch_mask_in_place      = epoch_mask << epoch_shift,
          cms_mask                 = right_n_bits(cms_bits),
@@ -181,12 +181,25 @@ class markOopDesc: public oopDesc {
 
   enum { max_bias_epoch           = epoch_mask };
 
-  // Biased Locking accessors.
-  // These must be checked by all code which calls into the
-  // ObjectSynchronizer and other code. The biasing is not understood
-  // by the lower-level CAS-based locking code, although the runtime
-  // fixes up biased locks to be compatible with it when a bias is
-  // revoked.
+  
+  /**
+   *  Biased Locking accessors.
+   * These must be checked by all code which calls into the
+   * ObjectSynchronizer and other code. The biasing is not understood
+   * by the lower-level CAS-based locking code, although the runtime
+   * fixes up biased locks to be compatible with it when a bias is
+   * revoked.
+   * 
+   */ 
+  /**
+   * 
+   * 判断当前对象是否是偏向锁模式,计算方式:
+   * 将biased_lock_mask_in_place（通过计算，值为7） 和对象头做与操作，如果等于5，则对象处于偏向锁模式
+   * 
+   * 为什么是5：
+   * >>> 见： 005.OpenJDK/000.openJDK_8u40/hotspot/src/share/vm/oops/markOop.hpp ， 对象头的描述，当最后三位是101时，表示对象处于偏向锁。二进制101换算为十进制： 5
+   * 
+   */ 
   bool has_bias_pattern() const {
     return (mask_bits(value(), biased_lock_mask_in_place) == biased_lock_pattern);
   }

@@ -572,6 +572,9 @@ inline bool oopDesc::is_unlocked() const {
   return mark()->is_unlocked();
 }
 
+/**
+ * 判断当前对象是否是处于偏向锁模式
+ */ 
 inline bool oopDesc::has_bias_pattern() const {
   return mark()->has_bias_pattern();
 }

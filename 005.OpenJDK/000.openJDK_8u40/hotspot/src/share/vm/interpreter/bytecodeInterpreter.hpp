@@ -132,7 +132,7 @@ private:
     oop                   _oop_temp;      // mirror for interpreted native, null otherwise
     intptr_t*             _stack_base;    // base of expression stack
     intptr_t*             _stack_limit;   // limit of expression stack
-    BasicObjectLock*      _monitor_base;  // base of monitors on the native stack
+    BasicObjectLock*      _monitor_base;  // base of monitors on the native stack  
 
 
 public:
