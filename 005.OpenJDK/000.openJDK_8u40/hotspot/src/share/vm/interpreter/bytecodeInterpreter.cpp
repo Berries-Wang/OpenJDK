@@ -1861,7 +1861,7 @@ run:
               /**
                * (anticipated_bias_locking_value & markOopDesc::biased_lock_mask_in_place) != 0
                *  运行到这里，说明mark word中是偏向的，即101，这里！=0，表示prototype_header不是偏向模式(注意：这里是对后三位掩码做与运算)
-               *  说明了什么? >>> 如果偏向标记设置为不可偏向则需要撤销偏向
+               *  说明了什么? >>> prototype_header不是偏向模式,说明没有开启偏向锁，因此需要撤销偏向锁
                */ 
               // try revoke bias(撤销偏向锁)
               markOop header = lockee->klass()->prototype_header();
