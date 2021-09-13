@@ -1873,19 +1873,23 @@ run:
                   (*BiasedLocking::revoked_lock_entry_count_addr())++;
               }
             } else if ((anticipated_bias_locking_value & epoch_mask_in_place) != 0) {
-              // try rebias
-              markOop new_header = (markOop)(
-                  (intptr_t)lockee->klass()->prototype_header() | thread_ident);
+              /**
+               * epoch 不相等，说明了mark 中的epoch过期了(发生了批量重偏向),epoch过期了可以看作没有偏向任何线程，可以重偏向。
+               * epoch 什么时候设置值，什么时候更新?
+               * 
+               */ 
+              // try rebias (尝试重偏向)
+              // 构造一个偏向当前线程的对象头,对象年龄呢???
+              markOop new_header = (markOop)((intptr_t)lockee->klass()->prototype_header() | thread_ident);
               if (hash != markOopDesc::no_hash) {
                 new_header = new_header->copy_set_hash(hash);
               }
-              if (Atomic::cmpxchg_ptr((void *)new_header, lockee->mark_addr(),
-                                      mark) == mark) {
-                if (PrintBiasedLockingStatistics)
+              if (Atomic::cmpxchg_ptr((void *)new_header, lockee->mark_addr(),mark) == mark) {
+                if (PrintBiasedLockingStatistics) {
                   (*BiasedLocking::rebiased_lock_entry_count_addr())++;
+                }
               } else {
-                CALL_VM(InterpreterRuntime::monitorenter(THREAD, entry),
-                        handle_exception);
+                CALL_VM(InterpreterRuntime::monitorenter(THREAD, entry),handle_exception);
               }
               success = true;
             } else {
