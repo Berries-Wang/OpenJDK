@@ -1879,21 +1879,27 @@ run:
                * 
                */ 
               // try rebias (尝试重偏向)
-              // 构造一个偏向当前线程的对象头,对象年龄呢???
+              // 构造一个偏向当前线程的对象头,对象年龄呢???,暂时忽略
               markOop new_header = (markOop)((intptr_t)lockee->klass()->prototype_header() | thread_ident);
               if (hash != markOopDesc::no_hash) {
                 new_header = new_header->copy_set_hash(hash);
               }
+              // 使用CAS操作替换对象mark word,从函数cmpxchg_ptr可定位到 atomic_linux_x86.inline.hpp(指令: cmpxchgq)
               if (Atomic::cmpxchg_ptr((void *)new_header, lockee->mark_addr(),mark) == mark) {
                 if (PrintBiasedLockingStatistics) {
                   (*BiasedLocking::rebiased_lock_entry_count_addr())++;
                 }
-              } else {
+              } else {// CAS操作失败，代表有竞争了
                 CALL_VM(InterpreterRuntime::monitorenter(THREAD, entry),handle_exception);
               }
               success = true;
             } else {
-              // try to bias towards thread in case object is anonymously biased
+              /**
+               * try to bias towards thread in case object is anonymously biased
+               * 尝试偏向线程，以防对象是匿名偏向
+               * 
+               * 注意，这里考虑到了对象年龄
+               */ 
               markOop header =
                   (markOop)((uintptr_t)mark &
                             ((uintptr_t)markOopDesc::biased_lock_mask_in_place |
@@ -1923,6 +1929,7 @@ run:
           if (!success) {
             markOop displaced = lockee->mark()->set_unlocked();
             entry->lock()->set_displaced_header(displaced);
+            //  虚拟机参数，表示是否只使用重量级锁，默认为false
             bool call_vm = UseHeavyMonitors;
             if (call_vm || Atomic::cmpxchg_ptr(entry, lockee->mark_addr(),
                                                displaced) != displaced) {
@@ -1938,6 +1945,7 @@ run:
           }
           UPDATE_PC_AND_TOS_AND_CONTINUE(1, -1);
         } else {
+           // lock record不够，重新执行
           istate->set_msg(more_monitors);
           UPDATE_PC_AND_RETURN(0); // Re-execute
         }
