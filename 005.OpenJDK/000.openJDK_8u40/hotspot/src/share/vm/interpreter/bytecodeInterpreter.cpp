@@ -1927,13 +1927,15 @@ run:
 
           // traditional lightweight locking(传统的轻量级锁)
           if (!success) {
+            // 获取锁对象的对象头，并重置锁定位
             markOop displaced = lockee->mark()->set_unlocked();
+            // 将对象头村存储到LockRecord上
             entry->lock()->set_displaced_header(displaced);
             //  虚拟机参数，表示是否只使用重量级锁，默认为false
             bool call_vm = UseHeavyMonitors;
             if (call_vm || Atomic::cmpxchg_ptr(entry, lockee->mark_addr(),
                                                displaced) != displaced) {
-              // Is it simple recursive case?
+              // Is it simple recursive case? 判断是否重入了
               if (!call_vm && THREAD->is_lock_owned(
                                   (address)displaced->clear_lock_bits())) {
                 entry->lock()->set_displaced_header(NULL);
