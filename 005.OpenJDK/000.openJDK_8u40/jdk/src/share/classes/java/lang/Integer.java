@@ -775,6 +775,8 @@ public final class Integer extends Number implements Comparable<Integer> {
      * During VM initialization, java.lang.Integer.IntegerCache.high property
      * may be set and saved in the private system properties in the
      * sun.misc.VM class.
+     * 
+     * 仅在java.lang.Integer#valueOf(int)方法中使用到，仅仅是为了自动拆箱和装箱
      */
 
     private static class IntegerCache {
@@ -821,6 +823,9 @@ public final class Integer extends Number implements Comparable<Integer> {
      *
      * This method will always cache values in the range -128 to 127,
      * inclusive, and may cache other values outside of this range.
+     * 
+     * 该方法将始终缓存范围为-128到127(包括-128到127)的值，并可能缓存该范围之外的其他值。
+     * 通过java.lang.Integer.IntegerCache类的静态代码块发现，缓存的范围取决于JVM的配置: 
      *
      * @param  i an {@code int} value.
      * @return an {@code Integer} instance representing {@code i}.
