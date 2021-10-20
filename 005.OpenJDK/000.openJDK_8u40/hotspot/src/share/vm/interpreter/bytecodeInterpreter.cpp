@@ -1884,7 +1884,7 @@ run:
               if (hash != markOopDesc::no_hash) {
                 new_header = new_header->copy_set_hash(hash);
               }
-              // 使用CAS操作替换对象mark word,从函数cmpxchg_ptr可定位到 atomic_linux_x86.inline.hpp(指令: cmpxchgq)
+              // 使用CAS操作替换对象mark word,从函数cmpxchg_ptr可定位到 atomic_linux_x86.inline.hpp(指令: cmpxchgq):005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/os_cpu/linux_x86/vm/atomic_linux_x86.inline.hpp
               if (Atomic::cmpxchg_ptr((void *)new_header, lockee->mark_addr(),mark) == mark) {
                 if (PrintBiasedLockingStatistics) {
                   (*BiasedLocking::rebiased_lock_entry_count_addr())++;

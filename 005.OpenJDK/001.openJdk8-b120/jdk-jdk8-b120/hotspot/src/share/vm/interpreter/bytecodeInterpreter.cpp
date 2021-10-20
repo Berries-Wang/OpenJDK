@@ -1700,8 +1700,10 @@ run:
         }
         if (entry != NULL) {
           entry->set_obj(lockee);
+          // 去掉锁对象的锁标志位，获取一个新的没有被加锁的markOop
           markOop displaced = lockee->mark()->set_unlocked();
           entry->lock()->set_displaced_header(displaced);
+          // 如果加锁失败,见代码注释: 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/os_cpu/linux_x86/vm/atomic_linux_x86.inline.hpp
           if (Atomic::cmpxchg_ptr(entry, lockee->mark_addr(), displaced) != displaced) {
             // Is it simple recursive case?
             if (THREAD->is_lock_owned((address) displaced->clear_lock_bits())) {
