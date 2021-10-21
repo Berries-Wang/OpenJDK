@@ -163,8 +163,8 @@ inline jlong    Atomic::cmpxchg    (jlong    exchange_value, volatile jlong*    
   bool mp = os::is_MP();
   /**
    * !!!注意，这里使用了两条汇编指令
-   * LOCK_IF_MP 是一个宏定义，判断是否需要给汇编指令。
-   * >>>  cmpxchgq 加lock前缀，通过学习JVM可以了解到，lock是将本处理器的缓存写入主存，并使得其他CPU或者别的内核无效化以及锁住总线(带有lock前缀的指令在执行期间会锁住总线，使得其他处理器暂时无法通过总线访问内存)
+   * LOCK_IF_MP 是一个宏定义，判断是否需要给汇编指令添加 lock前缀。
+   * >>>  cmpxchgq 加lock前缀，通过学习JVM可以了解到，lock是将本处理器的缓存写入主存，并使得其他CPU缓存或者别的内核无效化以及锁住总线(带有lock前缀的指令在执行期间会锁住总线，使得其他处理器暂时无法通过总线访问内存)
    * 故 lock指令可以：1. 保证指令执行的原子性；2.禁止指令重排序
    */ 
   __asm__ __volatile__ (LOCK_IF_MP(%4) "cmpxchgq %1,(%3)"
