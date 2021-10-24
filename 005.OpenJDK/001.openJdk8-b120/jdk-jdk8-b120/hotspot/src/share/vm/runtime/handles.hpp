@@ -31,6 +31,12 @@
 // In order to preserve oops during garbage collection, they should be
 // allocated and passed around via Handles within the VM. A handle is
 // simply an extra indirection allocated in a thread local handle area.
+// 为了在垃圾收集期间保持oops，它们应该在VM内通过句柄分配和传递。句柄只是在线程本地句柄区域中分配的额外的间接。
+// 
+// 注意:[待验证]
+// 1. Handle 主要是为了 JNI 代码引用的 java 对象在 GC 时候被移动，也能被 JNI 代码找到，类似智能指针包装真正的指针，起到一层代理的作用
+// 2. JNI代码在执行 java 方法的时候，会记录 当前这条内存链用到哪里了，当调用java方法结束，需要回到之前记录的地方，
+// 也就是 如果调用的java方法中有创建对象，那么调用完成的时候就需要解除对他们的引用，java 方法执行过程中，因为有 handle 引用他们，所以不会被 GC 回收。
 //
 // A handle is a ValueObj, so it can be passed around as a value, can
 // be used as a parameter w/o using &-passing, and can be returned as a

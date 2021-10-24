@@ -1,0 +1,92 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Main",
+            "request": "launch",
+            "mainClass": "link.bosswang.singleton.Main",
+            "projectName": "Design-Pattern"
+        },
+        {
+            "type": "java",
+            "name": "link.bosswang.builder.Test",
+            "request": "launch",
+            "mainClass": "link.bosswang.builder.Test",
+            "projectName": "Design-Pattern"
+        },
+        {
+            "type": "java",
+            "name": "Launch Test",
+            "request": "launch",
+            "mainClass": "link.bosswang.abstractfactory.Test",
+            "projectName": "Design-Pattern"
+        },
+        {
+            "type": "java",
+            "name": "Launch Test",
+            "request": "launch",
+            "mainClass": "link.bosswang.factorymethod.Test",
+            "projectName": "Design-Pattern"
+        },
+        {
+            "type": "java",
+            "name": "Launch Test",
+            "request": "launch",
+            "mainClass": "link.bosswang.simplefactory.Test",
+            "projectName": "Design-Pattern"
+        },
+        {
+            "type": "java",
+            "name": "Launch App",
+            "request": "launch",
+            "mainClass": "link.bosswang.App",
+            "projectName": "Design-Pattern"
+        },
+        {
+            "name": "java D",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/005.OpenJDK/000.openJDK_8u40/build/linux-x86_64-normal-server-slowdebug/jdk/bin/java",
+            "args": [
+                "D"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/005.OpenJDK/000.openJDK_8u40/build",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+        ,{
+            "name": "java Sync",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/build/linux-x86_64-normal-server-slowdebug/jdk/bin/java",
+            "args": [
+                "D"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/build",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}

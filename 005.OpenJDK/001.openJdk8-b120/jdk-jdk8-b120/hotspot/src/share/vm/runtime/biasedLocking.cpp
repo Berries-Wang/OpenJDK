@@ -143,8 +143,14 @@ static GrowableArray<MonitorInfo*>* get_or_compute_monitor_info(JavaThread* thre
 }
 
 
+/**
+ * 
+ * 撤销偏向锁
+ * 
+ */ 
 static BiasedLocking::Condition revoke_bias(oop obj, bool allow_rebias, bool is_bulk, JavaThread* requesting_thread) {
   markOop mark = obj->mark();
+  // 如果没有被偏向
   if (!mark->has_bias_pattern()) {
     if (TraceBiasedLocking) {
       ResourceMark rm;
@@ -154,8 +160,11 @@ static BiasedLocking::Condition revoke_bias(oop obj, bool allow_rebias, bool is_
     return BiasedLocking::NOT_BIASED;
   }
 
+ // 获取对象分代年龄 
   uint age = mark->age();
+  // 构造一个被偏向的oop，设置对象分代年龄。 但是没有偏向任何线程
   markOop   biased_prototype = markOopDesc::biased_locking_prototype()->set_age(age);
+  // 构造一个没有被偏向的oop，设置对象分代年龄
   markOop unbiased_prototype = markOopDesc::prototype()->set_age(age);
 
   if (TraceBiasedLocking && (Verbose || !is_bulk)) {
@@ -164,7 +173,9 @@ static BiasedLocking::Condition revoke_bias(oop obj, bool allow_rebias, bool is_
                   (void *)obj, (intptr_t) mark, obj->klass()->external_name(), (intptr_t) obj->klass()->prototype_header(), (allow_rebias ? 1 : 0), (intptr_t) requesting_thread);
   }
 
+  // 获取当前偏向锁所偏向的线程 
   JavaThread* biased_thread = mark->biased_locker();
+  // 当被偏向的线程为null,即可能是hashCode方法被调用
   if (biased_thread == NULL) {
     // Object is anonymously biased. We can get here if, for
     // example, we revoke the bias due to an identity hash code
@@ -178,7 +189,7 @@ static BiasedLocking::Condition revoke_bias(oop obj, bool allow_rebias, bool is_
     return BiasedLocking::BIAS_REVOKED;
   }
 
-  // Handle case where the thread toward which the object was biased has exited
+  // Handle case where the thread toward which the object was biased has exited (判断被偏向的线程是否还活着)
   bool thread_is_alive = false;
   if (requesting_thread == biased_thread) {
     thread_is_alive = true;
@@ -190,11 +201,12 @@ static BiasedLocking::Condition revoke_bias(oop obj, bool allow_rebias, bool is_
       }
     }
   }
+  // 当被偏向的线程已经退出
   if (!thread_is_alive) {
-    if (allow_rebias) {
+    if (allow_rebias) {// 允许重偏向
       obj->set_mark(biased_prototype);
     } else {
-      obj->set_mark(unbiased_prototype);
+      obj->set_mark(unbiased_prototype); // 不允许重偏向，注意： 这里将偏向线程去掉了
     }
     if (TraceBiasedLocking && (Verbose || !is_bulk)) {
       tty->print_cr("  Revoked bias of object biased toward dead thread");
@@ -202,22 +214,24 @@ static BiasedLocking::Condition revoke_bias(oop obj, bool allow_rebias, bool is_
     return BiasedLocking::BIAS_REVOKED;
   }
 
-  // Thread owning bias is alive.
+  // Thread owning bias is alive. // 到这里，被偏向的线程还是存活状态的.
   // Check to see whether it currently owns the lock and, if so,
   // write down the needed displaced headers to the thread's stack.
   // Otherwise, restore the object's header either to the unlocked
   // or unbiased state.
+  // 如果偏向线程还活着，会走到这里，遍历"偏向线程栈"中的所有 lock record（MonitorInfo 存储的信息与 lock record 差别不大）
   GrowableArray<MonitorInfo*>* cached_monitor_info = get_or_compute_monitor_info(biased_thread);
   BasicLock* highest_lock = NULL;
   for (int i = 0; i < cached_monitor_info->length(); i++) {
     MonitorInfo* mon_info = cached_monitor_info->at(i);
+    //  如果还有 lock record 指向锁对象，表明偏向线程还没有退出 synchronized 代码块，因为 monitorexit 时会把这里的指针断开
     if (mon_info->owner() == obj) {
       if (TraceBiasedLocking && Verbose) {
         tty->print_cr("   mon_info->owner (" PTR_FORMAT ") == obj (" PTR_FORMAT ")",
                       (void *) mon_info->owner(),
                       (void *) obj);
       }
-      // Assume recursive case and fix up highest lock later
+      // Assume(假设) recursive case and fix up highest lock later。 同一个锁，但是存在多个monitorInfo,可能是重入了.这里是解决锁重入的问题.但此时的锁是更重的锁
       markOop mark = markOopDesc::encode((BasicLock*) NULL);
       highest_lock = mon_info->lock();
       highest_lock->set_displaced_header(mark);
@@ -229,23 +243,27 @@ static BiasedLocking::Condition revoke_bias(oop obj, bool allow_rebias, bool is_
       }
     }
   }
+
+  // 撤销偏向锁. 升级为轻量级锁?待验证
   if (highest_lock != NULL) {
     // Fix up highest lock to contain displaced header and point
     // object at it
+    // 修改对象头为无偏向锁状态
     highest_lock->set_displaced_header(unbiased_prototype);
     // Reset object header to point to displaced mark
+    //设置对象头指向highest_lock
     obj->set_mark(markOopDesc::encode(highest_lock));
     assert(!obj->mark()->has_bias_pattern(), "illegal mark state: stack lock used bias bit");
     if (TraceBiasedLocking && (Verbose || !is_bulk)) {
       tty->print_cr("  Revoked bias of currently-locked object");
     }
-  } else {
+  } else { //  执行到此处，说明偏向线程不在同步代码块中
     if (TraceBiasedLocking && (Verbose || !is_bulk)) {
       tty->print_cr("  Revoked bias of currently-unlocked object");
     }
-    if (allow_rebias) {
+    if (allow_rebias) { // 允许重偏向，设置为匿名偏向状态
       obj->set_mark(biased_prototype);
-    } else {
+    } else { // 不允许重偏向，设置为无锁状态
       // Store the unlocked value into the object's header.
       obj->set_mark(unbiased_prototype);
     }
@@ -263,6 +281,13 @@ enum HeuristicsResult {
 };
 
 
+/**
+ * 
+ * @param o  对象头
+ * @param allow_rebias  是否允许重偏向
+ * 
+ * 
+ */ 
 static HeuristicsResult update_heuristics(oop o, bool allow_rebias) {
   markOop mark = o->mark();
   if (!mark->has_bias_pattern()) {
@@ -270,6 +295,7 @@ static HeuristicsResult update_heuristics(oop o, bool allow_rebias) {
   }
 
   // Heuristics to attempt to throttle the number of revocations.
+  // >>>尝试限制撤销数量的试探法。
   // Stages:
   // 1. Revoke the biases of all objects in the heap of this type,
   //    but allow rebiasing of those objects if unlocked.
@@ -304,14 +330,17 @@ static HeuristicsResult update_heuristics(oop o, bool allow_rebias) {
     revocation_count = k->atomic_incr_biased_lock_revocation_count();
   }
 
+  // 当达到阈值，进行批量 撤销
   if (revocation_count == BiasedLockingBulkRevokeThreshold) {
     return HR_BULK_REVOKE;
   }
 
+  // 当达到阈值，进行批量 重偏向
   if (revocation_count == BiasedLockingBulkRebiasThreshold) {
     return HR_BULK_REBIAS;
   }
 
+  // 单个撤销
   return HR_SINGLE_REVOKE;
 }
 
@@ -524,33 +553,53 @@ public:
 };
 
 
+/**
+ * 撤销并且重偏向?
+ * 
+ */ 
 BiasedLocking::Condition BiasedLocking::revoke_and_rebias(Handle obj, bool attempt_rebias, TRAPS) {
+  // 不能在安全点调用
   assert(!SafepointSynchronize::is_at_safepoint(), "must not be called while at safepoint");
 
-  // We can revoke the biases of anonymously-biased objects
-  // efficiently enough that we should not cause these revocations to
+  // We can revoke(撤销) the biases of anonymously-biased objects
+  // efficiently（adv. 高效地） enough  that we should not cause these revocations（撤回） to
   // update the heuristics because doing so may cause unwanted bulk
   // revocations (which are expensive) to occur.
+  // bulk revocations： 批量撤销
+  // 获取锁对象头
   markOop mark = obj->mark();
+  // 如果是匿名偏向锁(处于偏向模式，但是锁持有者为null，看is_biased_anonymously注释)，并且不尝试偏向
   if (mark->is_biased_anonymously() && !attempt_rebias) {
+    /**
+     * 此分支是进行对象的 hashCode 计算时会进入的， 根据 markWord 结构可以看到， 
+     * 当一个对象处于可偏向状态时， markWord 中 hashCode 的存储空间是被占用的
+     * 所以需要 revoke 可偏向状态， 以提供存储 hashCode 的空间
+     */ 
     // We are probably trying to revoke the bias of this object due to
-    // an identity hash code computation. Try to revoke the bias
+    // an identity hash code computation(计算). Try to revoke the bias
     // without a safepoint. This is possible if we can successfully
     // compare-and-exchange an unbiased header into the mark word of
     // the object, meaning that no other thread has raced to acquire
     // the bias of the object.
     markOop biased_value       = mark;
+    // 构造一个新的markOop并且将对象分代年龄继承过来了
     markOop unbiased_prototype = markOopDesc::prototype()->set_age(mark->age());
+    // 使用CAS操作，更新对象头
     markOop res_mark = (markOop) Atomic::cmpxchg_ptr(unbiased_prototype, obj->mark_addr(), mark);
     if (res_mark == biased_value) {
       return BIAS_REVOKED;
     }
-  } else if (mark->has_bias_pattern()) {
+  } else if (mark->has_bias_pattern()) { // 如果该对象处于偏向模式,到此，该对象偏向锁确实已经被某个线程持有
     Klass* k = obj->klass();
     markOop prototype_header = k->prototype_header();
-    if (!prototype_header->has_bias_pattern()) {
+    /**
+     * prototype_header->has_bias_pattern() : 对应的class是否开启偏向模式
+     * 
+     * 
+     */ 
+    if (!prototype_header->has_bias_pattern()) { // class没有开启偏向模式?
       // This object has a stale bias from before the bulk revocation
-      // for this data type occurred. It's pointless to update the
+      // for this data type occurred. It's pointless(无意义的) to update the
       // heuristics at this point so simply update the header with a
       // CAS. If we fail this race, the object's bias has been revoked
       // by another thread so we simply return and let the caller deal
@@ -559,13 +608,13 @@ BiasedLocking::Condition BiasedLocking::revoke_and_rebias(Handle obj, bool attem
       markOop res_mark = (markOop) Atomic::cmpxchg_ptr(prototype_header, obj->mark_addr(), mark);
       assert(!(*(obj->mark_addr()))->has_bias_pattern(), "even if we raced, should still be revoked");
       return BIAS_REVOKED;
-    } else if (prototype_header->bias_epoch() != mark->bias_epoch()) {
-      // The epoch of this biasing has expired indicating that the
-      // object is effectively unbiased. Depending on whether we need
+    } else if (prototype_header->bias_epoch() != mark->bias_epoch()) { // 偏向锁超时?
+      // The epoch of this biasing has expired(过期) indicating that the
+      // object is effectively(高效的) unbiased. Depending on whether we need
       // to rebias or revoke the bias of this object we can do it
       // efficiently enough with a CAS that we shouldn't update the
       // heuristics. This is normally done in the assembly code but we
-      // can reach this point due to various points in the runtime
+      // can reach this point due to various(adj. 各种各样的；多方面的) points in the runtime
       // needing to revoke biases.
       if (attempt_rebias) {
         assert(THREAD->is_Java_thread(), "");
@@ -586,12 +635,17 @@ BiasedLocking::Condition BiasedLocking::revoke_and_rebias(Handle obj, bool attem
     }
   }
 
+  // JVM参数判断，阈值判断
   HeuristicsResult heuristics = update_heuristics(obj(), attempt_rebias);
   if (heuristics == HR_NOT_BIASED) {
     return NOT_BIASED;
   } else if (heuristics == HR_SINGLE_REVOKE) {
     Klass *k = obj->klass();
     markOop prototype_header = k->prototype_header();
+    /**
+     *  走到这里说明需要撤销的是偏向当前线程的锁，当调用Object#hashcode方法时会走到这一步
+     *  因为只要遍历当前线程的栈就好了，所以不需要等到safepoint再撤销。
+     */ 
     if (mark->biased_locker() == THREAD &&
         prototype_header->bias_epoch() == mark->bias_epoch()) {
       // A thread is trying to revoke the bias of an object biased
@@ -602,7 +656,7 @@ BiasedLocking::Condition BiasedLocking::revoke_and_rebias(Handle obj, bool attem
       // reach no safepoints in the revocation path.
       // Also check the epoch because even if threads match, another thread
       // can come in with a CAS to steal the bias of an object that has a
-      // stale epoch.
+      // stale(不新鲜的) epoch.
       ResourceMark rm;
       if (TraceBiasedLocking) {
         tty->print_cr("Revoking bias by walking my own stack:");
@@ -611,8 +665,9 @@ BiasedLocking::Condition BiasedLocking::revoke_and_rebias(Handle obj, bool attem
       ((JavaThread*) THREAD)->set_cached_monitor_info(NULL);
       assert(cond == BIAS_REVOKED, "why not?");
       return cond;
-    } else {
+    } else { // 提交到VM Thread，由该线程执行
       VM_RevokeBias revoke(&obj, (JavaThread*) THREAD);
+      // 进行单个撤销
       VMThread::execute(&revoke);
       return revoke.status_code();
     }
@@ -620,9 +675,11 @@ BiasedLocking::Condition BiasedLocking::revoke_and_rebias(Handle obj, bool attem
 
   assert((heuristics == HR_BULK_REVOKE) ||
          (heuristics == HR_BULK_REBIAS), "?");
+
   VM_BulkRevokeBias bulk_revoke(&obj, (JavaThread*) THREAD,
                                 (heuristics == HR_BULK_REBIAS),
                                 attempt_rebias);
+  // 批量撤销
   VMThread::execute(&bulk_revoke);
   return bulk_revoke.status_code();
 }

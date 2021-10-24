@@ -157,26 +157,34 @@ static volatile int MonitorPopulation = 0 ;      // # Extant -- in circulation
 #define CHAINMARKER (cast_to_oop<intptr_t>(-1))
 
 // -----------------------------------------------------------------------------
-//  Fast Monitor Enter/Exit
-// This the fast monitor enter. The interpreter and compiler use
-// some assembly copies of this code. Make sure update those code
-// if the following function is changed. The implementation is
-// extremely sensitive to race condition. Be careful.
-
+/**
+ * 
+ *  Fast Monitor Enter/Exit
+ * This the fast monitor enter. The interpreter and compiler use
+ * some assembly copies of this code. Make sure update those code
+ * if the following function is changed. The implementation is
+ * extremely(极其) sensitive(敏感的) to race condition. Be careful.
+ * 
+ * 这是快速监视器的输入。解释器和编译器使用此代码的一些程序集副本。如果以下功能发生更改，请确保更新这些代码。该实现对竞争条件极为敏感。小心。
+ * 
+ * @param attempt_rebias 是否尝试重偏向,true
+ */ 
 void ObjectSynchronizer::fast_enter(Handle obj, BasicLock* lock, bool attempt_rebias, TRAPS) {
- if (UseBiasedLocking) {
-    if (!SafepointSynchronize::is_at_safepoint()) {
+  
+ if (UseBiasedLocking) { // 启用偏向锁
+    if (!SafepointSynchronize::is_at_safepoint()) {  // 不在安全点上
       BiasedLocking::Condition cond = BiasedLocking::revoke_and_rebias(obj, attempt_rebias, THREAD);
       if (cond == BiasedLocking::BIAS_REVOKED_AND_REBIASED) {
         return;
       }
-    } else {
+    } else { // 在安全点上
       assert(!attempt_rebias, "can not rebias toward VM thread");
       BiasedLocking::revoke_at_safepoint(obj);
     }
     assert(!obj->mark()->has_bias_pattern(), "biases should be revoked by now");
  }
 
+ // 没有启用偏向锁
  slow_enter (obj, lock, THREAD) ;
 }
 

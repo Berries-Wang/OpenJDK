@@ -96,6 +96,7 @@
 //                                               not valid at any other time
 //
 //    We assume that stack/thread pointers have the lowest two bits cleared.
+//  保存偏向时间戳 保存偏向锁的时间戳
 
 class BasicLock;
 class ObjectMonitor;
@@ -185,8 +186,13 @@ class markOopDesc: public oopDesc {
     assert(has_bias_pattern(), "should not call this otherwise");
     return (JavaThread*) ((intptr_t) (mask_bits(value(), ~(biased_lock_mask_in_place | age_mask_in_place | epoch_mask_in_place))));
   }
-  // Indicates that the mark has the bias bit set but that it has not
-  // yet been biased toward a particular thread
+  
+  /**
+   * 
+   *  Indicates that the mark has the bias bit set but that it has not yet been biased toward a particular thread
+   * 
+   *  是否匿名偏向? 即 该对象被偏向锁锁定，但是锁定的线程为null
+   */ 
   bool is_biased_anonymously() const {
     return (has_bias_pattern() && (biased_locker() == NULL));
   }

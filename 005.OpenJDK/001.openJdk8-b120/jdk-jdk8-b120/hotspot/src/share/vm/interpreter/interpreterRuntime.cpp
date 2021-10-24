@@ -554,22 +554,41 @@ IRT_END
 // Synchronization
 //
 // The interpreter's synchronization code is factored out so that it can
-// be shared by method invocation and synchronized blocks.
+// be shared by method invocation and synchronized blocks. (解释器的同步代码被分解出来，以便它可以被方法调用和同步块共享。)
 //%note synchronization_3
 
+
+/**
+ * @param thread 当前执行线程
+ * @param elem  lock Record 即锁记录
+ * 
+ */ 
 //%note monitor_1
 IRT_ENTRY_NO_ASYNC(void, InterpreterRuntime::monitorenter(JavaThread* thread, BasicObjectLock* elem))
 #ifdef ASSERT
   thread->last_frame().interpreter_frame_verify_monitor(elem);
 #endif
+  // 是否需要打印偏向锁信息
   if (PrintBiasedLockingStatistics) {
     Atomic::inc(BiasedLocking::slow_path_entry_count_addr());
   }
+  /**
+   * 
+   * elem->obj()，返回的类型是: oop
+   * 
+   * 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/runtime/basicLock.hpp
+   * Handle: 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/runtime/handles.hpp
+   */ 
   Handle h_obj(thread, elem->obj());
   assert(Universe::heap()->is_in_reserved_or_null(h_obj()),
          "must be NULL or an object");
-  if (UseBiasedLocking) {
-    // Retry fast entry if bias is revoked to avoid unnecessary inflation
+  if (UseBiasedLocking) {// 如果使用偏向锁
+    /**
+     * Retry fast entry if bias is revoked to avoid unnecessary inflation
+     * 
+     * inflation:  通货膨胀，通胀率；充气，膨胀，增大
+     * revoked: 撤销
+     */ 
     ObjectSynchronizer::fast_enter(h_obj, elem->lock(), true, CHECK);
   } else {
     ObjectSynchronizer::slow_enter(h_obj, elem->lock(), CHECK);
