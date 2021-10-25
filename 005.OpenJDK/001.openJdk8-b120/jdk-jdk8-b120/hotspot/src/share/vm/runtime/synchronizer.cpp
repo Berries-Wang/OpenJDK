@@ -171,7 +171,7 @@ static volatile int MonitorPopulation = 0 ;      // # Extant -- in circulation
  */ 
 void ObjectSynchronizer::fast_enter(Handle obj, BasicLock* lock, bool attempt_rebias, TRAPS) {
   
- if (UseBiasedLocking) { // 启用偏向锁
+ if (UseBiasedLocking) { // 启用偏向锁,在安全点和不在安全点有什么区别?
     if (!SafepointSynchronize::is_at_safepoint()) {  // 不在安全点上
       BiasedLocking::Condition cond = BiasedLocking::revoke_and_rebias(obj, attempt_rebias, THREAD);
       if (cond == BiasedLocking::BIAS_REVOKED_AND_REBIASED) {

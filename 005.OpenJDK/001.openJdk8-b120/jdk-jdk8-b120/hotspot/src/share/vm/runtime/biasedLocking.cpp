@@ -286,6 +286,8 @@ enum HeuristicsResult {
  * @param o  对象头
  * @param allow_rebias  是否允许重偏向
  * 
+ * 主体逻辑:
+ * >> 在「规定的时间」内，如果偏向锁撤销的次数达到20次，就会执行批量重偏向，如果撤销次数达到了40次，就会触发批量撤销。批量重偏向和批量撤销都可以理解为虚拟机的一种优化机制
  * 
  */ 
 static HeuristicsResult update_heuristics(oop o, bool allow_rebias) {
@@ -306,6 +308,14 @@ static HeuristicsResult update_heuristics(oop o, bool allow_rebias) {
   jlong cur_time = os::javaTimeMillis();
   jlong last_bulk_revocation_time = k->last_biased_lock_bulk_revocation_time();
   int revocation_count = k->biased_lock_revocation_count();
+  /**
+   * 以下常量均定义于: 005.OpenJDK/000.openJDK_8u40/hotspot/src/share/vm/runtime/globals.hpp
+   * BiasedLockingBulkRebiasThreshold:默认值20
+   * 
+   * BiasedLockingBulkRevokeThreshold:默认值40
+   * 、
+   * BiasedLockingDecayTime：默认值25000
+   */ 
   if ((revocation_count >= BiasedLockingBulkRebiasThreshold) &&
       (revocation_count <  BiasedLockingBulkRevokeThreshold) &&
       (last_bulk_revocation_time != 0) &&
@@ -321,6 +331,7 @@ static HeuristicsResult update_heuristics(oop o, bool allow_rebias) {
     // rebias operation later, we will, and if subsequently we see
     // many more revocation operations in a short period of time we
     // will completely disable biasing for this type.
+    // 重置撤销次数，注意： Class级别的
     k->set_biased_lock_revocation_count(0);
     revocation_count = 0;
   }
@@ -554,7 +565,7 @@ public:
 
 
 /**
- * 撤销并且重偏向?
+ * 撤销并且重偏向
  * 
  */ 
 BiasedLocking::Condition BiasedLocking::revoke_and_rebias(Handle obj, bool attempt_rebias, TRAPS) {
