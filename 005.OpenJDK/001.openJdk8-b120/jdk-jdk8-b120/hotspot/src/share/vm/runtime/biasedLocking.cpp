@@ -288,6 +288,14 @@ enum HeuristicsResult {
  * 
  * 主体逻辑:
  * >> 在「规定的时间」内，如果偏向锁撤销的次数达到20次，就会执行批量重偏向，如果撤销次数达到了40次，就会触发批量撤销。批量重偏向和批量撤销都可以理解为虚拟机的一种优化机制
+ * >>> 20次是指 类型为K的所有锁对象的插销次数之和
+ * 
+ * >>>介绍：
+ * >>>>> 批量重定向
+ * 当一个线程创建了同一个类的大量对象并执行了初始化同步操作之后，另一个线程也要将这些对象加锁，这样就会导致大量的偏向锁撤销操作。批量重偏向就是为了解决这种情况
+ * 
+ * >>>>> 批量撤销
+ * 在明显多线程竞争激烈的场景下，使用偏向锁已经不合适了。如果某个类存在多线程竞争的使用场景，那么就要通过批量撤销，禁用该类的所有对象的偏向锁。例如生产者/消费者队列。
  * 
  */ 
 static HeuristicsResult update_heuristics(oop o, bool allow_rebias) {
@@ -331,7 +339,7 @@ static HeuristicsResult update_heuristics(oop o, bool allow_rebias) {
     // rebias operation later, we will, and if subsequently we see
     // many more revocation operations in a short period of time we
     // will completely disable biasing for this type.
-    // 重置撤销次数，注意： Class级别的
+    // 在规定的时间内，如果撤销的次数没有超过阈值，则重置撤销次数，注意： Class级别的
     k->set_biased_lock_revocation_count(0);
     revocation_count = 0;
   }
