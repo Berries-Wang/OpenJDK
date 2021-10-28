@@ -230,25 +230,33 @@ void ObjectSynchronizer::fast_exit(oop object, BasicLock* lock, TRAPS) {
 // We don't need to use fast path here, because it must have been
 // failed in the interpreter/compiler code.
 void ObjectSynchronizer::slow_enter(Handle obj, BasicLock* lock, TRAPS) {
+  // 获取锁对象头
   markOop mark = obj->mark();
+  // slow_enter下，该锁对象不能是处于偏向模式
   assert(!mark->has_bias_pattern(), "should not see bias pattern here");
 
+  // 如果该对象没有被锁定
   if (mark->is_neutral()) {
     // Anticipate successful CAS -- the ST of the displaced mark must
     // be visible <= the ST performed by the CAS.
     lock->set_displaced_header(mark);
+    // CAS操作成功
     if (mark == (markOop) Atomic::cmpxchg_ptr(lock, obj()->mark_addr(), mark)) {
       TEVENT (slow_enter: release stacklock) ;
       return ;
     }
     // Fall through to inflate() ...
-  } else
-  if (mark->has_locker() && THREAD->is_lock_owned((address)mark->locker())) {
-    assert(lock != mark->locker(), "must not re-lock the same lock");
-    assert(lock != (BasicLock*)obj->mark(), "don't relock with same BasicLock");
-    lock->set_displaced_header(NULL);
-    return;
+  } else{
+    // 如果该对象被锁定了并且锁定的线程是当前执行线程
+    if (mark->has_locker() && THREAD->is_lock_owned((address)mark->locker())) {
+      assert(lock != mark->locker(), "must not re-lock the same lock");
+      assert(lock != (BasicLock*)obj->mark(), "don't relock with same BasicLock");
+      // 
+      lock->set_displaced_header(NULL);
+      return;
+    }
   }
+  
 
 #if 0
   // The following optimization isn't particularly useful.
@@ -258,11 +266,13 @@ void ObjectSynchronizer::slow_enter(Handle obj, BasicLock* lock, TRAPS) {
   }
 #endif
 
-  // The object header will never be displaced to this lock,
-  // so it does not matter what the value is, except that it
-  // must be non-zero to avoid looking like a re-entrant lock,
+  // The object header will never be displaced(移动，替换) to this lock,
+  // so it does not matter what the value is, except(除..之外，不包括) that it
+  // must be non-zero to avoid looking like a re-entrant(重入) lock,
   // and must not look locked either.
+  // 设置一下锁对象的对象头，标志进入了重量级锁.(markOopDesc::unused_mark() 注释)
   lock->set_displaced_header(markOopDesc::unused_mark());
+  // inflate 膨胀，充气，即锁升级
   ObjectSynchronizer::inflate(THREAD, obj())->enter(THREAD);
 }
 
@@ -1198,11 +1208,12 @@ ObjectMonitor* ObjectSynchronizer::inflate_helper(oop obj) {
 
 
 ObjectMonitor * ATTR ObjectSynchronizer::inflate (Thread * Self, oop object) {
-  // Inflate mutates the heap ...
+  // Inflate mutates the heap ... // 膨胀使堆发生变化
   // Relaxing assertion for bug 6320749.
   assert (Universe::verify_in_progress() ||
           !SafepointSynchronize::is_at_safepoint(), "invariant") ;
 
+  // 开始自旋 
   for (;;) {
       const markOop mark = object->mark() ;
       assert (!mark->has_bias_pattern(), "invariant") ;

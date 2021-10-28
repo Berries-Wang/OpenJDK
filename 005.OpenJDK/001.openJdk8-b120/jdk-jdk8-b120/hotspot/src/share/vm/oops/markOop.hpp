@@ -311,7 +311,7 @@ class markOopDesc: public oopDesc {
     return (markOop)tmp;
   }
   // it is only used to be stored into BasicLock as the
-  // indicator that the lock is using heavyweight monitor
+  // indicator(标志) that the lock is using heavyweight monitor
   static markOop unused_mark() {
     return (markOop) marked_value;
   }
