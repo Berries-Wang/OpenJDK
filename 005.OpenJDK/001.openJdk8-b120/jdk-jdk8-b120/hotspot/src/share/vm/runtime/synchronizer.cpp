@@ -1207,6 +1207,12 @@ ObjectMonitor* ObjectSynchronizer::inflate_helper(oop obj) {
 // multiple locks occupy the same $ line.  Padding might be appropriate.
 
 
+/**
+ * @param Self
+ * @param object
+ * 
+ * @return ObjectMonitor* 
+ */ 
 ObjectMonitor * ATTR ObjectSynchronizer::inflate (Thread * Self, oop object) {
   // Inflate mutates the heap ... // 膨胀使堆发生变化
   // Relaxing assertion for bug 6320749.
@@ -1225,8 +1231,9 @@ ObjectMonitor * ATTR ObjectSynchronizer::inflate (Thread * Self, oop object) {
       // *  Neutral      - aggressively inflate the object.
       // *  BIASED       - Illegal.  We should never see this
 
-      // CASE: inflated
+      // CASE: inflated > 如果已经膨胀完成
       if (mark->has_monitor()) {
+          // 获取重量级锁的ObjectMonitor
           ObjectMonitor * inf = mark->monitor() ;
           assert (inf->header()->is_neutral(), "invariant");
           assert (inf->object() == object, "invariant") ;
@@ -1240,6 +1247,7 @@ ObjectMonitor * ATTR ObjectSynchronizer::inflate (Thread * Self, oop object) {
       // The INFLATING value is transient.
       // Currently, we spin/yield/park and poll the markword, waiting for inflation to finish.
       // We could always eliminate polling by parking the thread on some auxiliary list.
+      // 正在升级中
       if (mark == markOopDesc::INFLATING()) {
          TEVENT (Inflate: spin while INFLATING) ;
          ReadStableMark(object) ;
@@ -1267,7 +1275,7 @@ ObjectMonitor * ATTR ObjectSynchronizer::inflate (Thread * Self, oop object) {
 
       if (mark->has_locker()) {
           ObjectMonitor * m = omAlloc (Self) ;
-          // Optimistically prepare the objectmonitor - anticipate successful CAS
+          // Optimistically(乐观地) prepare the objectmonitor - anticipate successful CAS
           // We do this before the CAS in order to minimize the length of time
           // in which INFLATING appears in the mark.
           m->Recycle();

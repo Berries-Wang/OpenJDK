@@ -319,7 +319,10 @@ void ATTR ObjectMonitor::enter(TRAPS) {
   Thread * const Self = THREAD ;
   void * cur ;
 
+  // 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/os_cpu/linux_x86/vm/atomic_linux_x86.inline.hpp
+  // CAS 替换
   cur = Atomic::cmpxchg_ptr (Self, &_owner, NULL) ;
+  // cur 为NULL时，表明ObjectMonitor没有被线程持有,并且此时持有这把锁的线程是Self,即当前线程
   if (cur == NULL) {
      // Either ASSERT _recursions == 0 or explicitly set _recursions = 0.
      assert (_recursions == 0   , "invariant") ;
@@ -328,12 +331,14 @@ void ATTR ObjectMonitor::enter(TRAPS) {
      return ;
   }
 
+   // 锁重入了,即_owner 的值就是 Self 
   if (cur == Self) {
      // TODO-FIXME: check for integer overflow!  BUGID 6557169.
      _recursions ++ ;
      return ;
   }
 
+  // 当前OM是否由当前线程锁定
   if (Self->is_lock_owned ((address)cur)) {
     assert (_recursions == 0, "internal state error");
     _recursions = 1 ;
@@ -346,6 +351,7 @@ void ATTR ObjectMonitor::enter(TRAPS) {
 
   // We've encountered genuine contention.
   assert (Self->_Stalled == 0, "invariant") ;
+  // Thread中 _Stalled指针指向当前OM
   Self->_Stalled = intptr_t(this) ;
 
   // Try one round of spinning *before* enqueueing Self
