@@ -249,6 +249,8 @@ public:
  protected:                         // protected for jvmtiRawMonitor
   void *  volatile _owner;          // pointer to owning thread OR BasicLock
   volatile jlong _previous_owner_tid; // thread id of the previous owner of the monitor
+
+  // 重入的次數，0代表首次進入
   volatile intptr_t  _recursions;   // recursion count, 0 for first entry
  private:
   int OwnerIsThread ;               // _owner is (Thread *) vs SP/BasicLock
@@ -265,6 +267,7 @@ public:
   volatile int _Spinner ;           // for exit->spinner handoff optimization
   volatile int _SpinFreq ;          // Spin 1-out-of-N attempts: success rate
   volatile int _SpinClock ;
+  // 
   volatile int _SpinDuration ;
   volatile intptr_t _SpinState ;    // MCS/CLH list of spinners
 

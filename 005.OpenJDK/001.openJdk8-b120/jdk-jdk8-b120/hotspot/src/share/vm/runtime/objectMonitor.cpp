@@ -158,7 +158,7 @@ static int Knob_SpinBackOff        = 0 ;       // spin-loop backoff
 static int Knob_CASPenalty         = -1 ;      // Penalty for failed CAS
 static int Knob_OXPenalty          = -1 ;      // Penalty for observed _owner change
 static int Knob_SpinSetSucc        = 1 ;       // spinners set the _succ field
-static int Knob_SpinEarly          = 1 ;
+static int Knob_SpinEarly          = 1 ;       // 自旋锁开关:  
 static int Knob_SuccEnabled        = 1 ;       // futile wake throttling
 static int Knob_SuccRestrict       = 0 ;       // Limit successors + spinners to at-most-one
 static int Knob_MaxSpinners        = -1 ;      // Should be a function of # CPUs
@@ -320,9 +320,9 @@ void ATTR ObjectMonitor::enter(TRAPS) {
   void * cur ;
 
   // 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/os_cpu/linux_x86/vm/atomic_linux_x86.inline.hpp
-  // CAS 替换
+  // CAS 替换  将NULL与_owner的值比较，如果相同，则将Self赋值给_owner,返回NULL;反之，返回_owner的值
   cur = Atomic::cmpxchg_ptr (Self, &_owner, NULL) ;
-  // cur 为NULL时，表明ObjectMonitor没有被线程持有,并且此时持有这把锁的线程是Self,即当前线程
+  // cur 为NULL时，即CAS操作成功，表明ObjectMonitor没有被线程持有,并且此时持有这把锁的线程是Self,即当前线程
   if (cur == NULL) {
      // Either ASSERT _recursions == 0 or explicitly set _recursions = 0.
      assert (_recursions == 0   , "invariant") ;
@@ -338,7 +338,8 @@ void ATTR ObjectMonitor::enter(TRAPS) {
      return ;
   }
 
-  // 当前OM是否由当前线程锁定
+  // 执行到此处，说明_owner既不是NULL也不是当前线程
+  // 当前OM是否由当前线程锁定，是之前的BasicLockObject？
   if (Self->is_lock_owned ((address)cur)) {
     assert (_recursions == 0, "internal state error");
     _recursions = 1 ;
@@ -354,11 +355,15 @@ void ATTR ObjectMonitor::enter(TRAPS) {
   // Thread中 _Stalled指针指向当前OM
   Self->_Stalled = intptr_t(this) ;
 
-  // Try one round of spinning *before* enqueueing Self
-  // and before going through the awkward and expensive state
-  // transitions.  The following spin is strictly optional ...
-  // Note that if we acquire the monitor from an initial spin
-  // we forgo posting JVMTI events and firing DTRACE probes.
+  /**
+   * spin: 自旋
+   * Try one round of spinning *before* enqueueing Self and before going through the awkward and expensive state
+   * transitions.  The following spin is strictly optional ...
+   * 
+   * Note that if we acquire the monitor from an initial spin we forgo posting JVMTI events and firing DTRACE probes(探针).
+   */ 
+
+  // 尝试自旋获得锁
   if (Knob_SpinEarly && TrySpin (Self) > 0) {
      assert (_owner == Self      , "invariant") ;
      assert (_recursions == 0    , "invariant") ;
@@ -463,21 +468,28 @@ void ATTR ObjectMonitor::enter(TRAPS) {
 // Caveat: TryLock() is not necessarily serializing if it returns failure.
 // Callers must compensate as needed.
 
+/**
+ * 
+ * 尝试获得ObjectMonitor锁，暂时只有一次CAS操作，没有重试，即没有自旋
+ * 
+ */ 
 int ObjectMonitor::TryLock (Thread * Self) {
+   // 自旋锁
    for (;;) {
       void * own = _owner ;
       if (own != NULL) return 0 ;
+      // 使用CAS替换_owner指向的内容,当CAS操作成功，说明拿到了锁
       if (Atomic::cmpxchg_ptr (Self, &_owner, NULL) == NULL) {
-         // Either guarantee _recursions == 0 or set _recursions = 0.
+         // Either guarantee(保证) _recursions == 0 or set _recursions = 0.
          assert (_recursions == 0, "invariant") ;
          assert (_owner == Self, "invariant") ;
          // CONSIDER: set or assert that OwnerIsThread == 1
          return 1 ;
       }
-      // The lock had been free momentarily, but we lost the race to the lock.
-      // Interference -- the CAS failed.
+      // The lock had been free momentarily(暂时), but we lost the race(比赛，竞争) to the lock.
+      // Interference(干扰) -- the CAS failed.
       // We can either return -1 or retry.
-      // Retry doesn't make as much sense because the lock was just acquired.
+      // Retry doesn't make as much sense(感觉) because the lock was just acquired.： 重试没有多大意义，因为锁是刚刚获取的
       if (true) return -1 ;
    }
 }
@@ -1980,30 +1992,50 @@ int (*ObjectMonitor::SpinCallbackFunction)(intptr_t, int) = NULL ;
 // Spinning: Fixed frequency (100%), vary duration
 
 
+/**  
+ * vary: 不同
+ * duration: 持续，持续时间
+ * Dumb: 哑的，愚蠢的，简易的
+ * brutal： 野蛮的，糟糕的
+ * comparative： 比较级，比较的，相对的
+ * measurements: 测量值，尺寸
+ * 
+ * 
+ * 本函数代码性能优化：
+ * 1. 自适应自旋
+ */ 
 int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
 
-    // Dumb, brutal spin.  Good for comparative measurements against adaptive spinning.
-    int ctr = Knob_FixedSpin ;
+    // Dumb, brutal spin.  Good for comparative measurements against adaptive spinning.(适合与自适应旋转进行比较测量)
+    int ctr = Knob_FixedSpin ; // Knob_FixedSpin为0
     if (ctr != 0) {
         while (--ctr >= 0) {
+           // TryLock 返回值>0表示获取锁成功
             if (TryLock (Self) > 0) return 1 ;
             SpinPause () ;
         }
         return 0 ;
     }
 
+     /**
+      * Knob_PreSpin: 自旋的次数
+      * 适应性自旋
+      */ 
     for (ctr = Knob_PreSpin + 1; --ctr >= 0 ; ) {
-      if (TryLock(Self) > 0) {
+      
+      if (TryLock(Self) > 0) { // 如果尝试加锁成功
         // Increase _SpinDuration ...
         // Note that we don't clamp SpinDuration precisely at SpinLimit.
         // Raising _SpurDuration to the poverty line is key.
         int x = _SpinDuration ;
+
         if (x < Knob_SpinLimit) {
            if (x < Knob_Poverty) x = Knob_Poverty ;
-           _SpinDuration = x + Knob_BonusB ;
+           _SpinDuration = x + Knob_BonusB ; // 如果获取到锁，则将_SpinDuration设置比之前长一点，下一次就不用循环那么多次
         }
         return 1 ;
       }
+      // 自旋等待
       SpinPause () ;
     }
 
@@ -2019,7 +2051,7 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
     // spin attempt.  "Periodically" might mean after a tally of
     // the # of failed spin attempts (or iterations) reaches some threshold.
     // This takes us into the realm of 1-out-of-N spinning, where we
-    // hold the duration constant but vary the frequency.
+    // hold the duration constant but vary the frequency(频率).
 
     ctr = _SpinDuration  ;
     if (ctr < Knob_SpinBase) ctr = Knob_SpinBase ;
