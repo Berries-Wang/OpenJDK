@@ -73,7 +73,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/build/linux-x86_64-normal-server-slowdebug/jdk/bin/java",
             "args": [
-                "D"
+                "Sync"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/build",
