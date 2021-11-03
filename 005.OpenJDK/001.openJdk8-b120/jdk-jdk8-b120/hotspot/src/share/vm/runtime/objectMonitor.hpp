@@ -141,16 +141,16 @@ class ObjectMonitor {
     _header       = NULL;
     _count        = 0;
     _waiters      = 0,
-    _recursions   = 0;
-    _object       = NULL;
-    _owner        = NULL;
-    _WaitSet      = NULL;
-    _WaitSetLock  = 0 ;
+    _recursions   = 0;    // 线程重入次数
+    _object       = NULL; // 存储monitor的对象
+    _owner        = NULL; // 持有该锁的线程
+    _WaitSet      = NULL; // 处于wait的线程
+    _WaitSetLock  = 0 ;   // 
     _Responsible  = NULL ;
     _succ         = NULL ;
-    _cxq          = NULL ;
+    _cxq          = NULL ; // 多线程竞争锁的单向列表
     FreeNext      = NULL ;
-    _EntryList    = NULL ;
+    _EntryList    = NULL ; // 处于等待锁的线程
     _SpinFreq     = 0 ;
     _SpinClock    = 0 ;
     OwnerIsThread = 0 ;
@@ -268,7 +268,7 @@ public:
   volatile int _SpinFreq ;          // Spin 1-out-of-N attempts: success rate
   volatile int _SpinClock ;
   // 
-  volatile int _SpinDuration ;
+  volatile int _SpinDuration ;        // 自旋持续时间?在哪里使用
   volatile intptr_t _SpinState ;    // MCS/CLH list of spinners
 
   // TODO-FIXME: _count, _waiters and _recursions should be of

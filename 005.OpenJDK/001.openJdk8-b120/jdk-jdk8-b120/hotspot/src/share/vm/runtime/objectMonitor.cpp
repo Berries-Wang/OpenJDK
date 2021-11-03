@@ -145,7 +145,7 @@ HS_DTRACE_PROBE_DECL4(hotspot, monitor__contended__exit,
 
 // Tunables ...
 // The knob* variables are effectively final.  Once set they should
-// never be modified hence.  Consider using __read_mostly with GCC.
+// never be modified hence(因此).  Consider using __read_mostly with GCC.
 
 int ObjectMonitor::Knob_Verbose    = 0 ;
 int ObjectMonitor::Knob_SpinLimit  = 5000 ;    // derived by an external tool -
@@ -363,7 +363,7 @@ void ATTR ObjectMonitor::enter(TRAPS) {
    * Note that if we acquire the monitor from an initial spin we forgo posting JVMTI events and firing DTRACE probes(探针).
    */ 
 
-  // 尝试自旋获得锁
+  // 尝试自旋获得锁(存在自适应自旋流程),自旋获取锁成功，说明获取锁成功，返回即可。
   if (Knob_SpinEarly && TrySpin (Self) > 0) {
      assert (_owner == Self      , "invariant") ;
      assert (_recursions == 0    , "invariant") ;
@@ -2019,14 +2019,17 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
 
      /**
       * Knob_PreSpin: 自旋的次数
-      * 适应性自旋
+      * 
+      * “适应性”自旋
+      * 
+      * _SpinDuration 是什么含义，这里增加的目的是什么?在什么地方用到了
       */ 
     for (ctr = Knob_PreSpin + 1; --ctr >= 0 ; ) {
       
       if (TryLock(Self) > 0) { // 如果尝试加锁成功
         // Increase _SpinDuration ...
         // Note that we don't clamp SpinDuration precisely at SpinLimit.
-        // Raising _SpurDuration to the poverty line is key.
+        // Raising(提高) _SpurDuration to the poverty line is key.
         int x = _SpinDuration ;
 
         if (x < Knob_SpinLimit) {
@@ -2035,29 +2038,41 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
         }
         return 1 ;
       }
-      // 自旋等待
+      // 等待
       SpinPause () ;
     }
 
-    // Admission control - verify preconditions for spinning
+    // 执行到此处(短暂自旋后)，说明在指定自旋次数中还没有获取到锁
+
+    // Admission control - verify(核实，查证) preconditions(先决条件) for spinning
     //
-    // We always spin a little bit, just to prevent _SpinDuration == 0 from
-    // becoming an absorbing state.  Put another way, we spin briefly to
-    // sample, just in case the system load, parallelism, contention, or lock
-    // modality changed.
+    // We always spin a little bit, just to prevent(防止) _SpinDuration == 0 from
+    // becoming an absorbing state.  Put another way(换句话说), we spin briefly(短暂的) to
+    // sample(尝试、样本), just in case the system load, parallelism(并行), contention(竞争), or lock
+    // modality(形式，形态) changed.  >>> 自旋一小会儿
     //
-    // Consider the following alternative:
-    // Periodically set _SpinDuration = _SpinLimit and try a long/full
-    // spin attempt.  "Periodically" might mean after a tally of
-    // the # of failed spin attempts (or iterations) reaches some threshold.
-    // This takes us into the realm of 1-out-of-N spinning, where we
+    // 
+    // Consider the following alternative(可供选择的):考虑以下替代方案
+    // Periodically(定期，偶尔) set _SpinDuration = _SpinLimit and try a long/full
+    // spin attempt.  "Periodically" might mean after a tally(记录) of
+    // the # of failed spin attempts (or iterations) reaches some threshold（门槛，起始点）.
+    // This takes us into the realm(领域，范围) of 1-out-of-N spinning, where we
     // hold the duration constant but vary the frequency(频率).
 
     ctr = _SpinDuration  ;
-    if (ctr < Knob_SpinBase) ctr = Knob_SpinBase ;
-    if (ctr <= 0) return 0 ;
 
-    if (Knob_SuccRestrict && _succ != NULL) return 0 ;
+    if (ctr < Knob_SpinBase){
+        ctr = Knob_SpinBase ;
+    }
+
+    if (ctr <= 0){
+      return 0 ;
+    }
+
+    if (Knob_SuccRestrict && _succ != NULL){
+        return 0 ;
+    }
+
     if (Knob_OState && NotRunnable (Self, (Thread *) _owner)) {
        TEVENT (Spin abort - notrunnable [TOP]);
        return 0 ;
