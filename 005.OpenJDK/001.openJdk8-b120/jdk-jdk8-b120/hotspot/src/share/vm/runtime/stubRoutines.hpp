@@ -437,7 +437,7 @@ class StubRoutines: AllStatic {
 };
 
 // Safefetch allows to load a value from a location that's not known
-// to be valid. If the load causes a fault, the error value is returned.
+// to be valid. If the load causes a fault(错误), the error value is returned.
 inline int SafeFetch32(int* adr, int errValue) {
   assert(StubRoutines::SafeFetch32_stub(), "stub not yet generated");
   return StubRoutines::SafeFetch32_stub()(adr, errValue);

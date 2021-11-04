@@ -2011,18 +2011,19 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
     if (ctr != 0) {
         while (--ctr >= 0) {
            // TryLock 返回值>0表示获取锁成功
-            if (TryLock (Self) > 0) return 1 ;
+            if (TryLock (Self) > 0) {
+               return 1 ;
+            }
             SpinPause () ;
         }
         return 0 ;
     }
 
      /**
-      * Knob_PreSpin: 自旋的次数
+      * Knob_PreSpin: 自旋的次数，当自旋超过了指定的次数仍然没有成功获取锁，就应当使用传统的方式去挂起线程。使用-XX:PreBlockSpin更改
       * 
-      * “适应性”自旋
       * 
-      * _SpinDuration 是什么含义，这里增加的目的是什么?在什么地方用到了
+      * _SpinDuration :适应性自旋的实现,看后续的逻辑
       */ 
     for (ctr = Knob_PreSpin + 1; --ctr >= 0 ; ) {
       
@@ -2032,9 +2033,18 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
         // Raising(提高) _SpurDuration to the poverty line is key.
         int x = _SpinDuration ;
 
+        /**
+        *  Knob_SpinLimit: 5000
+        *  Knob_Poverty: 1000 
+        * 
+        * _SpinDuration 初始值为: Knob_SpinLimit
+        */ 
         if (x < Knob_SpinLimit) {
-           if (x < Knob_Poverty) x = Knob_Poverty ;
-           _SpinDuration = x + Knob_BonusB ; // 如果获取到锁，则将_SpinDuration设置比之前长一点，下一次就不用循环那么多次
+           if (x < Knob_Poverty){
+              x = Knob_Poverty ;
+           } 
+           // 如果获取到锁，则在_SpinDuration基础上添加一些奖励???
+           _SpinDuration = x + Knob_BonusB ; 
         }
         return 1 ;
       }
@@ -2059,8 +2069,10 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
     // This takes us into the realm(领域，范围) of 1-out-of-N spinning, where we
     // hold the duration constant but vary the frequency(频率).
 
+   //  到这里才使用了 "_SpinDuration"
     ctr = _SpinDuration  ;
 
+    // Knob_SpinBase: 0
     if (ctr < Knob_SpinBase){
         ctr = Knob_SpinBase ;
     }
@@ -2069,6 +2081,7 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
       return 0 ;
     }
 
+   
     if (Knob_SuccRestrict && _succ != NULL){
         return 0 ;
     }
@@ -2252,7 +2265,7 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
    return 0 ;
 }
 
-// NotRunnable() -- informed spinning
+// NotRunnable() -- informed(有知识的，有根据的，可靠的，明智的) spinning
 //
 // Don't bother spinning if the owner is not eligible to drop the lock.
 // Peek at the owner's schedctl.sc_state and Thread._thread_values and
@@ -2260,6 +2273,7 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
 // The thread must be runnable in order to drop the lock in timely fashion.
 // If the _owner is not runnable then spinning will not likely be
 // successful (profitable).
+// >> 如果所有者没有资格放下锁，请不要打扰旋转。 查看所有者的 schedctl.sc_state 和 Thread._thread_values 并仅在所有者线程是 _thread_in_Java 或 _thread_in_vm 时自旋。 线程必须是可运行的，以便及时删除锁。 如果 _owner 不可运行，则旋转不太可能成功（有利可图）。
 //
 // Beware -- the thread referenced by _owner could have died
 // so a simply fetch from _owner->_thread_state might trap.
@@ -2268,18 +2282,21 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
 // observed by NotRunnable() might be garbage.  NotRunnable must
 // tolerate this and consider the observed _thread_state value
 // as advisory.
-//
+// >> 注意--_owner引用的线程可能已经死亡，所以简单地从_owner->_thread_state获取线程可能会陷入陷阱。相反，我们使用SafeFetchXX()安全地LD _owner->_thread_state。由于生命周期问题，NotRunnable()观察到的schedctl和_thread_state值可能是垃圾。NotRunnable必须容忍这种情况，并将观察到的_thread_state值视为建议值。
+// 
 // Beware too, that _owner is sometimes a BasicLock address and sometimes
 // a thread pointer.  We differentiate the two cases with OwnerIsThread.
 // Alternately, we might tag the type (thread pointer vs basiclock pointer)
 // with the LSB of _owner.  Another option would be to probablistically probe
 // the putative _owner->TypeTag value.
-//
+// >> 还要注意，_owner有时是BasicLock地址，有时是线程指针。我们用OwnerIsThread来区分这两种情况。或者，我们可以用_owner的LSB标记类型(线程指针vs . basiclock指针)。另一个选项可能是探测假定的_owner->TypeTag值。
+// 
 // Checking _thread_state isn't perfect.  Even if the thread is
 // in_java it might be blocked on a page-fault or have been preempted
 // and sitting on a ready/dispatch queue.  _thread state in conjunction
 // with schedctl.sc_state gives us a good picture of what the
 // thread is doing, however.
+// >> 检查_thread_state并不完美。即使线程是in_java的，它也可能因为页面错误而阻塞，或者已经被抢占并处于就绪/分派队列中。_thread状态与schedctl。然而，Sc_state向我们展示了线程正在做什么。
 //
 // TODO: check schedctl.sc_state.
 // We'll need to use SafeFetch32() to read from the schedctl block.
@@ -2289,31 +2306,54 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
 // result is based on sampling and is not necessarily coherent.
 // The caller must tolerate false-negative and false-positive errors.
 // Spinning, in general, is probabilistic anyway.
+// >> NotRunnable() 的返回值是 *advisory* —— 结果是基于采样的，不一定是一致的。 调用者必须容忍假阴性和假阳性错误。 无论如何，旋转通常是概率性的。
 
 
+/**
+ * 对ox的运行状态进行取反，即表示其他竞争锁的线程是否不被允许运行
+ * 
+ * 
+ * 
+ */ 
 int ObjectMonitor::NotRunnable (Thread * Self, Thread * ox) {
     // Check either OwnerIsThread or ox->TypeTag == 2BAD.
-    if (!OwnerIsThread) return 0 ;
+    if (!OwnerIsThread){
+       return 0 ;
+    }
 
-    if (ox == NULL) return 0 ;
+    if (ox == NULL) {
+       return 0 ;
+    }
 
     // Avoid transitive spinning ...
     // Say T1 spins or blocks trying to acquire L.  T1._Stalled is set to L.
-    // Immediately after T1 acquires L it's possible that T2, also
+    // Immediately(立即，马上) after T1 acquires L it's possible that T2, also
     // spinning on L, will see L.Owner=T1 and T1._Stalled=L.
-    // This occurs transiently after T1 acquired L but before
+    // This occurs(发生；存在；出现) transiently(仅持续片刻的) after T1 acquired(获得，取得) L but before
     // T1 managed to clear T1.Stalled.  T2 does not need to abort
-    // its spin in this circumstance.
+    // its spin in this circumstance(条件，情况).
+    /**
+     * 什么意思呢: 
+     * >>> 线程T1自旋或者阻塞去尝试获得锁L，T1._Stalled被设置为L。在T1获得锁之后，同样的T2也可能在L上自旋，将会看到L.Owner=T1,T1._Stalled=L,这种情况短暂的发生在T1获得L之后，T1清理T1.Stalled之前。
+     *        在这种情况下，T2不需要终止自旋
+     * 
+     */ 
+
+   //  如注释，_owner可能挂了，因此需要通过SafeFetchXX来获取线程的状态,通过代码注释，SafeFetchN 其实就是获取&ox->_Stalled的值
     intptr_t BlockedOn = SafeFetchN ((intptr_t *) &ox->_Stalled, intptr_t(1)) ;
 
-    if (BlockedOn == 1) return 1 ;
+    if (BlockedOn == 1){
+        return 1 ;
+    }
+
     if (BlockedOn != 0) {
       return BlockedOn != intptr_t(this) && _owner == ox ;
     }
 
-    assert (sizeof(((JavaThread *)ox)->_thread_state == sizeof(int)), "invariant") ;
+   // 到此处，ox->_Stalled == 0
+    assert (sizeof(((JavaThread *)ox)->_thread_state == sizeof(int)), "invariant(不变的)") ;
     int jst = SafeFetch32 ((int *) &((JavaThread *) ox)->_thread_state, -1) ; ;
-    // consider also: jst != _thread_in_Java -- but that's overspecific.
+    // consider also: jst != _thread_in_Java -- but that's overspecific(特定的).
     return jst == _thread_blocked || jst == _thread_in_native ;
 }
 

@@ -260,7 +260,9 @@ public:
  protected:
   ObjectWaiter * volatile _EntryList ;     // Threads blocked on entry or reentry.
  private:
-  Thread * volatile _succ ;          // Heir presumptive thread - used for futile wakeup throttling
+
+  Thread * volatile _succ ;    // Heir(继承人) presumptive(假定的) thread - used for futile(徒劳的，无用的，不重要的) wakeup throttling(节流) >>> 当锁被前一个线程释放，会指定一个假定继承者线程，但是它不一定最终获得锁
+
   Thread * volatile _Responsible ;
   int _PromptDrain ;                // rqst to drain cxq into EntryList ASAP
 
