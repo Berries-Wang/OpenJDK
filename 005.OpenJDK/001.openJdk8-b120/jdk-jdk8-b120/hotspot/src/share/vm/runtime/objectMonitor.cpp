@@ -416,7 +416,7 @@ void ATTR ObjectMonitor::enter(TRAPS) {
       // the monitor while suspended because that would surprise the
       // thread that suspended us.
       //
-          _recursions = 0 ;
+      _recursions = 0 ;
       _succ = NULL ;
       exit (false, Self) ;
 
@@ -2021,7 +2021,7 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
 
      /**
       * Knob_PreSpin: 自旋的次数，当自旋超过了指定的次数仍然没有成功获取锁，就应当使用传统的方式去挂起线程。使用-XX:PreBlockSpin更改
-      * 
+      * >>> 这里是自旋指定的次数，并不是自适应自旋
       * 
       * _SpinDuration :适应性自旋的实现,看后续的逻辑
       */ 
@@ -2043,7 +2043,7 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
            if (x < Knob_Poverty){
               x = Knob_Poverty ;
            } 
-           // 如果获取到锁，则在_SpinDuration基础上添加一些奖励???
+           // 如果获取到锁，则在_SpinDuration基础上添加一些奖励
            _SpinDuration = x + Knob_BonusB ; 
         }
         return 1 ;
@@ -2086,6 +2086,7 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
         return 0 ;
     }
 
+    // 检测_owner的线程状态 并且 需要阻塞当前线程(注意:当前线程不是_owner)
     if (Knob_OState && NotRunnable (Self, (Thread *) _owner)) {
        TEVENT (Spin abort - notrunnable [TOP]);
        return 0 ;
@@ -2097,7 +2098,7 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
           TEVENT (Spin abort -- too many spinners) ;
           return 0 ;
        }
-       // Slighty racy, but benign ...
+       // Slighty(轻微的) racy(), but benign ... // 略显活泼，但温和
        Adjust (&_Spinner, 1) ;
     }
 
