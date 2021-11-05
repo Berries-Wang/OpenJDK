@@ -58,7 +58,7 @@ class nmethod;
 class SafepointSynchronize : AllStatic {
  public:
   enum SynchronizeState {
-      _not_synchronized = 0,                   // Threads not synchronized at a safepoint
+      _not_synchronized = 0,                   // Threads not synchronized at a safepoint 
                                                // Keep this value 0. See the coment in do_call_back()
       _synchronizing    = 1,                   // Synchronizing in progress
       _synchronized     = 2                    // All Java threads are stopped at a safepoint. Only VM thread is running

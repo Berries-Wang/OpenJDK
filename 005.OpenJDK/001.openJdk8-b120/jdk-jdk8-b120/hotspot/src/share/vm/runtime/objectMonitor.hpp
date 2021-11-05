@@ -266,7 +266,7 @@ public:
   Thread * volatile _Responsible ;
   int _PromptDrain ;                // rqst to drain cxq into EntryList ASAP
 
-  volatile int _Spinner ;           // for exit->spinner handoff optimization
+  volatile int _Spinner ;           // for exit->spinner handoff(切换) optimization
   volatile int _SpinFreq ;          // Spin 1-out-of-N attempts: success rate
   volatile int _SpinClock ;
   // 

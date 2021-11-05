@@ -2093,16 +2093,18 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
     }
 
     int MaxSpin = Knob_MaxSpinners ;
+    // Knob_MaxSpinners默认值:-1,这里可以跳过
     if (MaxSpin >= 0) {
        if (_Spinner > MaxSpin) {
           TEVENT (Spin abort -- too many spinners) ;
           return 0 ;
        }
        // Slighty(轻微的) racy(), but benign ... // 略显活泼，但温和
+       // 使用CAS操作对_Spinner加一
        Adjust (&_Spinner, 1) ;
     }
 
-    // We're good to spin ... spin ingress.
+    // We're good to spin(我们可以旋转了) ... spin ingress(入口).
     // CONSIDER: use Prefetch::write() to avoid RTS->RTO upgrades
     // when preparing to LD...CAS _owner, etc and the CAS is likely
     // to succeed.
@@ -2111,31 +2113,35 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
     int caspty  = Knob_CASPenalty ;
     int oxpty   = Knob_OXPenalty ;
     int sss     = Knob_SpinSetSucc ;
-    if (sss && _succ == NULL ) _succ = Self ;
+
+    if (sss && _succ == NULL ){
+      _succ = Self ;
+    }
+
     Thread * prv = NULL ;
 
-    // There are three ways to exit the following loop:
-    // 1.  A successful spin where this thread has acquired the lock.
-    // 2.  Spin failure with prejudice
-    // 3.  Spin failure without prejudice
+    // There are three ways to exit the following loop:  这里有三种方式退出如下的循环
+    // 1.  A successful spin where this thread has acquired the lock. : 自旋成功，即当前线程获取到锁
+    // 2.  Spin failure with prejudice(偏见): 偏心旋转失败 
+    // 3.  Spin failure without prejudice: 无偏心旋转失败  ? 偏心旋转?
 
+   // 注意，ctr值就是取自“_SpinDuration”，这里应该就是自适应自旋 
     while (--ctr >= 0) {
 
-      // Periodic polling -- Check for pending GC
-      // Threads may spin while they're unsafe.
-      // We don't want spinning threads to delay the JVM from reaching
-      // a stop-the-world safepoint or to steal cycles from GC.
-      // If we detect a pending safepoint we abort in order that
-      // (a) this thread, if unsafe, doesn't delay the safepoint, and (b)
-      // this thread, if safe, doesn't steal cycles from GC.
-      // This is in keeping with the "no loitering in runtime" rule.
-      // We periodically check to see if there's a safepoint pending.
-      if ((ctr & 0xFF) == 0) {
+      /**
+       *  Periodic(阶段性的、定期的) polling(投票，轮询) -- Check for pending GC Threads may spin while they're unsafe.We don't want spinning threads to delay(推迟、延期) the JVM from reaching(到达) a stop-the-world safepoint or to steal(盗窃) cycles(周期) from GC.If we detect a pending safepoint we abort in order that (a) this thread, if unsafe, doesn't delay the safepoint, and (b)  this thread, if safe, doesn't steal cycles from GC.This is in keeping with the "no loitering in runtime" rule.  We periodically check to see if there's a safepoint pending.
+       * 
+       * 即:不希望自旋影响到GC
+       */ 
+      if ((ctr & 0xFF) == 0) {// 0xFF就是256，即每自旋256次就需要检查是否开启了安全点同步
+         // 当处于安全点 或 正在进入安全点
          if (SafepointSynchronize::do_call_back()) {
             TEVENT (Spin: safepoint) ;
-            goto Abort ;           // abrupt spin egress
+            goto Abort ;           // abrupt(突然，意外) spin egress(出口)
          }
-         if (Knob_UsePause & 1) SpinPause () ;
+         if (Knob_UsePause & 1){
+            SpinPause ();
+         }
 
          int (*scb)(intptr_t,int) = SpinCallbackFunction ;
          if (hits > 50 && scb != NULL) {
@@ -2143,7 +2149,10 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
          }
       }
 
-      if (Knob_UsePause & 2) SpinPause() ;
+      if (Knob_UsePause & 2){
+         SpinPause() ;
+      }
+         
 
       // Exponential back-off ...  Stay off the bus to reduce coherency traffic.
       // This is useful on classic SMP systems, but is of less utility on
@@ -2252,16 +2261,22 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
      }
    }
 
- Abort:
-   if (MaxSpin >= 0) Adjust (&_Spinner, -1) ;
+ Abort: // 终止
+   if (MaxSpin >= 0){
+      Adjust (&_Spinner, -1) ;
+   }
+   // 当后继线程是当前线程
    if (sss && _succ == Self) {
       _succ = NULL ;
-      // Invariant: after setting succ=null a contending thread
-      // must recheck-retry _owner before parking.  This usually happens
-      // in the normal usage of TrySpin(), but it's safest
-      // to make TrySpin() as foolproof as possible.
-      OrderAccess::fence() ;
-      if (TryLock(Self) > 0) return 1 ;
+      /**
+       * Invariant(不变的，不变量): after setting succ=null a contending(竞争) thread  must recheck-retry _owner before parking.  This usually happens in the normal usage of TrySpin(), but it's safest to make TrySpin() as foolproof(简单的) as possible.
+       * 不变式:设置succ=null后，竞争线程在停车前必须重新检查retry _owner。这通常在TrySpin()的正常使用中发生，但最安全的做法是使TrySpin()尽可能简单。
+       */ 
+      OrderAccess::fence() ; // 内存屏障
+      // _succ置为null后，再尝试获取锁,即还是要自旋一次来获取锁,避免后续的系统调用而引起内核态和用户态的切换
+      if (TryLock(Self) > 0){
+         return 1 ;
+      }
    }
    return 0 ;
 }
