@@ -313,6 +313,10 @@ bool ObjectMonitor::try_enter(Thread* THREAD) {
   }
 }
 
+/**
+ * 重量级锁入口
+ * 
+ */ 
 void ATTR ObjectMonitor::enter(TRAPS) {
   // The following code is ordered to check the most common cases first
   // and to reduce RTS->RTO cache line upgrades on SPARC and IA32 processors.
@@ -2001,8 +2005,9 @@ int (*ObjectMonitor::SpinCallbackFunction)(intptr_t, int) = NULL ;
  * measurements: 测量值，尺寸
  * 
  * 
- * 本函数代码性能优化：
- * 1. 自适应自旋
+ * 本函数注意事项: 
+ * 
+ * 
  */ 
 int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
 
@@ -2137,6 +2142,7 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
          // 当处于安全点 或 正在进入安全点
          if (SafepointSynchronize::do_call_back()) {
             TEVENT (Spin: safepoint) ;
+            // 即不在安全点,那么就不自适应自旋了
             goto Abort ;           // abrupt(突然，意外) spin egress(出口)
          }
          if (Knob_UsePause & 1){
@@ -2188,17 +2194,22 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
       // spin count-down variable "ctr", reducing it by 100, say.
 
       Thread * ox = (Thread *) _owner ;
+      // 当前锁没有被线程持有
       if (ox == NULL) {
+         // CAS抢占锁
          ox = (Thread *) Atomic::cmpxchg_ptr (Self, &_owner, NULL) ;
+         // 抢占成功
          if (ox == NULL) {
             // The CAS succeeded -- this thread acquired ownership
             // Take care of some bookkeeping to exit spin state.
             if (sss && _succ == Self) {
                _succ = NULL ;
             }
-            if (MaxSpin > 0) Adjust (&_Spinner, -1) ;
+            if (MaxSpin > 0) {
+               Adjust (&_Spinner, -1) ;
+            }
 
-            // Increase _SpinDuration :
+            // Increase _SpinDuration : // 抢占成功时，调整_SpinDuration,即自旋的次数
             // The spin was successful (profitable) so we tend toward
             // longer spin attempts in the future.
             // CONSIDER: factor "ctr" into the _SpinDuration adjustment.
@@ -2207,7 +2218,9 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
             // Note that we don't clamp SpinDuration precisely at SpinLimit.
             int x = _SpinDuration ;
             if (x < Knob_SpinLimit) {
-                if (x < Knob_Poverty) x = Knob_Poverty ;
+                if (x < Knob_Poverty){
+                  x = Knob_Poverty ;
+                } 
                 _SpinDuration = x + Knob_Bonus ;
             }
             return 1 ;
@@ -2246,9 +2259,12 @@ int ObjectMonitor::TrySpin_VaryDuration (Thread * Self) {
       if (sss && _succ == NULL ) _succ = Self ;
    }
 
-   // Spin failed with prejudice -- reduce _SpinDuration.
-   // TODO: Use an AIMD-like policy to adjust _SpinDuration.
-   // AIMD is globally stable.
+
+  /**
+   * Spin failed with prejudice -- reduce _SpinDuration. TODO: Use an AIMD-like policy to adjust _SpinDuration.AIMD is globally stable.
+   * 
+   * 自旋失败,向下调整 _SpinDuration 的值,即下次自旋的次数减少
+   */ 
    TEVENT (Spin failure) ;
    {
      int x = _SpinDuration ;
