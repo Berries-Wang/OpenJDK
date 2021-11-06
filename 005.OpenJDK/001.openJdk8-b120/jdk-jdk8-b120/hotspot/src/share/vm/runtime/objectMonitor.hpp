@@ -39,8 +39,11 @@ class ObjectWaiter : public StackObj {
  public:
   enum TStates { TS_UNDEF, TS_READY, TS_RUN, TS_WAIT, TS_ENTER, TS_CXQ } ;
   enum Sorted  { PREPEND, APPEND, SORTED } ;
+
+  // 双向链表
   ObjectWaiter * volatile _next;
   ObjectWaiter * volatile _prev;
+
   Thread*       _thread;
   jlong         _notifier_tid;
   ParkEvent *   _event;
@@ -254,15 +257,18 @@ public:
   volatile intptr_t  _recursions;   // recursion count, 0 for first entry
  private:
   int OwnerIsThread ;               // _owner is (Thread *) vs SP/BasicLock
-  ObjectWaiter * volatile _cxq ;    // LL of recently-arrived threads blocked on entry.
-                                    // The list is actually composed of WaitNodes, acting
-                                    // as proxies for Threads.
+  ObjectWaiter * volatile _cxq ;    // LL of recently-arrived threads blocked on entry.  The list is actually composed of WaitNodes, acting  as proxies for Threads.
+                                    // 最近到达的线程在进入时被阻塞的LL。这个列表实际上是由waitnode组成的，它充当线程的代理。
+
  protected:
-  ObjectWaiter * volatile _EntryList ;     // Threads blocked on entry or reentry.
+  ObjectWaiter * volatile _EntryList ;     // Threads blocked on entry or reentry. 在重进入 或者  进入时阻塞的线程
  private:
 
   Thread * volatile _succ ;    // Heir(继承人) presumptive(假定的) thread - used for futile(徒劳的，无用的，不重要的) wakeup throttling(节流) >>> 当锁被前一个线程释放，会指定一个假定继承者线程，但是它不一定最终获得锁
 
+  /**
+   *  _Responsible的park是 "有限时间" 的park,它会定期检查monitor的_owner字段,之所以这样设计是防止出现“stranding”即搁浅. 
+   */ 
   Thread * volatile _Responsible ;
   int _PromptDrain ;                // rqst to drain cxq into EntryList ASAP
 

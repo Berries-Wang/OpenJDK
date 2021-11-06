@@ -5626,6 +5626,12 @@ int os::PlatformEvent::TryPark() {
   }
 }
 
+
+/**
+ * 
+ * 线程挂起，使用mutex实现,是系统调用，涉及到用户态和内核态的切换
+ * 
+ */ 
 void os::PlatformEvent::park() {       // AKA "down()"
   // Invariant: Only the thread associated with the Event/PlatformEvent
   // may call park().
@@ -5633,12 +5639,14 @@ void os::PlatformEvent::park() {       // AKA "down()"
   int v ;
   for (;;) {
       v = _Event ;
-      if (Atomic::cmpxchg (v-1, &_Event, v) == v) break ;
+      if (Atomic::cmpxchg (v-1, &_Event, v) == v){
+         break ;
+      }
   }
   guarantee (v >= 0, "invariant") ;
   if (v == 0) {
      // Do this the hard way by blocking ...
-     int status = pthread_mutex_lock(_mutex);
+     int status = pthread_mutex_lock(_mutex); // 系统调用
      assert_status(status == 0, status, "mutex_lock");
      guarantee (_nParked == 0, "invariant") ;
      ++ _nParked ;
