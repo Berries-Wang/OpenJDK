@@ -31,6 +31,7 @@
  */
 
 #include "defines.h"
+#include<stdio.h>
 
 #ifdef _MSC_VER
 #if _MSC_VER > 1400 && _MSC_VER < 1600
@@ -122,6 +123,7 @@ main(int argc, char **argv)
     margc = argc;
     margv = argv;
 #endif /* WIN32 */
+    printf("OpenJDK JVM: Hello OpenJDK1.8 \n");
     return JLI_Launch(margc, margv,
                    sizeof(const_jargs) / sizeof(char *), const_jargs,
                    sizeof(const_appclasspath) / sizeof(char *), const_appclasspath,

@@ -76,9 +76,8 @@ class EventJavaMonitorWait;
 
 // It is also used as RawMonitor by the JVMTI
 
-
 class ObjectMonitor {
- public:
+public:
   enum {
     OM_OK,                    // no error
     OM_SYSTEM_ERROR,          // operating system error
@@ -87,150 +86,167 @@ class ObjectMonitor {
     OM_TIMED_OUT              // Object.wait() timed out
   };
 
- public:
-  // TODO-FIXME: the "offset" routines should return a type of off_t instead of int ...
-  // ByteSize would also be an appropriate type.
-  static int header_offset_in_bytes()      { return offset_of(ObjectMonitor, _header);     }
-  static int object_offset_in_bytes()      { return offset_of(ObjectMonitor, _object);     }
-  static int owner_offset_in_bytes()       { return offset_of(ObjectMonitor, _owner);      }
-  static int count_offset_in_bytes()       { return offset_of(ObjectMonitor, _count);      }
-  static int recursions_offset_in_bytes()  { return offset_of(ObjectMonitor, _recursions); }
-  static int cxq_offset_in_bytes()         { return offset_of(ObjectMonitor, _cxq) ;       }
-  static int succ_offset_in_bytes()        { return offset_of(ObjectMonitor, _succ) ;      }
-  static int EntryList_offset_in_bytes()   { return offset_of(ObjectMonitor, _EntryList);  }
-  static int FreeNext_offset_in_bytes()    { return offset_of(ObjectMonitor, FreeNext);    }
-  static int WaitSet_offset_in_bytes()     { return offset_of(ObjectMonitor, _WaitSet) ;   }
-  static int Responsible_offset_in_bytes() { return offset_of(ObjectMonitor, _Responsible);}
-  static int Spinner_offset_in_bytes()     { return offset_of(ObjectMonitor, _Spinner);    }
+public:
+  // TODO-FIXME: the "offset" routines should return a type of off_t instead of
+  // int ... ByteSize would also be an appropriate type.
+  static int header_offset_in_bytes() {
+    return offset_of(ObjectMonitor, _header);
+  }
+  static int object_offset_in_bytes() {
+    return offset_of(ObjectMonitor, _object);
+  }
+  static int owner_offset_in_bytes() {
+    return offset_of(ObjectMonitor, _owner);
+  }
+  static int count_offset_in_bytes() {
+    return offset_of(ObjectMonitor, _count);
+  }
+  static int recursions_offset_in_bytes() {
+    return offset_of(ObjectMonitor, _recursions);
+  }
+  static int cxq_offset_in_bytes() { return offset_of(ObjectMonitor, _cxq); }
+  static int succ_offset_in_bytes() { return offset_of(ObjectMonitor, _succ); }
+  static int EntryList_offset_in_bytes() {
+    return offset_of(ObjectMonitor, _EntryList);
+  }
+  static int FreeNext_offset_in_bytes() {
+    return offset_of(ObjectMonitor, FreeNext);
+  }
+  static int WaitSet_offset_in_bytes() {
+    return offset_of(ObjectMonitor, _WaitSet);
+  }
+  static int Responsible_offset_in_bytes() {
+    return offset_of(ObjectMonitor, _Responsible);
+  }
+  static int Spinner_offset_in_bytes() {
+    return offset_of(ObjectMonitor, _Spinner);
+  }
 
- public:
+public:
   // Eventaully we'll make provisions for multiple callbacks, but
   // now one will suffice.
-  static int (*SpinCallbackFunction)(intptr_t, int) ;
-  static intptr_t SpinCallbackArgument ;
+  static int (*SpinCallbackFunction)(intptr_t, int);
+  static intptr_t SpinCallbackArgument;
 
-
- public:
-  markOop   header() const;
-  void      set_header(markOop hdr);
+public:
+  markOop header() const;
+  void set_header(markOop hdr);
 
   intptr_t is_busy() const {
     // TODO-FIXME: merge _count and _waiters.
     // TODO-FIXME: assert _owner == null implies _recursions = 0
     // TODO-FIXME: assert _WaitSet != null implies _count > 0
-    return _count|_waiters|intptr_t(_owner)|intptr_t(_cxq)|intptr_t(_EntryList ) ;
+    return _count | _waiters | intptr_t(_owner) | intptr_t(_cxq) |
+           intptr_t(_EntryList);
   }
 
-  intptr_t  is_entered(Thread* current) const;
+  intptr_t is_entered(Thread *current) const;
 
-  void*     owner() const;
-  void      set_owner(void* owner);
+  void *owner() const;
+  void set_owner(void *owner);
 
-  intptr_t  waiters() const;
+  intptr_t waiters() const;
 
-  intptr_t  count() const;
-  void      set_count(intptr_t count);
-  intptr_t  contentions() const ;
-  intptr_t  recursions() const                                         { return _recursions; }
+  intptr_t count() const;
+  void set_count(intptr_t count);
+  intptr_t contentions() const;
+  intptr_t recursions() const { return _recursions; }
 
   // JVM/DI GetMonitorInfo() needs this
-  ObjectWaiter* first_waiter()                                         { return _WaitSet; }
-  ObjectWaiter* next_waiter(ObjectWaiter* o)                           { return o->_next; }
-  Thread* thread_of_waiter(ObjectWaiter* o)                            { return o->_thread; }
+  ObjectWaiter *first_waiter() { return _WaitSet; }
+  ObjectWaiter *next_waiter(ObjectWaiter *o) { return o->_next; }
+  Thread *thread_of_waiter(ObjectWaiter *o) { return o->_thread; }
 
   // initialize the monitor, exception the semaphore, all other fields
   // are simple integers or pointers
   ObjectMonitor() {
-    _header       = NULL;
-    _count        = 0;
-    _waiters      = 0,
-    _recursions   = 0;    // 线程重入次数
-    _object       = NULL; // 存储monitor的对象
-    _owner        = NULL; // 持有该锁的线程
-    _WaitSet      = NULL; // 处于wait的线程
-    _WaitSetLock  = 0 ;   // 
-    _Responsible  = NULL ;
-    _succ         = NULL ;
-    _cxq          = NULL ; // 多线程竞争锁的单向列表
-    FreeNext      = NULL ;
-    _EntryList    = NULL ; // 处于等待锁的线程
-    _SpinFreq     = 0 ;
-    _SpinClock    = 0 ;
-    OwnerIsThread = 0 ;
+    _header = NULL;
+    _count = 0;
+    _waiters = 0,
+    _recursions = 0;  // 线程重入次数
+    _object = NULL;   // 存储monitor的对象
+    _owner = NULL;    // 持有该锁的线程
+    _WaitSet = NULL;  // 处于wait的线程
+    _WaitSetLock = 0; //
+    _Responsible = NULL;
+    _succ = NULL;
+    _cxq = NULL; // 多线程竞争锁的单向列表
+    FreeNext = NULL;
+    _EntryList = NULL; // 处于等待锁的线程
+    _SpinFreq = 0;
+    _SpinClock = 0;
+    OwnerIsThread = 0;
     _previous_owner_tid = 0;
   }
 
   ~ObjectMonitor() {
-   // TODO: Add asserts ...
-   // _cxq == 0 _succ == NULL _owner == NULL _waiters == 0
-   // _count == 0 _EntryList  == NULL etc
+    // TODO: Add asserts ...
+    // _cxq == 0 _succ == NULL _owner == NULL _waiters == 0
+    // _count == 0 _EntryList  == NULL etc
   }
 
 private:
-  void Recycle () {
+  void Recycle() {
     // TODO: add stronger asserts ...
     // _cxq == 0 _succ == NULL _owner == NULL _waiters == 0
     // _count == 0 EntryList  == NULL
     // _recursions == 0 _WaitSet == NULL
     // TODO: assert (is_busy()|_recursions) == 0
-    _succ          = NULL ;
-    _EntryList     = NULL ;
-    _cxq           = NULL ;
-    _WaitSet       = NULL ;
-    _recursions    = 0 ;
-    _SpinFreq      = 0 ;
-    _SpinClock     = 0 ;
-    OwnerIsThread  = 0 ;
+    _succ = NULL;
+    _EntryList = NULL;
+    _cxq = NULL;
+    _WaitSet = NULL;
+    _recursions = 0;
+    _SpinFreq = 0;
+    _SpinClock = 0;
+    OwnerIsThread = 0;
   }
 
 public:
+  void *object() const;
+  void *object_addr();
+  void set_object(void *obj);
 
-  void*     object() const;
-  void*     object_addr();
-  void      set_object(void* obj);
-
-  bool      check(TRAPS);       // true if the thread owns the monitor.
-  void      check_slow(TRAPS);
-  void      clear();
+  bool check(TRAPS); // true if the thread owns the monitor.
+  void check_slow(TRAPS);
+  void clear();
 #ifndef PRODUCT
-  void      verify();
-  void      print();
+  void verify();
+  void print();
 #endif
 
-  bool      try_enter (TRAPS) ;
-  void      enter(TRAPS);
-  void      exit(bool not_suspended, TRAPS);
-  void      wait(jlong millis, bool interruptable, TRAPS);
-  void      notify(TRAPS);
-  void      notifyAll(TRAPS);
+  bool try_enter(TRAPS);
+  void enter(TRAPS);
+  void exit(bool not_suspended, TRAPS);
+  void wait(jlong millis, bool interruptable, TRAPS);
+  void notify(TRAPS);
+  void notifyAll(TRAPS);
 
-// Use the following at your own risk
-  intptr_t  complete_exit(TRAPS);
-  void      reenter(intptr_t recursions, TRAPS);
+  // Use the following at your own risk
+  intptr_t complete_exit(TRAPS);
+  void reenter(intptr_t recursions, TRAPS);
 
- private:
-  void      AddWaiter (ObjectWaiter * waiter) ;
-  static    void DeferredInitialize();
+private:
+  void AddWaiter(ObjectWaiter *waiter);
+  static void DeferredInitialize();
 
-  ObjectWaiter * DequeueWaiter () ;
-  void      DequeueSpecificWaiter (ObjectWaiter * waiter) ;
-  void      EnterI (TRAPS) ;
-  void      ReenterI (Thread * Self, ObjectWaiter * SelfNode) ;
-  void      UnlinkAfterAcquire (Thread * Self, ObjectWaiter * SelfNode) ;
-  int       TryLock (Thread * Self) ;
-  int       NotRunnable (Thread * Self, Thread * Owner) ;
-  int       TrySpin_Fixed (Thread * Self) ;
-  int       TrySpin_VaryFrequency (Thread * Self) ;
-  int       TrySpin_VaryDuration  (Thread * Self) ;
-  void      ctAsserts () ;
-  void      ExitEpilog (Thread * Self, ObjectWaiter * Wakee) ;
-  bool      ExitSuspendEquivalent (JavaThread * Self) ;
-  void      post_monitor_wait_event(EventJavaMonitorWait * event,
-                                                   jlong notifier_tid,
-                                                   jlong timeout,
-                                                   bool timedout);
+  ObjectWaiter *DequeueWaiter();
+  void DequeueSpecificWaiter(ObjectWaiter *waiter);
+  void EnterI(TRAPS);
+  void ReenterI(Thread *Self, ObjectWaiter *SelfNode);
+  void UnlinkAfterAcquire(Thread *Self, ObjectWaiter *SelfNode);
+  int TryLock(Thread *Self);
+  int NotRunnable(Thread *Self, Thread *Owner);
+  int TrySpin_Fixed(Thread *Self);
+  int TrySpin_VaryFrequency(Thread *Self);
+  int TrySpin_VaryDuration(Thread *Self);
+  void ctAsserts();
+  void ExitEpilog(Thread *Self, ObjectWaiter *Wakee);
+  bool ExitSuspendEquivalent(JavaThread *Self);
+  void post_monitor_wait_event(EventJavaMonitorWait *event, jlong notifier_tid,
+                               jlong timeout, bool timedout);
 
- private:
+private:
   friend class ObjectSynchronizer;
   friend class ObjectWaiter;
   friend class VMStructs;
@@ -240,101 +256,121 @@ public:
   // TODO-FIXME: assert that offsetof(_header) is 0 or get rid of the
   // implicit 0 offset in emitted code.
 
-  volatile markOop   _header;       // displaced object header word - mark
-  void*     volatile _object;       // backward object pointer - strong root
+  volatile markOop _header; // displaced object header word - mark
+  void *volatile _object;   // backward object pointer - strong root
 
-  double SharingPad [1] ;           // temp to reduce false sharing
+  double SharingPad[1]; // temp to reduce false sharing
 
   // All the following fields must be machine word aligned
   // The VM assumes write ordering wrt these fields, which can be
   // read from other threads.
 
- protected:                         // protected for jvmtiRawMonitor
-  void *  volatile _owner;          // pointer to owning thread OR BasicLock
-  volatile jlong _previous_owner_tid; // thread id of the previous owner of the monitor
+protected:               // protected for jvmtiRawMonitor
+  /**
+   * 因为由轻量级锁升级为重量级锁的时候，_owner指向的是BasicLock(即轻量级锁的Lock Record)，但是在后续锁竞争时，_owner指向的是持有锁的线程
+   */ 
+  void *volatile _owner; // pointer to owning thread OR BasicLock
+
+  volatile jlong
+      _previous_owner_tid; // thread id of the previous owner of the monitor
 
   // 重入的次數，0代表首次進入
-  volatile intptr_t  _recursions;   // recursion count, 0 for first entry
- private:
-  int OwnerIsThread ;               // _owner is (Thread *) vs SP/BasicLock
-  ObjectWaiter * volatile _cxq ;    // LL of recently-arrived threads blocked on entry.  The list is actually composed of WaitNodes, acting  as proxies for Threads.
-                                    // 最近到达的线程在进入时被阻塞的LL。这个列表实际上是由waitnode组成的，它充当线程的代理。
-
- protected:
-  ObjectWaiter * volatile _EntryList ;     // Threads blocked on entry or reentry. 在重进入 或者  进入时阻塞的线程
- private:
-
-  Thread * volatile _succ ;    // Heir(继承人) presumptive(假定的) thread - used for futile(徒劳的，无用的，不重要的) wakeup throttling(节流) >>> 当锁被前一个线程释放，会指定一个假定继承者线程，但是它不一定最终获得锁
+  volatile intptr_t _recursions; // recursion count, 0 for first entry
+private:
 
   /**
-   *  _Responsible的park是 "有限时间" 的park,它会定期检查monitor的_owner字段,之所以这样设计是防止出现“stranding”即搁浅. 
-   */ 
-  Thread * volatile _Responsible ;
-  int _PromptDrain ;                // rqst to drain cxq into EntryList ASAP
+   * 因为由轻量级锁升级为重量级锁的时候，_owner指向的是BasicLock(即轻量级锁的Lock Record)，但是在后续锁竞争时，_owner指向的是持有锁的线程
+   * 
+   * 因此，这里留一个标志位，判断_owner是指向线程还是BasicLock
+   */
+  int OwnerIsThread; // _owner is (Thread *) vs SP/BasicLock
 
-  volatile int _Spinner ;           // for exit->spinner handoff(切换) optimization
-  volatile int _SpinFreq ;          // Spin 1-out-of-N attempts: success rate
-  volatile int _SpinClock ;
-  // 
-  volatile int _SpinDuration ;        // 自旋持续时间?在哪里使用
-  volatile intptr_t _SpinState ;    // MCS/CLH list of spinners
+
+  /**
+   *  LL of recently-arrived threads blocked on entry.  The list is actually composed of WaitNodes, acting  as proxies for Threads.
+   *  最近到达的线程在进入时被阻塞的LL。这个列表实际上是由waitnode组成的，它充当线程的代理。
+   * 
+   * 该字段的功能: 
+   * 
+   */ 
+  ObjectWaiter
+      *volatile _cxq; 
+
+protected:
+  ObjectWaiter *volatile _EntryList; // Threads blocked on entry or reentry.
+                                     // 在重进入 或者  进入时阻塞的线程
+private:
+  Thread
+      *volatile _succ; // Heir(继承人) presumptive(假定的) thread - used for
+                       // futile(徒劳的，无用的，不重要的) wakeup
+                       // throttling(节流) >>>
+                       // 当锁被前一个线程释放，会指定一个假定继承者线程，但是它不一定最终获得锁
+
+  /**
+   *  _Responsible的park是 "有限时间"
+   * 的park,它会定期检查monitor的_owner字段,之所以这样设计是防止出现“stranding”即搁浅.
+   */
+  Thread *volatile _Responsible;
+  int _PromptDrain; // rqst to drain cxq into EntryList ASAP
+
+  volatile int _Spinner;  // for exit->spinner handoff(切换) optimization
+  volatile int _SpinFreq; // Spin 1-out-of-N attempts: success rate
+  volatile int _SpinClock;
+  
+  volatile int _SpinDuration;   // 自旋的次数
+  volatile intptr_t _SpinState; // MCS/CLH list of spinners
 
   // TODO-FIXME: _count, _waiters and _recursions should be of
   // type int, or int32_t but not intptr_t.  There's no reason
   // to use 64-bit fields for these variables on a 64-bit JVM.
 
-  volatile intptr_t  _count;        // reference count to prevent reclaimation/deflation
-                                    // at stop-the-world time.  See deflate_idle_monitors().
-                                    // _count is approximately |_WaitSet| + |_EntryList|
- protected:
-  volatile intptr_t  _waiters;      // number of waiting threads
- private:
- protected:
-  ObjectWaiter * volatile _WaitSet; // LL of threads wait()ing on the monitor
- private:
-  volatile int _WaitSetLock;        // protects Wait Queue - simple spinlock
+  volatile intptr_t
+      _count; // reference count to prevent reclaimation/deflation
+              // at stop-the-world time.  See deflate_idle_monitors().
+              // _count is approximately |_WaitSet| + |_EntryList|
+protected:
+  volatile intptr_t _waiters; // number of waiting threads
+private:
+protected:
+  ObjectWaiter *volatile _WaitSet; // LL of threads wait()ing on the monitor
+private:
+  volatile int _WaitSetLock; // protects Wait Queue - simple spinlock
 
- public:
-  int _QMix ;                       // Mixed prepend queue discipline
-  ObjectMonitor * FreeNext ;        // Free list linkage
-  intptr_t StatA, StatsB ;
+public:
+  int _QMix;               // Mixed prepend queue discipline
+  ObjectMonitor *FreeNext; // Free list linkage
+  intptr_t StatA, StatsB;
 
- public:
-  static void Initialize () ;
-  static PerfCounter * _sync_ContendedLockAttempts ;
-  static PerfCounter * _sync_FutileWakeups ;
-  static PerfCounter * _sync_Parks ;
-  static PerfCounter * _sync_EmptyNotifications ;
-  static PerfCounter * _sync_Notifications ;
-  static PerfCounter * _sync_SlowEnter ;
-  static PerfCounter * _sync_SlowExit ;
-  static PerfCounter * _sync_SlowNotify ;
-  static PerfCounter * _sync_SlowNotifyAll ;
-  static PerfCounter * _sync_FailedSpins ;
-  static PerfCounter * _sync_SuccessfulSpins ;
-  static PerfCounter * _sync_PrivateA ;
-  static PerfCounter * _sync_PrivateB ;
-  static PerfCounter * _sync_MonInCirculation ;
-  static PerfCounter * _sync_MonScavenged ;
-  static PerfCounter * _sync_Inflations ;
-  static PerfCounter * _sync_Deflations ;
-  static PerfLongVariable * _sync_MonExtant ;
+public:
+  static void Initialize();
+  static PerfCounter *_sync_ContendedLockAttempts;
+  static PerfCounter *_sync_FutileWakeups;
+  static PerfCounter *_sync_Parks;
+  static PerfCounter *_sync_EmptyNotifications;
+  static PerfCounter *_sync_Notifications;
+  static PerfCounter *_sync_SlowEnter;
+  static PerfCounter *_sync_SlowExit;
+  static PerfCounter *_sync_SlowNotify;
+  static PerfCounter *_sync_SlowNotifyAll;
+  static PerfCounter *_sync_FailedSpins;
+  static PerfCounter *_sync_SuccessfulSpins;
+  static PerfCounter *_sync_PrivateA;
+  static PerfCounter *_sync_PrivateB;
+  static PerfCounter *_sync_MonInCirculation;
+  static PerfCounter *_sync_MonScavenged;
+  static PerfCounter *_sync_Inflations;
+  static PerfCounter *_sync_Deflations;
+  static PerfLongVariable *_sync_MonExtant;
 
- public:
+public:
   static int Knob_Verbose;
   static int Knob_SpinLimit;
-  void* operator new (size_t size) throw() {
+  void *operator new(size_t size) throw() {
     return AllocateHeap(size, mtInternal);
   }
-  void* operator new[] (size_t size) throw() {
-    return operator new (size);
-  }
-  void operator delete(void* p) {
-    FreeHeap(p, mtInternal);
-  }
-  void operator delete[] (void *p) {
-    operator delete(p);
-  }
+  void *operator new[](size_t size) throw() { return operator new(size); }
+  void operator delete(void *p) { FreeHeap(p, mtInternal); }
+  void operator delete[](void *p) { operator delete(p); }
 };
 
 #undef TEVENT
