@@ -283,7 +283,7 @@ enum HeuristicsResult {
 
 /**
  * 
- * @param o  对象头
+ * @param o  持有该锁的对象，即锁对象
  * @param allow_rebias  是否允许重偏向
  * 
  * 主体逻辑:
@@ -574,7 +574,10 @@ public:
 
 /**
  * 撤销并且重偏向
+ * >>> 非线程安全点调用，可能与其他线程存在竞争
  * 
+ * @param obj   保存了对执行线程和锁对象的引用
+ * @param attempt_rebias  是否尝试重偏向,true
  */ 
 BiasedLocking::Condition BiasedLocking::revoke_and_rebias(Handle obj, bool attempt_rebias, TRAPS) {
   // 不能在安全点调用
@@ -585,38 +588,41 @@ BiasedLocking::Condition BiasedLocking::revoke_and_rebias(Handle obj, bool attem
   // update the heuristics because doing so may cause unwanted bulk
   // revocations (which are expensive) to occur.
   // bulk revocations： 批量撤销
-  // 获取锁对象头
+  // 获取锁对象的对象头 (阅读代码时注意C++中的运算符重载)
   markOop mark = obj->mark();
-  // 如果是匿名偏向锁(处于偏向模式，但是锁持有者为null，看is_biased_anonymously注释)，并且不尝试偏向
+
+  // 如果是匿名偏向锁(处于偏向模式，但是锁持有者为null，看is_biased_anonymously注释)，并且不尝试重偏向
   if (mark->is_biased_anonymously() && !attempt_rebias) {
     /**
-     * 此分支是进行对象的 hashCode 计算时会进入的， 根据 markWord 结构可以看到， 
+     * 此分支是进行对象的 hashCode 计算时会进入的， 根据 markWord 结构可以看到，
      * 当一个对象处于可偏向状态时， markWord 中 hashCode 的存储空间是被占用的
      * 所以需要 revoke 可偏向状态， 以提供存储 hashCode 的空间
-     */ 
+     */
     // We are probably trying to revoke the bias of this object due to
     // an identity hash code computation(计算). Try to revoke the bias
     // without a safepoint. This is possible if we can successfully
     // compare-and-exchange an unbiased header into the mark word of
     // the object, meaning that no other thread has raced to acquire
     // the bias of the object.
-    markOop biased_value       = mark;
+    markOop biased_value = mark;
     // 构造一个新的markOop并且将对象分代年龄继承过来了
     markOop unbiased_prototype = markOopDesc::prototype()->set_age(mark->age());
     // 使用CAS操作，更新对象头
-    markOop res_mark = (markOop) Atomic::cmpxchg_ptr(unbiased_prototype, obj->mark_addr(), mark);
+    markOop res_mark = (markOop)Atomic::cmpxchg_ptr(unbiased_prototype,
+                                                    obj->mark_addr(), mark);
+    // 当CAS操作失败，那么就需要撤销偏向了
     if (res_mark == biased_value) {
       return BIAS_REVOKED;
     }
-  } else if (mark->has_bias_pattern()) { // 如果该对象处于偏向模式,到此，该对象偏向锁确实已经被某个线程持有
+  } else if (mark->has_bias_pattern()) { // 如果该对象处于偏向模式,到此，该对象偏向锁确实已经被某个线程持有(不是匿名偏向)
+    // 获取锁对象的Klass类型 
     Klass* k = obj->klass();
+    // 获取原型对象头，即对象头模型
     markOop prototype_header = k->prototype_header();
     /**
      * prototype_header->has_bias_pattern() : 对应的class是否开启偏向模式
-     * 
-     * 
      */ 
-    if (!prototype_header->has_bias_pattern()) { // class没有开启偏向模式?
+    if (!prototype_header->has_bias_pattern()) { // 该Klass类型不支持偏向模式，但是该对象是处于偏向锁的模式，那么尽管是竞争状态，还是需要将偏向锁撤销
       // This object has a stale bias from before the bulk revocation
       // for this data type occurred. It's pointless(无意义的) to update the
       // heuristics at this point so simply update the header with a
@@ -626,6 +632,7 @@ BiasedLocking::Condition BiasedLocking::revoke_and_rebias(Handle obj, bool attem
       markOop biased_value       = mark;
       markOop res_mark = (markOop) Atomic::cmpxchg_ptr(prototype_header, obj->mark_addr(), mark);
       assert(!(*(obj->mark_addr()))->has_bias_pattern(), "even if we raced, should still be revoked");
+      // 撤销偏向
       return BIAS_REVOKED;
     } else if (prototype_header->bias_epoch() != mark->bias_epoch()) { // 偏向锁超时?
       // The epoch of this biasing has expired(过期) indicating that the
@@ -635,18 +642,22 @@ BiasedLocking::Condition BiasedLocking::revoke_and_rebias(Handle obj, bool attem
       // heuristics. This is normally done in the assembly code but we
       // can reach this point due to various(adj. 各种各样的；多方面的) points in the runtime
       // needing to revoke biases.
+
+      // 允许重偏向
       if (attempt_rebias) {
         assert(THREAD->is_Java_thread(), "");
         markOop biased_value       = mark;
         markOop rebiased_prototype = markOopDesc::encode((JavaThread*) THREAD, mark->age(), prototype_header->bias_epoch());
         markOop res_mark = (markOop) Atomic::cmpxchg_ptr(rebiased_prototype, obj->mark_addr(), mark);
+        // CAS操作成功，
         if (res_mark == biased_value) {
           return BIAS_REVOKED_AND_REBIASED;
         }
-      } else {
+      } else { // 不允许重偏向: 构建一个新的未偏向的头部，使用CAS替换
         markOop biased_value       = mark;
         markOop unbiased_prototype = markOopDesc::prototype()->set_age(mark->age());
         markOop res_mark = (markOop) Atomic::cmpxchg_ptr(unbiased_prototype, obj->mark_addr(), mark);
+        // CAS操作成功，撤销偏向锁
         if (res_mark == biased_value) {
           return BIAS_REVOKED;
         }

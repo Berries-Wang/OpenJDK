@@ -91,7 +91,7 @@
 //
 //  - the two lock bits are used to describe three states: locked/unlocked and monitor.
 //
-//    [ptr             | 00]  locked             ptr points to real header on stack
+//    [ptr             | 00]  locked             ptr points to real header on stack // ptr是指向在stack中的对象头指针，并没有说是轻量级锁，通过代码发现，似乎将轻量级锁和偏向锁合并了
 //    [header      | 0 | 01]  unlocked           regular(常规的) object header
 //    [ptr             | 10]  monitor            inflated lock (header is wapped out)
 //    [ptr             | 11]  marked             ### 注意: used by markSweep to mark an object not valid at any other time(!!! 由markSweep使用，将对象标记为在任何其他时间无效) 

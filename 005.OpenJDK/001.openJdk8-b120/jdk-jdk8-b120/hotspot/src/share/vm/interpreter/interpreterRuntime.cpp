@@ -574,7 +574,7 @@ IRT_ENTRY_NO_ASYNC(void, InterpreterRuntime::monitorenter(JavaThread* thread, Ba
   }
   /**
    * 
-   * elem->obj()，返回的类型是: oop
+   * elem->obj()，返回的类型是: oop，即持有这把锁的对象(参见: 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/runtime/basicLock.hpp)
    * 
    * 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/runtime/basicLock.hpp
    * Handle: 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/runtime/handles.hpp
@@ -582,13 +582,13 @@ IRT_ENTRY_NO_ASYNC(void, InterpreterRuntime::monitorenter(JavaThread* thread, Ba
   Handle h_obj(thread, elem->obj());
   assert(Universe::heap()->is_in_reserved_or_null(h_obj()),
          "must be NULL or an object");
-  if (UseBiasedLocking) {// 如果使用偏向锁
+  if (UseBiasedLocking) { // 如果启用偏向锁
     /**
      * Retry fast entry if bias is revoked to avoid unnecessary inflation
-     * 
+     *
      * inflation:  通货膨胀，通胀率；充气，膨胀，增大
      * revoked: 撤销
-     */ 
+     */
     ObjectSynchronizer::fast_enter(h_obj, elem->lock(), true, CHECK);
   } else {
     ObjectSynchronizer::slow_enter(h_obj, elem->lock(), CHECK);

@@ -68,41 +68,50 @@
 // used operators for ease of use.
 
 class Handle VALUE_OBJ_CLASS_SPEC {
- private:
-  oop* _handle;
+private:
+  oop *_handle;
 
- protected:
-  oop     obj() const                            { return _handle == NULL ? (oop)NULL : *_handle; }
-  oop     non_null_obj() const                   { assert(_handle != NULL, "resolving NULL handle"); return *_handle; }
+protected:
+  oop obj() const { return _handle == NULL ? (oop)NULL : *_handle; }
+  oop non_null_obj() const {
+    assert(_handle != NULL, "resolving NULL handle");
+    return *_handle;
+  }
 
- public:
+public:
   // Constructors
-  Handle()                                       { _handle = NULL; }
+  Handle() { _handle = NULL; }
   Handle(oop obj);
-  Handle(Thread* thread, oop obj);
+  Handle(Thread *thread, oop obj);
 
   // General access
-  oop     operator () () const                   { return obj(); }
-  oop     operator -> () const                   { return non_null_obj(); }
-  bool    operator == (oop o) const              { return obj() == o; }
-  bool    operator == (const Handle& h) const          { return obj() == h.obj(); }
+  oop operator()() const { return obj(); }
+
+  // 注意这个运算符的重载
+  oop operator->() const { return non_null_obj(); }
+
+  bool operator==(oop o) const { return obj() == o; }
+  bool operator==(const Handle &h) const { return obj() == h.obj(); }
 
   // Null checks
-  bool    is_null() const                        { return _handle == NULL; }
-  bool    not_null() const                       { return _handle != NULL; }
+  bool is_null() const { return _handle == NULL; }
+  bool not_null() const { return _handle != NULL; }
 
   // Debugging
-  void    print()                                { obj()->print(); }
+  void print() { obj()->print(); }
 
   // Direct interface, use very sparingly.
-  // Used by JavaCalls to quickly convert handles and to create handles static data structures.
-  // Constructor takes a dummy argument to prevent unintentional type conversion in C++.
-  Handle(oop *handle, bool dummy)                { _handle = handle; }
+  // Used by JavaCalls to quickly convert handles and to create handles static
+  // data structures. Constructor takes a dummy argument to prevent
+  // unintentional type conversion in C++.
+  Handle(oop *handle, bool dummy) { _handle = handle; }
 
-  // Raw handle access. Allows easy duplication of Handles. This can be very unsafe
-  // since duplicates is only valid as long as original handle is alive.
-  oop* raw_value()                               { return _handle; }
-  static oop raw_resolve(oop *handle)            { return handle == NULL ? (oop)NULL : *handle; }
+  // Raw handle access. Allows easy duplication of Handles. This can be very
+  // unsafe since duplicates is only valid as long as original handle is alive.
+  oop *raw_value() { return _handle; }
+  static oop raw_resolve(oop *handle) {
+    return handle == NULL ? (oop)NULL : *handle;
+  }
 };
 
 // Specific Handles for different oop types

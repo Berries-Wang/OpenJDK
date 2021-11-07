@@ -158,22 +158,26 @@ static volatile int MonitorPopulation = 0 ;      // # Extant -- in circulation
 
 // -----------------------------------------------------------------------------
 /**
- * 
- *  Fast Monitor Enter/Exit
+ *
+ * Fast Monitor Enter/Exit
  * This the fast monitor enter. The interpreter and compiler use
  * some assembly copies of this code. Make sure update those code
  * if the following function is changed. The implementation is
  * extremely(极其) sensitive(敏感的) to race condition. Be careful.
- * 
+ *
  * 这是快速监视器的输入。解释器和编译器使用此代码的一些程序集副本。如果以下功能发生更改，请确保更新这些代码。该实现对竞争条件极为敏感。小心。
- * 
+ *
  * @param attempt_rebias 是否尝试重偏向,true
+ * @param obj 保存了对执行线程和锁对象的引用
+ * @param lock 锁对象，即 BasicObjectLock
+ * @param TRAPS
  */
 void ObjectSynchronizer::fast_enter(Handle obj, BasicLock *lock,
                                     bool attempt_rebias, TRAPS) {
 
   if (UseBiasedLocking) { // 启用偏向锁,在安全点和不在安全点有什么区别?
     if (!SafepointSynchronize::is_at_safepoint()) { // 不在安全点上
+
       BiasedLocking::Condition cond =
           BiasedLocking::revoke_and_rebias(obj, attempt_rebias, THREAD);
       if (cond == BiasedLocking::BIAS_REVOKED_AND_REBIASED) {
@@ -232,6 +236,13 @@ void ObjectSynchronizer::fast_exit(oop object, BasicLock *lock, TRAPS) {
 // This routine is used to handle interpreter/compiler slow case
 // We don't need to use fast path here, because it must have been
 // failed in the interpreter/compiler code.
+
+/**
+ *
+ * @param obj 保存了对执行线程和锁对象的引用
+ * @param lock 锁对象，即 BasicObjectLock
+ *
+ */
 void ObjectSynchronizer::slow_enter(Handle obj, BasicLock *lock, TRAPS) {
   // 获取锁对象头
   markOop mark = obj->mark();
@@ -243,7 +254,7 @@ void ObjectSynchronizer::slow_enter(Handle obj, BasicLock *lock, TRAPS) {
     // Anticipate successful CAS -- the ST of the displaced mark must
     // be visible <= the ST performed by the CAS.
     lock->set_displaced_header(mark);
-    // CAS操作成功
+    // CAS操作替换对象头成功
     if (mark == (markOop)Atomic::cmpxchg_ptr(lock, obj()->mark_addr(), mark)) {
       TEVENT(slow_enter : release stacklock);
       return;
@@ -255,7 +266,7 @@ void ObjectSynchronizer::slow_enter(Handle obj, BasicLock *lock, TRAPS) {
       assert(lock != mark->locker(), "must not re-lock the same lock");
       assert(lock != (BasicLock *)obj->mark(),
              "don't relock with same BasicLock");
-      //
+      
       lock->set_displaced_header(NULL);
       return;
     }
