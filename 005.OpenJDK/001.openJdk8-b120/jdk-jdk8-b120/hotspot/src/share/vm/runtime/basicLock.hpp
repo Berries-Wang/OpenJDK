@@ -31,25 +31,29 @@
 
 /**
  * 
+ * 功能： 保存对象头部和对象本身
+ * 
  * BasicLock 和 BasicObjectLock的关系
  * 
  */
 
-
 class BasicLock VALUE_OBJ_CLASS_SPEC {
   friend class VMStructs;
- private:
-  volatile markOop _displaced_header; // 对象头，锁对象的
- public:
-  markOop      displaced_header() const               { return _displaced_header; }
-  void         set_displaced_header(markOop header)   { _displaced_header = header; }
 
-  void print_on(outputStream* st) const;
+private:
+  volatile markOop _displaced_header; // 对象头，锁对象的
+public:
+  markOop displaced_header() const { return _displaced_header; }
+  void set_displaced_header(markOop header) { _displaced_header = header; }
+
+  void print_on(outputStream *st) const;
 
   // move a basic lock (used during deoptimization
-  void move_to(oop obj, BasicLock* dest);
+  void move_to(oop obj, BasicLock *dest);
 
-  static int displaced_header_offset_in_bytes()       { return offset_of(BasicLock, _displaced_header); }
+  static int displaced_header_offset_in_bytes() {
+    return offset_of(BasicLock, _displaced_header);
+  }
 };
 
 // A BasicObjectLock associates a specific Java object with a BasicLock.
@@ -63,26 +67,30 @@ class BasicLock VALUE_OBJ_CLASS_SPEC {
 
 class BasicObjectLock VALUE_OBJ_CLASS_SPEC {
   friend class VMStructs;
- private:
-  BasicLock _lock;                                    // the lock, must be double word aligned 
-  oop       _obj;                                     // object holds the lock;  持有这把锁的对象
 
- public:
+private:
+  BasicLock _lock; // the lock, must be double word aligned // 真实锁对象
+  oop _obj;        // object holds the lock;  持有这把锁的对象
+
+public:
   // Manipulation
-  oop      obj() const                                { return _obj;  }
-  void set_obj(oop obj)                               { _obj = obj; }
-  BasicLock* lock()                                   { return &_lock; }
+  oop obj() const { return _obj; }
+  void set_obj(oop obj) { _obj = obj; }
+  BasicLock *lock() { return &_lock; }
 
-  // Note: Use frame::interpreter_frame_monitor_size() for the size of BasicObjectLocks
-  //       in interpreter activation frames since it includes machine-specific padding.
-  static int size()                                   { return sizeof(BasicObjectLock)/wordSize; }
+  // Note: Use frame::interpreter_frame_monitor_size() for the size of
+  // BasicObjectLocks
+  //       in interpreter activation frames since it includes machine-specific
+  //       padding.
+  static int size() { return sizeof(BasicObjectLock) / wordSize; }
 
   // GC support
-  void oops_do(OopClosure* f) { f->do_oop(&_obj); }
+  void oops_do(OopClosure *f) { f->do_oop(&_obj); }
 
-  static int obj_offset_in_bytes()                    { return offset_of(BasicObjectLock, _obj);  }
-  static int lock_offset_in_bytes()                   { return offset_of(BasicObjectLock, _lock); }
+  static int obj_offset_in_bytes() { return offset_of(BasicObjectLock, _obj); }
+  static int lock_offset_in_bytes() {
+    return offset_of(BasicObjectLock, _lock);
+  }
 };
-
 
 #endif // SHARE_VM_RUNTIME_BASICLOCK_HPP

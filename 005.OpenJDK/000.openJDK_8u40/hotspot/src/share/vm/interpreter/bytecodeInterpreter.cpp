@@ -1800,7 +1800,7 @@ run:
       }
 
       /* monitorenter and monitorexit for locking/unlocking an object */
-
+      // 请参见: 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/interpreter/bytecodeInterpreter.cpp
       CASE(_monitorenter) : {
         // 获取锁对象
         oop lockee = STACK_OBJECT(-1);

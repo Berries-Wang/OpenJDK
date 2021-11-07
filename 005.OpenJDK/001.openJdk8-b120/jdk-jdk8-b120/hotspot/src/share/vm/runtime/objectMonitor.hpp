@@ -290,7 +290,7 @@ private:
    *  LL of recently-arrived threads blocked on entry.  The list is actually composed of WaitNodes, acting  as proxies for Threads.
    *  最近到达的线程在进入时被阻塞的LL。这个列表实际上是由waitnode组成的，它充当线程的代理。
    * 
-   * 该字段的功能: 
+   * 在_cxq中的线程都是自旋等待锁的线程，而不是被挂起来的线程.
    * 
    */ 
   ObjectWaiter

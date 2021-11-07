@@ -1682,23 +1682,36 @@ run:
       }
 
       /* monitorenter and monitorexit for locking/unlocking an object */
-
+      /*
+       *monitorenter字节码指令入口
+       *
+       * 注意事项:
+       * >>> 1. 进入该入口的第一件事情: 获取Lock Record , 也就是说偏向锁和轻量级锁一样，对象头也是指向一个Lock Record
+       * 
+       */
       CASE(_monitorenter): {
         oop lockee = STACK_OBJECT(-1);
         // derefing's lockee ought to provoke implicit null check
         CHECK_NULL(lockee);
-        // find a free monitor or one already allocated for this object
-        // if we find a matching object then we need a new monitor
-        // since this is recursive enter
-        BasicObjectLock* limit = istate->monitor_base();
-        BasicObjectLock* most_recent = (BasicObjectLock*) istate->stack_base();
+        /**
+         * find a free monitor or one already allocated for this object if we find a matching object then we need a new monitor since this is recursive(递归的；循环的) enter
+         * >>>释义：找到一个空间的或者早已分配给这个对象的monitor，如果我们找到了一个匹配的对象，那么就需要重新分配一个monitor，因为他已经被重新进入了
+         * 
+         * 通过代码发现,“istate”类型是BytecodeInterpreter，即字节码解释器
+         */ 
+        // 遍历栈中的Lock Record , 找到一个空闲的Lock Record(即可以使用的)
+        BasicObjectLock* limit = istate->monitor_base(); // 线程栈的栈顶
+        BasicObjectLock* most_recent = (BasicObjectLock*) istate->stack_base();  // 线程栈的栈底
         BasicObjectLock* entry = NULL;
-        // 从线程栈中获取一个可以使用的Lock Record
-        while (most_recent != limit ) {
-          if (most_recent->obj() == NULL) entry = most_recent;
-          else if (most_recent->obj() == lockee) break;
+        // 从线程栈中获取一个可以使用的Lock Record: 从栈底向栈顶遍历
+        while (most_recent != limit) {
+          if (most_recent->obj() == NULL)
+            entry = most_recent;
+          else if (most_recent->obj() == lockee)
+            break;
           most_recent++;
         }
+        // 当找到了一个可用的Lock Record
         if (entry != NULL) {
           entry->set_obj(lockee);
           // 去掉锁对象的锁标志位，获取一个新的没有被加锁的markOop
@@ -1707,22 +1720,31 @@ run:
           // 如果加锁失败(将锁对象头执行LockRecord，lockRecord指向锁对象，即使用CAS进行替换),
           // >>> 见代码注释: 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/os_cpu/linux_x86/vm/atomic_linux_x86.inline.hpp
           if (Atomic::cmpxchg_ptr(entry, lockee->mark_addr(), displaced) != displaced) {
-            // Is it simple recursive case? 是简单递归的情况吗?,即是否是简单的重入锁
+            /**
+             * >>> 执行到此处，说明CAS操作失败了，即该对象是被锁住了 <<<
+             */ 
+            /**
+             * Is it simple recursive case? 是简单递归的情况吗?,即是否是简单的重入锁(注意，前提是CAS操作失败了)
+             * 如何判断: 
+             * 1. 首先得知道，如果CAS操作成功了，那么lockee->mark()就是BasicObjectLock的地址，所以后面的锁状态位无用。所以清零锁状态位，再判断对象的头部是否再线程栈的地址区间内
+             * >>>>>> 对比看一下: 004.OpenJDK(JVM)学习/004.类和对象/000.Oop-Klass二分模型.md
+             */ 
             if (THREAD->is_lock_owned((address) displaced->clear_lock_bits())) {
-              // 锁重入，释放这个Lock Record??待验证!!!
+              // 锁重入，释放这个Lock Record
               entry->lock()->set_displaced_header(NULL);
-            } else {
+            } else { // 如果不是，则说明有线程在执行,进入 InterpreterRuntime::monitorenter
               CALL_VM(InterpreterRuntime::monitorenter(THREAD, entry), handle_exception);
             }
           }
           // 执行下一条指令(CAS替换成功了，即加锁成功了)
           UPDATE_PC_AND_TOS_AND_CONTINUE(1, -1);
-        } else {
+        } else { // 当没有找到一个可以使用的Lock Record
           istate->set_msg(more_monitors);
           UPDATE_PC_AND_RETURN(0); // Re-execute
         }
       }
 
+      // monitorexit 字节码指令执行入口
       CASE(_monitorexit): {
         oop lockee = STACK_OBJECT(-1);
         CHECK_NULL(lockee);
