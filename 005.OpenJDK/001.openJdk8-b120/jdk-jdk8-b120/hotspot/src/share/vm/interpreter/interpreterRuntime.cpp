@@ -601,31 +601,49 @@ IRT_ENTRY_NO_ASYNC(void, InterpreterRuntime::monitorenter(JavaThread* thread, Ba
 IRT_END
 
 
+/**
+ * 
+ * monitorexit 线程退出同步代码块
+ * 
+ * @param thread  当前线程
+ * @param elem Lock Record
+ */
 //%note monitor_1
-IRT_ENTRY_NO_ASYNC(void, InterpreterRuntime::monitorexit(JavaThread* thread, BasicObjectLock* elem))
+IRT_ENTRY_NO_ASYNC(void, InterpreterRuntime::monitorexit(JavaThread *thread,
+                                                         BasicObjectLock *elem))
 #ifdef ASSERT
-  thread->last_frame().interpreter_frame_verify_monitor(elem);
+thread->last_frame().interpreter_frame_verify_monitor(elem);
 #endif
-  Handle h_obj(thread, elem->obj());
-  assert(Universe::heap()->is_in_reserved_or_null(h_obj()),
-         "must be NULL or an object");
-  if (elem == NULL || h_obj()->is_unlocked()) {
-    THROW(vmSymbols::java_lang_IllegalMonitorStateException());
-  }
-  ObjectSynchronizer::slow_exit(h_obj(), elem->lock(), thread);
-  // Free entry. This must be done here, since a pending exception might be installed on
-  // exit. If it is not cleared, the exception handling code will try to unlock the monitor again.
-  elem->set_obj(NULL);
-#ifdef ASSERT
-  thread->last_frame().interpreter_frame_verify_monitor(elem);
-#endif
-IRT_END
-
-
-IRT_ENTRY(void, InterpreterRuntime::throw_illegal_monitor_state_exception(JavaThread* thread))
+Handle h_obj(thread, elem->obj());
+assert(Universe::heap()->is_in_reserved_or_null(h_obj()),
+       "must be NULL or an object");
+if (elem == NULL || h_obj()->is_unlocked()) {
   THROW(vmSymbols::java_lang_IllegalMonitorStateException());
+}
+/**
+ * 通过Handle代码可以看出,()被重载了，h_obj()返回的是锁对象,即elem->()
+ *
+ */
+ObjectSynchronizer::slow_exit(h_obj(), elem->lock(), thread);
+
+/**
+ * Free entry. This must be done here, since a pending exception might be
+ * installed on exit. If it is not cleared, the exception handling code will try
+ * to unlock the monitor again.(免费的条目。这里必须这样做，因为退出时可能会安装一个挂起异常。如果未清除，异常处理代码将尝试再次解锁监视器。，
+ * (即通过判断BasicLock中的_obj字段来判断该BasicLock是否被用于锁,如果不为空，则说明是该BasicLock还在被使用，不是空闲的)
+ * 
+ *  最终是将锁对象置空(_obj字段)
+ */
+elem->set_obj(NULL);
+#ifdef ASSERT
+thread->last_frame().interpreter_frame_verify_monitor(elem);
+#endif
 IRT_END
 
+IRT_ENTRY(void, InterpreterRuntime::throw_illegal_monitor_state_exception(
+                    JavaThread *thread))
+THROW(vmSymbols::java_lang_IllegalMonitorStateException());
+IRT_END
 
 IRT_ENTRY(void, InterpreterRuntime::new_illegal_monitor_state_exception(JavaThread* thread))
   // Returns an illegal exception to install into the current thread. The

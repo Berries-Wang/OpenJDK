@@ -1730,7 +1730,7 @@ run:
              * >>>>>> 对比看一下: 004.OpenJDK(JVM)学习/004.类和对象/000.Oop-Klass二分模型.md
              */ 
             if (THREAD->is_lock_owned((address) displaced->clear_lock_bits())) {
-              // 锁重入，释放这个Lock Record
+              // 锁重入，释放这个Lock Record，但是这里没有重置锁字段：WEI0001. _obj(BasicObjectLock Class的字段) >> 那么可以看出，锁重入时线程栈是什么样子的(结合代码: WEI0002)
               entry->lock()->set_displaced_header(NULL);
             } else { // 如果不是，则说明有线程在执行,进入 InterpreterRuntime::monitorenter
               CALL_VM(InterpreterRuntime::monitorenter(THREAD, entry), handle_exception);
@@ -1746,21 +1746,34 @@ run:
 
       // monitorexit 字节码指令执行入口
       CASE(_monitorexit): {
+        // 获取锁对象
         oop lockee = STACK_OBJECT(-1);
         CHECK_NULL(lockee);
-        // derefing's lockee ought to provoke implicit null check
-        // find our monitor slot
+        // derefing's lockee ought(责任，义务) to provoke(激起，引起) implicit(含蓄的，隐式的) null check  find our monitor slot
         BasicObjectLock* limit = istate->monitor_base();
         BasicObjectLock* most_recent = (BasicObjectLock*) istate->stack_base();
+
+        /**
+         * 遍历线程栈，遍历所有的BasicLock，即所有的Lock Record，如果锁对象是lockee 且锁的对象头存在，那么就将
+         * BasicLock的锁对象字段置空并且使用CAS方式将对象头替换会锁对象上。若CAS失败，则进入 InterpreterRuntime::monitorexit 
+         * 
+         */ 
         while (most_recent != limit ) {
+          // 如果most_recent中的锁对象是lockee
           if ((most_recent)->obj() == lockee) {
-            BasicLock* lock = most_recent->lock();
+            BasicLock *lock = most_recent->lock();
             markOop header = lock->displaced_header();
             most_recent->set_obj(NULL);
-            // If it isn't recursive we either must swap old header or call the runtime
-            if (header != NULL) {
+            // If it isn't recursive we either must swap old header or call the  runtime 如果不是递归的，则必须交换旧的头文件或调用运行时。见上面的代码:WEI0001处
+            if (header != NULL) {  
+              /**
+               * 到这里，就获取到了第一次进入生成的Lock Record
+               * // WEI0002.
+               * 即锁重入多少次，那么线程栈中就有多少个Lock Record,只不过后面重入的Lock Record的"_displaced_header"为NULL
+               * 
+               */ 
               if (Atomic::cmpxchg_ptr(header, lockee->mark_addr(), lock) != lock) {
-                // restore object for the slow case
+                // restore object for the slow case (重置)
                 most_recent->set_obj(lockee);
                 CALL_VM(InterpreterRuntime::monitorexit(THREAD, most_recent), handle_exception);
               }

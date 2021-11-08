@@ -194,12 +194,19 @@ void ObjectSynchronizer::fast_enter(Handle obj, BasicLock *lock,
   slow_enter(obj, lock, THREAD);
 }
 
+/**
+ * 退出synchronized同步代码块
+ *
+ * @param object 锁对象
+ * @param lock 锁
+ */
 void ObjectSynchronizer::fast_exit(oop object, BasicLock *lock, TRAPS) {
   assert(!object->mark()->has_bias_pattern(),
          "should not see bias pattern here");
   // if displaced header is null, the previous enter is recursive enter, no-op
   markOop dhw = lock->displaced_header();
   markOop mark;
+  // _displaced_header 为空，说明是重入的 
   if (dhw == NULL) {
     // Recursive stack-lock.
     // Diagnostics -- Could be: stack-locked, inflating, inflated.
@@ -218,8 +225,7 @@ void ObjectSynchronizer::fast_exit(oop object, BasicLock *lock, TRAPS) {
 
   mark = object->mark();
 
-  // If the object is stack-locked by the current thread, try to
-  // swing the displaced header from the box back to the mark.
+  // If the object is stack-locked by the current thread, try to swing the displaced header from the box back to the mark. // 如果是当前线程获取了该锁对象，那么直接交换以下对象头即可
   if (mark == (markOop)lock) {
     assert(dhw->is_neutral(), "invariant");
     if ((markOop)Atomic::cmpxchg_ptr(dhw, object->mark_addr(), mark) == mark) {
@@ -228,6 +234,7 @@ void ObjectSynchronizer::fast_exit(oop object, BasicLock *lock, TRAPS) {
     }
   }
 
+  // 先膨胀，再退出
   ObjectSynchronizer::inflate(THREAD, object)->exit(true, THREAD);
 }
 

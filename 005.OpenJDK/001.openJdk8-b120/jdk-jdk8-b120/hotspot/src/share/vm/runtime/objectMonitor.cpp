@@ -1006,328 +1006,346 @@ void ObjectMonitor::UnlinkAfterAcquire (Thread * Self, ObjectWaiter * SelfNode)
 // Both impinge on OS scalability.  Given that, at most one thread parked on
 // a monitor will use a timer.
 
+
+/**
+ * 
+ *  重量级锁的退出
+ * 
+ * 
+ */ 
 void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
-   Thread * Self = THREAD ;
-   if (THREAD != _owner) {
-     if (THREAD->is_lock_owned((address) _owner)) {
-       // Transmute _owner from a BasicLock pointer to a Thread address.
-       // We don't need to hold _mutex for this transition.
-       // Non-null to Non-null is safe as long as all readers can
-       // tolerate either flavor.
-       assert (_recursions == 0, "invariant") ;
-       _owner = THREAD ;
-       _recursions = 0 ;
-       OwnerIsThread = 1 ;
-     } else {
-       // NOTE: we need to handle unbalanced monitor enter/exit
-       // in native code by throwing an exception.
-       // TODO: Throw an IllegalMonitorStateException ?
-       TEVENT (Exit - Throw IMSX) ;
-       assert(false, "Non-balanced monitor enter/exit!");
-       if (false) {
-          THROW(vmSymbols::java_lang_IllegalMonitorStateException());
-       }
-       return;
-     }
-   }
+  Thread *Self = THREAD;
+  // 当_owner不是THREAD(即当前线程)，即_owner是BasicLock
+  if (THREAD != _owner) {
+    // 当锁是被当前线程持有
+    if (THREAD->is_lock_owned((address)_owner)) {
+      // Transmute _owner from a BasicLock pointer to a Thread address.
+      // We don't need to hold _mutex for this transition.
+      // Non-null to Non-null is safe as long as all readers can
+      // tolerate either flavor.
+      assert(_recursions == 0, "invariant");
+      _owner = THREAD;
+      _recursions = 0;
+      OwnerIsThread = 1;
+    } else { // 不是当前线程持有，则抛出异常
+      // NOTE: we need to handle unbalanced monitor enter/exit
+      // in native code by throwing an exception.
+      // TODO: Throw an IllegalMonitorStateException ?
+      TEVENT(Exit - Throw IMSX);
+      assert(false, "Non-balanced monitor enter/exit!");
+      if (false) {
+        THROW(vmSymbols::java_lang_IllegalMonitorStateException());
+      }
+      return;
+    }
+  }
 
-   if (_recursions != 0) {
-     _recursions--;        // this is simple recursive enter
-     TEVENT (Inflated exit - recursive) ;
-     return ;
-   }
+   // 以下，_owner == THREAD
+  if (_recursions != 0) {
+    _recursions--; // this is simple recursive enter // 锁重入
+    TEVENT(Inflated exit - recursive);
+    return;
+  }
 
-   // Invariant: after setting Responsible=null an thread must execute
-   // a MEMBAR or other serializing instruction before fetching EntryList|cxq.
-   if ((SyncFlags & 4) == 0) {
-      _Responsible = NULL ;
-   }
+  // Invariant: after setting Responsible=null an thread must execute
+  // a MEMBAR or other serializing instruction before fetching EntryList|cxq.
+  if ((SyncFlags & 4) == 0) {
+    _Responsible = NULL;
+  }
 
 #if INCLUDE_TRACE
-   // get the owner's thread id for the MonitorEnter event
-   // if it is enabled and the thread isn't suspended
-   if (not_suspended && Tracing::is_event_enabled(TraceJavaMonitorEnterEvent)) {
-     _previous_owner_tid = SharedRuntime::get_java_tid(Self);
-   }
+  // get the owner's thread id for the MonitorEnter event
+  // if it is enabled and the thread isn't suspended
+  if (not_suspended && Tracing::is_event_enabled(TraceJavaMonitorEnterEvent)) {
+    _previous_owner_tid = SharedRuntime::get_java_tid(Self);
+  }
 #endif
 
-   for (;;) {
-      assert (THREAD == _owner, "invariant") ;
+  // 自旋
+  for (;;) {
+    assert(THREAD == _owner, "invariant");
 
+    if (Knob_ExitPolicy == 0) {
+      // release semantics: prior loads and stores from within the critical
+      // section must not float (reorder) past the following store that drops
+      // the lock. On SPARC that requires MEMBAR #loadstore|#storestore. But of
+      // course in TSO #loadstore|#storestore is not required. I'd like to write
+      // one of the following: A.  OrderAccess::release() ; _owner = NULL B.
+      // OrderAccess::loadstore(); OrderAccess::storestore(); _owner = NULL;
+      // Unfortunately OrderAccess::release() and OrderAccess::loadstore() both
+      // store into a _dummy variable.  That store is not needed, but can result
+      // in massive wasteful coherency traffic on classic SMP systems.
+      // Instead, I use release_store(), which is implemented as just a simple
+      // ST on x64, x86 and SPARC.
+      // 
+      OrderAccess::release_store_ptr(&_owner, NULL); // drop the lock
+      OrderAccess::storeload(); // See if we need to wake a successor
+      if ((intptr_t(_EntryList) | intptr_t(_cxq)) == 0 || _succ != NULL) {
+        TEVENT(Inflated exit - simple egress);
+        return;
+      }
+      TEVENT(Inflated exit - complex egress);
 
-      if (Knob_ExitPolicy == 0) {
-         // release semantics: prior loads and stores from within the critical section
-         // must not float (reorder) past the following store that drops the lock.
-         // On SPARC that requires MEMBAR #loadstore|#storestore.
-         // But of course in TSO #loadstore|#storestore is not required.
-         // I'd like to write one of the following:
-         // A.  OrderAccess::release() ; _owner = NULL
-         // B.  OrderAccess::loadstore(); OrderAccess::storestore(); _owner = NULL;
-         // Unfortunately OrderAccess::release() and OrderAccess::loadstore() both
-         // store into a _dummy variable.  That store is not needed, but can result
-         // in massive wasteful coherency traffic on classic SMP systems.
-         // Instead, I use release_store(), which is implemented as just a simple
-         // ST on x64, x86 and SPARC.
-         OrderAccess::release_store_ptr (&_owner, NULL) ;   // drop the lock
-         OrderAccess::storeload() ;                         // See if we need to wake a successor
-         if ((intptr_t(_EntryList)|intptr_t(_cxq)) == 0 || _succ != NULL) {
-            TEVENT (Inflated exit - simple egress) ;
-            return ;
-         }
-         TEVENT (Inflated exit - complex egress) ;
+      // Normally the exiting thread is responsible for ensuring succession,
+      // but if other successors are ready or other entering threads are
+      // spinning then this thread can simply store NULL into _owner and exit
+      // without waking a successor.  The existence of spinners or ready
+      // successors guarantees proper succession (liveness).  Responsibility
+      // passes to the ready or running successors.  The exiting thread
+      // delegates the duty. More precisely, if a successor already exists this
+      // thread is absolved of the responsibility of waking (unparking) one.
+      //
+      // The _succ variable is critical to reducing futile wakeup frequency.
+      // _succ identifies the "heir presumptive" thread that has been made
+      // ready (unparked) but that has not yet run.  We need only one such
+      // successor thread to guarantee progress.
+      // See http://www.usenix.org/events/jvm01/full_papers/dice/dice.pdf
+      // section 3.3 "Futile Wakeup Throttling" for details.
+      //
+      // Note that spinners in Enter() also set _succ non-null.
+      // In the current implementation spinners opportunistically set
+      // _succ so that exiting threads might avoid waking a successor.
+      // Another less appealing alternative would be for the exiting thread
+      // to drop the lock and then spin briefly to see if a spinner managed
+      // to acquire the lock.  If so, the exiting thread could exit
+      // immediately without waking a successor, otherwise the exiting
+      // thread would need to dequeue and wake a successor.
+      // (Note that we'd need to make the post-drop spin short, but no
+      // shorter than the worst-case round-trip cache-line migration time.
+      // The dropped lock needs to become visible to the spinner, and then
+      // the acquisition of the lock by the spinner must become visible to
+      // the exiting thread).
+      //
 
-         // Normally the exiting thread is responsible for ensuring succession,
-         // but if other successors are ready or other entering threads are spinning
-         // then this thread can simply store NULL into _owner and exit without
-         // waking a successor.  The existence of spinners or ready successors
-         // guarantees proper succession (liveness).  Responsibility passes to the
-         // ready or running successors.  The exiting thread delegates the duty.
-         // More precisely, if a successor already exists this thread is absolved
-         // of the responsibility of waking (unparking) one.
-         //
-         // The _succ variable is critical to reducing futile wakeup frequency.
-         // _succ identifies the "heir presumptive" thread that has been made
-         // ready (unparked) but that has not yet run.  We need only one such
-         // successor thread to guarantee progress.
-         // See http://www.usenix.org/events/jvm01/full_papers/dice/dice.pdf
-         // section 3.3 "Futile Wakeup Throttling" for details.
-         //
-         // Note that spinners in Enter() also set _succ non-null.
-         // In the current implementation spinners opportunistically set
-         // _succ so that exiting threads might avoid waking a successor.
-         // Another less appealing alternative would be for the exiting thread
-         // to drop the lock and then spin briefly to see if a spinner managed
-         // to acquire the lock.  If so, the exiting thread could exit
-         // immediately without waking a successor, otherwise the exiting
-         // thread would need to dequeue and wake a successor.
-         // (Note that we'd need to make the post-drop spin short, but no
-         // shorter than the worst-case round-trip cache-line migration time.
-         // The dropped lock needs to become visible to the spinner, and then
-         // the acquisition of the lock by the spinner must become visible to
-         // the exiting thread).
-         //
+      // It appears that an heir-presumptive (successor) must be made ready.
+      // Only the current lock owner can manipulate the EntryList or
+      // drain _cxq, so we need to reacquire the lock.  If we fail
+      // to reacquire the lock the responsibility for ensuring succession
+      // falls to the new owner.
+      //
+      if (Atomic::cmpxchg_ptr(THREAD, &_owner, NULL) != NULL) {
+        return;
+      }
+      TEVENT(Exit - Reacquired);
+    } else {
+      if ((intptr_t(_EntryList) | intptr_t(_cxq)) == 0 || _succ != NULL) {
+        OrderAccess::release_store_ptr(&_owner, NULL); // drop the lock
+        OrderAccess::storeload();
+        // Ratify the previously observed values.
+        if (_cxq == NULL || _succ != NULL) {
+          TEVENT(Inflated exit - simple egress);
+          return;
+        }
 
-         // It appears that an heir-presumptive (successor) must be made ready.
-         // Only the current lock owner can manipulate the EntryList or
-         // drain _cxq, so we need to reacquire the lock.  If we fail
-         // to reacquire the lock the responsibility for ensuring succession
-         // falls to the new owner.
-         //
-         if (Atomic::cmpxchg_ptr (THREAD, &_owner, NULL) != NULL) {
-            return ;
-         }
-         TEVENT (Exit - Reacquired) ;
+        // inopportune interleaving -- the exiting thread (this thread)
+        // in the fast-exit path raced an entering thread in the slow-enter
+        // path.
+        // We have two choices:
+        // A.  Try to reacquire the lock.
+        //     If the CAS() fails return immediately, otherwise
+        //     we either restart/rerun the exit operation, or simply
+        //     fall-through into the code below which wakes a successor.
+        // B.  If the elements forming the EntryList|cxq are TSM
+        //     we could simply unpark() the lead thread and return
+        //     without having set _succ.
+        if (Atomic::cmpxchg_ptr(THREAD, &_owner, NULL) != NULL) {
+          TEVENT(Inflated exit - reacquired succeeded);
+          return;
+        }
+        TEVENT(Inflated exit - reacquired failed);
       } else {
-         if ((intptr_t(_EntryList)|intptr_t(_cxq)) == 0 || _succ != NULL) {
-            OrderAccess::release_store_ptr (&_owner, NULL) ;   // drop the lock
-            OrderAccess::storeload() ;
-            // Ratify the previously observed values.
-            if (_cxq == NULL || _succ != NULL) {
-                TEVENT (Inflated exit - simple egress) ;
-                return ;
-            }
+        TEVENT(Inflated exit - complex egress);
+      }
+    }
 
-            // inopportune interleaving -- the exiting thread (this thread)
-            // in the fast-exit path raced an entering thread in the slow-enter
-            // path.
-            // We have two choices:
-            // A.  Try to reacquire the lock.
-            //     If the CAS() fails return immediately, otherwise
-            //     we either restart/rerun the exit operation, or simply
-            //     fall-through into the code below which wakes a successor.
-            // B.  If the elements forming the EntryList|cxq are TSM
-            //     we could simply unpark() the lead thread and return
-            //     without having set _succ.
-            if (Atomic::cmpxchg_ptr (THREAD, &_owner, NULL) != NULL) {
-               TEVENT (Inflated exit - reacquired succeeded) ;
-               return ;
-            }
-            TEVENT (Inflated exit - reacquired failed) ;
-         } else {
-            TEVENT (Inflated exit - complex egress) ;
-         }
+    guarantee(_owner == THREAD, "invariant");
+
+    ObjectWaiter *w = NULL;
+    int QMode = Knob_QMode;
+
+    if (QMode == 2 && _cxq != NULL) {
+      // QMode == 2 : cxq has precedence over EntryList.
+      // Try to directly wake a successor from the cxq.
+      // If successful, the successor will need to unlink itself from cxq.
+      w = _cxq;
+      assert(w != NULL, "invariant");
+      assert(w->TState == ObjectWaiter::TS_CXQ, "Invariant");
+      ExitEpilog(Self, w);
+      return;
+    }
+
+    if (QMode == 3 && _cxq != NULL) {
+      // Aggressively drain cxq into EntryList at the first opportunity.
+      // This policy ensure that recently-run threads live at the head of
+      // EntryList. Drain _cxq into EntryList - bulk transfer. First, detach
+      // _cxq. The following loop is tantamount to: w = swap (&cxq, NULL)
+      w = _cxq;
+      for (;;) {
+        assert(w != NULL, "Invariant");
+        ObjectWaiter *u = (ObjectWaiter *)Atomic::cmpxchg_ptr(NULL, &_cxq, w);
+        if (u == w)
+          break;
+        w = u;
+      }
+      assert(w != NULL, "invariant");
+
+      ObjectWaiter *q = NULL;
+      ObjectWaiter *p;
+      for (p = w; p != NULL; p = p->_next) {
+        guarantee(p->TState == ObjectWaiter::TS_CXQ, "Invariant");
+        p->TState = ObjectWaiter::TS_ENTER;
+        p->_prev = q;
+        q = p;
       }
 
-      guarantee (_owner == THREAD, "invariant") ;
-
-      ObjectWaiter * w = NULL ;
-      int QMode = Knob_QMode ;
-
-      if (QMode == 2 && _cxq != NULL) {
-          // QMode == 2 : cxq has precedence over EntryList.
-          // Try to directly wake a successor from the cxq.
-          // If successful, the successor will need to unlink itself from cxq.
-          w = _cxq ;
-          assert (w != NULL, "invariant") ;
-          assert (w->TState == ObjectWaiter::TS_CXQ, "Invariant") ;
-          ExitEpilog (Self, w) ;
-          return ;
+      // Append the RATs to the EntryList
+      // TODO: organize EntryList as a CDLL so we can locate the tail in
+      // constant-time.
+      ObjectWaiter *Tail;
+      for (Tail = _EntryList; Tail != NULL && Tail->_next != NULL;
+           Tail = Tail->_next)
+        ;
+      if (Tail == NULL) {
+        _EntryList = w;
+      } else {
+        Tail->_next = w;
+        w->_prev = Tail;
       }
 
-      if (QMode == 3 && _cxq != NULL) {
-          // Aggressively drain cxq into EntryList at the first opportunity.
-          // This policy ensure that recently-run threads live at the head of EntryList.
-          // Drain _cxq into EntryList - bulk transfer.
-          // First, detach _cxq.
-          // The following loop is tantamount to: w = swap (&cxq, NULL)
-          w = _cxq ;
-          for (;;) {
-             assert (w != NULL, "Invariant") ;
-             ObjectWaiter * u = (ObjectWaiter *) Atomic::cmpxchg_ptr (NULL, &_cxq, w) ;
-             if (u == w) break ;
-             w = u ;
-          }
-          assert (w != NULL              , "invariant") ;
+      // Fall thru into code that tries to wake a successor from EntryList
+    }
 
-          ObjectWaiter * q = NULL ;
-          ObjectWaiter * p ;
-          for (p = w ; p != NULL ; p = p->_next) {
-              guarantee (p->TState == ObjectWaiter::TS_CXQ, "Invariant") ;
-              p->TState = ObjectWaiter::TS_ENTER ;
-              p->_prev = q ;
-              q = p ;
-          }
-
-          // Append the RATs to the EntryList
-          // TODO: organize EntryList as a CDLL so we can locate the tail in constant-time.
-          ObjectWaiter * Tail ;
-          for (Tail = _EntryList ; Tail != NULL && Tail->_next != NULL ; Tail = Tail->_next) ;
-          if (Tail == NULL) {
-              _EntryList = w ;
-          } else {
-              Tail->_next = w ;
-              w->_prev = Tail ;
-          }
-
-          // Fall thru into code that tries to wake a successor from EntryList
-      }
-
-      if (QMode == 4 && _cxq != NULL) {
-          // Aggressively drain cxq into EntryList at the first opportunity.
-          // This policy ensure that recently-run threads live at the head of EntryList.
-
-          // Drain _cxq into EntryList - bulk transfer.
-          // First, detach _cxq.
-          // The following loop is tantamount to: w = swap (&cxq, NULL)
-          w = _cxq ;
-          for (;;) {
-             assert (w != NULL, "Invariant") ;
-             ObjectWaiter * u = (ObjectWaiter *) Atomic::cmpxchg_ptr (NULL, &_cxq, w) ;
-             if (u == w) break ;
-             w = u ;
-          }
-          assert (w != NULL              , "invariant") ;
-
-          ObjectWaiter * q = NULL ;
-          ObjectWaiter * p ;
-          for (p = w ; p != NULL ; p = p->_next) {
-              guarantee (p->TState == ObjectWaiter::TS_CXQ, "Invariant") ;
-              p->TState = ObjectWaiter::TS_ENTER ;
-              p->_prev = q ;
-              q = p ;
-          }
-
-          // Prepend the RATs to the EntryList
-          if (_EntryList != NULL) {
-              q->_next = _EntryList ;
-              _EntryList->_prev = q ;
-          }
-          _EntryList = w ;
-
-          // Fall thru into code that tries to wake a successor from EntryList
-      }
-
-      w = _EntryList  ;
-      if (w != NULL) {
-          // I'd like to write: guarantee (w->_thread != Self).
-          // But in practice an exiting thread may find itself on the EntryList.
-          // Lets say thread T1 calls O.wait().  Wait() enqueues T1 on O's waitset and
-          // then calls exit().  Exit release the lock by setting O._owner to NULL.
-          // Lets say T1 then stalls.  T2 acquires O and calls O.notify().  The
-          // notify() operation moves T1 from O's waitset to O's EntryList. T2 then
-          // release the lock "O".  T2 resumes immediately after the ST of null into
-          // _owner, above.  T2 notices that the EntryList is populated, so it
-          // reacquires the lock and then finds itself on the EntryList.
-          // Given all that, we have to tolerate the circumstance where "w" is
-          // associated with Self.
-          assert (w->TState == ObjectWaiter::TS_ENTER, "invariant") ;
-          ExitEpilog (Self, w) ;
-          return ;
-      }
-
-      // If we find that both _cxq and EntryList are null then just
-      // re-run the exit protocol from the top.
-      w = _cxq ;
-      if (w == NULL) continue ;
+    if (QMode == 4 && _cxq != NULL) {
+      // Aggressively drain cxq into EntryList at the first opportunity.
+      // This policy ensure that recently-run threads live at the head of
+      // EntryList.
 
       // Drain _cxq into EntryList - bulk transfer.
       // First, detach _cxq.
       // The following loop is tantamount to: w = swap (&cxq, NULL)
+      w = _cxq;
       for (;;) {
-          assert (w != NULL, "Invariant") ;
-          ObjectWaiter * u = (ObjectWaiter *) Atomic::cmpxchg_ptr (NULL, &_cxq, w) ;
-          if (u == w) break ;
-          w = u ;
+        assert(w != NULL, "Invariant");
+        ObjectWaiter *u = (ObjectWaiter *)Atomic::cmpxchg_ptr(NULL, &_cxq, w);
+        if (u == w)
+          break;
+        w = u;
       }
-      TEVENT (Inflated exit - drain cxq into EntryList) ;
+      assert(w != NULL, "invariant");
 
-      assert (w != NULL              , "invariant") ;
-      assert (_EntryList  == NULL    , "invariant") ;
-
-      // Convert the LIFO SLL anchored by _cxq into a DLL.
-      // The list reorganization step operates in O(LENGTH(w)) time.
-      // It's critical that this step operate quickly as
-      // "Self" still holds the outer-lock, restricting parallelism
-      // and effectively lengthening the critical section.
-      // Invariant: s chases t chases u.
-      // TODO-FIXME: consider changing EntryList from a DLL to a CDLL so
-      // we have faster access to the tail.
-
-      if (QMode == 1) {
-         // QMode == 1 : drain cxq to EntryList, reversing order
-         // We also reverse the order of the list.
-         ObjectWaiter * s = NULL ;
-         ObjectWaiter * t = w ;
-         ObjectWaiter * u = NULL ;
-         while (t != NULL) {
-             guarantee (t->TState == ObjectWaiter::TS_CXQ, "invariant") ;
-             t->TState = ObjectWaiter::TS_ENTER ;
-             u = t->_next ;
-             t->_prev = u ;
-             t->_next = s ;
-             s = t;
-             t = u ;
-         }
-         _EntryList  = s ;
-         assert (s != NULL, "invariant") ;
-      } else {
-         // QMode == 0 or QMode == 2
-         _EntryList = w ;
-         ObjectWaiter * q = NULL ;
-         ObjectWaiter * p ;
-         for (p = w ; p != NULL ; p = p->_next) {
-             guarantee (p->TState == ObjectWaiter::TS_CXQ, "Invariant") ;
-             p->TState = ObjectWaiter::TS_ENTER ;
-             p->_prev = q ;
-             q = p ;
-         }
+      ObjectWaiter *q = NULL;
+      ObjectWaiter *p;
+      for (p = w; p != NULL; p = p->_next) {
+        guarantee(p->TState == ObjectWaiter::TS_CXQ, "Invariant");
+        p->TState = ObjectWaiter::TS_ENTER;
+        p->_prev = q;
+        q = p;
       }
 
-      // In 1-0 mode we need: ST EntryList; MEMBAR #storestore; ST _owner = NULL
-      // The MEMBAR is satisfied by the release_store() operation in ExitEpilog().
-
-      // See if we can abdicate to a spinner instead of waking a thread.
-      // A primary goal of the implementation is to reduce the
-      // context-switch rate.
-      if (_succ != NULL) continue;
-
-      w = _EntryList  ;
-      if (w != NULL) {
-          guarantee (w->TState == ObjectWaiter::TS_ENTER, "invariant") ;
-          ExitEpilog (Self, w) ;
-          return ;
+      // Prepend the RATs to the EntryList
+      if (_EntryList != NULL) {
+        q->_next = _EntryList;
+        _EntryList->_prev = q;
       }
-   }
+      _EntryList = w;
+
+      // Fall thru into code that tries to wake a successor from EntryList
+    }
+
+    w = _EntryList;
+    if (w != NULL) {
+      // I'd like to write: guarantee (w->_thread != Self).
+      // But in practice an exiting thread may find itself on the EntryList.
+      // Lets say thread T1 calls O.wait().  Wait() enqueues T1 on O's waitset
+      // and then calls exit().  Exit release the lock by setting O._owner to
+      // NULL. Lets say T1 then stalls.  T2 acquires O and calls O.notify(). The
+      // notify() operation moves T1 from O's waitset to O's EntryList. T2 then
+      // release the lock "O".  T2 resumes immediately after the ST of null into
+      // _owner, above.  T2 notices that the EntryList is populated, so it
+      // reacquires the lock and then finds itself on the EntryList.
+      // Given all that, we have to tolerate the circumstance where "w" is
+      // associated with Self.
+      assert(w->TState == ObjectWaiter::TS_ENTER, "invariant");
+      ExitEpilog(Self, w);
+      return;
+    }
+
+    // If we find that both _cxq and EntryList are null then just
+    // re-run the exit protocol from the top.
+    w = _cxq;
+    if (w == NULL)
+      continue;
+
+    // Drain _cxq into EntryList - bulk transfer.
+    // First, detach _cxq.
+    // The following loop is tantamount to: w = swap (&cxq, NULL)
+    for (;;) {
+      assert(w != NULL, "Invariant");
+      ObjectWaiter *u = (ObjectWaiter *)Atomic::cmpxchg_ptr(NULL, &_cxq, w);
+      if (u == w)
+        break;
+      w = u;
+    }
+    TEVENT(Inflated exit - drain cxq into EntryList);
+
+    assert(w != NULL, "invariant");
+    assert(_EntryList == NULL, "invariant");
+
+    // Convert the LIFO SLL anchored by _cxq into a DLL.
+    // The list reorganization step operates in O(LENGTH(w)) time.
+    // It's critical that this step operate quickly as
+    // "Self" still holds the outer-lock, restricting parallelism
+    // and effectively lengthening the critical section.
+    // Invariant: s chases t chases u.
+    // TODO-FIXME: consider changing EntryList from a DLL to a CDLL so
+    // we have faster access to the tail.
+
+    if (QMode == 1) {
+      // QMode == 1 : drain cxq to EntryList, reversing order
+      // We also reverse the order of the list.
+      ObjectWaiter *s = NULL;
+      ObjectWaiter *t = w;
+      ObjectWaiter *u = NULL;
+      while (t != NULL) {
+        guarantee(t->TState == ObjectWaiter::TS_CXQ, "invariant");
+        t->TState = ObjectWaiter::TS_ENTER;
+        u = t->_next;
+        t->_prev = u;
+        t->_next = s;
+        s = t;
+        t = u;
+      }
+      _EntryList = s;
+      assert(s != NULL, "invariant");
+    } else {
+      // QMode == 0 or QMode == 2
+      _EntryList = w;
+      ObjectWaiter *q = NULL;
+      ObjectWaiter *p;
+      for (p = w; p != NULL; p = p->_next) {
+        guarantee(p->TState == ObjectWaiter::TS_CXQ, "Invariant");
+        p->TState = ObjectWaiter::TS_ENTER;
+        p->_prev = q;
+        q = p;
+      }
+    }
+
+    // In 1-0 mode we need: ST EntryList; MEMBAR #storestore; ST _owner = NULL
+    // The MEMBAR is satisfied by the release_store() operation in ExitEpilog().
+
+    // See if we can abdicate to a spinner instead of waking a thread.
+    // A primary goal of the implementation is to reduce the
+    // context-switch rate.
+    if (_succ != NULL)
+      continue;
+
+    w = _EntryList;
+    if (w != NULL) {
+      guarantee(w->TState == ObjectWaiter::TS_ENTER, "invariant");
+      ExitEpilog(Self, w);
+      return;
+    }
+  }
 }
 
 // ExitSuspendEquivalent:
