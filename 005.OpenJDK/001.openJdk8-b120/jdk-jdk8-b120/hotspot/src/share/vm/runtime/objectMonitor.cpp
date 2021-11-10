@@ -1027,7 +1027,7 @@ void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
       _owner = THREAD;
       _recursions = 0;
       OwnerIsThread = 1;
-    } else { // 不是当前线程持有，则抛出异常
+    } else { // 不是当前线程持有，则抛出异常(锁状态异常)
       // NOTE: we need to handle unbalanced monitor enter/exit
       // in native code by throwing an exception.
       // TODO: Throw an IllegalMonitorStateException ?
@@ -1040,15 +1040,15 @@ void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
     }
   }
 
-   // 以下，_owner == THREAD
+   // 以下，_owner == THREAD,即当前持有这把锁的线程
   if (_recursions != 0) {
     _recursions--; // this is simple recursive enter // 锁重入
     TEVENT(Inflated exit - recursive);
     return;
   }
-
-  // Invariant: after setting Responsible=null an thread must execute
-  // a MEMBAR or other serializing instruction before fetching EntryList|cxq.
+  /**
+   *  Invariant: after setting Responsible=null an thread must execute a MEMBAR or other serializing instruction before fetching EntryList|cxq. (不变:在设置Responsible=null后，线程必须在获取EntryList|cxq之前执行MEMBAR或其他序列化指令。)
+   */
   if ((SyncFlags & 4) == 0) {
     _Responsible = NULL;
   }
@@ -1065,21 +1065,20 @@ void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
   for (;;) {
     assert(THREAD == _owner, "invariant");
 
+     // 退出策略???
     if (Knob_ExitPolicy == 0) {
-      // release semantics: prior loads and stores from within the critical
-      // section must not float (reorder) past the following store that drops
-      // the lock. On SPARC that requires MEMBAR #loadstore|#storestore. But of
-      // course in TSO #loadstore|#storestore is not required. I'd like to write
-      // one of the following: A.  OrderAccess::release() ; _owner = NULL B.
-      // OrderAccess::loadstore(); OrderAccess::storestore(); _owner = NULL;
-      // Unfortunately OrderAccess::release() and OrderAccess::loadstore() both
-      // store into a _dummy variable.  That store is not needed, but can result
-      // in massive wasteful coherency traffic on classic SMP systems.
-      // Instead, I use release_store(), which is implemented as just a simple
-      // ST on x64, x86 and SPARC.
-      // 
-      OrderAccess::release_store_ptr(&_owner, NULL); // drop the lock
-      OrderAccess::storeload(); // See if we need to wake a successor
+
+      /**
+       * release semantics: prior loads and stores from within the critical section must not float (reorder) past the following store that drops the lock. On SPARC that requires MEMBAR #loadstore|#storestore. But of course in TSO #loadstore|#storestore is not required. I'd like to write one of the following: A.  OrderAccess::release() ; _owner = NULL B. OrderAccess::loadstore(); OrderAccess::storestore(); _owner = NULL;Unfortunately OrderAccess::release() and OrderAccess::loadstore() both store into a _dummy variable.  That store is not needed, but can result in massive wasteful coherency traffic on classic SMP systems.  Instead, I use release_store(), which is implemented as just a simple ST on x64, x86 and SPARC.
+       *  
+       * 
+       * 
+       * 释放语义:在临界区段内的先前的加载和存储不能浮动(重排)到下面的存储，否则锁将被删除。在SPARC上，需要MEMBAR #loadstore|#storestore。当然，在tso# loadstore|中#storestore不是必需的。我想写以下其中之一:A. OrderAccess::release();B. OrderAccess::loadstore();OrderAccess: storestore ();_owner = NULL;不幸的是OrderAccess::release()和OrderAccess::loadstore()都存储在_dummy变量中。这个存储不是必需的，但是在经典的SMP系统上会导致大量浪费的一致性流量。相反，我使用release_store()，它在x64、x86和SPARC上实现为一个简单的ST。
+       * 
+       */
+      OrderAccess::release_store_ptr(&_owner, NULL); // drop the lock // 释放锁
+      OrderAccess::storeload(); // See if we need to wake a successor 判断是否需要唤起后继线程
+      
       if ((intptr_t(_EntryList) | intptr_t(_cxq)) == 0 || _succ != NULL) {
         TEVENT(Inflated exit - simple egress);
         return;
