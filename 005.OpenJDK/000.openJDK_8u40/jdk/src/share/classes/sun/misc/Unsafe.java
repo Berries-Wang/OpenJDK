@@ -1010,6 +1010,8 @@ public final class Unsafe {
      * @return <tt>true</tt> if successful
      *
      * CAS
+     * 
+     * 具体实现： 005.OpenJDK/000.openJDK_8u40/hotspot/src/share/vm/prims/unsafe.cpp#Unsafe_CompareAndSwapInt
      */
     public final native boolean compareAndSwapInt(Object o, long offset,
                                                   int expected,
@@ -1239,8 +1241,9 @@ public final class Unsafe {
     public final int getAndSetInt(Object o, long offset, int newValue) {
         int v;
         do {
+            // 重新获取新的值
             v = getIntVolatile(o, offset);
-        } while (!compareAndSwapInt(o, offset, v, newValue));
+        } while (!compareAndSwapInt(o, offset, v, newValue)); // 进行CAS操作,expectValue是每次循环都会去获取最新的值
         return v;
     }
 
