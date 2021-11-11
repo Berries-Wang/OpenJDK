@@ -300,6 +300,11 @@ protected:
   ObjectWaiter *volatile _EntryList; // Threads blocked on entry or reentry.
                                      // 在重进入 或者  进入时阻塞的线程
 private:
+/**
+ * 
+ * 问题，_succ在那里赋值的
+ * 
+ */ 
   Thread
       *volatile _succ; // Heir(继承人) presumptive(假定的) thread - used for
                        // futile(徒劳的，无用的，不重要的) wakeup

@@ -177,7 +177,7 @@ static int BackOffMask             = 0 ;
 
 static int Knob_FastHSSEC          = 0 ;
 static int Knob_MoveNotifyee       = 2 ;       // notify() - disposition of notifyee
-static int Knob_QMode              = 0 ;       // EntryList-cxq policy - queue discipline
+static int Knob_QMode              = 0 ;       // EntryList-cxq policy - queue discipline(排队规则)
 static volatile int InitDone       = 0 ;
 
 #define TrySpin TrySpin_VaryDuration
@@ -1065,8 +1065,8 @@ void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
   for (;;) {
     assert(THREAD == _owner, "invariant");
 
-     // 退出策略???
-    if (Knob_ExitPolicy == 0) {
+    
+    if (Knob_ExitPolicy == 0) { // 假设这就是默认的退出策略
 
       /**
        * release semantics: prior loads and stores from within the critical section must not float (reorder) past the following store that drops the lock. On SPARC that requires MEMBAR #loadstore|#storestore. But of course in TSO #loadstore|#storestore is not required. I'd like to write one of the following: A.  OrderAccess::release() ; _owner = NULL B. OrderAccess::loadstore(); OrderAccess::storestore(); _owner = NULL;Unfortunately OrderAccess::release() and OrderAccess::loadstore() both store into a _dummy variable.  That store is not needed, but can result in massive wasteful coherency traffic on classic SMP systems.  Instead, I use release_store(), which is implemented as just a simple ST on x64, x86 and SPARC.
@@ -1079,7 +1079,7 @@ void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
       OrderAccess::release_store_ptr(&_owner, NULL); // drop the lock // 释放锁
       OrderAccess::storeload(); // See if we need to wake a successor 判断是否需要唤起后继线程
       
-      if ((intptr_t(_EntryList) | intptr_t(_cxq)) == 0 || _succ != NULL) {
+      if ((intptr_t(_EntryList) | intptr_t(_cxq)) == 0 || _succ != NULL) { // 如果没有线程需要唤醒
         TEVENT(Inflated exit - simple egress);
         return;
       }
@@ -1121,13 +1121,13 @@ void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
       // drain _cxq, so we need to reacquire the lock.  If we fail
       // to reacquire the lock the responsibility for ensuring succession
       // falls to the new owner.
-      //
+      // 使用CAS操作使用当前线程来抢占这把锁，如果抢占失败，说明锁已经被其他线程持有(之前已经释放了),当即退出即可
       if (Atomic::cmpxchg_ptr(THREAD, &_owner, NULL) != NULL) {
         return;
       }
       TEVENT(Exit - Reacquired);
     } else {
-      if ((intptr_t(_EntryList) | intptr_t(_cxq)) == 0 || _succ != NULL) {
+      if ((intptr_t(_EntryList) | intptr_t(_cxq)) == 0 || _succ != NULL) { // _succ 表示后继线程，意思是当他！= null时才会有线程去抢占,其他情况需要去唤醒线程?
         OrderAccess::release_store_ptr(&_owner, NULL); // drop the lock
         OrderAccess::storeload();
         // Ratify the previously observed values.
@@ -1138,15 +1138,15 @@ void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
 
         // inopportune interleaving -- the exiting thread (this thread)
         // in the fast-exit path raced an entering thread in the slow-enter
-        // path.
+        // path. // 不合时宜的交错——快速退出路径中的退出线程(此线程)与缓慢进入路径中的进入线程赛跑。
         // We have two choices:
         // A.  Try to reacquire the lock.
         //     If the CAS() fails return immediately, otherwise
         //     we either restart/rerun the exit operation, or simply
-        //     fall-through into the code below which wakes a successor.
+        //     fall-through into the code below which wakes a successor. // 尝试重新获取锁。如果CAS()失败，则立即返回，否则我们要么重新启动/重新运行退出操作，要么直接进入下面的代码，以唤醒后续操作。>>> 即有线程抢占了这把锁，那就返回，没有抢占，那么就需要唤起其他的线程来执行。
         // B.  If the elements forming the EntryList|cxq are TSM
         //     we could simply unpark() the lead thread and return
-        //     without having set _succ.
+        //     without having set _succ. // 如果组成EntryList|cxq的元素是TSM，我们可以简单地将引导线程取消park()并返回，而不需要设置_succ。
         if (Atomic::cmpxchg_ptr(THREAD, &_owner, NULL) != NULL) {
           TEVENT(Inflated exit - reacquired succeeded);
           return;
