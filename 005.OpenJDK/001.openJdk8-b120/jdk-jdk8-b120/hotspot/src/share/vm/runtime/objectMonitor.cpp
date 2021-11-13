@@ -177,7 +177,16 @@ static int BackOffMask             = 0 ;
 
 static int Knob_FastHSSEC          = 0 ;
 static int Knob_MoveNotifyee       = 2 ;       // notify() - disposition of notifyee
-static int Knob_QMode              = 0 ;       // EntryList-cxq policy - queue discipline(排队规则)
+/**
+ * EntryList-cxq policy - queue discipline(排队规则)
+ * 排队规则:
+ *>> 0:
+ *>> 1:
+ *
+ *
+ *
+ */
+static int Knob_QMode = 0;
 static volatile int InitDone       = 0 ;
 
 #define TrySpin TrySpin_VaryDuration
@@ -1011,6 +1020,11 @@ void ObjectMonitor::UnlinkAfterAcquire (Thread * Self, ObjectWaiter * SelfNode)
  * 
  *  重量级锁的退出
  * 
+ * 总体流程: 
+ * >> 
+ * >>
+ * >>
+ * >> 
  * 
  */ 
 void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
@@ -1047,7 +1061,9 @@ void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
     return;
   }
   /**
-   *  Invariant: after setting Responsible=null an thread must execute a MEMBAR or other serializing instruction before fetching EntryList|cxq. (不变:在设置Responsible=null后，线程必须在获取EntryList|cxq之前执行MEMBAR或其他序列化指令。)
+   *  Invariant: after setting Responsible=null an thread must execute a MEMBAR
+   * or other serializing instruction before fetching EntryList|cxq.
+   * (不变:在设置Responsible=null后，线程必须在获取EntryList|cxq之前执行MEMBAR或其他序列化指令。)
    */
   if ((SyncFlags & 4) == 0) {
     _Responsible = NULL;
@@ -1065,8 +1081,7 @@ void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
   for (;;) {
     assert(THREAD == _owner, "invariant");
 
-    
-    if (Knob_ExitPolicy == 0) { // 假设这就是默认的退出策略
+    if (Knob_ExitPolicy == 0) { // 默认值，关键代码
 
       /**
        * release semantics: prior loads and stores from within the critical section must not float (reorder) past the following store that drops the lock. On SPARC that requires MEMBAR #loadstore|#storestore. But of course in TSO #loadstore|#storestore is not required. I'd like to write one of the following: A.  OrderAccess::release() ; _owner = NULL B. OrderAccess::loadstore(); OrderAccess::storestore(); _owner = NULL;Unfortunately OrderAccess::release() and OrderAccess::loadstore() both store into a _dummy variable.  That store is not needed, but can result in massive wasteful coherency traffic on classic SMP systems.  Instead, I use release_store(), which is implemented as just a simple ST on x64, x86 and SPARC.
@@ -1079,6 +1094,7 @@ void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
       OrderAccess::release_store_ptr(&_owner, NULL); // drop the lock // 释放锁
       OrderAccess::storeload(); // See if we need to wake a successor 判断是否需要唤起后继线程
       
+      // _succ != NULL表示有线程被唤醒了,既然被唤醒了，那么就直接返回(不用再去唤醒其他线程了)
       if ((intptr_t(_EntryList) | intptr_t(_cxq)) == 0 || _succ != NULL) { // 如果没有线程需要唤醒
         TEVENT(Inflated exit - simple egress);
         return;
@@ -1160,8 +1176,10 @@ void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
     guarantee(_owner == THREAD, "invariant");
 
     ObjectWaiter *w = NULL;
+    // 默认是0
     int QMode = Knob_QMode;
 
+    //  QMode 为0，非关键代码
     if (QMode == 2 && _cxq != NULL) {
       // QMode == 2 : cxq has precedence over EntryList.
       // Try to directly wake a successor from the cxq.
@@ -1173,6 +1191,7 @@ void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
       return;
     }
 
+    //  QMode 为0，非关键代码
     if (QMode == 3 && _cxq != NULL) {
       // Aggressively drain cxq into EntryList at the first opportunity.
       // This policy ensure that recently-run threads live at the head of
@@ -1214,6 +1233,7 @@ void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
       // Fall thru into code that tries to wake a successor from EntryList
     }
 
+    //  QMode 为0，非关键代码
     if (QMode == 4 && _cxq != NULL) {
       // Aggressively drain cxq into EntryList at the first opportunity.
       // This policy ensure that recently-run threads live at the head of
@@ -1252,19 +1272,26 @@ void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
     }
 
     w = _EntryList;
+
+    // 注意，这里是判断 _EntryList 是否为NULL，即是否有需要被唤起的线程
     if (w != NULL) {
-      // I'd like to write: guarantee (w->_thread != Self).
-      // But in practice an exiting thread may find itself on the EntryList.
-      // Lets say thread T1 calls O.wait().  Wait() enqueues T1 on O's waitset
-      // and then calls exit().  Exit release the lock by setting O._owner to
-      // NULL. Lets say T1 then stalls.  T2 acquires O and calls O.notify(). The
-      // notify() operation moves T1 from O's waitset to O's EntryList. T2 then
-      // release the lock "O".  T2 resumes immediately after the ST of null into
-      // _owner, above.  T2 notices that the EntryList is populated, so it
-      // reacquires the lock and then finds itself on the EntryList.
-      // Given all that, we have to tolerate the circumstance where "w" is
-      // associated with Self.
+      /**
+       *  I'd like to write: guarantee (w->_thread != Self). But in practice an
+       * exiting thread may find itself on the EntryList.  Lets say thread T1
+       * calls O.wait().  Wait() enqueues T1 on O's waitset and then calls
+       * exit().  Exit release the lock by setting O._owner to NULL. Lets say T1
+       * then stalls.  T2 acquires O and calls O.notify(). The notify()
+       * operation moves T1 from O's waitset to O's EntryList. T2 then release
+       * the lock "O".  T2 resumes immediately after the ST of null into _owner,
+       * above.  T2 notices that the EntryList is populated, so it reacquires
+       * the lock and then finds itself on the EntryList. Given all that, we
+       * have to tolerate the  circumstance where "w" is  associated with Self.
+       *
+       *我想写:guarantee (w->_thread != Self)。但在实践中，退出线程可能会发现自己在EntryList中。假设线程T1调用了O.wait()。Wait()在O的waitset上排队T1，然后调用exit()。通过将O._owner设置为NULL来释放锁。假设T1停了。T2获取O并调用O.notify()。notify()操作将T1从O的waitset移动到O的EntryList。然后T2释放锁“O”。T2在null的ST之后立即恢复到_owner，如上所述。T2注意到EntryList已被填充，因此它重新获得锁，然后在EntryList中发现自己。综上所述，我们必须容忍“w”与“Self”相关的情况。
+       *
+       */
       assert(w->TState == ObjectWaiter::TS_ENTER, "invariant");
+      // 释放锁，唤起线程
       ExitEpilog(Self, w);
       return;
     }
@@ -1272,17 +1299,26 @@ void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
     // If we find that both _cxq and EntryList are null then just
     // re-run the exit protocol from the top.
     w = _cxq;
-    if (w == NULL)
+    if (w == NULL) {
       continue;
+    }
 
-    // Drain _cxq into EntryList - bulk transfer.
+    // Drain(排空，放干，流走) _cxq into EntryList - bulk transfer.
     // First, detach _cxq.
-    // The following loop is tantamount to: w = swap (&cxq, NULL)
+    // The following loop is tantamount(等同于) to: w = swap (&cxq, NULL)
+    /**
+     * 将_cxq值赋给EntryList，但是为什么
+     * 
+     */ 
     for (;;) {
       assert(w != NULL, "Invariant");
+      /**
+       * 将_cxq的值与w值相比较，如果等，则将NULL赋值给_cxq,返回w;反之，则返回_cxq的值
+       */ 
       ObjectWaiter *u = (ObjectWaiter *)Atomic::cmpxchg_ptr(NULL, &_cxq, w);
-      if (u == w)
+      if (u == w) {
         break;
+      }
       w = u;
     }
     TEVENT(Inflated exit - drain cxq into EntryList);
@@ -1299,7 +1335,7 @@ void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
     // TODO-FIXME: consider changing EntryList from a DLL to a CDLL so
     // we have faster access to the tail.
 
-    if (QMode == 1) {
+    if (QMode == 1) { // 非核心代码，不处理
       // QMode == 1 : drain cxq to EntryList, reversing order
       // We also reverse the order of the list.
       ObjectWaiter *s = NULL;
@@ -1316,13 +1352,14 @@ void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
       }
       _EntryList = s;
       assert(s != NULL, "invariant");
-    } else {
+    } else { // 核心代码
       // QMode == 0 or QMode == 2
-      _EntryList = w;
+      _EntryList = w; // ### 抽取_cxq到_EntryList  #_EntryList赋值
       ObjectWaiter *q = NULL;
       ObjectWaiter *p;
       for (p = w; p != NULL; p = p->_next) {
         guarantee(p->TState == ObjectWaiter::TS_CXQ, "Invariant");
+        //  设置一下线程状态
         p->TState = ObjectWaiter::TS_ENTER;
         p->_prev = q;
         q = p;
@@ -1332,15 +1369,21 @@ void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
     // In 1-0 mode we need: ST EntryList; MEMBAR #storestore; ST _owner = NULL
     // The MEMBAR is satisfied by the release_store() operation in ExitEpilog().
 
-    // See if we can abdicate to a spinner instead of waking a thread.
-    // A primary goal of the implementation is to reduce the
-    // context-switch rate.
-    if (_succ != NULL)
+    /**
+     * See if we can abdicate(放弃，退位，让位，这里译为让位) to a spinner
+     * instead of waking a thread. A primary goal of the
+     * implementation(实施，执行) is to reduce the context-switch
+     * rate(速率，费用). 
+     * 即: 用自旋来代替唤起线程，避免上下文切换的消耗
+     */
+    if (_succ != NULL) {
       continue;
+    }
 
     w = _EntryList;
     if (w != NULL) {
       guarantee(w->TState == ObjectWaiter::TS_ENTER, "invariant");
+      // 同上，即释放锁，唤起线程
       ExitEpilog(Self, w);
       return;
     }
@@ -1393,41 +1436,44 @@ bool ObjectMonitor::ExitSuspendEquivalent (JavaThread * jSelf) {
    return jSelf->handle_special_suspend_equivalent_condition() ;
 }
 
+/**
+ * 退出策略很明显了嘛，见注释
+ *
+ *
+ */
+void ObjectMonitor::ExitEpilog(Thread *Self, ObjectWaiter *Wakee) {
+  assert(_owner == Self, "invariant");
 
-void ObjectMonitor::ExitEpilog (Thread * Self, ObjectWaiter * Wakee) {
-   assert (_owner == Self, "invariant") ;
+  // Exit protocol:
+  // 1. ST _succ = wakee   # 更新_succ的值
+  // 2. membar #loadstore|#storestore;  # 内存屏障
+  // 2. ST _owner = NULL  # 释放锁
+  // 3. unpark(wakee)  # 唤起线程
 
-   // Exit protocol:
-   // 1. ST _succ = wakee
-   // 2. membar #loadstore|#storestore;
-   // 2. ST _owner = NULL
-   // 3. unpark(wakee)
+  _succ = Knob_SuccEnabled ? Wakee->_thread : NULL;
+  ParkEvent *Trigger = Wakee->_event;
 
-   _succ = Knob_SuccEnabled ? Wakee->_thread : NULL ;
-   ParkEvent * Trigger = Wakee->_event ;
+  // Hygiene -- once we've set _owner = NULL we can't safely dereference Wakee
+  // again. The thread associated with Wakee may have grabbed the lock and
+  // "Wakee" may be out-of-scope (non-extant).
+  Wakee = NULL;
 
-   // Hygiene -- once we've set _owner = NULL we can't safely dereference Wakee again.
-   // The thread associated with Wakee may have grabbed the lock and "Wakee" may be
-   // out-of-scope (non-extant).
-   Wakee  = NULL ;
+  // Drop the lock
+  OrderAccess::release_store_ptr(&_owner, NULL);
+  OrderAccess::fence(); // ST _owner vs LD in unpark()
 
-   // Drop the lock
-   OrderAccess::release_store_ptr (&_owner, NULL) ;
-   OrderAccess::fence() ;                               // ST _owner vs LD in unpark()
+  if (SafepointSynchronize::do_call_back()) {
+    TEVENT(unpark before SAFEPOINT);
+  }
 
-   if (SafepointSynchronize::do_call_back()) {
-      TEVENT (unpark before SAFEPOINT) ;
-   }
+  DTRACE_MONITOR_PROBE(contended__exit, this, object(), Self);
+  Trigger->unpark();
 
-   DTRACE_MONITOR_PROBE(contended__exit, this, object(), Self);
-   Trigger->unpark() ;
-
-   // Maintain stats and report events to JVMTI
-   if (ObjectMonitor::_sync_Parks != NULL) {
-      ObjectMonitor::_sync_Parks->inc() ;
-   }
+  // Maintain stats and report events to JVMTI
+  if (ObjectMonitor::_sync_Parks != NULL) {
+    ObjectMonitor::_sync_Parks->inc();
+  }
 }
-
 
 // -----------------------------------------------------------------------------
 // Class Loader deadlock handling.

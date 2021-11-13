@@ -5629,14 +5629,29 @@ int os::PlatformEvent::TryPark() {
 
 /**
  * 
- * 线程挂起，使用mutex实现,是系统调用，涉及到用户态和内核态的切换
+ * 线程挂起，使用mutex实现,是系统调用，涉及到用户态和内核态的切换.
+ * 参考: 《UNIX环境高级编程》 P335
  * 
+ * pthread_mutex_lock：
+ * >>> 对互斥量进行加锁，如果互斥量已经被上锁了，调用线程将阻塞到互斥量被解锁。
+ * 
+ * pthread_cond_wait：
+ * >> 将调用线程放到等待条件的的线程列表中，对互斥量进行解锁。当条件满足，函数返回，互斥量再次被锁住
+ * 
+ * pthread_mutex_unlock：
+ * >> 对互斥量解锁
+ * 
+ * pthread_cond_signal:
+ * >> 至少唤醒一个等待该条件的线程
+ * 
+ * 通过对函数的分析，不难发现线程挂起的实现方式
  */ 
 void os::PlatformEvent::park() {       // AKA "down()"
   // Invariant: Only the thread associated with the Event/PlatformEvent
   // may call park().
   // TODO: assert that _Assoc != NULL or _Assoc == Self
   int v ;
+  // 自旋，_Event值减一
   for (;;) {
       v = _Event ;
       if (Atomic::cmpxchg (v-1, &_Event, v) == v){

@@ -297,6 +297,11 @@ private:
       *volatile _cxq; 
 
 protected:
+/**
+ * _EntryList monitorenter的过程中并没有被赋值，那是在那里赋值的呢? 全局搜索: "_EntryList赋值"
+ * 
+ * 
+ */
   ObjectWaiter *volatile _EntryList; // Threads blocked on entry or reentry.
                                      // 在重进入 或者  进入时阻塞的线程
 private:
