@@ -1705,10 +1705,11 @@ run:
         BasicObjectLock* entry = NULL;
         // 从线程栈中获取一个可以使用的Lock Record: 从栈底向栈顶遍历
         while (most_recent != limit) {
-          if (most_recent->obj() == NULL)
+          if (most_recent->obj() == NULL) {
             entry = most_recent;
-          else if (most_recent->obj() == lockee)
+          } else if (most_recent->obj() == lockee) {
             break;
+          }
           most_recent++;
         }
         // 当找到了一个可用的Lock Record
@@ -1763,6 +1764,7 @@ run:
           if ((most_recent)->obj() == lockee) {
             BasicLock *lock = most_recent->lock();
             markOop header = lock->displaced_header();
+            // 释放Lock Record
             most_recent->set_obj(NULL);
             // If it isn't recursive we either must swap old header or call the  runtime 如果不是递归的，则必须交换旧的头文件或调用运行时。见上面的代码:WEI0001处
             if (header != NULL) {  

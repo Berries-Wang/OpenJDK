@@ -206,16 +206,17 @@ void ObjectSynchronizer::fast_exit(oop object, BasicLock *lock, TRAPS) {
   // if displaced header is null, the previous enter is recursive enter, no-op
   markOop dhw = lock->displaced_header();
   markOop mark;
-  // _displaced_header 为空，说明是重入的 
+  // _displaced_header 为空，说明是重入的 (重入: Lock Record
+  // 中_displaced_head为空,_obj为锁对象)
   if (dhw == NULL) {
     // Recursive stack-lock.
-    // Diagnostics -- Could be: stack-locked, inflating, inflated.
+    // Diagnostics(诊断学) -- Could be: stack-locked, inflating, inflated.
     mark = object->mark();
     assert(!mark->is_neutral(), "invariant");
     if (mark->has_locker() && mark != markOopDesc::INFLATING()) {
       assert(THREAD->is_lock_owned((address)mark->locker()), "invariant");
     }
-    if (mark->has_monitor()) {
+    if (mark->has_monitor()) { // 兼容锁升级
       ObjectMonitor *m = mark->monitor();
       assert(((oop)(m->object()))->mark() == mark, "invariant");
       assert(m->is_entered(THREAD), "invariant");
@@ -225,7 +226,9 @@ void ObjectSynchronizer::fast_exit(oop object, BasicLock *lock, TRAPS) {
 
   mark = object->mark();
 
-  // If the object is stack-locked by the current thread, try to swing the displaced header from the box back to the mark. // 如果是当前线程获取了该锁对象，那么直接交换以下对象头即可
+  // If the object is stack-locked by the current thread, try to swing the
+  // displaced header from the box back to the mark. //
+  // 如果是当前线程获取了该锁对象，那么直接交换以下对象头即可
   if (mark == (markOop)lock) {
     assert(dhw->is_neutral(), "invariant");
     if ((markOop)Atomic::cmpxchg_ptr(dhw, object->mark_addr(), mark) == mark) {
@@ -1230,6 +1233,8 @@ ObjectMonitor* ObjectSynchronizer::inflate_helper(oop obj) {
 
 /**
  *
+ * >>>>> 锁升级会自旋
+ * 
  * 进行锁的膨胀,即升级为重量级锁
  *
  * @param Self

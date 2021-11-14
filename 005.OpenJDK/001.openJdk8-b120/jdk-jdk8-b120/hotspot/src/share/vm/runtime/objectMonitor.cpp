@@ -1015,18 +1015,11 @@ void ObjectMonitor::UnlinkAfterAcquire (Thread * Self, ObjectWaiter * SelfNode)
 // Both impinge on OS scalability.  Given that, at most one thread parked on
 // a monitor will use a timer.
 
-
 /**
- * 
+ *
  *  重量级锁的退出
- * 
- * 总体流程: 
- * >> 
- * >>
- * >>
- * >> 
- * 
- */ 
+ *
+ */
 void ATTR ObjectMonitor::exit(bool not_suspended, TRAPS) {
   Thread *Self = THREAD;
   // 当_owner不是THREAD(即当前线程)，即_owner是BasicLock
