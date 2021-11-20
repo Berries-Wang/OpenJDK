@@ -75,7 +75,7 @@ char *JLI_StringDup(const char *s1) {
 void JLI_MemFree(void *ptr) { free(ptr); }
 
 /*
- * debug helpers we use
+ * debug helpers we use，将debug日志打印出来
  */
 static jboolean _launcher_debug = JNI_TRUE;
 

@@ -90,12 +90,10 @@ WinMain(HINSTANCE inst, HINSTANCE previnst, LPSTR cmdline, int cmdshow)
     __initenv = _environ;
 
 #else /* JAVAW */
-int
-main(int argc, char **argv)
-{
-    int margc;
-    char** margv;
-    const jboolean const_javaw = JNI_FALSE;
+int main(int argc, char **argv) {
+  int margc;
+  char **margv;
+  const jboolean const_javaw = JNI_FALSE;
 #endif /* JAVAW */
 #ifdef _WIN32
     {

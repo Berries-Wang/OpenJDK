@@ -3301,6 +3301,10 @@ void Threads::threads_do(ThreadClosure* tc) {
   // If CompilerThreads ever become non-JavaThreads, add them here
 }
 
+/**
+ * 创建jvm
+ * 
+ */ 
 jint Threads::create_vm(JavaVMInitArgs* args, bool* canTryAgain) {
 
   extern void JDK_Version_init();
@@ -3444,7 +3448,12 @@ jint Threads::create_vm(JavaVMInitArgs* args, bool* canTryAgain) {
   // Fully start NMT
   MemTracker::start();
 
-  // Create the VMThread
+  /**
+   * 创建虚拟机线程
+   * Create the VMThread
+   * 
+   * 
+   */ 
   { TraceTime timer("Start VMThread", TraceStartupTime);
     VMThread::create();
     Thread* vmthread = VMThread::vm_thread();

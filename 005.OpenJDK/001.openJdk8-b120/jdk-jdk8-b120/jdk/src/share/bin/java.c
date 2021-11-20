@@ -234,6 +234,9 @@ int JLI_Launch(int argc, char **argv,                 /* main argc, argc */
   CreateExecutionEnvironment(&argc, &argv, jrepath, sizeof(jrepath), jvmpath,
                              sizeof(jvmpath), jvmcfg, sizeof(jvmcfg));
 
+  //打印出jvmpath
+  printf("java.c jvmpath: %s\n", jvmpath);
+
   ifn.CreateJavaVM = 0;
   ifn.GetDefaultJavaVMInitArgs = 0;
 
@@ -241,6 +244,7 @@ int JLI_Launch(int argc, char **argv,                 /* main argc, argc */
     start = CounterGet();
   }
 
+  // 解析 libjvm.so,从动态链接库中将完整的ifn解析出来
   if (!LoadJavaVM(jvmpath, &ifn)) {
     return (6);
   }
@@ -340,138 +344,142 @@ int JLI_Launch(int argc, char **argv,                 /* main argc, argc */
         } \
     } while (JNI_FALSE)
 
-int JNICALL
-JavaMain(void * _args)
-{
-    JavaMainArgs *args = (JavaMainArgs *)_args;
-    int argc = args->argc;
-    char **argv = args->argv;
-    int mode = args->mode;
-    char *what = args->what;
-    InvocationFunctions ifn = args->ifn;
+/**
+ *  启动JVM
+ * 
+ */ 
+int JNICALL JavaMain(void *_args) {
+  JavaMainArgs *args = (JavaMainArgs *)_args;
+  int argc = args->argc;
+  char **argv = args->argv;
+  int mode = args->mode;
+  char *what = args->what;
+  InvocationFunctions ifn = args->ifn;
 
-    JavaVM *vm = 0;
-    JNIEnv *env = 0;
-    jclass mainClass = NULL;
-    jclass appClass = NULL; // actual application class being launched
-    jmethodID mainID;
-    jobjectArray mainArgs;
-    int ret = 0;
-    jlong start, end;
+  JavaVM *vm = 0;
+  JNIEnv *env = 0;
+  jclass mainClass = NULL;
+  jclass appClass = NULL; // actual application class being launched
+  jmethodID mainID;
+  jobjectArray mainArgs;
+  int ret = 0;
+  jlong start, end;
 
-    RegisterThread();
+  RegisterThread();
 
-    /* Initialize the virtual machine */
-    start = CounterGet();
-    if (!InitializeJVM(&vm, &env, &ifn)) {
-        JLI_ReportErrorMessage(JVM_ERROR1);
-        exit(1);
+  /* Initialize the virtual machine */
+  start = CounterGet();
+  // 初始化JVM
+  if (!InitializeJVM(&vm, &env, &ifn)) {
+    JLI_ReportErrorMessage(JVM_ERROR1);
+    exit(1);
+  }
+
+  if (showSettings != NULL) {
+    ShowSettings(env, showSettings);
+    CHECK_EXCEPTION_LEAVE(1);
+  }
+
+  if (printVersion || showVersion) {
+    PrintJavaVersion(env, showVersion);
+    CHECK_EXCEPTION_LEAVE(0);
+    if (printVersion) {
+      LEAVE();
     }
+  }
 
-    if (showSettings != NULL) {
-        ShowSettings(env, showSettings);
-        CHECK_EXCEPTION_LEAVE(1);
-    }
-
-    if (printVersion || showVersion) {
-        PrintJavaVersion(env, showVersion);
-        CHECK_EXCEPTION_LEAVE(0);
-        if (printVersion) {
-            LEAVE();
-        }
-    }
-
-    /* If the user specified neither a class name nor a JAR file */
-    if (printXUsage || printUsage || what == 0 || mode == LM_UNKNOWN) {
-        PrintUsage(env, printXUsage);
-        CHECK_EXCEPTION_LEAVE(1);
-        LEAVE();
-    }
-
-    FreeKnownVMs();  /* after last possible PrintUsage() */
-
-    if (JLI_IsTraceLauncher()) {
-        end = CounterGet();
-        JLI_TraceLauncher("%ld micro seconds to InitializeJVM\n",
-               (long)(jint)Counter2Micros(end-start));
-    }
-
-    /* At this stage, argc/argv have the application's arguments */
-    if (JLI_IsTraceLauncher()){
-        int i;
-        printf("%s is '%s'\n", launchModeNames[mode], what);
-        printf("App's argc is %d\n", argc);
-        for (i=0; i < argc; i++) {
-            printf("    argv[%2d] = '%s'\n", i, argv[i]);
-        }
-    }
-
-    ret = 1;
-
-    /*
-     * Get the application's main class.
-     *
-     * See bugid 5030265.  The Main-Class name has already been parsed
-     * from the manifest, but not parsed properly for UTF-8 support.
-     * Hence the code here ignores the value previously extracted and
-     * uses the pre-existing code to reextract the value.  This is
-     * possibly an end of release cycle expedient.  However, it has
-     * also been discovered that passing some character sets through
-     * the environment has "strange" behavior on some variants of
-     * Windows.  Hence, maybe the manifest parsing code local to the
-     * launcher should never be enhanced.
-     *
-     * Hence, future work should either:
-     *     1)   Correct the local parsing code and verify that the
-     *          Main-Class attribute gets properly passed through
-     *          all environments,
-     *     2)   Remove the vestages of maintaining main_class through
-     *          the environment (and remove these comments).
-     *
-     * This method also correctly handles launching existing JavaFX
-     * applications that may or may not have a Main-Class manifest entry.
-     */
-    mainClass = LoadMainClass(env, mode, what);
-    CHECK_EXCEPTION_NULL_LEAVE(mainClass);
-    /*
-     * In some cases when launching an application that needs a helper, e.g., a
-     * JavaFX application with no main method, the mainClass will not be the
-     * applications own main class but rather a helper class. To keep things
-     * consistent in the UI we need to track and report the application main class.
-     */
-    appClass = GetApplicationClass(env);
-    NULL_CHECK_RETURN_VALUE(appClass, -1);
-    /*
-     * PostJVMInit uses the class name as the application name for GUI purposes,
-     * for example, on OSX this sets the application name in the menu bar for
-     * both SWT and JavaFX. So we'll pass the actual application class here
-     * instead of mainClass as that may be a launcher or helper class instead
-     * of the application class.
-     */
-    PostJVMInit(env, appClass, vm);
-    /*
-     * The LoadMainClass not only loads the main class, it will also ensure
-     * that the main method's signature is correct, therefore further checking
-     * is not required. The main method is invoked here so that extraneous java
-     * stacks are not in the application stack trace.
-     */
-    mainID = (*env)->GetStaticMethodID(env, mainClass, "main",
-                                       "([Ljava/lang/String;)V");
-    CHECK_EXCEPTION_NULL_LEAVE(mainID);
-
-    /* Build platform specific argument array */
-    mainArgs = CreateApplicationArgs(env, argv, argc);
-    CHECK_EXCEPTION_NULL_LEAVE(mainArgs);
-
-    /* Invoke main method. */
-    (*env)->CallStaticVoidMethod(env, mainClass, mainID, mainArgs);
-
-    /*
-     * The launcher's exit code (in the absence of calls to
-     * System.exit) will be non-zero if main threw an exception.
-     */
-    ret = (*env)->ExceptionOccurred(env) == NULL ? 0 : 1;
+  /* If the user specified neither a class name nor a JAR file */
+  if (printXUsage || printUsage || what == 0 || mode == LM_UNKNOWN) {
+    PrintUsage(env, printXUsage);
+    CHECK_EXCEPTION_LEAVE(1);
     LEAVE();
+  }
+
+  FreeKnownVMs(); /* after last possible PrintUsage() */
+
+  if (JLI_IsTraceLauncher()) {
+    end = CounterGet();
+    JLI_TraceLauncher("%ld micro seconds to InitializeJVM\n",
+                      (long)(jint)Counter2Micros(end - start));
+  }
+
+  /* At this stage, argc/argv have the application's arguments */
+  if (JLI_IsTraceLauncher()) {
+    int i;
+    printf("%s is '%s'\n", launchModeNames[mode], what);
+    printf("App's argc is %d\n", argc);
+    for (i = 0; i < argc; i++) {
+      printf("    argv[%2d] = '%s'\n", i, argv[i]);
+    }
+  }
+
+  ret = 1;
+
+  /*
+   * Get the application's main class.
+   *
+   * See bugid 5030265.  The Main-Class name has already been parsed
+   * from the manifest, but not parsed properly for UTF-8 support.
+   * Hence the code here ignores the value previously extracted and
+   * uses the pre-existing code to reextract the value.  This is
+   * possibly an end of release cycle expedient.  However, it has
+   * also been discovered that passing some character sets through
+   * the environment has "strange" behavior on some variants of
+   * Windows.  Hence, maybe the manifest parsing code local to the
+   * launcher should never be enhanced.
+   *
+   * Hence, future work should either:
+   *     1)   Correct the local parsing code and verify that the
+   *          Main-Class attribute gets properly passed through
+   *          all environments,
+   *     2)   Remove the vestages of maintaining main_class through
+   *          the environment (and remove these comments).
+   *
+   * This method also correctly handles launching existing JavaFX
+   * applications that may or may not have a Main-Class manifest entry.
+   */
+  mainClass = LoadMainClass(env, mode, what);
+  CHECK_EXCEPTION_NULL_LEAVE(mainClass);
+  /*
+   * In some cases when launching an application that needs a helper, e.g., a
+   * JavaFX application with no main method, the mainClass will not be the
+   * applications own main class but rather a helper class. To keep things
+   * consistent in the UI we need to track and report the application main
+   * class.
+   */
+  appClass = GetApplicationClass(env);
+  NULL_CHECK_RETURN_VALUE(appClass, -1);
+  /*
+   * PostJVMInit uses the class name as the application name for GUI purposes,
+   * for example, on OSX this sets the application name in the menu bar for
+   * both SWT and JavaFX. So we'll pass the actual application class here
+   * instead of mainClass as that may be a launcher or helper class instead
+   * of the application class.
+   */
+  PostJVMInit(env, appClass, vm);
+  /*
+   * The LoadMainClass not only loads the main class, it will also ensure
+   * that the main method's signature is correct, therefore further checking
+   * is not required. The main method is invoked here so that extraneous java
+   * stacks are not in the application stack trace.
+   */
+  mainID = (*env)->GetStaticMethodID(env, mainClass, "main",
+                                     "([Ljava/lang/String;)V");
+  CHECK_EXCEPTION_NULL_LEAVE(mainID);
+
+  /* Build platform specific argument array */
+  mainArgs = CreateApplicationArgs(env, argv, argc);
+  CHECK_EXCEPTION_NULL_LEAVE(mainArgs);
+
+  /* Invoke main method. */
+  (*env)->CallStaticVoidMethod(env, mainClass, mainID, mainArgs);
+
+  /*
+   * The launcher's exit code (in the absence of calls to
+   * System.exit) will be non-zero if main threw an exception.
+   */
+  ret = (*env)->ExceptionOccurred(env) == NULL ? 0 : 1;
+  LEAVE();
 }
 
 /*
@@ -1113,33 +1121,31 @@ ParseArguments(int *pargc, char ***pargv,
  * Initializes the Java Virtual Machine. Also frees options array when
  * finished.
  */
-static jboolean
-InitializeJVM(JavaVM **pvm, JNIEnv **penv, InvocationFunctions *ifn)
-{
-    JavaVMInitArgs args;
-    jint r;
+static jboolean InitializeJVM(JavaVM **pvm, JNIEnv **penv,
+                              InvocationFunctions *ifn) {
+  JavaVMInitArgs args;
+  jint r;
 
-    memset(&args, 0, sizeof(args));
-    args.version  = JNI_VERSION_1_2;
-    args.nOptions = numOptions;
-    args.options  = options;
-    args.ignoreUnrecognized = JNI_FALSE;
+  memset(&args, 0, sizeof(args));
+  args.version = JNI_VERSION_1_2;
+  args.nOptions = numOptions;
+  args.options = options;
+  args.ignoreUnrecognized = JNI_FALSE;
 
-    if (JLI_IsTraceLauncher()) {
-        int i = 0;
-        printf("JavaVM args:\n    ");
-        printf("version 0x%08lx, ", (long)args.version);
-        printf("ignoreUnrecognized is %s, ",
-               args.ignoreUnrecognized ? "JNI_TRUE" : "JNI_FALSE");
-        printf("nOptions is %ld\n", (long)args.nOptions);
-        for (i = 0; i < numOptions; i++)
-            printf("    option[%2d] = '%s'\n",
-                   i, args.options[i].optionString);
-    }
+  if (JLI_IsTraceLauncher()) {
+    int i = 0;
+    printf("JavaVM args:\n    ");
+    printf("version 0x%08lx, ", (long)args.version);
+    printf("ignoreUnrecognized is %s, ",
+           args.ignoreUnrecognized ? "JNI_TRUE" : "JNI_FALSE");
+    printf("nOptions is %ld\n", (long)args.nOptions);
+    for (i = 0; i < numOptions; i++)
+      printf("    option[%2d] = '%s'\n", i, args.options[i].optionString);
+  }
 
-    r = ifn->CreateJavaVM(pvm, (void **)penv, &args);
-    JLI_MemFree(options);
-    return r == JNI_OK;
+  r = ifn->CreateJavaVM(pvm, (void **)penv, &args);
+  JLI_MemFree(options);
+  return r == JNI_OK;
 }
 
 static jclass helperClass = NULL;
@@ -1787,40 +1793,39 @@ FreeKnownVMs()
 /*
  * Displays the splash screen according to the jar file name
  * and image file names stored in environment variables
+ * 
+ * 根据存储在环境变量中的jar文件名和映像文件名显示启动屏幕
  */
-void
-ShowSplashScreen()
-{
-    const char *jar_name = getenv(SPLASH_JAR_ENV_ENTRY);
-    const char *file_name = getenv(SPLASH_FILE_ENV_ENTRY);
-    int data_size;
-    void *image_data;
-    if (jar_name) {
-        image_data = JLI_JarUnpackFile(jar_name, file_name, &data_size);
-        if (image_data) {
-            DoSplashInit();
-            DoSplashLoadMemory(image_data, data_size);
-            JLI_MemFree(image_data);
-        }
-    } else if (file_name) {
-        DoSplashInit();
-        DoSplashLoadFile(file_name);
-    } else {
-        return;
+void ShowSplashScreen() {
+  const char *jar_name = getenv(SPLASH_JAR_ENV_ENTRY);
+  const char *file_name = getenv(SPLASH_FILE_ENV_ENTRY);
+  int data_size;
+  void *image_data;
+  if (jar_name) {
+    image_data = JLI_JarUnpackFile(jar_name, file_name, &data_size);
+    if (image_data) {
+      DoSplashInit();
+      DoSplashLoadMemory(image_data, data_size);
+      JLI_MemFree(image_data);
     }
-    DoSplashSetFileJarName(file_name, jar_name);
+  } else if (file_name) {
+    DoSplashInit();
+    DoSplashLoadFile(file_name);
+  } else {
+    return;
+  }
+  DoSplashSetFileJarName(file_name, jar_name);
 
-    /*
-     * Done with all command line processing and potential re-execs so
-     * clean up the environment.
-     */
-    (void)UnsetEnv(ENV_ENTRY);
-    (void)UnsetEnv(SPLASH_FILE_ENV_ENTRY);
-    (void)UnsetEnv(SPLASH_JAR_ENV_ENTRY);
+  /*
+   * Done with all command line processing and potential re-execs so
+   * clean up the environment.
+   */
+  (void)UnsetEnv(ENV_ENTRY);
+  (void)UnsetEnv(SPLASH_FILE_ENV_ENTRY);
+  (void)UnsetEnv(SPLASH_JAR_ENV_ENTRY);
 
-    JLI_MemFree(splash_jar_entry);
-    JLI_MemFree(splash_file_entry);
-
+  JLI_MemFree(splash_jar_entry);
+  JLI_MemFree(splash_file_entry);
 }
 
 const char*
@@ -1865,44 +1870,45 @@ IsWildCardEnabled()
     return _wc_enabled;
 }
 
-int
-ContinueInNewThread(InvocationFunctions* ifn, jlong threadStackSize,
-                    int argc, char **argv,
-                    int mode, char *what, int ret)
-{
+/**
+ * 开启一个新的线程执行
+ * 
+ */ 
+int ContinueInNewThread(InvocationFunctions *ifn, jlong threadStackSize,
+                        int argc, char **argv, int mode, char *what, int ret) {
 
-    /*
-     * If user doesn't specify stack size, check if VM has a preference.
-     * Note that HotSpot no longer supports JNI_VERSION_1_1 but it will
-     * return its default stack size through the init args structure.
+  /*
+   * If user doesn't specify stack size, check if VM has a preference.
+   * Note that HotSpot no longer supports JNI_VERSION_1_1 but it will
+   * return its default stack size through the init args structure.
+   */
+  if (threadStackSize == 0) {
+    struct JDK1_1InitArgs args1_1;
+    memset((void *)&args1_1, 0, sizeof(args1_1));
+    args1_1.version = JNI_VERSION_1_1;
+    ifn->GetDefaultJavaVMInitArgs(&args1_1); /* ignore return value */
+    if (args1_1.javaStackSize > 0) {
+      threadStackSize = args1_1.javaStackSize;
+    }
+  }
+
+  { /* Create a new thread to create JVM and invoke main method */
+    JavaMainArgs args;
+    int rslt;
+
+    args.argc = argc;
+    args.argv = argv;
+    args.mode = mode;
+    args.what = what;
+    args.ifn = *ifn;
+
+    rslt = ContinueInNewThread0(JavaMain, threadStackSize, (void *)&args);
+    /* If the caller has deemed there is an error we
+     * simply return that, otherwise we return the value of
+     * the callee
      */
-    if (threadStackSize == 0) {
-      struct JDK1_1InitArgs args1_1;
-      memset((void*)&args1_1, 0, sizeof(args1_1));
-      args1_1.version = JNI_VERSION_1_1;
-      ifn->GetDefaultJavaVMInitArgs(&args1_1);  /* ignore return value */
-      if (args1_1.javaStackSize > 0) {
-         threadStackSize = args1_1.javaStackSize;
-      }
-    }
-
-    { /* Create a new thread to create JVM and invoke main method */
-      JavaMainArgs args;
-      int rslt;
-
-      args.argc = argc;
-      args.argv = argv;
-      args.mode = mode;
-      args.what = what;
-      args.ifn = *ifn;
-
-      rslt = ContinueInNewThread0(JavaMain, threadStackSize, (void*)&args);
-      /* If the caller has deemed there is an error we
-       * simply return that, otherwise we return the value of
-       * the callee
-       */
-      return (ret != 0) ? ret : rslt;
-    }
+    return (ret != 0) ? ret : rslt;
+  }
 }
 
 static void

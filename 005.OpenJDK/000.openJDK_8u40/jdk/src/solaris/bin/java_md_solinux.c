@@ -826,15 +826,13 @@ GetJREPath(char *path, jint pathsize, const char * arch, jboolean speculative)
     return JNI_FALSE;
 }
 
-jboolean
-LoadJavaVM(const char *jvmpath, InvocationFunctions *ifn)
-{
-    void *libjvm;
+jboolean LoadJavaVM(const char *jvmpath, InvocationFunctions *ifn) {
+  void *libjvm;
 
-    JLI_TraceLauncher("JVM path is %s\n", jvmpath);
+  JLI_TraceLauncher("JVM path is %s\n", jvmpath);
 
-    libjvm = dlopen(jvmpath, RTLD_NOW + RTLD_GLOBAL);
-    if (libjvm == NULL) {
+  libjvm = dlopen(jvmpath, RTLD_NOW + RTLD_GLOBAL);
+  if (libjvm == NULL) {
 #if defined(__solaris__) && defined(__sparc) && !defined(_LP64) /* i.e. 32-bit sparc */
       FILE * fp;
       Elf32_Ehdr elf_head;

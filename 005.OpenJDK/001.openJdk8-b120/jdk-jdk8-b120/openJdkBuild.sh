@@ -74,3 +74,5 @@ else
     echo "构建成功"
     exit
 fi
+
+# ./configure  --with-target-bits=64 --with-freetype-include=/usr/X11/include/freetype2 --with-freetype-lib=/usr/X11/lib --disable-warnings-as-errors --with-debug-level=slowdebug  --with-native-debug-symbols=internal
