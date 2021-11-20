@@ -170,133 +170,128 @@ static jlong initialHeapSize    = 0;  /* inital heap size */
 /*
  * Entry point.
  */
-int
-JLI_Launch(int argc, char ** argv,              /* main argc, argc */
-        int jargc, const char** jargv,          /* java args */
-        int appclassc, const char** appclassv,  /* app classpath */
-        const char* fullversion,                /* full version defined */
-        const char* dotversion,                 /* dot version defined */
-        const char* pname,                      /* program name */
-        const char* lname,                      /* launcher name */
-        jboolean javaargs,                      /* JAVA_ARGS */
-        jboolean cpwildcard,                    /* classpath wildcard*/
-        jboolean javaw,                         /* windows-only javaw */
-        jint ergo                               /* ergonomics class policy */
-)
-{
-    int mode = LM_UNKNOWN;
-    char *what = NULL;
-    char *cpath = 0;
-    char *main_class = NULL;
-    int ret;
-    InvocationFunctions ifn;
-    jlong start, end;
-    char jvmpath[MAXPATHLEN];
-    char jrepath[MAXPATHLEN];
-    char jvmcfg[MAXPATHLEN];
+int JLI_Launch(int argc, char **argv,                 /* main argc, argc */
+               int jargc, const char **jargv,         /* java args */
+               int appclassc, const char **appclassv, /* app classpath */
+               const char *fullversion,               /* full version defined */
+               const char *dotversion,                /* dot version defined */
+               const char *pname,                     /* program name */
+               const char *lname,                     /* launcher name */
+               jboolean javaargs,                     /* JAVA_ARGS */
+               jboolean cpwildcard,                   /* classpath wildcard*/
+               jboolean javaw,                        /* windows-only javaw */
+               jint ergo /* ergonomics class policy */
+) {
+  int mode = LM_UNKNOWN;
+  char *what = NULL;
+  char *cpath = 0;
+  char *main_class = NULL;
+  int ret;
+  InvocationFunctions ifn;
+  jlong start, end;
+  char jvmpath[MAXPATHLEN];
+  char jrepath[MAXPATHLEN];
+  char jvmcfg[MAXPATHLEN];
 
-    _fVersion = fullversion;
-    _dVersion = dotversion;
-    _launcher_name = lname;
-    _program_name = pname;
-    _is_java_args = javaargs;
-    _wc_enabled = cpwildcard;
-    _ergo_policy = ergo;
+  _fVersion = fullversion;
+  _dVersion = dotversion;
+  _launcher_name = lname;
+  _program_name = pname;
+  _is_java_args = javaargs;
+  _wc_enabled = cpwildcard;
+  _ergo_policy = ergo;
 
-    InitLauncher(javaw);
-    DumpState();
-    if (JLI_IsTraceLauncher()) {
-        int i;
-        printf("Command line args:\n");
-        for (i = 0; i < argc ; i++) {
-            printf("argv[%d] = %s\n", i, argv[i]);
-        }
-        AddOption("-Dsun.java.launcher.diag=true", NULL);
+  InitLauncher(javaw);
+  DumpState();
+  if (JLI_IsTraceLauncher()) {
+    int i;
+    printf("Command line args:\n");
+    for (i = 0; i < argc; i++) {
+      printf("argv[%d] = %s\n", i, argv[i]);
     }
+    AddOption("-Dsun.java.launcher.diag=true", NULL);
+  }
 
-    /*
-     * Make sure the specified version of the JRE is running.
-     *
-     * There are three things to note about the SelectVersion() routine:
-     *  1) If the version running isn't correct, this routine doesn't
-     *     return (either the correct version has been exec'd or an error
-     *     was issued).
-     *  2) Argc and Argv in this scope are *not* altered by this routine.
-     *     It is the responsibility of subsequent code to ignore the
-     *     arguments handled by this routine.
-     *  3) As a side-effect, the variable "main_class" is guaranteed to
-     *     be set (if it should ever be set).  This isn't exactly the
-     *     poster child for structured programming, but it is a small
-     *     price to pay for not processing a jar file operand twice.
-     *     (Note: This side effect has been disabled.  See comment on
-     *     bugid 5030265 below.)
-     */
-    SelectVersion(argc, argv, &main_class);
+  /*
+   * Make sure the specified version of the JRE is running.
+   *
+   * There are three things to note about the SelectVersion() routine:
+   *  1) If the version running isn't correct, this routine doesn't
+   *     return (either the correct version has been exec'd or an error
+   *     was issued).
+   *  2) Argc and Argv in this scope are *not* altered by this routine.
+   *     It is the responsibility of subsequent code to ignore the
+   *     arguments handled by this routine.
+   *  3) As a side-effect, the variable "main_class" is guaranteed to
+   *     be set (if it should ever be set).  This isn't exactly the
+   *     poster child for structured programming, but it is a small
+   *     price to pay for not processing a jar file operand twice.
+   *     (Note: This side effect has been disabled.  See comment on
+   *     bugid 5030265 below.)
+   */
+  SelectVersion(argc, argv, &main_class);
 
-    CreateExecutionEnvironment(&argc, &argv,
-                               jrepath, sizeof(jrepath),
-                               jvmpath, sizeof(jvmpath),
-                               jvmcfg,  sizeof(jvmcfg));
+  CreateExecutionEnvironment(&argc, &argv, jrepath, sizeof(jrepath), jvmpath,
+                             sizeof(jvmpath), jvmcfg, sizeof(jvmcfg));
 
-    ifn.CreateJavaVM = 0;
-    ifn.GetDefaultJavaVMInitArgs = 0;
+  ifn.CreateJavaVM = 0;
+  ifn.GetDefaultJavaVMInitArgs = 0;
 
-    if (JLI_IsTraceLauncher()) {
-        start = CounterGet();
+  if (JLI_IsTraceLauncher()) {
+    start = CounterGet();
+  }
+
+  if (!LoadJavaVM(jvmpath, &ifn)) {
+    return (6);
+  }
+
+  if (JLI_IsTraceLauncher()) {
+    end = CounterGet();
+  }
+
+  JLI_TraceLauncher("%ld micro seconds to LoadJavaVM\n",
+                    (long)(jint)Counter2Micros(end - start));
+
+  ++argv;
+  --argc;
+
+  if (IsJavaArgs()) {
+    /* Preprocess wrapper arguments */
+    TranslateApplicationArgs(jargc, jargv, &argc, &argv);
+    if (!AddApplicationOptions(appclassc, appclassv)) {
+      return (1);
     }
-
-    if (!LoadJavaVM(jvmpath, &ifn)) {
-        return(6);
+  } else {
+    /* Set default CLASSPATH */
+    cpath = getenv("CLASSPATH");
+    if (cpath == NULL) {
+      cpath = ".";
     }
+    SetClassPath(cpath);
+  }
 
-    if (JLI_IsTraceLauncher()) {
-        end   = CounterGet();
-    }
+  /* Parse command line options; if the return value of
+   * ParseArguments is false, the program should exit.
+   */
+  if (!ParseArguments(&argc, &argv, &mode, &what, &ret, jrepath)) {
+    return (ret);
+  }
 
-    JLI_TraceLauncher("%ld micro seconds to LoadJavaVM\n",
-             (long)(jint)Counter2Micros(end-start));
+  /* Override class path if -jar flag was specified */
+  if (mode == LM_JAR) {
+    SetClassPath(what); /* Override class path */
+  }
 
-    ++argv;
-    --argc;
+  /* set the -Dsun.java.command pseudo property */
+  SetJavaCommandLineProp(what, argc, argv);
 
-    if (IsJavaArgs()) {
-        /* Preprocess wrapper arguments */
-        TranslateApplicationArgs(jargc, jargv, &argc, &argv);
-        if (!AddApplicationOptions(appclassc, appclassv)) {
-            return(1);
-        }
-    } else {
-        /* Set default CLASSPATH */
-        cpath = getenv("CLASSPATH");
-        if (cpath == NULL) {
-            cpath = ".";
-        }
-        SetClassPath(cpath);
-    }
+  /* Set the -Dsun.java.launcher pseudo property */
+  SetJavaLauncherProp();
 
-    /* Parse command line options; if the return value of
-     * ParseArguments is false, the program should exit.
-     */
-    if (!ParseArguments(&argc, &argv, &mode, &what, &ret, jrepath))
-    {
-        return(ret);
-    }
+  /* set the -Dsun.java.launcher.* platform properties */
+  SetJavaLauncherPlatformProps();
 
-    /* Override class path if -jar flag was specified */
-    if (mode == LM_JAR) {
-        SetClassPath(what);     /* Override class path */
-    }
-
-    /* set the -Dsun.java.command pseudo property */
-    SetJavaCommandLineProp(what, argc, argv);
-
-    /* Set the -Dsun.java.launcher pseudo property */
-    SetJavaLauncherProp();
-
-    /* set the -Dsun.java.launcher.* platform properties */
-    SetJavaLauncherPlatformProps();
-
-    return JVMInit(&ifn, threadStackSize, argc, argv, mode, what, ret);
+  return JVMInit(&ifn, threadStackSize, argc, argv, mode, what, ret);
 }
 /*
  * Always detach the main thread so that it appears to have ended when

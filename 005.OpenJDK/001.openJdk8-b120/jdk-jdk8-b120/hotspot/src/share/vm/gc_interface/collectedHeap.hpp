@@ -37,7 +37,7 @@
 // A "CollectedHeap" is an implementation of a java heap for HotSpot.  This
 // is an abstract class: there may be many different kinds of heaps.  This
 // class defines the functions that a heap must implement, and contains
-// infrastructure common to all heaps.
+// infrastructure(n. 基础设施；公共建设；下部构造)  common to all heaps.
 
 class AdaptiveSizePolicy;
 class BarrierSet;
