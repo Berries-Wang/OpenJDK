@@ -42,6 +42,12 @@ class GCTaskManager;
 class PSAdaptiveSizePolicy;
 class PSHeapSummary;
 
+
+/**
+ * 
+ * 
+ * 
+ */ 
 class ParallelScavengeHeap : public CollectedHeap {
   friend class VMStructs;
  private:

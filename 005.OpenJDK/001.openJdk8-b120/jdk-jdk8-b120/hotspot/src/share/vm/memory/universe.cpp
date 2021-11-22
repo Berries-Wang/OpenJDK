@@ -624,17 +624,24 @@ void* Universe::non_oop_word() {
   return (void*)_non_oop_bits;
 }
 
+/**
+ * 
+ * JVM堆初始化
+ * 
+ */
 jint universe_init() {
   assert(!Universe::_fully_initialized, "called after initialize_vtables");
   guarantee(1 << LogHeapWordSize == sizeof(HeapWord),
-         "LogHeapWordSize is incorrect.");
+            "LogHeapWordSize is incorrect.");
   guarantee(sizeof(oop) >= sizeof(HeapWord), "HeapWord larger than oop?");
   guarantee(sizeof(oop) % sizeof(HeapWord) == 0,
             "oop size is not not a multiple of HeapWord size");
   TraceTime timer("Genesis", TraceStartupTime);
-  GC_locker::lock();  // do not allow gc during bootstrapping
+  // 禁止在启动的时候GC
+  GC_locker::lock(); // do not allow gc during bootstrapping
   JavaClasses::compute_hard_coded_offsets();
 
+  // 初始化JVM堆
   jint status = Universe::initialize_heap();
   if (status != JNI_OK) {
     return status;
@@ -649,8 +656,8 @@ jint universe_init() {
   // We have a heap so create the Method* caches before
   // Metaspace::initialize_shared_spaces() tries to populate them.
   Universe::_finalizer_register_cache = new LatestMethodCache();
-  Universe::_loader_addClass_cache    = new LatestMethodCache();
-  Universe::_pd_implies_cache         = new LatestMethodCache();
+  Universe::_loader_addClass_cache = new LatestMethodCache();
+  Universe::_pd_implies_cache = new LatestMethodCache();
 
   if (UseSharedSpaces) {
     // Read the data structures supporting the shared spaces (shared
@@ -774,8 +781,14 @@ char* Universe::preferred_heap_base(size_t heap_size, size_t alignment, NARROW_O
   return (char*)base; // also return NULL (don't care) for 32-bit VM
 }
 
+/**
+ * 初始化JVM堆
+ *
+ *
+ */
 jint Universe::initialize_heap() {
 
+  // JDK8 默认使用 UseParallelGC
   if (UseParallelGC) {
 #if INCLUDE_ALL_GCS
     Universe::_collectedHeap = new ParallelScavengeHeap();
@@ -785,9 +798,9 @@ jint Universe::initialize_heap() {
 
   } else if (UseG1GC) {
 #if INCLUDE_ALL_GCS
-    G1CollectorPolicy* g1p = new G1CollectorPolicy();
+    G1CollectorPolicy *g1p = new G1CollectorPolicy();
     g1p->initialize_all();
-    G1CollectedHeap* g1h = new G1CollectedHeap(g1p);
+    G1CollectedHeap *g1h = new G1CollectedHeap(g1p);
     Universe::_collectedHeap = g1h;
 #else  // INCLUDE_ALL_GCS
     fatal("UseG1GC not supported in java kernel vm.");
@@ -805,9 +818,9 @@ jint Universe::initialize_heap() {
       } else {
         gc_policy = new ConcurrentMarkSweepPolicy();
       }
-#else  // INCLUDE_ALL_GCS
-    fatal("UseConcMarkSweepGC not supported in this VM.");
-#endif // INCLUDE_ALL_GCS
+#else        // INCLUDE_ALL_GCS
+      fatal("UseConcMarkSweepGC not supported in this VM.");
+#endif       // INCLUDE_ALL_GCS
     } else { // default old generation
       gc_policy = new MarkSweepPolicy();
     }
@@ -833,16 +846,18 @@ jint Universe::initialize_heap() {
     if (verbose) {
       tty->cr();
       tty->print("heap address: " PTR_FORMAT ", size: " SIZE_FORMAT " MB",
-                 Universe::heap()->base(), Universe::heap()->reserved_region().byte_size()/M);
+                 Universe::heap()->base(),
+                 Universe::heap()->reserved_region().byte_size() / M);
     }
-    if (((uint64_t)Universe::heap()->reserved_region().end() > OopEncodingHeapMax)) {
+    if (((uint64_t)Universe::heap()->reserved_region().end() >
+         OopEncodingHeapMax)) {
       // Can't reserve heap below 32Gb.
       // keep the Universe::narrow_oop_base() set in Universe::reserve_heap()
       Universe::set_narrow_oop_shift(LogMinObjAlignmentInBytes);
       if (verbose) {
-        tty->print(", %s: "PTR_FORMAT,
-            narrow_oop_mode_to_string(HeapBasedNarrowOop),
-            Universe::narrow_oop_base());
+        tty->print(", %s: " PTR_FORMAT,
+                   narrow_oop_mode_to_string(HeapBasedNarrowOop),
+                   Universe::narrow_oop_base());
       }
     } else {
       Universe::set_narrow_oop_base(0);
@@ -856,7 +871,8 @@ jint Universe::initialize_heap() {
         Universe::set_narrow_oop_use_implicit_null_checks(true);
       }
 #endif //  _WIN64
-      if((uint64_t)Universe::heap()->reserved_region().end() > UnscaledOopHeapMax) {
+      if ((uint64_t)Universe::heap()->reserved_region().end() >
+          UnscaledOopHeapMax) {
         // Can't reserve heap below 4Gb.
         Universe::set_narrow_oop_shift(LogMinObjAlignmentInBytes);
       } else {
@@ -874,11 +890,13 @@ jint Universe::initialize_heap() {
     Universe::set_narrow_ptrs_base(Universe::narrow_oop_base());
   }
   // Universe::narrow_oop_base() is one page below the heap.
-  assert((intptr_t)Universe::narrow_oop_base() <= (intptr_t)(Universe::heap()->base() -
-         os::vm_page_size()) ||
-         Universe::narrow_oop_base() == NULL, "invalid value");
+  assert((intptr_t)Universe::narrow_oop_base() <=
+                 (intptr_t)(Universe::heap()->base() - os::vm_page_size()) ||
+             Universe::narrow_oop_base() == NULL,
+         "invalid value");
   assert(Universe::narrow_oop_shift() == LogMinObjAlignmentInBytes ||
-         Universe::narrow_oop_shift() == 0, "invalid value");
+             Universe::narrow_oop_shift() == 0,
+         "invalid value");
 #endif
 
   // We will never reach the CATCH below since Exceptions::_throw will cause
@@ -891,7 +909,6 @@ jint Universe::initialize_heap() {
   }
   return JNI_OK;
 }
-
 
 // Reserve the Java heap, which is now the same for all GCs.
 ReservedSpace Universe::reserve_heap(size_t heap_size, size_t alignment) {
