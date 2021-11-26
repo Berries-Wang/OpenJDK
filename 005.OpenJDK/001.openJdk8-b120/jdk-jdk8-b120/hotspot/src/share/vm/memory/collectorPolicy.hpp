@@ -25,6 +25,8 @@
 #ifndef SHARE_VM_MEMORY_COLLECTORPOLICY_HPP
 #define SHARE_VM_MEMORY_COLLECTORPOLICY_HPP
 
+#include<stdio.h>
+
 #include "memory/allocation.hpp"
 #include "memory/barrierSet.hpp"
 #include "memory/generationSpec.hpp"
@@ -319,7 +321,9 @@ class TwoGenerationCollectorPolicy : public GenCollectorPolicy {
 
  public:
   TwoGenerationCollectorPolicy() : GenCollectorPolicy(), _min_gen1_size(0),
-    _initial_gen1_size(0), _max_gen1_size(0) {}
+    _initial_gen1_size(0), _max_gen1_size(0) {
+      printf("正在执行 TwoGenerationCollectorPolicy 构造函数 \n");
+    }
 
   // Accessors
   size_t min_gen1_size()     { return _min_gen1_size; }

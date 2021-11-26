@@ -142,13 +142,15 @@ void CollectedHeap::trace_heap_after_gc(GCTracer* gc_tracer) {
 
 // Memory state functions.
 
-
-CollectedHeap::CollectedHeap() : _n_par_threads(0)
-{
+/**
+ * CollectedHeap类无参构造函数
+ * 
+ */ 
+CollectedHeap::CollectedHeap() : _n_par_threads(0) {
   const size_t max_len = size_t(arrayOopDesc::max_array_length(T_INT));
   const size_t elements_per_word = HeapWordSize / sizeof(jint);
-  _filler_array_max_size = align_object_size(filler_array_hdr_size() +
-                                             max_len / elements_per_word);
+  _filler_array_max_size =
+      align_object_size(filler_array_hdr_size() + max_len / elements_per_word);
 
   _barrier_set = NULL;
   _is_gc_active = false;
@@ -161,14 +163,14 @@ CollectedHeap::CollectedHeap() : _n_par_threads(0)
     EXCEPTION_MARK;
 
     // create the gc cause jvmstat counters
-    _perf_gc_cause = PerfDataManager::create_string_variable(SUN_GC, "cause",
-                             80, GCCause::to_string(_gc_cause), CHECK);
+    _perf_gc_cause = PerfDataManager::create_string_variable(
+        SUN_GC, "cause", 80, GCCause::to_string(_gc_cause), CHECK);
 
-    _perf_gc_lastcause =
-                PerfDataManager::create_string_variable(SUN_GC, "lastCause",
-                             80, GCCause::to_string(_gc_lastcause), CHECK);
+    _perf_gc_lastcause = PerfDataManager::create_string_variable(
+        SUN_GC, "lastCause", 80, GCCause::to_string(_gc_lastcause), CHECK);
   }
-  _defer_initial_card_mark = false; // strengthened by subclass in pre_initialize() below.
+  _defer_initial_card_mark =
+      false; // strengthened by subclass in pre_initialize() below.
   // Create the ring log
   if (LogEvents) {
     _gc_heap_log = new GCHeapLog();

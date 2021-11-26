@@ -75,6 +75,7 @@ class GCHeapLog : public EventLogBase<GCMessage> {
 };
 
 //
+// 继承关系
 // CollectedHeap
 //   SharedHeap
 //     GenCollectedHeap

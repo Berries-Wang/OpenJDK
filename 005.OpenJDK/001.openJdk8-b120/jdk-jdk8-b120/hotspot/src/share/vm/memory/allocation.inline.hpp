@@ -25,6 +25,8 @@
 #ifndef SHARE_VM_MEMORY_ALLOCATION_INLINE_HPP
 #define SHARE_VM_MEMORY_ALLOCATION_INLINE_HPP
 
+#include<stdio.h>
+
 #include "runtime/atomic.inline.hpp"
 #include "runtime/os.hpp"
 
@@ -83,15 +85,17 @@ inline void FreeHeap(void* p, MEMFLAGS memflags = mtInternal) {
   os::free(p, memflags);
 }
 
-
-template <MEMFLAGS F> void* CHeapObj<F>::operator new(size_t size,
-      address caller_pc) throw() {
-    void* p = (void*)AllocateHeap(size, F, (caller_pc != 0 ? caller_pc : CALLER_PC));
+template <MEMFLAGS F>
+void *CHeapObj<F>::operator new(size_t size, address caller_pc) throw() {
+  printf("正在执行 void *CHeapObj<F>::operator new(size_t size, address caller_pc) \n");
+  void *p =
+      (void *)AllocateHeap(size, F, (caller_pc != 0 ? caller_pc : CALLER_PC));
 #ifdef ASSERT
-    if (PrintMallocFree) trace_heap_malloc(size, "CHeapObj-new", p);
+  if (PrintMallocFree)
+    trace_heap_malloc(size, "CHeapObj-new", p);
 #endif
-    return p;
-  }
+  return p;
+}
 
 template <MEMFLAGS F> void* CHeapObj<F>::operator new (size_t size,
   const std::nothrow_t&  nothrow_constant, address caller_pc) throw() {

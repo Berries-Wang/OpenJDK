@@ -68,12 +68,10 @@ enum GCH_process_strong_roots_tasks {
   GCH_PS_NumElements
 };
 
-GenCollectedHeap::GenCollectedHeap(GenCollectorPolicy *policy) :
-  SharedHeap(policy),
-  _gen_policy(policy),
-  _gen_process_strong_tasks(new SubTasksDone(GCH_PS_NumElements)),
-  _full_collections_completed(0)
-{
+GenCollectedHeap::GenCollectedHeap(GenCollectorPolicy *policy)
+    : SharedHeap(policy), _gen_policy(policy),
+      _gen_process_strong_tasks(new SubTasksDone(GCH_PS_NumElements)),
+      _full_collections_completed(0) {
   if (_gen_process_strong_tasks == NULL ||
       !_gen_process_strong_tasks->valid()) {
     vm_exit_during_initialization("Failed necessary allocation.");

@@ -783,8 +783,10 @@ char* Universe::preferred_heap_base(size_t heap_size, size_t alignment, NARROW_O
 
 /**
  * 初始化JVM堆
- *
- *
+ * 
+ * 目标：
+ * >> 学习 ParNew + CMS的组合
+ * >> 学习 G1
  */
 jint Universe::initialize_heap() {
 
@@ -806,17 +808,18 @@ jint Universe::initialize_heap() {
     fatal("UseG1GC not supported in java kernel vm.");
 #endif // INCLUDE_ALL_GCS
 
-  } else {
+  } else { //  学习 ParNew + CMS的组合 其他暂时不理睬
+
     GenCollectorPolicy *gc_policy;
 
     if (UseSerialGC) {
       gc_policy = new MarkSweepPolicy();
-    } else if (UseConcMarkSweepGC) {
+    } else if (UseConcMarkSweepGC) { // UseConcMarkSweepGC 
 #if INCLUDE_ALL_GCS
-      if (UseAdaptiveSizePolicy) {
+      if (UseAdaptiveSizePolicy) { // UseAdaptiveSizePolicy 默认为false，非主流程，不深入
         gc_policy = new ASConcurrentMarkSweepPolicy();
-      } else {
-        gc_policy = new ConcurrentMarkSweepPolicy();
+      } else {// CMS垃圾收集器
+        gc_policy = new ConcurrentMarkSweepPolicy(); // 空构造函数，仅为对象gc_policy分配空间
       }
 #else        // INCLUDE_ALL_GCS
       fatal("UseConcMarkSweepGC not supported in this VM.");

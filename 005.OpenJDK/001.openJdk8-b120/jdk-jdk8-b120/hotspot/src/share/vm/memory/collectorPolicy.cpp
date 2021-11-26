@@ -21,6 +21,7 @@
  * questions.
  *
  */
+#include<stdio.h>
 
 #include "precompiled.hpp"
 #include "gc_implementation/shared/adaptiveSizePolicy.hpp"
@@ -198,13 +199,11 @@ size_t CollectorPolicy::compute_heap_alignment() {
 
 // GenCollectorPolicy methods.
 
-GenCollectorPolicy::GenCollectorPolicy() :
-    _min_gen0_size(0),
-    _initial_gen0_size(0),
-    _max_gen0_size(0),
-    _gen_alignment(0),
-    _generations(NULL)
-{}
+GenCollectorPolicy::GenCollectorPolicy()
+    : _min_gen0_size(0), _initial_gen0_size(0), _max_gen0_size(0),
+      _gen_alignment(0), _generations(NULL) {
+         printf("正在执行 GenCollectorPolicy 构造函数 \n");
+      }
 
 size_t GenCollectorPolicy::scale_by_NewRatio_aligned(size_t base_size) {
   return align_size_down_bounded(base_size / (NewRatio + 1), _gen_alignment);

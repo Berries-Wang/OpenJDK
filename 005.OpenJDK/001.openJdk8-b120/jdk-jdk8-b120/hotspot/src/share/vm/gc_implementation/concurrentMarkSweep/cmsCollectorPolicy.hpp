@@ -27,13 +27,17 @@
 
 #include "memory/collectorPolicy.hpp"
 
+#include<stdio.h>
+
 class ConcurrentMarkSweepPolicy : public TwoGenerationCollectorPolicy {
  protected:
   void initialize_alignments();
   void initialize_generations();
 
  public:
-  ConcurrentMarkSweepPolicy() {}
+  ConcurrentMarkSweepPolicy() {
+    printf("正在执行 ConcurrentMarkSweepPolicy 构造函数\n");
+  }
 
   ConcurrentMarkSweepPolicy* as_concurrent_mark_sweep_policy() { return this; }
 
