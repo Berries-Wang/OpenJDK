@@ -59,6 +59,11 @@ class G1CollectorPolicy;
 class GCPolicyCounters;
 class MarkSweepPolicy;
 
+/**
+ * 
+ * !!!注意，这里是收集策略
+ * 
+ */ 
 class CollectorPolicy : public CHeapObj<mtGC> {
  protected:
   GCPolicyCounters* _gc_policy_counters;
@@ -70,11 +75,17 @@ class CollectorPolicy : public CHeapObj<mtGC> {
   DEBUG_ONLY(virtual void assert_flags();)
   DEBUG_ONLY(virtual void assert_size_info();)
 
+  //初始堆内存
   size_t _initial_heap_byte_size;
+  // 最大堆内存
   size_t _max_heap_byte_size;
+  // 最小堆内存
   size_t _min_heap_byte_size;
 
+  // space分配粒度
   size_t _space_alignment;
+
+  // /heap分配粒度，_heap_alignment必须大于_space_alignment，且是_space_alignment的整数倍
   size_t _heap_alignment;
 
   // Needed to keep information if MaxHeapSize was set on the command line
@@ -98,11 +109,17 @@ class CollectorPolicy : public CHeapObj<mtGC> {
   CollectorPolicy();
 
  public:
-  virtual void initialize_all() {
-    initialize_alignments();
-    initialize_flags();
-    initialize_size_info();
-  }
+   virtual void initialize_all() {
+
+     // 初始化对齐策略,用于计算  _space_alignment 、 _heap_alignment
+     initialize_alignments();
+
+     // 进行参数校验，内存对齐
+     initialize_flags();
+
+     // 日志打印
+     initialize_size_info();
+   }
 
   // Return maximum heap alignment that may be imposed by the policy
   static size_t compute_heap_alignment();
@@ -224,6 +241,7 @@ class ClearedAllSoftRefs : public StackObj {
 class GenCollectorPolicy : public CollectorPolicy {
  protected:
   size_t _min_gen0_size;
+  // 该成员变量由 gc_policy->initialize_all()函数进行赋值，具体的代码得视继承情况来分析
   size_t _initial_gen0_size;
   size_t _max_gen0_size;
 
@@ -231,6 +249,7 @@ class GenCollectorPolicy : public CollectorPolicy {
   // time. When using large pages they can differ.
   size_t _gen_alignment;
 
+  //  分代
   GenerationSpec **_generations;
 
   // Return true if an allocation should be attempted in the older
@@ -276,10 +295,25 @@ class GenCollectorPolicy : public CollectorPolicy {
 
   virtual GenCollectorPolicy* as_generation_policy() { return this; }
 
-  virtual void initialize_generations() { };
+  /**
+   * 初始化分代信息，虚方法，具体由子类实现
+   */
+  virtual void initialize_generations(){};
 
+  /**
+   * 初始化回收策略的所有信息
+   *
+   *  >> 大致流程
+   * 1. 内存对齐
+   * 2. 通过VM参数，计算新生代 老年代内存大小
+   * 3. 创建新生代了老年代内存空间
+   */
   virtual void initialize_all() {
+    // 超类方法，优先初始化
     CollectorPolicy::initialize_all();
+
+    // 初始化分代信息,由具体的GC策略实现
+    // >>> CMS: 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/gc_implementation/concurrentMarkSweep/cmsCollectorPolicy.cpp
     initialize_generations();
   }
 

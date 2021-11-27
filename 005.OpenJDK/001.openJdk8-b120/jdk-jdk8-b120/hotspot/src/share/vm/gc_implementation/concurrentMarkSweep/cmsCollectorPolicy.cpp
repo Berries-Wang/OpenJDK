@@ -43,6 +43,9 @@
 #include "runtime/thread.inline.hpp"
 #include "runtime/vmThread.hpp"
 
+// 日志
+#include "wei_log/WeiLog.hpp"
+
 //
 // ConcurrentMarkSweepPolicy methods
 //
@@ -52,29 +55,41 @@ void ConcurrentMarkSweepPolicy::initialize_alignments() {
   _heap_alignment = compute_heap_alignment();
 }
 
-void ConcurrentMarkSweepPolicy::initialize_generations() {
-  _generations = NEW_C_HEAP_ARRAY3(GenerationSpecPtr, number_of_generations(), mtGC, 0, AllocFailStrategy::RETURN_NULL);
-  if (_generations == NULL)
-    vm_exit_during_initialization("Unable to allocate gen spec");
 
-  if (UseParNewGC) {
-    if (UseAdaptiveSizePolicy) {
+/**
+ * 初始化分代信息 
+ */
+void ConcurrentMarkSweepPolicy::initialize_generations() {
+  wei_log_info(1,"正在执行 ConcurrentMarkSweepPolicy::initialize_generations");
+
+   // 创建两个指针(>> typedef GenerationSpec* GenerationSpecPtr;)
+  _generations = NEW_C_HEAP_ARRAY3(GenerationSpecPtr, number_of_generations(),
+                                   mtGC, 0, AllocFailStrategy::RETURN_NULL);
+  if (_generations == NULL){
+    vm_exit_during_initialization("Unable to allocate gen spec");
+  } 
+
+  // CMS是老年代收集器，需要搭配新生代收集器使用
+  if (UseParNewGC) { //  ParNew + CMS的组合 ,重点
+    if (UseAdaptiveSizePolicy) { // AdaptiveSizePolicy(自适应大小策略),非重点，看else
       _generations[0] = new GenerationSpec(Generation::ASParNew,
                                            _initial_gen0_size, _max_gen0_size);
     } else {
+      // 初始化新生代空间
       _generations[0] = new GenerationSpec(Generation::ParNew,
                                            _initial_gen0_size, _max_gen0_size);
     }
   } else {
-    _generations[0] = new GenerationSpec(Generation::DefNew,
-                                         _initial_gen0_size, _max_gen0_size);
+    _generations[0] = new GenerationSpec(Generation::DefNew, _initial_gen0_size,
+                                         _max_gen0_size);
   }
   if (UseAdaptiveSizePolicy) {
     _generations[1] = new GenerationSpec(Generation::ASConcurrentMarkSweep,
-                            _initial_gen1_size, _max_gen1_size);
+                                         _initial_gen1_size, _max_gen1_size);
   } else {
+     // 初始化老年代空间
     _generations[1] = new GenerationSpec(Generation::ConcurrentMarkSweep,
-                            _initial_gen1_size, _max_gen1_size);
+                                         _initial_gen1_size, _max_gen1_size);
   }
 
   if (_generations[0] == NULL || _generations[1] == NULL) {

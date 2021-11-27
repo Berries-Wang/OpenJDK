@@ -814,12 +814,14 @@ jint Universe::initialize_heap() {
 
     if (UseSerialGC) {
       gc_policy = new MarkSweepPolicy();
-    } else if (UseConcMarkSweepGC) { // UseConcMarkSweepGC 
+    } else if (UseConcMarkSweepGC) { // UseConcMarkSweepGC
 #if INCLUDE_ALL_GCS
-      if (UseAdaptiveSizePolicy) { // UseAdaptiveSizePolicy 默认为false，非主流程，不深入
+      if (UseAdaptiveSizePolicy) { // UseAdaptiveSizePolicy
+                                   // 默认为false，非主流程，不深入
         gc_policy = new ASConcurrentMarkSweepPolicy();
-      } else {// CMS垃圾收集器
-        gc_policy = new ConcurrentMarkSweepPolicy(); // 空构造函数，仅为对象gc_policy分配空间
+      } else { // CMS垃圾收集器
+        gc_policy =
+            new ConcurrentMarkSweepPolicy(); // 空构造函数，仅为对象gc_policy分配空间
       }
 #else        // INCLUDE_ALL_GCS
       fatal("UseConcMarkSweepGC not supported in this VM.");
@@ -827,11 +829,23 @@ jint Universe::initialize_heap() {
     } else { // default old generation
       gc_policy = new MarkSweepPolicy();
     }
+    /**
+     *  通过继承关系发现，initialize_all方法由 CollectorPolicy::initialize_all
+     * 和 具体的实现类来确定
+     * >> 004.OpenJDK(JVM)学习/009.GC/README.md
+     * 
+     * >> 大致流程
+     * 1. 内存对齐
+     * 2. 通过VM参数，计算新生代 老年代内存大小
+     * 3. 创建新生代了老年代内存空间
+     */
     gc_policy->initialize_all();
 
+    // 结合 gc_policy 创建Heap
     Universe::_collectedHeap = new GenCollectedHeap(gc_policy);
   }
 
+  // 进行堆的初始化，注意继承关系
   jint status = Universe::heap()->initialize();
   if (status != JNI_OK) {
     return status;

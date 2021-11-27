@@ -41,3 +41,10 @@
  - 在 JDK 1.8 中，如果使用 CMS，无论 UseAdaptiveSizePolicy 如何设置，都会将 UseAdaptiveSizePolicy 设置为 false；不过不同版本的JDK存在差异；
  - UseAdaptiveSizePolicy不要和SurvivorRatio参数显示设置搭配使用，一起使用会导致参数失效；
  - 由于AdaptiveSizePolicy会动态调整 Eden、Survivor 的大小，有些情况存在Survivor 被自动调为很小，比如十几MB甚至几MB的可能，这个时候YGC回收掉 Eden区后，还存活的对象进入Survivor 装不下，就会直接晋升到老年代，导致老年代占用空间逐渐增加，从而触发FULL GC，如果一次FULL GC的耗时很长（比如到达几百毫秒），那么在要求高响应的系统就是不可取的。
+
+## 收集策略的继承关系(在上的是超类，往下是子类)
+- CHeapObj
+-  + CollectorPolicy
+-  +  + GenCollectorPolicy
+-  +  +   + TwoGenerationCollectorPolicy
+-  +  +   +   + ConcurrentMarkSweepPolicy

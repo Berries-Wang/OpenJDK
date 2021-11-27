@@ -89,6 +89,9 @@ void CollectorPolicy::initialize_flags() {
          err_msg("heap_alignment: " SIZE_FORMAT " not aligned by space_alignment: " SIZE_FORMAT,
                  _heap_alignment, _space_alignment));
 
+  /**
+   * 如果MaxHeapSize是命令行参数
+   */ 
   if (FLAG_IS_CMDLINE(MaxHeapSize)) {
     if (FLAG_IS_CMDLINE(InitialHeapSize) && InitialHeapSize > MaxHeapSize) {
       vm_exit_during_initialization("Initial heap size set to a larger value than the maximum heap size");
@@ -107,7 +110,7 @@ void CollectorPolicy::initialize_flags() {
     vm_exit_during_initialization("Too small minimum heap");
   }
 
-  // User inputs from -Xmx and -Xms must be aligned
+  // User inputs from -Xmx and -Xms must be aligned  // 将指定的-Xmx -Xms进行内存对齐
   _min_heap_byte_size = align_size_up(_min_heap_byte_size, _heap_alignment);
   uintx aligned_initial_heap_size = align_size_up(InitialHeapSize, _heap_alignment);
   uintx aligned_max_heap_size = align_size_up(MaxHeapSize, _heap_alignment);
@@ -141,11 +144,15 @@ void CollectorPolicy::initialize_flags() {
   DEBUG_ONLY(CollectorPolicy::assert_flags();)
 }
 
+/**
+ * 日志打印
+ */
 void CollectorPolicy::initialize_size_info() {
   if (PrintGCDetails && Verbose) {
-    gclog_or_tty->print_cr("Minimum heap " SIZE_FORMAT "  Initial heap "
-      SIZE_FORMAT "  Maximum heap " SIZE_FORMAT,
-      _min_heap_byte_size, _initial_heap_byte_size, _max_heap_byte_size);
+    gclog_or_tty->print_cr(
+        "Minimum heap " SIZE_FORMAT "  Initial heap " SIZE_FORMAT
+        "  Maximum heap " SIZE_FORMAT,
+        _min_heap_byte_size, _initial_heap_byte_size, _max_heap_byte_size);
   }
 
   DEBUG_ONLY(CollectorPolicy::assert_size_info();)
@@ -311,6 +318,8 @@ void GenCollectorPolicy::initialize_flags() {
   if (smallest_new_size != NewSize) {
     FLAG_SET_ERGO(uintx, NewSize, smallest_new_size);
   }
+
+  // 新生代内存大小
   _initial_gen0_size = NewSize;
 
   if (!FLAG_IS_DEFAULT(MaxNewSize)) {

@@ -145,6 +145,11 @@ class Generation: public CHeapObj<mtGC> {
     // GenGrain.
     // Note: on ARM we add 1 bit for card_table_base to be properly aligned
     // (we expect its low byte to be zero - see implementation of post_barrier)
+    /**
+     *  2^16=64KB 即按照64KB对齐,ARM特殊一些，需要128KB
+     * 
+     * 注意:在ARM上，我们为card_table_base添加1位以使其正确对齐(我们希望其低字节为零——参见post_barrier的实现)
+     */ 
     LogOfGenGrain = 16 ARM_ONLY(+1),
     GenGrain = 1 << LogOfGenGrain
   };
