@@ -79,10 +79,15 @@ GenCollectedHeap::GenCollectedHeap(GenCollectorPolicy *policy)
   assert(policy != NULL, "Sanity check");
 }
 
+/**
+ * 对空间初始化
+ * 
+ */ 
 jint GenCollectedHeap::initialize() {
   CollectedHeap::pre_initialize();
 
   int i;
+  // 从GC策略中获取分代数量
   _n_gens = gen_policy()->number_of_generations();
 
   // While there are no constraints in the GC code that HeapWordSize
@@ -97,7 +102,7 @@ jint GenCollectedHeap::initialize() {
 
   _gen_specs = gen_policy()->generations();
 
-  // Make sure the sizes are all aligned.
+  // Make sure the sizes are all aligned. 进行对齐
   for (i = 0; i < _n_gens; i++) {
     _gen_specs[i]->align(gen_alignment);
   }
