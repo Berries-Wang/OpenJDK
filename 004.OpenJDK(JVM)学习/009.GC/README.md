@@ -116,11 +116,8 @@
 
 ---
 ## JVM参数
-### 1. CompressedClassSpaceSize
+### 1. CompressedClassSpaceSize （与UseCompressedOops区分）
 > 这个参数主要是设置Klass Metaspace的大小，不过这个参数设置了也不一定起作用，前提是能开启压缩指针，假如-Xmx超过了32G，压缩指针是开启不来的。如果有Klass Metaspace，那这块内存是和Heap连着的。
-
-> 为什么JVM开启指针压缩后支持的最大堆内存是32GB
->> 开启指针压缩之后，对象指针会被压缩到4字节，也就是32位，也就是能代表2的32次方个寻址地址(4GB)。又因为java默认对象对齐方式是8个字节，所以根据4GB个地址找到32个内存的对象。如果超过32G之后，压缩就已经找不全所有的对象了，那么就不压缩了
 
 - <img src="./pics/compressed_class_space-001.png"/>
 - 那这里的metaspace存的是什么呢?

@@ -1343,6 +1343,10 @@ void Arguments::set_cms_and_parnew_gc_flags() {
 }
 #endif // INCLUDE_ALL_GCS
 
+/**
+ *  计算OopEncodingHeapMax,值为32GB
+ * 
+ */ 
 void set_object_alignment() {
   // Object alignment.
   assert(is_power_of_2(ObjectAlignmentInBytes), "ObjectAlignmentInBytes must be power of 2");
@@ -1356,6 +1360,8 @@ void set_object_alignment() {
   LogMinObjAlignment         = LogMinObjAlignmentInBytes - LogHeapWordSize;
 
   // Oop encoding heap max
+  // 其中(uint64_t(max_juint) + 1) 的值也被称为NarrowOopHeapMax，也就是2的32次方，0x100000000；
+  // ObjectAlignmentInBytes在64位HotSpot上默认为8，LogMinObjAlignmentInBytes在默认8字节对齐时是3，所以最后OopEncodingHeapMax = 0x800000000 // 32GB
   OopEncodingHeapMax = (uint64_t(max_juint) + 1) << LogMinObjAlignmentInBytes;
 
 #if INCLUDE_ALL_GCS
@@ -1397,13 +1403,21 @@ bool verify_object_alignment() {
   return true;
 }
 
+/**
+ * 开启指针压缩时，计算堆的最大值.OopEncodingHeapMax为32GB,因此，最大堆是一个接近于32GB的
+ * 
+ */ 
 uintx Arguments::max_heap_for_compressed_oops() {
   // Avoid sign flip.
   assert(OopEncodingHeapMax > (uint64_t)os::vm_page_size(), "Unusual page size");
-  // We need to fit both the NULL page and the heap into the memory budget, while
-  // keeping alignment constraints of the heap. To guarantee the latter, as the
-  // NULL page is located before the heap, we pad the NULL page to the conservative
-  // maximum alignment that the GC may ever impose upon the heap.
+  /**
+   *  We need to fit both the NULL page and the heap into the memory budget, while
+   *  keeping alignment constraints of the heap. To guarantee the latter, as the
+   *  NULL page is located before the heap, we pad the NULL page to the conservative
+   *  maximum alignment that the GC may ever impose upon the heap.
+   *  有道: 我们需要将NULL页和堆都放入内存预算中，同时保持堆的对齐约束。为了保证后者，由于NULL页位于堆之前，我们将NULL页填充到GC可能对堆施加的保守的最大对齐。
+   */ 
+  // displacement_due_to_null_page需要根据不同的垃圾回收器进行计算，但是一般不大。
   size_t displacement_due_to_null_page = align_size_up_(os::vm_page_size(),
                                                         _conservative_max_heap_alignment);
 
@@ -1424,7 +1438,9 @@ bool Arguments::should_auto_select_low_pause_collector() {
   }
   return false;
 }
-
+/**
+ * 设置指针压缩，这里的指针压缩压缩的是 oop 指针
+ */ 
 void Arguments::set_use_compressed_oops() {
 #ifndef ZERO
 #ifdef _LP64
@@ -1505,6 +1521,10 @@ void Arguments::set_conservative_max_heap_alignment() {
     CollectorPolicy::compute_heap_alignment());
 }
 
+/**
+ * 设置性能标志
+ * ergonomics: 人体工程学
+ */ 
 void Arguments::set_ergonomics_flags() {
 
   if (os::is_server_class_machine()) {
@@ -1539,10 +1559,11 @@ void Arguments::set_ergonomics_flags() {
 
 #ifndef ZERO
 #ifdef _LP64
+  // 设置oop指针压缩
   set_use_compressed_oops();
 
-  // set_use_compressed_klass_ptrs() must be called after calling
-  // set_use_compressed_oops().
+  // set_use_compressed_klass_ptrs() must be called after calling set_use_compressed_oops().
+  // 设置oop属性指针压缩
   set_use_compressed_klass_ptrs();
 
   // Also checks that certain machines are slower with compressed oops

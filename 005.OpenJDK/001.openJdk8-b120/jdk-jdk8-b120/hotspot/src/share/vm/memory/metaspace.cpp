@@ -2890,12 +2890,13 @@ bool Metaspace::can_use_cds_with_metaspace_addr(char* metaspace_base, address cd
 
 /**
  * Try to allocate the metaspace at the requested addr.
- * 尝试在指定的地址上为元空间申请内存
+ * 尝试在指定的地址上为元空间中的Klass metaspace 申请内存
  * 
  */ 
 void Metaspace::allocate_metaspace_compressed_klass_ptrs(char* requested_addr, address cds_base) {
   assert(using_class_space(), "called improperly");
   assert(UseCompressedClassPointers, "Only use with CompressedKlassPtrs");
+  // assert(false,"手动报错"); 会造成程序终止
   assert(compressed_class_space_size() < KlassEncodingMetaspaceMax,
          "Metaspace size is too big"); // KlassEncodingMetaspaceMax：32G
   assert_is_ptr_aligned(requested_addr, _reserve_alignment);
@@ -2909,6 +2910,9 @@ void Metaspace::allocate_metaspace_compressed_klass_ptrs(char* requested_addr, a
    * 给元空间分配内存。内具体是多少呢?
    * 
    * compressed_class_space_size() Debug时是1G
+   * 
+   * > 从004.OpenJDK(JVM)学习/009.GC/README.md 可以看出，这个1G是最大值，并不是实际使用的值。
+   * >>> 因为mmap是建立虚拟内存的映射，并不是实际使用物理内存。物理内存是在使用的时候申请的(即虚拟内存和实际内存的映射是在真实使用内存的时候操作的)
    */ 
   ReservedSpace metaspace_rs = ReservedSpace(compressed_class_space_size(),
                                              _reserve_alignment,
