@@ -1521,6 +1521,11 @@ char* os::reserve_memory(size_t bytes, char* addr, size_t alignment_hint,
   return result;
 }
 
+/**
+ * 
+ * 尝试在起始位置为addr的地址空间里预留大小为bytes个字节的空间
+ * 
+ */ 
 char* os::attempt_reserve_memory_at(size_t bytes, char* addr) {
   char* result = pd_attempt_reserve_memory_at(bytes, addr);
   if (result != NULL) {

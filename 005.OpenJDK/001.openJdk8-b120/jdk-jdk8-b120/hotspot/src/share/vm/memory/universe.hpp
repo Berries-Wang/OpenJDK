@@ -75,15 +75,22 @@ class LatestMethodCache : public CHeapObj<mtClass> {
 };
 
 
+/**
+ * 用来保存开启指针压缩时计算压缩指针真实地址的base地址等属性信息
+ */ 
 // For UseCompressedOops.
 struct NarrowPtrStruct {
-  // Base address for oop-within-java-object materialization.
-  // NULL if using wide oops or zero based narrow oops.
+  /**
+   * Base address for oop-within-java-object materialization(物质化，实体化). NULL if using wide oops or zero based narrow(压缩) oops.
+   * 实现java对象内部oop的基地址。如果使用宽oops或基于零的压缩oops，则为NULL。
+   */ 
   address _base;
-  // Number of shift bits for encoding/decoding narrow ptrs.
-  // 0 if using wide ptrs or zero based unscaled narrow ptrs,
-  // LogMinObjAlignmentInBytes/LogKlassAlignmentInBytes otherwise.
+  /** Number of shift bits for encoding/decoding narrow ptrs.
+   * 0 if using wide ptrs or zero based unscaled narrow ptrs,
+   * LogMinObjAlignmentInBytes/LogKlassAlignmentInBytes otherwise.
+  */
   int     _shift;
+
   // Generate code with implicit null checks for narrow ptrs.
   bool    _use_implicit_null_checks;
 };

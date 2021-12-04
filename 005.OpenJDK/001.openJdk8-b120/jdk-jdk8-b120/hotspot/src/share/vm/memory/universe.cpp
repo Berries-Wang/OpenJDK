@@ -852,6 +852,7 @@ jint Universe::initialize_heap() {
   }
 
 #ifdef _LP64
+  // 是否使用指针压缩
   if (UseCompressedOops) {
     // Subtract a page because something can get allocated at heap base.
     // This also makes implicit null checking work, because the
@@ -866,8 +867,7 @@ jint Universe::initialize_heap() {
                  Universe::heap()->base(),
                  Universe::heap()->reserved_region().byte_size() / M);
     }
-    if (((uint64_t)Universe::heap()->reserved_region().end() >
-         OopEncodingHeapMax)) {
+    if (((uint64_t)Universe::heap()->reserved_region().end() > OopEncodingHeapMax)) {
       // Can't reserve heap below 32Gb.
       // keep the Universe::narrow_oop_base() set in Universe::reserve_heap()
       Universe::set_narrow_oop_shift(LogMinObjAlignmentInBytes);
@@ -888,8 +888,7 @@ jint Universe::initialize_heap() {
         Universe::set_narrow_oop_use_implicit_null_checks(true);
       }
 #endif //  _WIN64
-      if ((uint64_t)Universe::heap()->reserved_region().end() >
-          UnscaledOopHeapMax) {
+      if ((uint64_t)Universe::heap()->reserved_region().end() > UnscaledOopHeapMax) {
         // Can't reserve heap below 4Gb.
         Universe::set_narrow_oop_shift(LogMinObjAlignmentInBytes);
       } else {
@@ -907,8 +906,7 @@ jint Universe::initialize_heap() {
     Universe::set_narrow_ptrs_base(Universe::narrow_oop_base());
   }
   // Universe::narrow_oop_base() is one page below the heap.
-  assert((intptr_t)Universe::narrow_oop_base() <=
-                 (intptr_t)(Universe::heap()->base() - os::vm_page_size()) ||
+  assert((intptr_t)Universe::narrow_oop_base() <= (intptr_t)(Universe::heap()->base() - os::vm_page_size()) ||
              Universe::narrow_oop_base() == NULL,
          "invalid value");
   assert(Universe::narrow_oop_shift() == LogMinObjAlignmentInBytes ||
@@ -927,41 +925,70 @@ jint Universe::initialize_heap() {
   return JNI_OK;
 }
 
+/***
+ * reserve_heap方法用于给Java堆申请一段连续的内存空间，同时计算在开启指针压缩时的指针基地址，所有的垃圾回收器在初始化的时候都会调用此方法
+ *
+ */
 // Reserve the Java heap, which is now the same for all GCs.
 ReservedSpace Universe::reserve_heap(size_t heap_size, size_t alignment) {
   assert(alignment <= Arguments::conservative_max_heap_alignment(),
-      err_msg("actual alignment "SIZE_FORMAT" must be within maximum heap alignment "SIZE_FORMAT,
-          alignment, Arguments::conservative_max_heap_alignment()));
+         err_msg("actual alignment " SIZE_FORMAT
+                 " must be within maximum heap alignment " SIZE_FORMAT,
+                 alignment, Arguments::conservative_max_heap_alignment()));
   size_t total_reserved = align_size_up(heap_size, alignment);
-  assert(!UseCompressedOops || (total_reserved <= (OopEncodingHeapMax - os::vm_page_size())),
-      "heap size is too big for compressed oops");
+  assert(!UseCompressedOops ||
+             (total_reserved <= (OopEncodingHeapMax - os::vm_page_size())),
+         "heap size is too big for compressed oops");
 
-  bool use_large_pages = UseLargePages && is_size_aligned(alignment, os::large_page_size());
-  assert(!UseLargePages
-      || UseParallelGC
-      || use_large_pages, "Wrong alignment to use large pages");
+  // 是否使用大内存页， UseLargePages默认为false
+  bool use_large_pages =
+      UseLargePages && is_size_aligned(alignment, os::large_page_size());
+  assert(!UseLargePages || UseParallelGC || use_large_pages,
+         "Wrong alignment to use large pages");
 
-  char* addr = Universe::preferred_heap_base(total_reserved, alignment, Universe::UnscaledNarrowOop);
+  // 计算java堆的基地址
+  char *addr = Universe::preferred_heap_base(total_reserved, alignment,
+                                             Universe::UnscaledNarrowOop);
 
+  /**
+   * 目标，给java堆申请内存。在Linux中，是调用C函数mmap(POSIX接口)来申请内存的，具体请查看man手册
+   * >>> mmap： 在调用者进程的虚拟地址空间中创建一个内存映射.只是在虚拟地址空间创建，还没有映射到物理内存空间中去。在首次使用的时候才会映射到物理内存空间(产生缺页中断，操作系统发现该中断
+   * 后去申请内存)
+   * 
+   * 函数调用栈如下: 
+   * libjvm.so!anon_mmap(char * requested_addr, size_t bytes, bool fixed) (/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/os/linux/vm/os_linux.cpp:3124)
+   * libjvm.so!os::pd_attempt_reserve_memory_at(size_t bytes, char * requested_addr) (/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/os/linux/vm/os_linux.cpp:3730)
+   * libjvm.so!os::attempt_reserve_memory_at(size_t bytes, char * addr) (/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/runtime/os.cpp:1525)
+   * libjvm.so!ReservedSpace::initialize(ReservedSpace * const this, size_t size, size_t alignment, bool large, char * requested_address, const size_t noaccess_prefix, bool executable) (/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/runtime/virtualspace.cpp:182)
+   * libjvm.so!ReservedSpace::ReservedSpace(ReservedSpace * const this, size_t size, size_t alignment, bool large, char * requested_address, const size_t noaccess_prefix) (/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/runtime/virtualspace.cpp:68)
+   * libjvm.so!ReservedHeapSpace::ReservedHeapSpace(ReservedHeapSpace * const this, size_t size, size_t alignment, bool large, char * requested_address) (/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/runtime/virtualspace.cpp:341) 
+   * 
+   */ 
   ReservedHeapSpace total_rs(total_reserved, alignment, use_large_pages, addr);
 
+  // 是否压缩指针
   if (UseCompressedOops) {
+    // 当内存分配失败
     if (addr != NULL && !total_rs.is_reserved()) {
       // Failed to reserve at specified address - the requested memory
       // region is taken already, for example, by 'java' launcher.
       // Try again to reserver heap higher.
-      addr = Universe::preferred_heap_base(total_reserved, alignment, Universe::ZeroBasedNarrowOop);
+      addr = Universe::preferred_heap_base(total_reserved, alignment,
+                                           Universe::ZeroBasedNarrowOop);
 
-      ReservedHeapSpace total_rs0(total_reserved, alignment,
-          use_large_pages, addr);
+      // 重新分配
+      ReservedHeapSpace total_rs0(total_reserved, alignment, use_large_pages,
+                                  addr);
 
       if (addr != NULL && !total_rs0.is_reserved()) {
         // Failed to reserve at specified address again - give up.
-        addr = Universe::preferred_heap_base(total_reserved, alignment, Universe::HeapBasedNarrowOop);
+        addr = Universe::preferred_heap_base(total_reserved, alignment,
+                                             Universe::HeapBasedNarrowOop);
         assert(addr == NULL, "");
-
-        ReservedHeapSpace total_rs1(total_reserved, alignment,
-            use_large_pages, addr);
+ 
+        // 再重试
+        ReservedHeapSpace total_rs1(total_reserved, alignment, use_large_pages,
+                                    addr);
         total_rs = total_rs1;
       } else {
         total_rs = total_rs0;
@@ -969,20 +996,22 @@ ReservedSpace Universe::reserve_heap(size_t heap_size, size_t alignment) {
     }
   }
 
+  // 重试也失败，退出了
   if (!total_rs.is_reserved()) {
-    vm_exit_during_initialization(err_msg("Could not reserve enough space for " SIZE_FORMAT "KB object heap", total_reserved/K));
+    vm_exit_during_initialization(err_msg(
+        "Could not reserve enough space for " SIZE_FORMAT "KB object heap",
+        total_reserved / K));
     return total_rs;
   }
 
   if (UseCompressedOops) {
-    // Universe::initialize_heap() will reset this to NULL if unscaled
-    // or zero-based narrow oops are actually used.
+    // Universe::initialize_heap() will reset this to NULL if unscaled or zero-based narrow(狭小的，压缩) oops are actually used.
+    // 如果实际使用了非缩放或从零开始的窄oops，则Universe::initialize_heap()会将其重置为NULL。 ???
     address base = (address)(total_rs.base() - os::vm_page_size());
     Universe::set_narrow_oop_base(base);
   }
   return total_rs;
 }
-
 
 // It's the caller's responsibility to ensure glitch-freedom
 // (if required).

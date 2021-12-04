@@ -48,6 +48,9 @@ ReservedSpace::ReservedSpace() : _base(NULL), _size(0), _noaccess_prefix(0),
     _alignment(0), _special(false), _executable(false) {
 }
 
+/**
+ * 空间预留
+ */ 
 ReservedSpace::ReservedSpace(size_t size) {
   size_t page_size = os::page_size_for_region(size, size, 1);
   bool large_pages = page_size != (size_t)os::vm_page_size();
@@ -57,6 +60,9 @@ ReservedSpace::ReservedSpace(size_t size) {
   initialize(size, alignment, large_pages, NULL, 0, false);
 }
 
+/**
+ *  以requested_address为基地址，向OS申请内存
+ */ 
 ReservedSpace::ReservedSpace(size_t size, size_t alignment,
                              bool large,
                              char* requested_address,
@@ -100,6 +106,11 @@ static bool failed_to_reserve_as_requested(char* base, char* requested_address,
   return true;
 }
 
+
+/**
+ * 空间初始化
+ * 
+ */ 
 void ReservedSpace::initialize(size_t size, size_t alignment, bool large,
                                char* requested_address,
                                const size_t noaccess_prefix,
@@ -138,6 +149,7 @@ void ReservedSpace::initialize(size_t size, size_t alignment, bool large,
     assert(requested_address != NULL, "huge noaccess prefix?");
   }
 
+  // 这里Debug时为false 
   if (special) {
 
     base = os::reserve_memory_special(size, alignment, requested_address, executable);
@@ -321,13 +333,20 @@ void ReservedSpace::protect_noaccess_prefix(const size_t size) {
          "must be exactly of required size and alignment");
 }
 
-ReservedHeapSpace::ReservedHeapSpace(size_t size, size_t alignment,
-                                     bool large, char* requested_address) :
-  ReservedSpace(size, alignment, large,
-                requested_address,
-                (UseCompressedOops && (Universe::narrow_oop_base() != NULL) &&
-                 Universe::narrow_oop_use_implicit_null_checks()) ?
-                  lcm(os::vm_page_size(), alignment) : 0) {
+
+/**
+ * /share/vm/runtime/virtualspace.cpp:65#ReservedSpace
+ * 
+ * 
+ */ 
+ReservedHeapSpace::ReservedHeapSpace(size_t size, size_t alignment, bool large,
+                                     char *requested_address)
+    : ReservedSpace(size, alignment, large, requested_address,
+                    (UseCompressedOops &&
+                     (Universe::narrow_oop_base() != NULL) &&
+                     Universe::narrow_oop_use_implicit_null_checks())
+                        ? lcm(os::vm_page_size(), alignment)
+                        : 0) {
   if (base() > 0) {
     MemTracker::record_virtual_memory_type((address)base(), mtJavaHeap);
   }

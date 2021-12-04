@@ -41,8 +41,8 @@ export ALT_BOOTDIR=${BOOTJDK}
 #允许自动下载依赖
 export ALLOW_DOWNLOADS=true
 #并行编译的线程数，设置为和CPU内核数量一致即可
-export HOTSPOT_BUILD_JOBS=4
-export ALT_PARALLEL_COMPILE_JOBS=4
+export HOTSPOT_BUILD_JOBS=8
+export ALT_PARALLEL_COMPILE_JOBS=8
 #比较本次build出来的映像与先前版本的差异。这对我们来说没有意义，
 #必须设置为false，否则sanity检查会报缺少先前版本JDK的映像的错误提示。
 #如果已经设置dev或者DEV_ONLY=true，这个不显式设置也行

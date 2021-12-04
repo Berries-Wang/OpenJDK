@@ -33,6 +33,7 @@
 
 // Thread-Local Edens support
 
+// refills 再充满，再装满
 // static member initialization
 unsigned         ThreadLocalAllocBuffer::_target_refills = 0;
 GlobalTLABStats* ThreadLocalAllocBuffer::_global_stats   = NULL;
@@ -208,17 +209,23 @@ void ThreadLocalAllocBuffer::initialize() {
   initialize_statistics();
 }
 
+/**
+ * TLAB初始化
+ */ 
 void ThreadLocalAllocBuffer::startup_initialization() {
 
-  // Assuming each thread's active tlab is, on average,
-  // 1/2 full at a GC
-  _target_refills = 100 / (2 * TLABWasteTargetPercent);
+  /**
+   * Assuming each thread's active tlab is, on average,  1/2 full at a GC
+   * 假设每个线程的活动tlab在一次GC时平均只有一半满
+   * 
+   */
+  _target_refills = 100 / (2 * TLABWasteTargetPercent); // TLABWasteTargetPercent默认值为1
   _target_refills = MAX2(_target_refills, (unsigned)1U);
 
   _global_stats = new GlobalTLABStats();
 
-  // During jvm startup, the main (primordial) thread is initialized
-  // before the heap is initialized.  So reinitialize it now.
+  // During jvm startup, the main (primordial(原始的，根本的)) thread is initialized
+  // before the heap is initialized.  So reinitialize(重新启动，重新引导) it now.
   guarantee(Thread::current()->is_Java_thread(), "tlab initialization thread not Java thread");
   Thread::current()->tlab().initialize();
 

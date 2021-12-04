@@ -81,7 +81,6 @@ GenCollectedHeap::GenCollectedHeap(GenCollectorPolicy *policy)
 
 /**
  * 对空间初始化
- * 
  */ 
 jint GenCollectedHeap::initialize() {
   CollectedHeap::pre_initialize();
@@ -98,8 +97,9 @@ jint GenCollectedHeap::initialize() {
   guarantee(HeapWordSize == wordSize, "HeapWordSize must equal wordSize");
 
   // The heap must be at least as aligned as generations.
-  size_t gen_alignment = Generation::GenGrain;
+  size_t gen_alignment = Generation::GenGrain;// 65533
 
+  // 获取分代的数量 
   _gen_specs = gen_policy()->generations();
 
   // Make sure the sizes are all aligned. 进行对齐
@@ -160,6 +160,12 @@ jint GenCollectedHeap::initialize() {
 }
 
 
+/**
+ * @param _total_reserved 是一个指针，在这里是一个返回参数，表明堆的总大小。
+ * 
+ * 
+ * 
+ */ 
 char* GenCollectedHeap::allocate(size_t alignment,
                                  size_t* _total_reserved,
                                  int* _n_covered_regions,
