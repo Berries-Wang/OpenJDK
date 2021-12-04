@@ -46,7 +46,9 @@
         "string_view": "cpp",
         "string": "cpp",
         "bitset": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "list": "cpp",
+        "typeindex": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

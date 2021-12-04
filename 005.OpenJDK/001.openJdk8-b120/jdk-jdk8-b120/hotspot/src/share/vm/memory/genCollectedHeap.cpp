@@ -936,10 +936,15 @@ bool GenCollectedHeap::supports_tlab_allocation() const {
   return false;
 }
 
+/**
+ * 计算TLAB的总大小
+ */ 
 size_t GenCollectedHeap::tlab_capacity(Thread* thr) const {
   size_t result = 0;
   for (int i = 0; i < _n_gens; i += 1) {
+     // 调试(ParNew + CMS的组合)发现，eden区支持tlab
     if (_gens[i]->supports_tlab_allocation()) {
+      // 调试(ParNew + CMS的组合)发现，tlab_capacity就是eden区的大小
       result += _gens[i]->tlab_capacity();
     }
   }

@@ -646,7 +646,11 @@ jint universe_init() {
   if (status != JNI_OK) {
     return status;
   }
-
+ 
+  /**
+   * 元空间初始化
+   * 内存是怎么申请的，内存多大
+   */ 
   Metaspace::global_initialize();
 
   // Create memory for metadata.  Must be after initializing heap for
@@ -659,6 +663,12 @@ jint universe_init() {
   Universe::_loader_addClass_cache = new LatestMethodCache();
   Universe::_pd_implies_cache = new LatestMethodCache();
 
+  /**
+   * 当JVM启动时若配置-XX:+UseSharedSpaces,则它会通过内存映射文件的方式把classes.jsa文件的内存加载到自己的JVM进程空间中.
+   *  classes.jsa对应的这一部分内存空间地址一般在永久代(现在是元空间了)内存地址空间的后面.
+   * JVM这么做的目的就是让这个JVM的所有实例共享classlist中所有类的类型描述信息以达到节约物理内存的目标
+   * 
+   */ 
   if (UseSharedSpaces) {
     // Read the data structures supporting the shared spaces (shared
     // system dictionary, symbol table, etc.).  After that, access to

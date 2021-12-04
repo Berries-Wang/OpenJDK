@@ -31,20 +31,21 @@
 
 class GlobalTLABStats;
 
+
 // ThreadLocalAllocBuffer: a descriptor for thread-local storage used by
 // the threads for allocation.
-//            It is thread-private at any time, but maybe multiplexed over
-//            time across multiple threads. The park()/unpark() pair is
+//            It is thread-private at any time, but maybe multiplexed(多路复用) over
+//            time across multiple threads（随着时间的推移可以在多个线程中复用）. The park()/unpark() pair is
 //            used to make it available for such multiplexing.
 class ThreadLocalAllocBuffer: public CHeapObj<mtThread> {
   friend class VMStructs;
 private:
-  HeapWord* _start;                              // address of TLAB
-  HeapWord* _top;                                // address after last allocation
-  HeapWord* _pf_top;                             // allocation prefetch watermark
-  HeapWord* _end;                                // allocation end (excluding alignment_reserve)
-  size_t    _desired_size;                       // desired size   (including alignment_reserve)
-  size_t    _refill_waste_limit;                 // hold onto tlab if free() is larger than this
+  HeapWord* _start;                              // address of TLAB  TLAB起始地址
+  HeapWord* _top;                                // address after last allocation 上次分配的内存地址
+  HeapWord* _pf_top;                             // allocation prefetch watermark 
+  HeapWord* _end;                                // allocation end (excluding alignment_reserve) TLAB结束地址
+  size_t    _desired_size;                       // desired size   (including alignment_reserve)  // TLAB 大小 包括保留空间，表示内存大小都需要通过 size_t 类型，也就是实际字节数除以 HeapWordSize 的值
+  size_t    _refill_waste_limit;                 // hold onto tlab if free() is larger than this   // TLAB最大浪费空间，剩余空间不足分配浪费空间限制。在TLAB剩余空间不足的时候，根据这个值决定分配策略，如果浪费空间大于这个值则直接在 Eden 区分配，如果小于这个值则将当前 TLAB 放回 Eden 区管理并从 Eden 申请新的 TLAB 进行分配
 
   static unsigned _target_refills;               // expected number of refills between GCs
 

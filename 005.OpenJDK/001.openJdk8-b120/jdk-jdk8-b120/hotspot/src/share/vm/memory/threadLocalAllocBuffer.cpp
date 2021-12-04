@@ -188,19 +188,28 @@ void ThreadLocalAllocBuffer::initialize(HeapWord* start,
   invariants();
 }
 
+/**
+ * 初始化TLAB,并没有设置单个TLAB的大小，仅设置了总大小
+ * 
+ */ 
 void ThreadLocalAllocBuffer::initialize() {
+   //设置初始指针，由于还没有从 Eden 分配内存，所以这里都设置为 NULL
   initialize(NULL,                    // start
              NULL,                    // top
              NULL);                   // end
 
+  // TLAB设置预期的大小
   set_desired_size(initial_desired_size());
 
-  // Following check is needed because at startup the main (primordial)
+  // Following check is needed because at startup the main (primordial(原始的，根本的))
   // thread is initialized before the heap is.  The initialization for
   // this thread is redone in startup_initialization below.
   if (Universe::heap() != NULL) {
+    // 所有TLAB总大小(不同GC不同实现,调试ParNew + CMS时是Eden的大小)
     size_t capacity   = Universe::heap()->tlab_capacity(myThread()) / HeapWordSize;
+
     double alloc_frac = desired_size() * target_refills() / (double) capacity;
+
     _allocation_fraction.sample(alloc_frac);
   }
 

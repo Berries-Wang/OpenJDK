@@ -2888,12 +2888,16 @@ bool Metaspace::can_use_cds_with_metaspace_addr(char* metaspace_base, address cd
   return ((uint64_t)(higher_address - lower_base) <= UnscaledClassSpaceMax);
 }
 
-// Try to allocate the metaspace at the requested addr.
+/**
+ * Try to allocate the metaspace at the requested addr.
+ * 尝试在指定的地址上为元空间申请内存
+ * 
+ */ 
 void Metaspace::allocate_metaspace_compressed_klass_ptrs(char* requested_addr, address cds_base) {
   assert(using_class_space(), "called improperly");
   assert(UseCompressedClassPointers, "Only use with CompressedKlassPtrs");
   assert(compressed_class_space_size() < KlassEncodingMetaspaceMax,
-         "Metaspace size is too big");
+         "Metaspace size is too big"); // KlassEncodingMetaspaceMax：32G
   assert_is_ptr_aligned(requested_addr, _reserve_alignment);
   assert_is_ptr_aligned(cds_base, _reserve_alignment);
   assert_is_size_aligned(compressed_class_space_size(), _reserve_alignment);
@@ -2901,6 +2905,11 @@ void Metaspace::allocate_metaspace_compressed_klass_ptrs(char* requested_addr, a
   // Don't use large pages for the class space.
   bool large_pages = false;
 
+  /**
+   * 给元空间分配内存。内具体是多少呢?
+   * 
+   * compressed_class_space_size() Debug时是1G
+   */ 
   ReservedSpace metaspace_rs = ReservedSpace(compressed_class_space_size(),
                                              _reserve_alignment,
                                              large_pages,
@@ -3018,14 +3027,23 @@ void Metaspace::ergo_initialize() {
   set_compressed_class_space_size(CompressedClassSpaceSize);
 }
 
+/**
+ * 元空间初始化
+ */ 
 void Metaspace::global_initialize() {
   // Initialize the alignment for shared spaces.
-  int max_alignment = os::vm_page_size();
+  int max_alignment = os::vm_page_size(); // 4096,4K
   size_t cds_total = 0;
 
   MetaspaceShared::set_max_alignment(max_alignment);
 
-  if (DumpSharedSpaces) {
+  /**
+   * 当JVM启动时若配置-XX:+DumpSharedSpaces, 则它会去jdk的安装目录下寻找一个名为classlist的文件 (linux下它一般在jre/lib/classlist), 
+   * 这个文件其实就是一个类列表, 它的每一行表示的是一个类的全路径名,JVM会加载每一个类(装载/解析/链接),
+   * 然后把它们对应的类型描述信息dump到一个名为classes.jsa的文件中((linux下它一般在jre/lib/amd64/{client|server}/classes.jsa下),然后JVM退出
+   * 
+   */ 
+  if (DumpSharedSpaces) { //默认false
     SharedReadOnlySize  = align_size_up(SharedReadOnlySize,  max_alignment);
     SharedReadWriteSize = align_size_up(SharedReadWriteSize, max_alignment);
     SharedMiscDataSize  = align_size_up(SharedMiscDataSize,  max_alignment);
@@ -3070,7 +3088,7 @@ void Metaspace::global_initialize() {
     // and map in the memory before initializing the rest of metaspace (so
     // the addresses don't conflict)
     address cds_address = NULL;
-    if (UseSharedSpaces) {
+    if (UseSharedSpaces) { //默认false
       FileMapInfo* mapinfo = new FileMapInfo();
       memset(mapinfo, 0, sizeof(FileMapInfo));
 
@@ -3091,13 +3109,15 @@ void Metaspace::global_initialize() {
 #ifdef _LP64
     // If UseCompressedClassPointers is set then allocate the metaspace area
     // above the heap and above the CDS area (if it exists).
-    if (using_class_space()) {
-      if (UseSharedSpaces) {
+    if (using_class_space()) { // 默认true
+      if (UseSharedSpaces) { // 默认false
         char* cds_end = (char*)(cds_address + cds_total);
         cds_end = (char *)align_ptr_up(cds_end, _reserve_alignment);
         allocate_metaspace_compressed_klass_ptrs(cds_end, cds_address);
       } else {
+        // 计算元空间的起始地址。
         char* base = (char*)align_ptr_up(Universe::heap()->reserved_region().end(), _reserve_alignment);
+        // 尝试为元空间分配内存
         allocate_metaspace_compressed_klass_ptrs(base, 0);
       }
     }

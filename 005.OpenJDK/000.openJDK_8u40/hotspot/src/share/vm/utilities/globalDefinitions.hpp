@@ -148,7 +148,6 @@ const int SerializePageShiftCount = 3;
  *   hw += oop(hw)->foo();
  * works, where foo is a method (like size or scavenge) that returns the
  * object size.
- * 指向空闲块的开始地址
  */
 class HeapWord {
   friend class VMStructs;
