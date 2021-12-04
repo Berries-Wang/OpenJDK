@@ -936,7 +936,7 @@ jint Universe::initialize_heap() {
 }
 
 /***
- * reserve_heap方法用于给Java堆申请一段连续的内存空间，同时计算在开启指针压缩时的指针基地址，所有的垃圾回收器在初始化的时候都会调用此方法
+ * reserve_heap方法用于给Java堆申请一段连续的内存空间(即为堆空间预留内存)，同时计算在开启指针压缩时的指针基地址，所有的垃圾回收器在初始化的时候都会调用此方法
  *
  */
 // Reserve the Java heap, which is now the same for all GCs.

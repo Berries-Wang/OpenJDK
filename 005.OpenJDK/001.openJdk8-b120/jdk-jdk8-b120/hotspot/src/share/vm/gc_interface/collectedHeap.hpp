@@ -99,6 +99,7 @@ class CollectedHeap : public CHeapObj<mtInternal> {
   bool _defer_initial_card_mark;
 
  protected:
+  // 表示堆空间
   MemRegion _reserved;
   BarrierSet* _barrier_set;
   bool _is_gc_active;

@@ -29,8 +29,8 @@
 #include "utilities/debug.hpp"
 #include "utilities/globalDefinitions.hpp"
 
-// A very simple data structure representing a contigous region
-// region of address space.
+// A very simple data structure representing a contigous region  region of address space.
+// 一种非常简单的数据结构，表示地址空间的一个相邻区域。
 
 // Note that MemRegions are passed by value, not by reference.
 // The intent is that they remain very small and contain no
@@ -40,24 +40,35 @@
 
 class MetaWord;
 
+/**
+ * #define VALUE_OBJ_CLASS_SPEC    : public _ValueObj
+ * 
+ * Region 区域
+ */ 
 class MemRegion VALUE_OBJ_CLASS_SPEC {
   friend class VMStructs;
 private:
+  // 内存区域的起始地址
   HeapWord* _start;
+  // 
   size_t    _word_size;
 
 public:
   MemRegion() : _start(NULL), _word_size(0) {};
+
   MemRegion(HeapWord* start, size_t word_size) :
     _start(start), _word_size(word_size) {};
+
   MemRegion(HeapWord* start, HeapWord* end) :
     _start(start), _word_size(pointer_delta(end, start)) {
     assert(end >= start, "incorrect constructor arguments");
   }
+
   MemRegion(MetaWord* start, MetaWord* end) :
     _start((HeapWord*)start), _word_size(pointer_delta(end, start)) {
     assert(end >= start, "incorrect constructor arguments");
   }
+
 
   MemRegion(const MemRegion& mr): _start(mr._start), _word_size(mr._word_size) {}
 

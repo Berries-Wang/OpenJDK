@@ -97,7 +97,7 @@ jint GenCollectedHeap::initialize() {
   guarantee(HeapWordSize == wordSize, "HeapWordSize must equal wordSize");
 
   // The heap must be at least as aligned as generations.
-  size_t gen_alignment = Generation::GenGrain;// 65533
+  size_t gen_alignment = Generation::GenGrain;// 65536
 
   // 获取分代的数量 
   _gen_specs = gen_policy()->generations();
@@ -124,18 +124,20 @@ jint GenCollectedHeap::initialize() {
       "Could not reserve enough space for object heap");
     return JNI_ENOMEM;
   }
-
+   // 包装一下，将堆空间(大小，起始地址)包装成MemRegion
   _reserved = MemRegion((HeapWord*)heap_rs.base(),
                         (HeapWord*)(heap_rs.base() + heap_rs.size()));
 
-  // It is important to do this in a way such that concurrent readers can't
-  // temporarily think somethings in the heap.  (Seen this happen in asserts.)
+  // It is important to do this in a way such that concurrent readers can't temporarily think somethings in the heap.  (Seen this happen in asserts.)
+  // 这样做很重要，并发读者不能临时考虑堆中的某些东西。(看到这发生在断言。)
   _reserved.set_word_size(0);
   _reserved.set_start((HeapWord*)heap_rs.base());
   size_t actual_heap_size = heap_rs.size();
   _reserved.set_end((HeapWord*)(heap_rs.base() + actual_heap_size));
 
+  // 创建CardTable 
   _rem_set = collector_policy()->create_rem_set(_reserved, n_covered_regions);
+  // 
   set_barrier_set(rem_set()->bs());
 
   _gch = this;
@@ -145,6 +147,7 @@ jint GenCollectedHeap::initialize() {
     _gens[i] = _gen_specs[i]->init(this_rs, i, rem_set());
     heap_rs = heap_rs.last_part(_gen_specs[i]->max_size());
   }
+  
   clear_incremental_collection_failed();
 
 #if INCLUDE_ALL_GCS
@@ -163,7 +166,7 @@ jint GenCollectedHeap::initialize() {
 /**
  * @param _total_reserved 是一个指针，在这里是一个返回参数，表明堆的总大小。
  * 
- * 
+ * 申请内存时，按照max_size之和来申请的，但是此时的申请仅仅是建立虚拟地址空间的映射，没有实际申请内存.
  * 
  */ 
 char* GenCollectedHeap::allocate(size_t alignment,
@@ -198,7 +201,7 @@ char* GenCollectedHeap::allocate(size_t alignment,
 
   *_total_reserved = total_reserved;
   *_n_covered_regions = n_covered_regions;
-
+  // 为Java堆空间预留内存(重复了多次！ 这里预留内存，是在虚拟地址空间上建立映射，实际物理内存需要到使用的时候才会分配)
   *heap_rs = Universe::reserve_heap(total_reserved, alignment);
   return heap_rs->base();
 }

@@ -118,9 +118,9 @@
 ## JVM参数
 ### 1. CompressedClassSpaceSize （与UseCompressedOops区分）
 > 这个参数主要是设置Klass Metaspace的大小，不过这个参数设置了也不一定起作用，前提是能开启压缩指针，假如-Xmx超过了32G，压缩指针是开启不来的。如果有Klass Metaspace，那这块内存是和Heap连着的。
-
+- <img src="./pics/20160602101028338.png"/>
 - <img src="./pics/compressed_class_space-001.png"/>
-- 那这里的metaspace存的是什么呢?
++ >> Klass Metaspace 的空间是包含在Metaspace里面的
 ### 2. MetaspaceSize
 + 定义于文件: 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/runtime/globals.hpp
 + 这个JVM参数是指Metaspace扩容时触发FullGC的初始化阈值，也是最小的阈值。这里有几个要点需要明确：
