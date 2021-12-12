@@ -1,3 +1,10 @@
+# OpenJDK构建
+1. 原始文件: [http://hg.openjdk.java.net/jdk8/jdk8/raw-file/tip/README-builds.html](http://hg.openjdk.java.net/jdk8/jdk8/raw-file/tip/README-builds.html)
+2. OpenJDK官方构建文档(参考，不一定适用于当前版本): [https://openjdk.java.net/groups/build/doc/building.html](https://openjdk.java.net/groups/build/doc/building.html)
+3. [OpenJDK Github](https://github.com/openjdk/jdk/tree/jdk8-b120)
+
+## README
+```txt
 README:
   frok from: https://github.com/openjdk/jdk
   
@@ -40,3 +47,5 @@ is 3.81 or newer. Note that on Solaris, GNU make is called "gmake".
 
 Complete details are available in the file:
      http://hg.openjdk.java.net/jdk8/jdk8/raw-file/tip/README-builds.html
+
+```
