@@ -649,7 +649,7 @@ jint universe_init() {
  
   /**
    * 元空间初始化
-   * 内存是怎么申请的，内存多大
+   * 内存是怎么申请的，内存多大,详见: <004.OpenJDK(JVM)学习/009.GC/006.Metaspace.md>
    */ 
   Metaspace::global_initialize();
 
