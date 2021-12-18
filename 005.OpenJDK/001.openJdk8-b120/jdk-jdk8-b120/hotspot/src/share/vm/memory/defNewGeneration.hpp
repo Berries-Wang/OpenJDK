@@ -144,8 +144,12 @@ protected:
     MinFreeScratchWords = 100
   };
 
-  // Return the size of a survivor space if this generation were of size
-  // gen_size.
+  /**
+   * Return the size of a survivor space if this generation were of size  gen_size.
+   *  根据堆空间大小计算survivor空间的大小(一个survivor的大小)
+   * 
+   * JVM 参数： SurvivorRatio 默认是8
+   */ 
   size_t compute_survivor_size(size_t gen_size, size_t alignment) const {
     size_t n = gen_size / (SurvivorRatio + 2);
     return n > alignment ? align_size_down(n, alignment) : alignment;

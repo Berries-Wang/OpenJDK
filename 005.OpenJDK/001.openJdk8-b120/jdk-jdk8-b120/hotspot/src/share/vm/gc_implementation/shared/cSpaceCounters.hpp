@@ -32,6 +32,8 @@
 // A CSpaceCounters is a holder class for performance counters
 // that track a space;
 
+// CSpaceCounters是一个用于跟踪空间的性能计数器的holder类;
+
 class CSpaceCounters: public CHeapObj<mtGC> {
   friend class VMStructs;
 

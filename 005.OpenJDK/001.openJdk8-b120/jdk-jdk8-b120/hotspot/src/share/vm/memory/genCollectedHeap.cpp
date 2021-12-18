@@ -80,7 +80,7 @@ GenCollectedHeap::GenCollectedHeap(GenCollectorPolicy *policy)
 }
 
 /**
- * 对空间初始化
+ * 对堆空间初始化
  */ 
 jint GenCollectedHeap::initialize() {
   CollectedHeap::pre_initialize();
@@ -135,7 +135,7 @@ jint GenCollectedHeap::initialize() {
   size_t actual_heap_size = heap_rs.size();
   _reserved.set_end((HeapWord*)(heap_rs.base() + actual_heap_size));
 
-  // 创建CardTable 
+  // 创建CardTable!!! ， 只是创建对象，还没有初始化
   _rem_set = collector_policy()->create_rem_set(_reserved, n_covered_regions);
   // 
   set_barrier_set(rem_set()->bs());
@@ -144,6 +144,7 @@ jint GenCollectedHeap::initialize() {
 
   for (i = 0; i < _n_gens; i++) {
     ReservedSpace this_rs = heap_rs.first_part(_gen_specs[i]->max_size(), false, false);
+    // 注意，这里是根据分代描述符来创建分代对象: _gen_specs , _gens 这是两个数组:(hotspot/src/share/vm/memory/generationSpec.cpp)
     _gens[i] = _gen_specs[i]->init(this_rs, i, rem_set());
     heap_rs = heap_rs.last_part(_gen_specs[i]->max_size());
   }

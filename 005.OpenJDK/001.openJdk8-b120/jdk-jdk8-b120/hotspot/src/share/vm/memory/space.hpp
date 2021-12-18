@@ -1028,6 +1028,8 @@ class EdenSpace : public ContiguousSpace {
   // _soft_end is used as a soft limit on allocation.  As soft limits are
   // reached, the slow-path allocation code can invoke other actions and then
   // adjust _soft_end up to a new soft limit or to end().
+  // _soft_end 是内存分配的一个软限制，当到达这个限制之后，慢速分配的代码就可以执行其他的逻辑，然后调整_soft_end到一个新的限制或者end().
+  // 限制什么?
   HeapWord* _soft_end;
 
  public:

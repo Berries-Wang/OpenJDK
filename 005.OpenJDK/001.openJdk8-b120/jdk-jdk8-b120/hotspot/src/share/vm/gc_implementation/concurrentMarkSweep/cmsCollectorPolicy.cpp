@@ -58,9 +58,11 @@ void ConcurrentMarkSweepPolicy::initialize_alignments() {
 
 /**
  * 初始化分代信息 
+ * 
+ * 即创建两个分代，并指定大小，没有实质申请内存
  */
 void ConcurrentMarkSweepPolicy::initialize_generations() {
-  wei_log_info(1,"正在执行 ConcurrentMarkSweepPolicy::initialize_generations");
+  wei_log_info(1,"正在执行 ConcurrentMarkSweepPolicy::initialize_generations 即初始化分代信息");
 
    // 创建两个指针(>> typedef GenerationSpec* GenerationSpecPtr;)
   _generations = NEW_C_HEAP_ARRAY3(GenerationSpecPtr, number_of_generations(),
@@ -87,7 +89,12 @@ void ConcurrentMarkSweepPolicy::initialize_generations() {
     _generations[1] = new GenerationSpec(Generation::ASConcurrentMarkSweep,
                                          _initial_gen1_size, _max_gen1_size);
   } else {
-     // 初始化老年代空间
+     /**
+      * 初始化老年代空间,但是注意，这里只是创建了GenerationSpec类型的对象，并设置堆名称和大小
+      * 并没有实质分配内存。
+      * 
+      * Debug发现: 这里是先调用 CHeapObj 中被重载的new操作符，先分配空间: 这里的 “_generations[1]” 与 new操作符重载方法中的返回值"*p" 值是一致的
+      */ 
     _generations[1] = new GenerationSpec(Generation::ConcurrentMarkSweep,
                                          _initial_gen1_size, _max_gen1_size);
   }
@@ -95,6 +102,8 @@ void ConcurrentMarkSweepPolicy::initialize_generations() {
   if (_generations[0] == NULL || _generations[1] == NULL) {
     vm_exit_during_initialization("Unable to allocate gen spec");
   }
+
+  wei_log_info(1,"ConcurrentMarkSweepPolicy::initialize_generations 初始化分代信息完成");
 }
 
 void ConcurrentMarkSweepPolicy::initialize_size_policy(size_t init_eden_size,

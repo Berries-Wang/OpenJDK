@@ -31,6 +31,11 @@
 // some generation-specific behavior.  This is done here rather than as a
 // virtual function of Generation because these methods are needed in
 // initialization of the Generations.
+/**
+ * 描述分代信息，描述了垃圾收集器的名称，初始大小，最大大小
+ * 
+ * 这个类最重要的方法就是： GenerationSpec::init ， 即根据分代描述符来创建分代对象
+ */ 
 class GenerationSpec : public CHeapObj<mtGC> {
   friend class VMStructs;
 private:

@@ -178,53 +178,62 @@ KlassScanClosure::KlassScanClosure(OopsInKlassOrGenClosure* scavenge_closure,
       _accumulate_modified_oops(klass_rem_set->accumulate_modified_oops()) {}
 
 
-DefNewGeneration::DefNewGeneration(ReservedSpace rs,
-                                   size_t initial_size,
-                                   int level,
-                                   const char* policy)
-  : Generation(rs, initial_size, level),
-    _promo_failure_drain_in_progress(false),
-    _should_allocate_from_space(false)
-{
-  MemRegion cmr((HeapWord*)_virtual_space.low(),
-                (HeapWord*)_virtual_space.high());
+/** 
+ * DefNew 堆空间初始化
+ */
+DefNewGeneration::DefNewGeneration(ReservedSpace rs, size_t initial_size,
+                                   int level, const char *policy)
+    : Generation(rs, initial_size, level),
+      _promo_failure_drain_in_progress(false),
+      _should_allocate_from_space(false) {
+  MemRegion cmr((HeapWord *)_virtual_space.low(),
+                (HeapWord *)_virtual_space.high());
   Universe::heap()->barrier_set()->resize_covered_region(cmr);
 
+  // 创建 eden from to 空间对象 
   if (GenCollectedHeap::heap()->collector_policy()->has_soft_ended_eden()) {
     _eden_space = new ConcEdenSpace(this);
   } else {
     _eden_space = new EdenSpace(this);
   }
   _from_space = new ContiguousSpace();
-  _to_space   = new ContiguousSpace();
+  _to_space = new ContiguousSpace();
 
   if (_eden_space == NULL || _from_space == NULL || _to_space == NULL)
     vm_exit_during_initialization("Could not allocate a new gen space");
 
-  // Compute the maximum eden and survivor space sizes. These sizes
-  // are computed assuming the entire reserved space is committed.
-  // These values are exported as performance counters.
-  uintx alignment = GenCollectedHeap::heap()->collector_policy()->space_alignment();
+  /**
+   * Compute the maximum eden and survivor space sizes. 
+   * These sizes　are computed assuming the entire reserved space is committed.　
+   * These values are exported as performance counters.
+   *
+   * 计算最大的eden和survivor空间大小，这些大小是在提交了整个预留空间的情况下计算的，这些值被导出为性能计数器。
+   */
+  uintx alignment =
+      GenCollectedHeap::heap()->collector_policy()->space_alignment();
   uintx size = _virtual_space.reserved_size();
+  // 计算survivor的大小(一个survivor的)
   _max_survivor_size = compute_survivor_size(size, alignment);
-  _max_eden_size = size - (2*_max_survivor_size);
+  // 计算eden区的大小
+  _max_eden_size = size - (2 * _max_survivor_size);
 
   // allocate the performance counters
 
-  // Generation counters -- generation 0, 3 subspaces
+  // Generation counters -- generation 0, 3 subspaces  这些counter是用户跟踪空间的性能计算器，非重点
   _gen_counters = new GenerationCounters("new", 0, 3, &_virtual_space);
   _gc_counters = new CollectorCounters(policy, 0);
 
-  _eden_counters = new CSpaceCounters("eden", 0, _max_eden_size, _eden_space,
-                                      _gen_counters);
+  _eden_counters =
+      new CSpaceCounters("eden", 0, _max_eden_size, _eden_space, _gen_counters);
   _from_counters = new CSpaceCounters("s0", 1, _max_survivor_size, _from_space,
                                       _gen_counters);
-  _to_counters = new CSpaceCounters("s1", 2, _max_survivor_size, _to_space,
-                                    _gen_counters);
+  _to_counters =
+      new CSpaceCounters("s1", 2, _max_survivor_size, _to_space, _gen_counters);
 
   compute_space_boundaries(0, SpaceDecorator::Clear, SpaceDecorator::Mangle);
   update_counters();
   _next_gen = NULL;
+  // JVM参数: -XX:MaxTenuringThreshold 主要是控制新生代需要经历多少次GC晋升到老年代中的最大阈值。在JVM中用4个bit存储（放在对象头中），所以其最大值是15
   _tenuring_threshold = MaxTenuringThreshold;
   _pretenure_size_threshold_words = PretenureSizeThreshold >> LogHeapWordSize;
 

@@ -635,18 +635,26 @@ void ParNewGenTask::work(uint worker_id) {
 #pragma warning( push )
 #pragma warning( disable:4355 ) // 'this' : used in base member initializer list
 #endif
-ParNewGeneration::
-ParNewGeneration(ReservedSpace rs, size_t initial_byte_size, int level)
-  : DefNewGeneration(rs, initial_byte_size, level, "PCopy"),
-  _overflow_list(NULL),
-  _is_alive_closure(this),
-  _plab_stats(YoungPLABSize, PLABWeight)
-{
+ParNewGeneration::ParNewGeneration(ReservedSpace rs, size_t initial_byte_size,
+                                   int level)
+    : DefNewGeneration(rs, initial_byte_size, level, "PCopy"), // 注意这里的继承关系
+      _overflow_list(NULL), _is_alive_closure(this),
+      _plab_stats(YoungPLABSize, PLABWeight) {
   NOT_PRODUCT(_overflow_counter = ParGCWorkQueueOverflowInterval;)
   NOT_PRODUCT(_num_par_pushes = 0;)
+  // 创建任务队列
   _task_queues = new ObjToScanQueueSet(ParallelGCThreads);
   guarantee(_task_queues != NULL, "task_queues allocation failure.");
 
+  /**
+   * JVM参数:  -XX:ParallelGCThreads={value} 这个参数是指定并行 GC 线程的数量，一般最好和
+   * CPU 核心数量相当。默认情况下， 当 CPU 数量小于8， ParallelGCThreads
+   * 的值等于 CPU 数量，当 CPU 数量大于 8 时， 则使用公式：ParallelGCThreads = 8
+   * + ((N - 8) * 5/8) = 3 +（（5*CPU）/ 8）； 同时这个参数只要是并行 GC
+   * 都可以使用，不只是 ParNew。
+   *
+   */
+  // 每一个收集线程对应一个队列
   for (uint i1 = 0; i1 < ParallelGCThreads; i1++) {
     ObjToScanQueue *q = new ObjToScanQueue();
     guarantee(q != NULL, "work_queue Allocation failure.");
@@ -673,8 +681,8 @@ ParNewGeneration(ReservedSpace rs, size_t initial_byte_size, int level)
     EXCEPTION_MARK;
     ResourceMark rm;
 
-    const char* cname =
-         PerfDataManager::counter_name(_gen_counters->name_space(), "threads");
+    const char *cname =
+        PerfDataManager::counter_name(_gen_counters->name_space(), "threads");
     PerfDataManager::create_constant(SUN_GC, cname, PerfData::U_None,
                                      ParallelGCThreads, CHECK);
   }

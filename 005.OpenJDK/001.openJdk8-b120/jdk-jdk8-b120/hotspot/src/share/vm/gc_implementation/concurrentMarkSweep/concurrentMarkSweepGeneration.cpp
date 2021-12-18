@@ -194,32 +194,26 @@ class CMSParGCThreadState: public CHeapObj<mtGC> {
 };
 
 ConcurrentMarkSweepGeneration::ConcurrentMarkSweepGeneration(
-     ReservedSpace rs, size_t initial_byte_size, int level,
-     CardTableRS* ct, bool use_adaptive_freelists,
-     FreeBlockDictionary<FreeChunk>::DictionaryChoice dictionaryChoice) :
-  CardGeneration(rs, initial_byte_size, level, ct),
-  _dilatation_factor(((double)MinChunkSize)/((double)(CollectedHeap::min_fill_size()))),
-  _debug_collection_type(Concurrent_collection_type),
-  _did_compact(false)
-{
-  HeapWord* bottom = (HeapWord*) _virtual_space.low();
-  HeapWord* end    = (HeapWord*) _virtual_space.high();
+    ReservedSpace rs, size_t initial_byte_size, int level, CardTableRS *ct,
+    bool use_adaptive_freelists,
+    FreeBlockDictionary<FreeChunk>::DictionaryChoice dictionaryChoice)
+    : CardGeneration(rs, initial_byte_size, level, ct),
+      _dilatation_factor(((double)MinChunkSize) /
+                         ((double)(CollectedHeap::min_fill_size()))),
+      _debug_collection_type(Concurrent_collection_type), _did_compact(false) {
+  HeapWord *bottom = (HeapWord *)_virtual_space.low();
+  HeapWord *end = (HeapWord *)_virtual_space.high();
 
   _direct_allocated_words = 0;
-  NOT_PRODUCT(
-    _numObjectsPromoted = 0;
-    _numWordsPromoted = 0;
-    _numObjectsAllocated = 0;
-    _numWordsAllocated = 0;
-  )
+  NOT_PRODUCT(_numObjectsPromoted = 0; _numWordsPromoted = 0;
+              _numObjectsAllocated = 0; _numWordsAllocated = 0;)
 
-  _cmsSpace = new CompactibleFreeListSpace(_bts, MemRegion(bottom, end),
-                                           use_adaptive_freelists,
-                                           dictionaryChoice);
+  _cmsSpace = new CompactibleFreeListSpace(
+      _bts, MemRegion(bottom, end), use_adaptive_freelists, dictionaryChoice);
   NOT_PRODUCT(debug_cms_space = _cmsSpace;)
   if (_cmsSpace == NULL) {
     vm_exit_during_initialization(
-      "CompactibleFreeListSpace allocation failure");
+        "CompactibleFreeListSpace allocation failure");
   }
   _cmsSpace->_gen = this;
 
@@ -229,26 +223,37 @@ ConcurrentMarkSweepGeneration::ConcurrentMarkSweepGeneration(
   // offsets match. The ability to tell free chunks from objects
   // depends on this property.
   debug_only(
-    FreeChunk* junk = NULL;
-    assert(UseCompressedClassPointers ||
-           junk->prev_addr() == (void*)(oop(junk)->klass_addr()),
-           "Offset of FreeChunk::_prev within FreeChunk must match"
-           "  that of OopDesc::_klass within OopDesc");
-  )
-  if (CollectedHeap::use_parallel_gc_threads()) {
-    typedef CMSParGCThreadState* CMSParGCThreadStatePtr;
+      FreeChunk *junk = NULL; assert(UseCompressedClassPointers ||
+                                         junk->prev_addr() ==
+                                             (void *)(oop(junk)->klass_addr()),
+                                     "Offset of FreeChunk::_prev within "
+                                     "FreeChunk must match"
+                                     "  that of OopDesc::_klass within "
+                                     "OopDesc");) if (CollectedHeap::
+                                                          use_parallel_gc_threads()) {
+    typedef CMSParGCThreadState *CMSParGCThreadStatePtr;
     _par_gc_thread_states =
-      NEW_C_HEAP_ARRAY(CMSParGCThreadStatePtr, ParallelGCThreads, mtGC);
+        NEW_C_HEAP_ARRAY(CMSParGCThreadStatePtr, ParallelGCThreads, mtGC);
     if (_par_gc_thread_states == NULL) {
       vm_exit_during_initialization("Could not allocate par gc structs");
     }
+    /**
+     * JVM参数:  -XX:ParallelGCThreads={value} 这个参数是指定并行 GC
+     * 线程的数量，一般最好和 CPU 核心数量相当。默认情况下， 当 CPU 数量小于8，
+     * ParallelGCThreads 的值等于 CPU 数量，当 CPU 数量大于 8 时，
+     * 则使用公式：ParallelGCThreads = 8
+     * + ((N - 8) * 5/8) = 3 +（（5*CPU）/ 8）； 同时这个参数只要是并行 GC
+     * 都可以使用，不只是 ParNew。
+     *
+     */
     for (uint i = 0; i < ParallelGCThreads; i++) {
       _par_gc_thread_states[i] = new CMSParGCThreadState(cmsSpace());
       if (_par_gc_thread_states[i] == NULL) {
         vm_exit_during_initialization("Could not allocate par gc structs");
       }
     }
-  } else {
+  }
+  else {
     _par_gc_thread_states = NULL;
   }
   _incremental_collection_failed = false;
@@ -265,7 +270,6 @@ ConcurrentMarkSweepGeneration::ConcurrentMarkSweepGeneration(
   assert(MinChunkSize >= CollectedHeap::min_fill_size(), "just checking");
   assert(_dilatation_factor >= 1.0, "from previous assert");
 }
-
 
 // The field "_initiating_occupancy" represents the occupancy percentage
 // at which we trigger a new collection cycle.  Unless explicitly specified

@@ -37,68 +37,66 @@
 #include "gc_implementation/parNew/parNewGeneration.hpp"
 #endif // INCLUDE_ALL_GCS
 
-Generation* GenerationSpec::init(ReservedSpace rs, int level,
-                                 GenRemSet* remset) {
+Generation *GenerationSpec::init(ReservedSpace rs, int level,
+                                 GenRemSet *remset) {
   switch (name()) {
-    case Generation::DefNew:
-      return new DefNewGeneration(rs, init_size(), level);
+  case Generation::DefNew:
+    return new DefNewGeneration(rs, init_size(), level); 
 
-    case Generation::MarkSweepCompact:
-      return new TenuredGeneration(rs, init_size(), level, remset);
+  case Generation::MarkSweepCompact:
+    return new TenuredGeneration(rs, init_size(), level, remset);
 
 #if INCLUDE_ALL_GCS
-    case Generation::ParNew:
-      return new ParNewGeneration(rs, init_size(), level);
+  case Generation::ParNew:
+    return new ParNewGeneration(rs, init_size(), level); // 对新生代堆空间进行初始化，主要是分配eden，survivor区
 
-    case Generation::ASParNew:
-      return new ASParNewGeneration(rs,
-                                    init_size(),
-                                    init_size() /* min size */,
-                                    level);
+  case Generation::ASParNew:
+    return new ASParNewGeneration(rs, init_size(), init_size() /* min size */,
+                                  level);
 
-    case Generation::ConcurrentMarkSweep: {
-      assert(UseConcMarkSweepGC, "UseConcMarkSweepGC should be set");
-      CardTableRS* ctrs = remset->as_CardTableRS();
-      if (ctrs == NULL) {
-        vm_exit_during_initialization("Rem set incompatibility.");
-      }
-      // Otherwise
-      // The constructor creates the CMSCollector if needed,
-      // else registers with an existing CMSCollector
-
-      ConcurrentMarkSweepGeneration* g = NULL;
-      g = new ConcurrentMarkSweepGeneration(rs,
-                 init_size(), level, ctrs, UseCMSAdaptiveFreeLists,
-                 (FreeBlockDictionary<FreeChunk>::DictionaryChoice)CMSDictionaryChoice);
-
-      g->initialize_performance_counters();
-
-      return g;
+  case Generation::ConcurrentMarkSweep: { // CMS垃圾收集器
+    assert(UseConcMarkSweepGC, "UseConcMarkSweepGC should be set");
+    CardTableRS *ctrs = remset->as_CardTableRS();
+    if (ctrs == NULL) {
+      vm_exit_during_initialization("Rem set incompatibility.");
     }
+    // Otherwise
+    // The constructor creates the CMSCollector if needed,
+    // else registers with an existing CMSCollector
 
-    case Generation::ASConcurrentMarkSweep: {
-      assert(UseConcMarkSweepGC, "UseConcMarkSweepGC should be set");
-      CardTableRS* ctrs = remset->as_CardTableRS();
-      if (ctrs == NULL) {
-        vm_exit_during_initialization("Rem set incompatibility.");
-      }
-      // Otherwise
-      // The constructor creates the CMSCollector if needed,
-      // else registers with an existing CMSCollector
+    ConcurrentMarkSweepGeneration *g = NULL;
+    g = new ConcurrentMarkSweepGeneration(
+        rs, init_size(), level, ctrs, UseCMSAdaptiveFreeLists,
+        (FreeBlockDictionary<FreeChunk>::DictionaryChoice)CMSDictionaryChoice);
 
-      ASConcurrentMarkSweepGeneration* g = NULL;
-      g = new ASConcurrentMarkSweepGeneration(rs,
-                 init_size(), level, ctrs, UseCMSAdaptiveFreeLists,
-                 (FreeBlockDictionary<FreeChunk>::DictionaryChoice)CMSDictionaryChoice);
+    g->initialize_performance_counters();
 
-      g->initialize_performance_counters();
+    return g;
+  }
 
-      return g;
+  case Generation::ASConcurrentMarkSweep: {
+    assert(UseConcMarkSweepGC, "UseConcMarkSweepGC should be set");
+    CardTableRS *ctrs = remset->as_CardTableRS();
+    if (ctrs == NULL) {
+      vm_exit_during_initialization("Rem set incompatibility.");
     }
+    // Otherwise
+    // The constructor creates the CMSCollector if needed,
+    // else registers with an existing CMSCollector
+
+    ASConcurrentMarkSweepGeneration *g = NULL;
+    g = new ASConcurrentMarkSweepGeneration(
+        rs, init_size(), level, ctrs, UseCMSAdaptiveFreeLists,
+        (FreeBlockDictionary<FreeChunk>::DictionaryChoice)CMSDictionaryChoice);
+
+    g->initialize_performance_counters();
+
+    return g;
+  }
 #endif // INCLUDE_ALL_GCS
 
-    default:
-      guarantee(false, "unrecognized GenerationName");
-      return NULL;
+  default:
+    guarantee(false, "unrecognized GenerationName");
+    return NULL;
   }
 }

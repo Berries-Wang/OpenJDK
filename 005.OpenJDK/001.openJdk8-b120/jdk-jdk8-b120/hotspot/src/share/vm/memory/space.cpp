@@ -849,13 +849,14 @@ inline HeapWord* ContiguousSpace::allocate_impl(size_t size,
 }
 
 // This version is lock-free.
-inline HeapWord* ContiguousSpace::par_allocate_impl(size_t size,
-                                                    HeapWord* const end_value) {
+inline HeapWord *ContiguousSpace::par_allocate_impl(size_t size,
+                                                    HeapWord *const end_value) {
   do {
-    HeapWord* obj = top();
+    HeapWord *obj = top();
     if (pointer_delta(end_value, obj) >= size) {
-      HeapWord* new_top = obj + size;
-      HeapWord* result = (HeapWord*)Atomic::cmpxchg_ptr(new_top, top_addr(), obj);
+      HeapWord *new_top = obj + size;
+      HeapWord *result =
+          (HeapWord *)Atomic::cmpxchg_ptr(new_top, top_addr(), obj);
       // result can be one of two:
       //  the old top value: the exchange succeeded
       //  otherwise: the new value of the top is returned.
@@ -926,8 +927,7 @@ HeapWord* EdenSpace::par_allocate(size_t size) {
   return par_allocate_impl(size, soft_end());
 }
 
-HeapWord* ConcEdenSpace::par_allocate(size_t size)
-{
+HeapWord *ConcEdenSpace::par_allocate(size_t size) {
   do {
     // The invariant is top() should be read before end() because
     // top() can't be greater than end(), so if an update of _soft_end
@@ -935,11 +935,13 @@ HeapWord* ConcEdenSpace::par_allocate(size_t size)
     // also can grow up to the new end() and the condition
     // 'top_val > end_val' is true. To ensure the loading order
     // OrderAccess::loadload() is required after top() read.
-    HeapWord* obj = top();
+    HeapWord *obj = top();
+    // 
     OrderAccess::loadload();
     if (pointer_delta(*soft_end_addr(), obj) >= size) {
-      HeapWord* new_top = obj + size;
-      HeapWord* result = (HeapWord*)Atomic::cmpxchg_ptr(new_top, top_addr(), obj);
+      HeapWord *new_top = obj + size;
+      HeapWord *result =
+          (HeapWord *)Atomic::cmpxchg_ptr(new_top, top_addr(), obj);
       // result can be one of two:
       //  the old top value: the exchange succeeded
       //  otherwise: the new value of the top is returned.
@@ -952,7 +954,6 @@ HeapWord* ConcEdenSpace::par_allocate(size_t size)
     }
   } while (true);
 }
-
 
 HeapWord* OffsetTableContigSpace::initialize_threshold() {
   return _offsets.initialize_threshold();

@@ -847,7 +847,7 @@ jint Universe::initialize_heap() {
      * >> 大致流程
      * 1. 内存对齐
      * 2. 通过VM参数，计算新生代 老年代内存大小
-     * 3. 创建新生代了老年代内存空间
+     * 3. 创建新生代了老年代内存空间,错误，仅仅是创建了两个分代对象(错误，创建分代信息的描述符，并不是分代对象)，并没有分配内存空间。
      */
     gc_policy->initialize_all();
 
@@ -855,7 +855,7 @@ jint Universe::initialize_heap() {
     Universe::_collectedHeap = new GenCollectedHeap(gc_policy);
   }
 
-  // 进行堆的初始化，注意继承关系
+  // 进行堆的初始化，注意继承关系(如: GenCollectedHeap::initialize)
   jint status = Universe::heap()->initialize();
   if (status != JNI_OK) {
     return status;
