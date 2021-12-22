@@ -5,6 +5,7 @@
         "compounds": []
     },
     "files.associations": {
+        "*.ic": "cpp",
         "*.idl": "cpp",
         "array": "cpp",
         "atomic": "cpp",
@@ -48,7 +49,8 @@
         "bitset": "cpp",
         "random": "cpp",
         "list": "cpp",
-        "typeindex": "cpp"
+        "typeindex": "cpp",
+        "ratio": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

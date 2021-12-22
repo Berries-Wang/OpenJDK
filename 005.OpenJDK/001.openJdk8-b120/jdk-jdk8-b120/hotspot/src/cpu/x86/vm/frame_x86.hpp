@@ -52,10 +52,12 @@
 //    [oop temp              ]                     (only for native calls)
 //    [locals and parameters ]
 //                               <- sender sp
-// ------------------------------ Asm interpreter ----------------------------------------
+// ------------------------------ Asm interpreter(ASM 汇编解释器) ----------------------------------------
 
-// ------------------------------ C++ interpreter ----------------------------------------
+// ------------------------------ C++ interpreter(C++解释器)----------------------------------------
 //
+// expression stack 就是操作数栈,即 “后进先出(Last-In-First-out）的操作数栈”，
+// 
 // Layout of C++ interpreter frame: (While executing in BytecodeInterpreter::run)
 //
 //                             <- SP (current esp/rsp)
@@ -77,9 +79,9 @@
 //                               <- sender sp
 
 // [1] When the c++ interpreter calls a new method it returns to the frame
-//     manager which allocates a new frame on the stack. In that case there
-//     is no real callee of this newly allocated frame. The frame manager is
-//     aware of the  additional frame(s) and will pop them as nested calls
+//     manager which allocates(分配，分派) a new frame on the stack. In that case there
+//     is no real callee(被召者) of this newly allocated frame. The frame manager is
+//     aware(知道，明白) of the  additional(附加的，额外的) frame(s) and will pop them as nested(嵌套的) calls
 //     complete. Howevers tTo make it look good in the debugger the frame
 //     manager actually installs a dummy pc pointing to RecursiveInterpreterActivation
 //     with a fake interpreter_state* parameter to make it easy to debug
