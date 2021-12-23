@@ -33,7 +33,23 @@
 // In contrast, vframes represent source-level activations, so that one physical frame
 // can correspond to multiple source level frames because of inlining.
 // A frame is comprised of {pc, fp, sp}
-// ------------------------------ Asm interpreter ----------------------------------------
+
+// ------------------------------------------------------栈帧字段说明------------------------------------------------
+// | constant pool cache                     方法所属类的常量池缓存。
+// | expression stack                        操作数栈，用于支持字节码执行时的栈使用需求。使用栈顶缓存技术（TOS）将栈操作转化为寄存器操作，提高执行效率。
+// | byte code index/pointr (bcx)            表示字节码指针，指向待执行的字节码。
+// | pointer to locals                       局部变量表起始地址
+// | Method*                                 存储栈帧所属方法的 C++ 对象的地址。
+// | locals and parameters                   局部变量和入参共用，C 语言函数调用只会将入参入栈，而 hotspot 将这块内存区域扩展到能够存放局部变量的大小，以使得局部变量和入参能共享此区域。
+// | return pc                               返回地址
+// | methodData                              指向 MethodData 对象的 _data 成员变量，其中记录着 data entries，详情查询 MethodData。
+// | last sp                                 在调用者栈帧中，存储调用者跳转时的 sp 指针（仅限 java 函数间跳转）。 调用者栈帧中的 last sp 和被调用者栈帧中的 sender sp 指向同一位置
+// | old stack pointer(sender_sp)            在被调用者栈帧中，存储调用者在跳转时的 sp 指针。
+// | ----------------部分名词解释----------------------
+// | bp 、 sp：x86 硬件有专用栈寄存器（bp、sp）
+// ------------------------------------------------------栈帧字段说明------------------------------------------------
+
+// ------------------------------ Asm interpreter (默认模板解释器栈帧)----------------------------------------
 // Layout of asm interpreter frame:
 //    [expression stack      ] * <- sp
 //    [monitors              ]   \
