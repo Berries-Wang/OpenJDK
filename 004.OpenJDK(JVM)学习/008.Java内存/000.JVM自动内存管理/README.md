@@ -10,6 +10,7 @@
 ### 6. 直接内存
 + JDK1.4中新加入了NIO，引入了一种基于通道与缓冲区的I/O方式，使用Native函数库直接分配堆外内存，然后通过一个存储在Java堆里面的DirectByteBuff对象作为这块内存的引用进行操作。
 ### 7.CodeCache
++ Codecache最大的用户: JIT,JIT将编译后的方法存放到codecache中，codecache空间不足会导致JIT停止编译方法
 
 
 ## 学习目标
