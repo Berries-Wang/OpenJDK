@@ -555,11 +555,11 @@ class Klass : public Metadata {
   markOop prototype_header() const      { return _prototype_header; }
   // NOTE: once instances of this klass are floating around in the
   // system, this header must only be updated at a safepoint.
-  // NOTE 2: currently we only ever set the prototype header to the
-  // biasable prototype for instanceKlasses. There is no technical
+  // NOTE 2: currently we only ever(曾经，始终) set the prototype header to the
+  // biasable prototype for instanceKlasses. There is no technical(专业的，严格的)
   // reason why it could not be done for arrayKlasses aside from
   // wanting to reduce the initial scope of this optimization. There
-  // are potential problems in setting the bias pattern for
+  // are potential(潜在的，可能的) problems in setting the bias pattern for
   // JVM-internal oops.
   inline void set_prototype_header(markOop header);
   static ByteSize prototype_header_offset() { return in_ByteSize(offset_of(Klass, _prototype_header)); }

@@ -102,6 +102,13 @@ class BasicLock;
 class ObjectMonitor;
 class JavaThread;
 
+/**
+ * 可以看到，markOopDesc类没有任何成员属性。
+ * 
+ * 那么对象头中的数据保存在哪里呢?
+ *  volatile markOop  _mark; 这就是一个对象头部，markOop 是 typedef class  markOopDesc* markOop; 即_mark是一个指针，
+ *                           其实对象头的数据就存在_mark本身，虽然是指针，但是不指向任何地方，仅存储对象头部数据(_mark这个指针并没有指向任何地方，而是作为变量来存储对象Mark Word数据)。
+ */ 
 class markOopDesc : public oopDesc {
 private:
   // Conversion
@@ -372,7 +379,13 @@ public:
 
   bool has_no_hash() const { return hash() == no_hash; }
 
-  // Prototype mark for initialization
+  /**
+   * Prototype mark for initialization
+   * 
+   * markOop不是一个函数，而是一个指针。(no_hash_in_place | no_lock_in_place)就是为markOop赋的初值。
+   * 在C语言中，对于变量初始化，有一种快速赋初值的写法： int x=3; => int x(3);
+   * 同样，对于指针类型也支持快速赋初始值的写法: int x=3; int *p=&x;=> int x=3;int*p(&x);
+   */ 
   static markOop prototype() {
     return markOop(no_hash_in_place | no_lock_in_place);
   }

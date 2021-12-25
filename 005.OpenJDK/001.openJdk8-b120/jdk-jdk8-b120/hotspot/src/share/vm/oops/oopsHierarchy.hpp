@@ -38,7 +38,7 @@ typedef juint narrowOop; // Offset instead of address for an oop within a java o
 typedef juint  narrowKlass;
 
 typedef void* OopOrNarrowOopStar;
-typedef class   markOopDesc*                markOop;
+typedef class   markOopDesc*               markOop;
 
 #ifndef CHECK_UNHANDLED_OOPS
 

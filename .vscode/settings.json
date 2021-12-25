@@ -50,7 +50,8 @@
         "random": "cpp",
         "list": "cpp",
         "typeindex": "cpp",
-        "ratio": "cpp"
+        "ratio": "cpp",
+        "thread": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

@@ -923,6 +923,7 @@ class InstanceKlass: public Klass {
   //  - the class has a finalizer (if !RegisterFinalizersAtInit)
   //  - the class size is larger than FastAllocateSizeLimit
   //  - the class is java/lang/Class, which cannot be allocated directly
+  // 
   bool can_be_fastpath_allocated() const {
     return !layout_helper_needs_slow_path(layout_helper());
   }

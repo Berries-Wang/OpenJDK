@@ -372,7 +372,7 @@
 #undef DECACHE_PC
 #undef CACHE_PC
 #define DECACHE_PC()    istate->set_bcp(pc);
-#define CACHE_PC()      pc = istate->bcp();
+#define CACHE_PC()      pc = istate->bcp();  // 初始化程序计数器
 #define CACHE_CP()      cp = istate->constants();
 #define CACHE_LOCALS()  locals = istate->locals();
 #undef CACHE_FRAME
@@ -2006,31 +2006,48 @@ run:
           UPDATE_PC_AND_TOS_AND_CONTINUE(3, count);
         }
 
+        // 004.OpenJDK(JVM)学习/009.GC/003.对象创建源码分析.md
         CASE(_new) : {
+          // pc，即程序计数器，定义于 /vm/interpreter/bytecodeInterpreter.hpp 中BytecodeInterpreter类_bcp字段,搜索 "CACHE_PC"
+          // 根据程序计数器从常量池中获取class的索引
           u2 index = Bytes::get_Java_u2(pc + 1);
+          // 获取常量池
           ConstantPool *constants = istate->method()->constants();
+          // 判断class是否被加载
           if (!constants->tag_at(index).is_unresolved_klass()) {
             // Make sure klass is initialized and doesn't have a finalizer
             Klass *entry = constants->slot_at(index).get_klass();
             assert(entry->is_klass(), "Should be resolved klass");
             Klass *k_entry = (Klass *)entry;
             assert(k_entry->oop_is_instance(), "Should be InstanceKlass");
+            // 强制类型转换
             InstanceKlass *ik = (InstanceKlass *)k_entry;
+            /**
+             * ik->is_initialized(): class 是否初始化完成
+             * ik->can_be_fastpath_allocated() 是否允许被快速分配,即是否允许在TLAB中分配
+             */ 
             if (ik->is_initialized() && ik->can_be_fastpath_allocated()) {
+              // 获取单个类实例大小
               size_t obj_size = ik->size_helper();
               oop result = NULL;
               // If the TLAB isn't pre-zeroed then we'll have to do it
+              // 记录是否需要将对象所有字段置为零值.
               bool need_zero = !ZeroTLAB;
+              // 如果使用TLAB分配
               if (UseTLAB) {
+                // 从当前线程的tlab中为实例分配内存
                 result = (oop)THREAD->tlab().allocate(obj_size);
               }
+
+              // 从当前线程的tlab分配失败
               if (result == NULL) {
                 need_zero = true;
-                // Try allocate in shared eden
+                // Try allocate in shared eden // 尝试在共享的eden中分配.当对象的大小超过阈值时在老年代分配，代码提现在哪里?
               retry:
                 HeapWord *compare_to = *Universe::heap()->top_addr();
                 HeapWord *new_top = compare_to + obj_size;
                 if (new_top <= *Universe::heap()->end_addr()) {
+                  // CAS
                   if (Atomic::cmpxchg_ptr(new_top, Universe::heap()->top_addr(),
                                           compare_to) != compare_to) {
                     goto retry;
@@ -2039,29 +2056,38 @@ run:
                 }
               }
               if (result != NULL) {
-                // Initialize object (if nonzero size and need) and then the
-                // header
+                // Initialize object (if nonzero size and need) and then the header
+                // 如果需要赋零值
                 if (need_zero) {
                   HeapWord *to_zero =
                       (HeapWord *)result + sizeof(oopDesc) / oopSize;
                   obj_size -= sizeof(oopDesc) / oopSize;
+                  // 赋零值
                   if (obj_size > 0) {
                     memset(to_zero, 0, obj_size * HeapWordSize);
                   }
                 }
-                if (UseBiasedLocking) {
+                // 是否使用偏向锁
+                if (UseBiasedLocking) { 
+                  /**
+                   * 使用偏向锁，从Klass的原型头部复制一个markOop出来。可以参考:
+                   * 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/oops/markOop.hpp
+                   * 可以得知，_mark(class oopDesc 也就是对象头的成员属性)这个指针并没有指向任何地方，而是作为变量来存储对象Mark Word数据
+                   */ 
                   result->set_mark(ik->prototype_header());
                 } else {
                   result->set_mark(markOopDesc::prototype());
                 }
                 result->set_klass_gap(0);
+                // 给对象设置klass指针
                 result->set_klass(k_entry);
+                // 将对象的引用入栈，执行下一条指令
                 SET_STACK_OBJECT(result, 0);
                 UPDATE_PC_AND_TOS_AND_CONTINUE(3, 1);
               }
             }
           }
-          // Slow case allocation
+          // Slow case allocation // 执行慢速分配
           CALL_VM(InterpreterRuntime::_new(THREAD, METHOD->constants(), index),
                   handle_exception);
           SET_STACK_OBJECT(THREAD->vm_result(), 0);

@@ -120,10 +120,10 @@ public:
 
 private:
     JavaThread*           _thread;        // the vm's java thread pointer
-    address               _bcp;           // instruction pointer
+    address               _bcp;           // instruction pointer(指令指针),即 程序计数器，PC
     intptr_t*             _locals;        // local variable pointer
     ConstantPoolCache*    _constants;     // constant pool cache
-    Method*               _method;        // method being executed
+    Method*               _method;        // method being executed // 正在执行的方法
     DataLayout*           _mdx;           // compiler profiling data for current bytecode
     intptr_t*             _stack;         // expression stack
     messages              _msg;           // frame manager <-> interpreter message
@@ -525,7 +525,7 @@ static void swap(intptr_t *tos);      /* swap top two elements */
 
 // umm don't like this method modifies its object
 
-// The Interpreter used when
+// The Interpreter used when // 使用的解释器
 static void run(interpreterState istate);
 // The interpreter used if JVMTI needs interpreter events
 static void runWithChecks(interpreterState istate);

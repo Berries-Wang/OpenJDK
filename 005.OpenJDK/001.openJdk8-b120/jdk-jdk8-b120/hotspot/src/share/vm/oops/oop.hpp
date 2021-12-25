@@ -59,6 +59,7 @@ class ParCompactionManager;
 class oopDesc {
   friend class VMStructs;
  private:
+  // _mark这个指针并没有指向任何地方，而是作为变量来存储对象Mark Word数据
   volatile markOop  _mark;
   union _metadata {
     Klass*      _klass;

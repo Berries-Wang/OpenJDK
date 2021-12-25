@@ -3248,6 +3248,7 @@ void TemplateTable::invokedynamic(int byte_no) {
 
 void TemplateTable::_new() {
   transition(vtos, atos);
+  // 从_bcp中获取class在常量池中的索引
   __ get_unsigned_2_byte_index_at_bcp(rdx, 1);
   Label slow_case;
   Label done;
