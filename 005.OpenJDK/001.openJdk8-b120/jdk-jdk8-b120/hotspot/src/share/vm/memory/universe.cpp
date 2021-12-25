@@ -626,7 +626,7 @@ void* Universe::non_oop_word() {
 
 /**
  * 
- * JVM堆初始化
+ * JVM universe 初始化
  * 
  */
 jint universe_init() {

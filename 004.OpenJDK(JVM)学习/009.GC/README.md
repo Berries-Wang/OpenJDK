@@ -1,7 +1,7 @@
 # JVM GC(Garbage Collection)
 > 004.OpenJDK(JVM)学习/003.JVM启动/001.Universe初始化/README.md
 
-&nbsp;&nbsp; 从 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/memory/universe.cpp#Universe::initialize_heap开始
+&nbsp;&nbsp; 从 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/memory/universe.cpp#universe_init开始
 ## CollectedHeap
 &nbsp;&nbsp;CollectedHeap是一个接口，CollectedHeap类根据CollectorPolicy中设置的值确定策略。CollectedHeap类定义了对象的分配和回收的接口。
 ### 重要方法
@@ -52,7 +52,7 @@
 
 ## 函数分析
 ### jdk-jdk8-b120/hotspot/src/share/vm/memory/universe.cpp#universe_init
-  - 先为java堆申请内存，再为元空间申请内存
+  - 先为JVM堆申请内存，再为元空间申请内存,方式都是“预留空间”，即申请连续的虚拟地址空间，而非时间的物理内存
   ```c++
      jint universe_init() {
             assert(!Universe::_fully_initialized, "called after initialize_vtables");
@@ -131,12 +131,12 @@
   - 如果MaxMetaspaceSize设置太小，可能会导致频繁FullGC，甚至OOM；
 + 赋值
 ```txt
-libjvm.so!Metaspace::ergo_initialize() (/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/memory/metaspace.cpp:3011)
-libjvm.so!Arguments::apply_ergo() (/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/runtime/arguments.cpp:3670)
-libjvm.so!Threads::create_vm(JavaVMInitArgs * args, bool * canTryAgain) (/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/runtime/thread.cpp:3339)
-libjvm.so!JNI_CreateJavaVM(JavaVM ** vm, void ** penv, void * args) (/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/prims/jni.cpp:5166)
-libjli.so!InitializeJVM(JavaVM ** pvm, JNIEnv ** penv, InvocationFunctions * ifn) (/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/jdk/src/share/bin/java.c:1146)
-libjli.so!JavaMain(void * _args) (/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/jdk/src/share/bin/java.c:373)
+libjvm.so!Metaspace::ergo_initialize() (hotspot/src/share/vm/memory/metaspace.cpp:3011)
+libjvm.so!Arguments::apply_ergo() (hotspot/src/share/vm/runtime/arguments.cpp:3670)
+libjvm.so!Threads::create_vm(JavaVMInitArgs * args, bool * canTryAgain) (hotspot/src/share/vm/runtime/thread.cpp:3339)
+libjvm.so!JNI_CreateJavaVM(JavaVM ** vm, void ** penv, void * args) (hotspot/src/share/vm/prims/jni.cpp:5166)
+libjli.so!InitializeJVM(JavaVM ** pvm, JNIEnv ** penv, InvocationFunctions * ifn) (jdk/src/share/bin/java.c:1146)
+libjli.so!JavaMain(void * _args) (jdk/src/share/bin/java.c:373)
 libpthread.so.0!start_thread(void * arg) (/build/glibc-eX1tMB/glibc-2.31/nptl/pthread_create.c:477)
 libc.so.6!clone() (/build/glibc-eX1tMB/glibc-2.31/sysdeps/unix/sysv/linux/x86_64/clone.S:95)
 ```
