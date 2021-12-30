@@ -235,6 +235,7 @@ DefNewGeneration::DefNewGeneration(ReservedSpace rs, size_t initial_size,
   _next_gen = NULL;
   // JVM参数: -XX:MaxTenuringThreshold 主要是控制新生代需要经历多少次GC晋升到老年代中的最大阈值。在JVM中用4个bit存储（放在对象头中），所以其最大值是15
   _tenuring_threshold = MaxTenuringThreshold;
+  // JVM参数: PretenureSizeThreshold
   _pretenure_size_threshold_words = PretenureSizeThreshold >> LogHeapWordSize;
 
   _gc_timer = new (ResourceObj::C_HEAP, mtGC) STWGCTimer();

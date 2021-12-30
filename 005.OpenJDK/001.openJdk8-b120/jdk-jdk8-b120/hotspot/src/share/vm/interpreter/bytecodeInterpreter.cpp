@@ -2024,7 +2024,7 @@ run:
             InstanceKlass *ik = (InstanceKlass *)k_entry;
             /**
              * ik->is_initialized(): class 是否初始化完成
-             * ik->can_be_fastpath_allocated() 是否允许被快速分配,即是否允许在TLAB中分配
+             * ik->can_be_fastpath_allocated() 是否允许被快速分配,即是否允许在TLAB中分配  这个选项是否和JVM参数PretenureSizeThreshold有关呢?
              */ 
             if (ik->is_initialized() && ik->can_be_fastpath_allocated()) {
               // 获取单个类实例大小
@@ -2042,7 +2042,7 @@ run:
               // 从当前线程的tlab分配失败
               if (result == NULL) {
                 need_zero = true;
-                // Try allocate in shared eden // 尝试在共享的eden中分配.当对象的大小超过阈值时在老年代分配，代码提现在哪里?
+                // Try allocate in shared eden // 尝试在共享的eden中分配.当对象的大小超过阈值时在老年代分配，代码体现在哪里?
               retry:
                 HeapWord *compare_to = *Universe::heap()->top_addr();
                 HeapWord *new_top = compare_to + obj_size;
@@ -2087,7 +2087,7 @@ run:
               }
             }
           }
-          // Slow case allocation // 执行慢速分配
+          // Slow case allocation // 执行慢速分配 很重要!!!
           CALL_VM(InterpreterRuntime::_new(THREAD, METHOD->constants(), index),
                   handle_exception);
           SET_STACK_OBJECT(THREAD->vm_result(), 0);

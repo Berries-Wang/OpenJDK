@@ -75,6 +75,8 @@
 #include "opto/runtime.hpp"
 #endif
 
+#include "wei_log/WeiLog.hpp"
+
 class UnlockFlagSaver {
   private:
     JavaThread* _thread;
@@ -145,6 +147,10 @@ IRT_END
 //------------------------------------------------------------------------------------------------------------------------
 // Allocation
 
+/**
+ * 慢速创建对象: 字节码解释器 && 模板解释器 公用这部分代码
+ * 
+ */ 
 IRT_ENTRY(void, InterpreterRuntime::_new(JavaThread* thread, ConstantPool* pool, int index))
   Klass* k_oop = pool->klass_at(index, CHECK);
   instanceKlassHandle klass (THREAD, k_oop);
@@ -154,6 +160,12 @@ IRT_ENTRY(void, InterpreterRuntime::_new(JavaThread* thread, ConstantPool* pool,
 
   // Make sure klass is initialized
   klass->initialize(CHECK);
+
+  char* className = "Sync";
+  // 捕捉指定的类并打印一下类名 // 在调试控制台输入： className = "Hello" 来修改className的值,注意，最后面不要分号
+  if (wei_string_equal(klass->name(), className)) {
+    wei_print_klass_name(klass->name());
+  }
 
   // At this point the class may not be fully initialized
   // because of recursive initialization. If it is fully
