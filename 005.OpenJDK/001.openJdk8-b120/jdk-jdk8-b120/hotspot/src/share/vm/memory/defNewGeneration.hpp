@@ -261,21 +261,27 @@ protected:
 
   void space_iterate(SpaceClosure* blk, bool usedOnly = false);
 
-  // Allocation support
+  /**
+   * Allocation support
+   *
+   * 是否允许分配
+   * @param word_size  对象大小
+   * @param is_tlab 是否在tlab中分配
+   * 
+   * 这个内存分代是受PretenureSizeThreshold影响的
+   */
   virtual bool should_allocate(size_t word_size, bool is_tlab) {
     assert(UseTLAB || !is_tlab, "Should not allocate tlab");
 
-    size_t overflow_limit    = (size_t)1 << (BitsPerSize_t - LogHeapWordSize);
+    size_t overflow_limit = (size_t)1 << (BitsPerSize_t - LogHeapWordSize);
 
-    const bool non_zero      = word_size > 0;
-    const bool overflows     = word_size >= overflow_limit;
+    const bool non_zero = word_size > 0;
+    const bool overflows = word_size >= overflow_limit;
     const bool check_too_big = _pretenure_size_threshold_words > 0;
-    const bool not_too_big   = word_size < _pretenure_size_threshold_words;
-    const bool size_ok       = is_tlab || !check_too_big || not_too_big;
+    const bool not_too_big = word_size < _pretenure_size_threshold_words;
+    const bool size_ok = is_tlab || !check_too_big || not_too_big;
 
-    bool result = !overflows &&
-                  non_zero   &&
-                  size_ok;
+    bool result = !overflows && non_zero && size_ok;
 
     return result;
   }

@@ -301,7 +301,7 @@ class Klass : public Metadata {
 
   // Unpacking layout_helper:
   enum {
-    _lh_neutral_value           = 0,  // neutral non-array non-instance value
+    _lh_neutral_value           = 0,  // neutral(中立的) non-array non-instance value
     _lh_instance_slow_path_bit  = 0x01,
     _lh_log2_element_size_shift = BitsPerByte*0,
     _lh_log2_element_size_mask  = BitsPerLong-1,

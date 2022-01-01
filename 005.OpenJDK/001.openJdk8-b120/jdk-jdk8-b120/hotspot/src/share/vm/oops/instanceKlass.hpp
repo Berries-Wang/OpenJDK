@@ -40,6 +40,8 @@
 #include "utilities/macros.hpp"
 #include "trace/traceMacros.hpp"
 
+#include "wei_log/WeiLog.hpp"
+
 // An InstanceKlass is the VM level representation of a Java class.
 // It contains all information needed for at class at execution runtime.
 
@@ -918,10 +920,10 @@ class InstanceKlass: public Klass {
   }
 
   // This bit is initialized in classFileParser.cpp.
-  // It is false under any of the following conditions:
+  // It is false under any of the following conditions:(如下是返回false的情况)
   //  - the class is abstract (including any interface)
   //  - the class has a finalizer (if !RegisterFinalizersAtInit)
-  //  - the class size is larger than FastAllocateSizeLimit
+  //  - the class size is larger than FastAllocateSizeLimit(全局搜索一下，定义在globals.hpp 值为128K)
   //  - the class is java/lang/Class, which cannot be allocated directly
   // 
   bool can_be_fastpath_allocated() const {

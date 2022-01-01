@@ -2025,6 +2025,7 @@ run:
             /**
              * ik->is_initialized(): class 是否初始化完成
              * ik->can_be_fastpath_allocated() 是否允许被快速分配,即是否允许在TLAB中分配  这个选项是否和JVM参数PretenureSizeThreshold有关呢?
+             * ---> 看一下函数注释即可
              */ 
             if (ik->is_initialized() && ik->can_be_fastpath_allocated()) {
               // 获取单个类实例大小

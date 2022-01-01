@@ -93,7 +93,7 @@ class GC_locker: public AllStatic {
   }
   static bool needs_gc()       { return _needs_gc;                        }
 
-  // Shorthand
+  // Shorthand(速记)
   static bool is_active_and_needs_gc() {
     // Use is_active_internal since _needs_gc can change from true to
     // false outside of a safepoint, triggering the assert in

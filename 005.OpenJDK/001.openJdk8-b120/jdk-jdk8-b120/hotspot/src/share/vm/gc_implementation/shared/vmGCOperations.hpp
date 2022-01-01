@@ -160,7 +160,10 @@ class VM_GC_HeapInspection: public VM_GC_Operation {
   bool collect();
 };
 
-
+/**
+ * 在对象内存分配失败之后进行一次GC
+ *
+ */
 class VM_GenCollectForAllocation: public VM_GC_Operation {
  private:
   HeapWord*   _res;

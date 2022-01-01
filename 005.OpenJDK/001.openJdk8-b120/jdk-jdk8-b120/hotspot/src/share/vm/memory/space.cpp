@@ -848,7 +848,13 @@ inline HeapWord* ContiguousSpace::allocate_impl(size_t size,
   }
 }
 
-// This version is lock-free.
+/***
+ *  This version is lock-free.
+ *
+ * 无锁编程: CAS
+ *
+ *
+ */
 inline HeapWord *ContiguousSpace::par_allocate_impl(size_t size,
                                                     HeapWord *const end_value) {
   do {
@@ -922,8 +928,15 @@ HeapWord* EdenSpace::allocate(size_t size) {
   return allocate_impl(size, soft_end());
 }
 
-// Lock-free.
-HeapWord* EdenSpace::par_allocate(size_t size) {
+/**
+ *  Lock-free. 无锁编程
+ *
+ * 为Java对象分配内存
+ *
+ * @param size 对象大小
+ *
+ */
+HeapWord *EdenSpace::par_allocate(size_t size) {
   return par_allocate_impl(size, soft_end());
 }
 

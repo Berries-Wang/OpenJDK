@@ -646,9 +646,18 @@ void TwoGenerationCollectorPolicy::initialize_size_info() {
   DEBUG_ONLY(TwoGenerationCollectorPolicy::assert_size_info();)
 }
 
-HeapWord* GenCollectorPolicy::mem_allocate_work(size_t size,
-                                        bool is_tlab,
-                                        bool* gc_overhead_limit_was_exceeded) {
+/**
+ * Def + CMS： 为Java对象分配内存
+ *
+ * @param size 对象大小
+ * @param is_tlab 是否使用tlab(Def+CMS是false)
+ * @param gc_overhead_limit_was_exceeded 传出参数
+ *
+ */
+HeapWord *
+GenCollectorPolicy::mem_allocate_work(size_t size, bool is_tlab,
+                                      bool *gc_overhead_limit_was_exceeded) {
+  // 获取JVM堆
   GenCollectedHeap *gch = GenCollectedHeap::heap();
 
   debug_only(gch->check_for_valid_allocation_state());
@@ -659,36 +668,48 @@ HeapWord* GenCollectorPolicy::mem_allocate_work(size_t size,
   // limit is being exceeded as checked below.
   *gc_overhead_limit_was_exceeded = false;
 
-  HeapWord* result = NULL;
+  HeapWord *result = NULL;
 
-  // Loop until the allocation is satisified,
+  // Loop until the allocation is satisified(感到满意的),
   // or unsatisfied after GC.
-  for (int try_count = 1, gclocker_stalled_count = 0; /* return or throw */; try_count += 1) {
+  for (int try_count = 1, gclocker_stalled_count = 0; /* return or throw */;
+       try_count += 1) {
     HandleMark hm; // discard any handles allocated in each iteration
 
-    // First allocation attempt is lock-free.
+    // First allocation attempt is lock-free. // 没有加锁
+    // 获取第一个分区: 
+    //   DefNew + CMS: 年轻代
     Generation *gen0 = gch->get_gen(0);
     assert(gen0->supports_inline_contig_alloc(),
-      "Otherwise, must do alloc within heap lock");
+           "Otherwise, must do alloc within heap lock");
+    // 此处就与具体的分代收集器相关了
+    // ParNew + CMS:  defNewGeneration.hpp#should_allocate
     if (gen0->should_allocate(size, is_tlab)) {
+      // 首先从年轻代为对象分配内存
       result = gen0->par_allocate(size, is_tlab);
+      // 分配成功直接返回
       if (result != NULL) {
         assert(gch->is_in_reserved(result), "result not in heap");
         return result;
       }
     }
-    unsigned int gc_count_before;  // read inside the Heap_lock locked region
+    unsigned int gc_count_before; // read inside the Heap_lock locked region
     {
+      // 加锁
       MutexLocker ml(Heap_lock);
       if (PrintGC && Verbose) {
-        gclog_or_tty->print_cr("TwoGenerationCollectorPolicy::mem_allocate_work:"
-                      " attempting locked slow path allocation");
+        gclog_or_tty->print_cr(
+            "TwoGenerationCollectorPolicy::mem_allocate_work:"
+            " attempting locked slow path allocation");
       }
       // Note that only large objects get a shot at being
       // allocated in later generations.
-      bool first_only = ! should_try_older_generation_allocation(size);
+      // true: 表示在年轻代分配；false表示在老年代分配
+      bool first_only = !should_try_older_generation_allocation(size);
 
+      // 在JVM堆中分配内存
       result = gch->attempt_allocation(size, is_tlab, first_only);
+      // 对象分配成功就直接返回了，就不会执行到下面了
       if (result != NULL) {
         assert(gch->is_in_reserved(result), "result not in heap");
         return result;
@@ -696,10 +717,11 @@ HeapWord* GenCollectorPolicy::mem_allocate_work(size_t size,
 
       if (GC_locker::is_active_and_needs_gc()) {
         if (is_tlab) {
-          return NULL;  // Caller will retry allocating individual object
+          return NULL; // Caller will retry allocating individual object
         }
         if (!gch->is_maximal_no_gc()) {
-          // Try and expand heap to satisfy request
+          // Try and expand(扩大、增加) heap to satisfy(使满意，使满足) request
+          // 堆内存拓展
           result = expand_heap_and_allocate(size, is_tlab);
           // result could be null if we are out of space
           if (result != NULL) {
@@ -708,16 +730,23 @@ HeapWord* GenCollectorPolicy::mem_allocate_work(size_t size,
         }
 
         if (gclocker_stalled_count > GCLockerRetryAllocationCount) {
+          // 返回NULL会怎样?=>OOM
           return NULL; // we didn't get to do a GC and we didn't get any memory
         }
 
-        // If this thread is not in a jni critical section, we stall
-        // the requestor until the critical section has cleared and
-        // GC allowed. When the critical section clears, a GC is
-        // initiated by the last thread exiting the critical section; so
-        // we retry the allocation sequence from the beginning of the loop,
-        // rather than causing more, now probably unnecessary, GC attempts.
-        JavaThread* jthr = JavaThread::current();
+        /**
+         * // If this thread is not in a jni critical section, we stall
+         * // the requestor until the critical section has cleared and
+         * // GC allowed. When the critical section clears, a GC is
+         * // initiated by the last thread exiting the critical section; so
+         * // we retry the allocation sequence from the beginning of the loop,
+         * // rather than causing more, now probably unnecessary, GC attempts.
+         *
+         * 如果这个线程不在jni临界区中，我们将暂停请求者，直到临界区被清除并且GC允许为止。
+         * 当临界区时，GC由退出临界区时的最后一个线程发起;因此，我们从循环开始重试分配序列，
+         * 而不是引起更多的，现在可能不必要的GC尝试。
+         */
+        JavaThread *jthr = JavaThread::current();
         if (!jthr->in_critical()) {
           MutexUnlocker mul(Heap_lock);
           // Wait for JNI critical section to be exited
@@ -736,14 +765,15 @@ HeapWord* GenCollectorPolicy::mem_allocate_work(size_t size,
       // Read the gc count while the heap lock is held.
       gc_count_before = Universe::heap()->total_collections();
     }
-
+    // 见: 004.OpenJDK(JVM)学习/009.GC/006.VM_Operation.md
+    // ---->>> 这个操作是处理对象分配的情况(主要是GC,可能会清理软引用)，并重新为对象分配内存
     VM_GenCollectForAllocation op(size, is_tlab, gc_count_before);
     VMThread::execute(&op);
     if (op.prologue_succeeded()) {
       result = op.result();
       if (op.gc_locked()) {
-         assert(result == NULL, "must be NULL if gc_locked() is true");
-         continue;  // retry and/or stall as necessary
+        assert(result == NULL, "must be NULL if gc_locked() is true");
+        continue; // retry and/or stall as necessary
       }
 
       // Allocation has failed and a collection
@@ -759,8 +789,10 @@ HeapWord* GenCollectorPolicy::mem_allocate_work(size_t size,
         *gc_overhead_limit_was_exceeded = true;
         size_policy()->set_gc_overhead_limit_exceeded(false);
         if (op.result() != NULL) {
+          // 对象填充： 设置对象头...
           CollectedHeap::fill_with_object(op.result(), size);
         }
+        // 不论如何，返回的是NULL
         return NULL;
       }
       assert(result == NULL || gch->is_in_reserved(result),
@@ -771,16 +803,22 @@ HeapWord* GenCollectorPolicy::mem_allocate_work(size_t size,
     // Give a warning if we seem to be looping forever.
     if ((QueuedAllocationWarningCount > 0) &&
         (try_count % QueuedAllocationWarningCount == 0)) {
-          warning("TwoGenerationCollectorPolicy::mem_allocate_work retries %d times \n\t"
-                  " size=%d %s", try_count, size, is_tlab ? "(TLAB)" : "");
+      warning("TwoGenerationCollectorPolicy::mem_allocate_work retries %d "
+              "times \n\t"
+              " size=%d %s",
+              try_count, size, is_tlab ? "(TLAB)" : "");
     }
   }
 }
 
-HeapWord* GenCollectorPolicy::expand_heap_and_allocate(size_t size,
-                                                       bool   is_tlab) {
+/**
+ * JVM堆内存拓展(扩大)
+ *
+ */
+HeapWord *GenCollectorPolicy::expand_heap_and_allocate(size_t size,
+                                                       bool is_tlab) {
   GenCollectedHeap *gch = GenCollectedHeap::heap();
-  HeapWord* result = NULL;
+  HeapWord *result = NULL;
   for (int i = number_of_generations() - 1; i >= 0 && result == NULL; i--) {
     Generation *gen = gch->get_gen(i);
     if (gen->should_allocate(size, is_tlab)) {
@@ -791,42 +829,61 @@ HeapWord* GenCollectorPolicy::expand_heap_and_allocate(size_t size,
   return result;
 }
 
-HeapWord* GenCollectorPolicy::satisfy_failed_allocation(size_t size,
-                                                        bool   is_tlab) {
+/**
+ * 处理Java对象在JVM堆上分配失败的情况，并重新分配
+ * >> 这里会进行
+ * >>> 1. Young GC
+ * >>> 2. Full GC
+ * >>> 3. 清理所有的软引用
+ *
+ *
+ * @param size 对象大小
+ * @param is_tlab 是否在tlab中分配
+ *
+ * @return 对象内存地址
+ */
+HeapWord *GenCollectorPolicy::satisfy_failed_allocation(size_t size,
+                                                        bool is_tlab) {
+  // 获取JVM堆
   GenCollectedHeap *gch = GenCollectedHeap::heap();
+  // 设置GC原因
   GCCauseSetter x(gch, GCCause::_allocation_failure);
-  HeapWord* result = NULL;
+  // 为该对象新分配的内存
+  HeapWord *result = NULL;
 
   assert(size != 0, "Precondition violated");
+  // 如果正在GC或需要GC
   if (GC_locker::is_active_and_needs_gc()) {
     // GC locker is active; instead of a collection we will attempt
-    // to expand the heap, if there's room for expansion.
+    // to expand the heap, if there's room for expansion(扩大).
     if (!gch->is_maximal_no_gc()) {
+      // 拓展堆内存并且为对象分配内存
       result = expand_heap_and_allocate(size, is_tlab);
     }
-    return result;   // could be null if we are out of space
-  } else if (!gch->incremental_collection_will_fail(false /* don't consult_young */)) {
-    // Do an incremental collection.
-    gch->do_collection(false            /* full */,
-                       false            /* clear_all_soft_refs */,
-                       size             /* size */,
-                       is_tlab          /* is_tlab */,
+    return result; // could be null if we are out of space
+  } else if (!gch->incremental_collection_will_fail(
+                 false /* don't consult_young */)) {
+    // Do an incremental(增长的、递增的) collection.
+    // 进行一次GC(Young GC)，年轻代(因第一个参数为false)
+    gch->do_collection(false /* full */, false /* clear_all_soft_refs */,
+                       size /* size */, is_tlab /* is_tlab */,
                        number_of_generations() - 1 /* max_level */);
   } else {
+    // 打印GC日志
     if (Verbose && PrintGCDetails) {
       gclog_or_tty->print(" :: Trying full because partial may fail :: ");
     }
+    // FULL GC
     // Try a full collection; see delta for bug id 6266275
     // for the original code and why this has been simplified
     // with from-space allocation criteria modified and
     // such allocation moved out of the safepoint path.
-    gch->do_collection(true             /* full */,
-                       false            /* clear_all_soft_refs */,
-                       size             /* size */,
-                       is_tlab          /* is_tlab */,
+    gch->do_collection(true /* full */, false /* clear_all_soft_refs */,
+                       size /* size */, is_tlab /* is_tlab */,
                        number_of_generations() - 1 /* max_level */);
   }
 
+  // 从JVM堆上分配内存
   result = gch->attempt_allocation(size, is_tlab, false /*first_only*/);
 
   if (result != NULL) {
@@ -835,23 +892,31 @@ HeapWord* GenCollectorPolicy::satisfy_failed_allocation(size_t size,
   }
 
   // OK, collection failed, try expansion.
+  // GC失败，拓展JVM堆
   result = expand_heap_and_allocate(size, is_tlab);
+  // 当操作成功，即堆拓展成功且为对象成功分配内存
   if (result != NULL) {
     return result;
   }
 
-  // If we reach this point, we're really out of memory. Try every trick
-  // we can to reclaim memory. Force collection of soft references. Force
-  // a complete compaction of the heap. Any additional methods for finding
-  // free memory should be here, especially if they are expensive. If this
-  // attempt fails, an OOM exception will be thrown.
+  /**
+   *
+   * If we reach this point, we're really out of memory. Try every trick
+   * we can to reclaim(开拓；回收再利用) memory. Force collection of soft
+   * references. Force a complete compaction(压紧) of the heap. Any additional
+   * methods for finding free memory should be here, especially if they are
+   * expensive. If this attempt fails, an OOM exception will be thrown.
+   *
+   * 执行到这里，说明OOM了.尝试使用每个方式去回收内存。强制清理软引用，强制压缩堆空间。
+   * 寻找空闲内存的任何其他方法都应该在这里，尽管他们的代价很高昂。
+   * 如果这次尝试失败了，那么抛出OOM
+   */
   {
-    UIntFlagSetting flag_change(MarkSweepAlwaysCompactCount, 1); // Make sure the heap is fully compacted
-
-    gch->do_collection(true             /* full */,
-                       true             /* clear_all_soft_refs */,
-                       size             /* size */,
-                       is_tlab          /* is_tlab */,
+    UIntFlagSetting flag_change(MarkSweepAlwaysCompactCount,
+                                1); // Make sure the heap is fully compacted
+    // Full GC 并且清理所有的软引用
+    gch->do_collection(true /* full */, true /* clear_all_soft_refs */,
+                       size /* size */, is_tlab /* is_tlab */,
                        number_of_generations() - 1 /* max_level */);
   }
 
@@ -862,7 +927,7 @@ HeapWord* GenCollectorPolicy::satisfy_failed_allocation(size_t size,
   }
 
   assert(!should_clear_all_soft_refs(),
-    "Flag should have been handled and cleared prior to this point");
+         "Flag should have been handled and cleared prior to this point");
 
   // What else?  We might try synchronous finalization later.  If the total
   // space available is large enough for the allocation, then a more
@@ -948,19 +1013,20 @@ MetaWord* CollectorPolicy::satisfy_failed_metadata_allocation(
 
 // Return true if any of the following is true:
 // . the allocation won't fit into the current young gen heap
-// . gc locker is occupied (jni critical section)
-// . heap memory is tight -- the most recent previous collection
+// . gc locker is occupied(占用) (jni critical section)
+// . heap memory is tight(堆内存紧张) -- the most recent previous collection
 //   was a full collection because a partial collection (would
 //   have) failed and is likely to fail again
 bool GenCollectorPolicy::should_try_older_generation_allocation(
-        size_t word_size) const {
-  GenCollectedHeap* gch = GenCollectedHeap::heap();
+    size_t word_size) const {
+  // 获取JVM堆
+  GenCollectedHeap *gch = GenCollectedHeap::heap();
+  // 获取年轻代内存容量(实际是Eden)
   size_t gen0_capacity = gch->get_gen(0)->capacity_before_gc();
-  return    (word_size > heap_word_size(gen0_capacity))
-         || GC_locker::is_active_and_needs_gc()
-         || gch->incremental_collection_failed();
+  return (word_size > heap_word_size(gen0_capacity)) ||
+         GC_locker::is_active_and_needs_gc() ||
+         gch->incremental_collection_failed();
 }
-
 
 //
 // MarkSweepPolicy methods

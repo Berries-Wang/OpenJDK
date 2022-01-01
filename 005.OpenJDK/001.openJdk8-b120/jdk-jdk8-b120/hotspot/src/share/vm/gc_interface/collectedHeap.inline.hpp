@@ -108,7 +108,20 @@ void CollectedHeap::post_allocation_setup_array(KlassHandle klass,
   post_allocation_notify(klass, (oop)obj);
 }
 
-HeapWord* CollectedHeap::common_mem_allocate_noinit(KlassHandle klass, size_t size, TRAPS) {
+/**
+ * 为Java对象分配内存
+ *
+ * @param klass 对象的Klass
+ * @param size  对象大小
+ * @param TRAPS 当前Java线程
+ *
+ *
+ * @return 返回的对象的内存地址，但是对象此时还没有初始化.
+ * @throw 当分配失败，会抛出OOM
+ *
+ */
+HeapWord *CollectedHeap::common_mem_allocate_noinit(KlassHandle klass,
+                                                    size_t size, TRAPS) {
 
   // Clear unhandled oops for memory allocation.  Memory allocation might
   // not take out a lock if from tlab, so clear here.
@@ -116,10 +129,11 @@ HeapWord* CollectedHeap::common_mem_allocate_noinit(KlassHandle klass, size_t si
 
   if (HAS_PENDING_EXCEPTION) {
     NOT_PRODUCT(guarantee(false, "Should not allocate with exception pending"));
-    return NULL;  // caller does a CHECK_0 too
+    return NULL; // caller does a CHECK_0 too
   }
 
-  HeapWord* result = NULL;
+  HeapWord *result = NULL;
+  // 如果使用TLAB，那么直接从TLAB中分配内存
   if (UseTLAB) {
     result = allocate_from_tlab(klass, THREAD, size);
     if (result != NULL) {
@@ -129,11 +143,14 @@ HeapWord* CollectedHeap::common_mem_allocate_noinit(KlassHandle klass, size_t si
     }
   }
   bool gc_overhead_limit_was_exceeded = false;
-  result = Universe::heap()->mem_allocate(size,
-                                          &gc_overhead_limit_was_exceeded);
+  // 调用堆进行内存分配
+  // DefNew + CMS: Universe::heap() = GenCollectedHeap
+  result =
+      Universe::heap()->mem_allocate(size, &gc_overhead_limit_was_exceeded);
+  
   if (result != NULL) {
-    NOT_PRODUCT(Universe::heap()->
-      check_for_non_bad_heap_word_value(result, size));
+    NOT_PRODUCT(
+        Universe::heap()->check_for_non_bad_heap_word_value(result, size));
     assert(!HAS_PENDING_EXCEPTION,
            "Unexpected exception, will result in uninitialized storage");
     THREAD->incr_allocated_bytes(size * HeapWordSize);
@@ -143,15 +160,16 @@ HeapWord* CollectedHeap::common_mem_allocate_noinit(KlassHandle klass, size_t si
     return result;
   }
 
-
+  // 哈哈，终于看到OOM了 
   if (!gc_overhead_limit_was_exceeded) {
     // -XX:+HeapDumpOnOutOfMemoryError and -XX:OnOutOfMemoryError support
     report_java_out_of_memory("Java heap space");
 
     if (JvmtiExport::should_post_resource_exhausted()) {
       JvmtiExport::post_resource_exhausted(
-        JVMTI_RESOURCE_EXHAUSTED_OOM_ERROR | JVMTI_RESOURCE_EXHAUSTED_JAVA_HEAP,
-        "Java heap space");
+          JVMTI_RESOURCE_EXHAUSTED_OOM_ERROR |
+              JVMTI_RESOURCE_EXHAUSTED_JAVA_HEAP,
+          "Java heap space");
     }
 
     THROW_OOP_0(Universe::out_of_memory_error_java_heap());
@@ -161,17 +179,32 @@ HeapWord* CollectedHeap::common_mem_allocate_noinit(KlassHandle klass, size_t si
 
     if (JvmtiExport::should_post_resource_exhausted()) {
       JvmtiExport::post_resource_exhausted(
-        JVMTI_RESOURCE_EXHAUSTED_OOM_ERROR | JVMTI_RESOURCE_EXHAUSTED_JAVA_HEAP,
-        "GC overhead limit exceeded");
+          JVMTI_RESOURCE_EXHAUSTED_OOM_ERROR |
+              JVMTI_RESOURCE_EXHAUSTED_JAVA_HEAP,
+          "GC overhead limit exceeded");
     }
 
     THROW_OOP_0(Universe::out_of_memory_error_gc_overhead_limit());
   }
 }
 
-HeapWord* CollectedHeap::common_mem_allocate_init(KlassHandle klass, size_t size, TRAPS) {
-  HeapWord* obj = common_mem_allocate_noinit(klass, size, CHECK_NULL);
+/**
+ * 实际为Java对象分配内存,并初始化对象
+ *
+ * @param  klass Class
+ * @param size  对象大小
+ * @param TRAPS 当前线程
+ *
+ * @return  对象地址或者抛出OOM
+ */
+HeapWord *CollectedHeap::common_mem_allocate_init(KlassHandle klass,
+                                                  size_t size, TRAPS) {
+  // 为对象分配内存，但是没有init
+  HeapWord *obj = common_mem_allocate_noinit(klass, size, CHECK_NULL);
+
+  // 初始化对象(内存对齐啥的,不是调用init方法)
   init_obj(obj, size);
+
   return obj;
 }
 
@@ -194,13 +227,29 @@ void CollectedHeap::init_obj(HeapWord* obj, size_t size) {
   Copy::fill_to_aligned_words(obj + hs, size - hs);
 }
 
+/**
+ * 为Java对象分配内存
+ *
+ * @param klass  Class
+ * @param size  对象大小
+ * @param  TRAPS 当前线程
+ *
+ * @return  对象内存地址或者OOM
+ */
 oop CollectedHeap::obj_allocate(KlassHandle klass, int size, TRAPS) {
   debug_only(check_for_valid_allocation_state());
+  // 不能在GC的时候分配内存
   assert(!Universe::heap()->is_gc_active(), "Allocation during gc not allowed");
   assert(size >= 0, "int won't convert to size_t");
-  HeapWord* obj = common_mem_allocate_init(klass, size, CHECK_NULL);
+
+  // 实际分配内存,但是不会初始化(即不会调用init方法，注意init方法是另一个字节码指令调用的，并不是在new字节码指令中执行的)
+  HeapWord *obj = common_mem_allocate_init(klass, size, CHECK_NULL);
+
+  // 设置对象头
   post_allocation_setup_obj(klass, obj);
+
   NOT_PRODUCT(Universe::heap()->check_for_bad_heap_word_value(obj, size));
+
   return (oop)obj;
 }
 

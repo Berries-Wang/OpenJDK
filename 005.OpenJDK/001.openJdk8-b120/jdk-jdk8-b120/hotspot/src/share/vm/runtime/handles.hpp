@@ -32,6 +32,7 @@
 // allocated and passed around via Handles within the VM. A handle is
 // simply an extra indirection allocated in a thread local handle area.
 // 为了在垃圾收集期间保持oops，它们应该在VM内通过句柄分配和传递。句柄只是在线程本地句柄区域中分配的额外的间接。
+// 垃圾回收时对象可能被移动（对象地址发生改变），通过 handle 访问对象可以对使用者屏蔽垃圾回收细节
 // 
 // 注意:[待验证]
 // 1. Handle 主要是为了 JNI 代码引用的 java 对象在 GC 时候被移动，也能被 JNI 代码找到，类似智能指针包装真正的指针，起到一层代理的作用

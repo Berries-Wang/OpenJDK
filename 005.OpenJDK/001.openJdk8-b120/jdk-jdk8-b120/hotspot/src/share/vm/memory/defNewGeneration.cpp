@@ -1078,9 +1078,15 @@ HeapWord* DefNewGeneration::allocate(size_t word_size,
   return result;
 }
 
-HeapWord* DefNewGeneration::par_allocate(size_t word_size,
-                                         bool is_tlab) {
-  HeapWord* res = eden()->par_allocate(word_size);
+/**
+ * 为Java对象分配内存
+ *
+ * @param word_size 对象大小
+ * @param is_tlab 是否在tlab中分配
+ */
+HeapWord *DefNewGeneration::par_allocate(size_t word_size, bool is_tlab) {
+  // 最先是在eden中分配
+  HeapWord *res = eden()->par_allocate(word_size);
   if (CMSEdenChunksRecordAlways && _next_gen != NULL) {
     _next_gen->sample_eden_chunk();
   }

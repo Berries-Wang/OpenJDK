@@ -550,7 +550,15 @@ void InstanceKlass::eager_initialize_impl(instanceKlassHandle this_oop) {
 // See "The Virtual Machine Specification" section 2.16.5 for a detailed explanation of the class initialization
 // process. The step comments refers to the procedure described in that section.
 // Note: implementation moved to static method to expose the this pointer.
+// 即这一步是按照书中的描述来进行的
 void InstanceKlass::initialize(TRAPS) {
+  char *className = "Sync";
+  // 捕捉指定的类并打印一下类名 // 在调试控制台输入： className = "Hello"
+  // 来修改className的值,注意，最后面不要分号
+  if (wei_string_equal(this->name(), className)) {
+    wei_print_klass_name(this->name());
+  }
+
   if (this->should_be_initialized()) {
     HandleMark hm(THREAD);
     instanceKlassHandle this_oop(THREAD, this);
@@ -562,7 +570,6 @@ void InstanceKlass::initialize(TRAPS) {
     assert(is_initialized(), "sanity check");
   }
 }
-
 
 bool InstanceKlass::verify_code(
     instanceKlassHandle this_oop, bool throw_verifyerror, TRAPS) {
@@ -1093,6 +1100,13 @@ instanceOop InstanceKlass::register_finalizer(instanceOop i, TRAPS) {
   return h_i();
 }
 
+/**
+ * 实际创建对象
+ * @param TRAPS 其实就是当前的Java 线程
+ * 
+ * 
+ * @return 对象内存地址或者OOM
+ */ 
 instanceOop InstanceKlass::allocate_instance(TRAPS) {
   bool has_finalizer_flag = has_finalizer(); // Query before possible GC
   int size = size_helper();  // Query before forming handle.
@@ -1101,10 +1115,13 @@ instanceOop InstanceKlass::allocate_instance(TRAPS) {
 
   instanceOop i;
 
+  // 为对象分配内存(实际的物理内存)
   i = (instanceOop)CollectedHeap::obj_allocate(h_k, size, CHECK_NULL);
+  // 如果重写了finalizer方法，则需要注册一下
   if (has_finalizer_flag && !RegisterFinalizersAtInit) {
     i = register_finalizer(i, CHECK_NULL);
   }
+  
   return i;
 }
 

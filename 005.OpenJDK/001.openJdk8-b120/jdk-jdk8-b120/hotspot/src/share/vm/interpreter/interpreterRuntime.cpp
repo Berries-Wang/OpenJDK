@@ -155,17 +155,20 @@ IRT_ENTRY(void, InterpreterRuntime::_new(JavaThread* thread, ConstantPool* pool,
   Klass* k_oop = pool->klass_at(index, CHECK);
   instanceKlassHandle klass (THREAD, k_oop);
 
-  // Make sure we are not instantiating an abstract klass
-  klass->check_valid_for_instantiation(true, CHECK);
-
-  // Make sure klass is initialized
-  klass->initialize(CHECK);
-
   char* className = "Sync";
   // 捕捉指定的类并打印一下类名 // 在调试控制台输入： className = "Hello" 来修改className的值,注意，最后面不要分号
   if (wei_string_equal(klass->name(), className)) {
     wei_print_klass_name(klass->name());
   }
+  
+  // Make sure we are not instantiating an abstract klass
+  // 确保不是在实例化一个抽象类
+  // 注意，此时的Klass是005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/oops/instanceKlass.cpp
+  klass->check_valid_for_instantiation(true, CHECK);
+
+  // Make sure klass is initialized (InstanceKlass::initialize)
+  // Klass初始化,宏定义: CHECK : __the_thread__
+  klass->initialize(CHECK);
 
   // At this point the class may not be fully initialized
   // because of recursive initialization. If it is fully
@@ -181,7 +184,9 @@ IRT_ENTRY(void, InterpreterRuntime::_new(JavaThread* thread, ConstantPool* pool,
   //       Java).
   //       If we have a breakpoint, then we don't rewrite
   //       because the _breakpoint bytecode would be lost.
+  // 创建对象(InstanceKlass::allocate_instance)
   oop obj = klass->allocate_instance(CHECK);
+  // 设置返回结果，至此，对象创建完成
   thread->set_vm_result(obj);
 IRT_END
 

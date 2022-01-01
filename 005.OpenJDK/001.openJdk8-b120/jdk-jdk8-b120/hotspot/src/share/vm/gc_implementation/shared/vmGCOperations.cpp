@@ -179,11 +179,16 @@ void VM_GC_HeapInspection::doit() {
 }
 
 
+/**
+ * VM_Operation 的工作方法
+ * 
+ */ 
 void VM_GenCollectForAllocation::doit() {
   SvcGCMarker sgcm(SvcGCMarker::MINOR);
 
   GenCollectedHeap* gch = GenCollectedHeap::heap();
   GCCauseSetter gccs(gch, _gc_cause);
+  // 处理对象分配失败的情况，并重新为对象分配内存
   _res = gch->satisfy_failed_allocation(_size, _tlab);
   assert(gch->is_in_reserved_or_null(_res), "result not in heap");
 
