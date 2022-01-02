@@ -399,8 +399,7 @@ public abstract class ClassLoader {
      *          If the class could not be found
      */
     protected Class<?> loadClass(String name, boolean resolve)
-        throws ClassNotFoundException
-    {
+            throws ClassNotFoundException {
         synchronized (getClassLoadingLock(name)) {
             // First, check if the class has already been loaded
             Class<?> c = findLoadedClass(name);

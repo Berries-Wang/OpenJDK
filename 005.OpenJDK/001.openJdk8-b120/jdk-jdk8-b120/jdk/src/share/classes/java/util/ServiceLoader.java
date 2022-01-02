@@ -182,8 +182,7 @@ import java.util.NoSuchElementException;
  * @since 1.6
  */
 
-public final class ServiceLoader<S>
-    implements Iterable<S>
+public final class ServiceLoader<S> implements Iterable<S>
 {
 
     private static final String PREFIX = "META-INF/services/";
@@ -534,7 +533,9 @@ public final class ServiceLoader<S>
      * @return A new service loader
      */
     public static <S> ServiceLoader<S> load(Class<S> service) {
+        // 使用线程上下文类加载器
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        // 服务发现机制
         return ServiceLoader.load(service, cl);
     }
 

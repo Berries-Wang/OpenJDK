@@ -95,11 +95,14 @@ public class DriverManager {
 
     /**
      * Load the initial JDBC drivers by checking the System property
-     * jdbc.properties and then use the {@code ServiceLoader} mechanism
+     * jdbc.properties and then use the {@code ServiceLoader} mechanism(机件；途径，方法)
+     * 
+     * 通过校验jdbc.properties系统属性来加载初始的JDBC驱动并通过ServiceLoader机制使用
      */
     static {
+        // 通过ServiceLoader(服务发现者)加载驱动
         loadInitialDrivers();
-        println("JDBC DriverManager initialized");
+        println("来自于005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/jdk/src/share/classes/java/sql/DriverManager.java: JDBC DriverManager initialized");
     }
 
     /**
@@ -564,6 +567,11 @@ public class DriverManager {
         return result;
     }
 
+
+    /**
+     * 通过ServiceLoader加载JDBC驱动
+     * 其实，在这里 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/jdk/src/share/classes/java/util/ServiceLoader.java 类是核心
+     */
     private static void loadInitialDrivers() {
         String drivers;
         try {
@@ -583,7 +591,9 @@ public class DriverManager {
         AccessController.doPrivileged(new PrivilegedAction<Void>() {
             public Void run() {
 
+                // 这段代码是核心： 即加载并解析ServiceLoader#PREFIX 下的文件
                 ServiceLoader<Driver> loadedDrivers = ServiceLoader.load(Driver.class);
+
                 Iterator<Driver> driversIterator = loadedDrivers.iterator();
 
                 /* Load these drivers, so that they can be instantiated.
