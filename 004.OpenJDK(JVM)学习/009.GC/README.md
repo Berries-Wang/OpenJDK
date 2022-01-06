@@ -1,6 +1,9 @@
 # JVM GC(Garbage Collection)
 > 004.OpenJDK(JVM)学习/003.JVM启动/001.Universe初始化/README.md
 
+## JVM堆的划分(仅Heap)
+- <img src ="./pics/285952-20180131105449984-2130189134.png"/>
+
 &nbsp;&nbsp; 从 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/memory/universe.cpp#universe_init开始
 ## CollectedHeap
 &nbsp;&nbsp;CollectedHeap是一个接口，CollectedHeap类根据CollectorPolicy中设置的值确定策略。CollectedHeap类定义了对象的分配和回收的接口。
