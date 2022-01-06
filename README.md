@@ -19,3 +19,7 @@
 4. 学习该功能的用法，并编写Demo
 5. 以Demo作为入口，来进行调试，从而分析源代码
 6. 剥离出关键代码，分析关键代码
+
+### 参考资料查询
+1. Oracle:[https://docs.oracle.com/](https://docs.oracle.com/)
+2. OpenJDK Wiki: [http://openjdk.java.net/](http://openjdk.java.net/)
