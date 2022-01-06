@@ -2,7 +2,7 @@
 > 004.OpenJDK(JVM)学习/003.JVM启动/001.Universe初始化/README.md
 
 ## JVM堆的划分(仅Heap)
-- <img src ="./pics/285952-20180131105449984-2130189134.png"/>
+&nbsp;&nbsp; 不同的收集器有着自己不同的实现，具体还得根据收集器来分析判断
 
 &nbsp;&nbsp; 从 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/memory/universe.cpp#universe_init开始
 ## CollectedHeap
