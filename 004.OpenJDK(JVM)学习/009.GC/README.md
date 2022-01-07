@@ -1,4 +1,9 @@
 # JVM GC(Garbage Collection)
+## JVM GC
+1. 哪些内存需要回收
+2. 什么时候回收
+3. 如何回收
+## JVM内存空间初始化
 > 004.OpenJDK(JVM)学习/003.JVM启动/001.Universe初始化/README.md
 
 ## JVM堆的划分(仅Heap)
