@@ -29,6 +29,9 @@
 // should be cleared.
 
 
+/**
+ * 引用回收策略，超类，不可直接使用
+ */
 class ReferencePolicy : public CHeapObj<mtGC> {
  public:
   virtual bool should_clear_reference(oop p, jlong timestamp_clock) {

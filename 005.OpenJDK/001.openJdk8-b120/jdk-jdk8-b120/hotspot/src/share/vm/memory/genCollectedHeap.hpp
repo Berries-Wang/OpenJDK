@@ -99,11 +99,18 @@ protected:
                      bool   is_tlab,
                      int    max_level);
 
-  // Callback from VM_GenCollectForAllocation operation.
-  // This function does everything necessary/possible to satisfy an
-  // allocation request that failed in the youngest generation that should
-  // have handled it (including collection, expansion, etc.)
-  HeapWord* satisfy_failed_allocation(size_t size, bool is_tlab);
+  /**
+   *  // Callback from VM_GenCollectForAllocation operation.
+   *  // This function does everything necessary/possible to satisfy an
+   *  // allocation request that failed in the youngest generation that should
+   *  // have handled it (including collection, expansion, etc.)
+   *
+   *  由VM_GenCollectForAllocation进行回调，该函数做任何必要的或者可能的事情来满足一个需要处理的在年轻代
+   * 分配内存失败的请求，这样的还有 垃圾收集，内存拓展等等
+   *
+   * satisfy： 使满意；满足
+   */
+  HeapWord *satisfy_failed_allocation(size_t size, bool is_tlab);
 
   // Callback from VM_GenCollectFull operation.
   // Perform a full collection of the first max_level+1 generations.
@@ -135,7 +142,7 @@ public:
     return CollectedHeap::GenCollectedHeap;
   }
 
-  // The generational collector policy.
+  // The generational collector policy. // 分代收集策略
   GenCollectorPolicy* gen_policy() const { return _gen_policy; }
   virtual CollectorPolicy* collector_policy() const { return (CollectorPolicy*) gen_policy(); }
 

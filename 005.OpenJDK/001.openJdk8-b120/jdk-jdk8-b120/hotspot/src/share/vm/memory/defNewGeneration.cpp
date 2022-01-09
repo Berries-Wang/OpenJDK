@@ -488,7 +488,11 @@ size_t DefNewGeneration::max_capacity() const {
   return reserved_bytes - compute_survivor_size(reserved_bytes, alignment);
 }
 
+/**
+ * 获取eden区空闲空间
+ */
 size_t DefNewGeneration::unsafe_max_alloc_nogc() const {
+  // 实际返回的是eden区空间空间大小
   return eden()->free();
 }
 

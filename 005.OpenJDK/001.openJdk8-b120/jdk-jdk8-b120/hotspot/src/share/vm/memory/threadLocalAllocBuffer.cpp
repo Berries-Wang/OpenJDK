@@ -43,10 +43,17 @@ void ThreadLocalAllocBuffer::clear_before_allocation() {
   make_parsable(true);   // also retire the TLAB
 }
 
+/**
+ * 
+ * 
+ * 
+ */ 
 void ThreadLocalAllocBuffer::accumulate_statistics_before_gc() {
+  // 状态复位
   global_stats()->initialize();
 
-  for(JavaThread *thread = Threads::first(); thread; thread = thread->next()) {
+  // 遍历每一个JavaThread
+  for (JavaThread *thread = Threads::first(); thread; thread = thread->next()) {
     thread->tlab().accumulate_statistics();
     thread->tlab().initialize_statistics();
   }
@@ -60,14 +67,24 @@ void ThreadLocalAllocBuffer::accumulate_statistics_before_gc() {
   }
 }
 
+/**
+ * 统计并更新单个TLAB的信息
+ * 
+ * 更新了什么？目前不是重点
+ */ 
 void ThreadLocalAllocBuffer::accumulate_statistics() {
+  // 获取TLAB的总空间
   size_t capacity = Universe::heap()->tlab_capacity(myThread()) / HeapWordSize;
+  // 获取还未使用的空间
   size_t unused   = Universe::heap()->unsafe_max_tlab_alloc(myThread()) / HeapWordSize;
+  // 计算已使用的空间
   size_t used     = capacity - unused;
 
   // Update allocation history if a reasonable amount of eden was allocated.
+  // 使用量是否超过一半
   bool update_allocation_history = used > 0.5 * capacity;
 
+  // 计算浪费的空间,即在本次GC时，有多少Eden区的空间没有被使用
   _gc_waste += (unsigned)remaining();
 
   if (PrintTLAB && (_number_of_refills > 0 || Verbose)) {

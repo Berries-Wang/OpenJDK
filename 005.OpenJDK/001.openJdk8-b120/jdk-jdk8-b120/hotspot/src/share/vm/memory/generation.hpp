@@ -344,8 +344,11 @@ class Generation: public CHeapObj<mtGC> {
   // do nothing.
   virtual void par_oop_since_save_marks_iterate_done(int thread_num) {}
 
-  // This generation will collect all younger generations
-  // during a full collection.
+  /**
+   * This generation will collect all younger generations
+   *  during a full collection.
+   *  是否在Full GC前回收年轻代内存
+   */ 
   virtual bool full_collects_younger_generations() const { return false; }
 
   // This generation does in-place marking, meaning that mark words

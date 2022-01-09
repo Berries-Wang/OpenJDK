@@ -180,16 +180,23 @@ void VM_GC_HeapInspection::doit() {
 
 
 /**
- * VM_Operation 的工作方法
+ * 该VM_Operation 的工作方法
+ *> 该VM_Operation是处理给对象分配内存时内存不足时的VM_Operation
  * 
+ * @return  返回参数均存储在成员属性上
  */ 
 void VM_GenCollectForAllocation::doit() {
   SvcGCMarker sgcm(SvcGCMarker::MINOR);
 
+  // 获取JVM堆 
   GenCollectedHeap* gch = GenCollectedHeap::heap();
+
+  // 设置GC原因
   GCCauseSetter gccs(gch, _gc_cause);
-  // 处理对象分配失败的情况，并重新为对象分配内存
+
+  // 处理对象分配失败的情况，并重新为对象分配内存.在这里也会进行内存回收
   _res = gch->satisfy_failed_allocation(_size, _tlab);
+
   assert(gch->is_in_reserved_or_null(_res), "result not in heap");
 
   if (_res == NULL && GC_locker::is_active_and_needs_gc()) {

@@ -33,6 +33,8 @@
             "args": [ // 为什么这么指定VM options，请参看 man java的输出
                 "-XX:+UseParNewGC",
                 "-XX:+UseConcMarkSweepGC",
+                "-Xms1M",
+                "-Xms1M",
                 "Sync"
             ],
             "stopAtEntry": false,

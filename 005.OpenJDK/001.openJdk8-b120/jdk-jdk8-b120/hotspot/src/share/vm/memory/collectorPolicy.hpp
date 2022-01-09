@@ -92,7 +92,10 @@ class CollectorPolicy : public CHeapObj<mtGC> {
   // when the flag value is aligned etc by ergonomics
   bool _max_heap_size_cmdline;
 
-  // The sizing of the heap are controlled by a sizing policy.
+  /**
+   * The sizing of the heap are controlled by a sizing policy.
+   * 堆的大小由大小策略来控制。即自适应大小策略
+   */ 
   AdaptiveSizePolicy* _size_policy;
 
   // Set to true when policy wants soft refs cleared.

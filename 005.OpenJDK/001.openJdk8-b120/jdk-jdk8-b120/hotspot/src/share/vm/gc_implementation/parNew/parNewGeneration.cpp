@@ -593,6 +593,10 @@ void ParNewGenTask::set_for_termination(int active_workers) {
   gch->set_n_termination(active_workers);
 }
 
+/** 
+ * ParNew GC操作
+ * 
+ */ 
 void ParNewGenTask::work(uint worker_id) {
   GenCollectedHeap* gch = GenCollectedHeap::heap();
   // Since this is being done in a separate thread, need new resource
@@ -915,6 +919,15 @@ void ParNewGeneration::handle_promotion_failed(GenCollectedHeap* gch, ParScanThr
   NOT_PRODUCT(Universe::heap()->reset_promotion_should_fail();)
 }
 
+/**
+ * ParNew 垃圾收集器的内存收集方法
+ *
+ * @param full 是否是Full GC
+ * @param clear_all_soft_refs 是否清理软应用
+ * @param size 对象大小(本次分配内存的对象)
+ * @param is_tlab  是否tlab
+ *
+ */
 void ParNewGeneration::collect(bool   full,
                                bool   clear_all_soft_refs,
                                size_t size,
@@ -927,18 +940,27 @@ void ParNewGeneration::collect(bool   full,
 
   assert(gch->kind() == CollectedHeap::GenCollectedHeap,
     "not a CMS generational heap");
+
+  // 获取堆自适应大小策略
   AdaptiveSizePolicy* size_policy = gch->gen_policy()->size_policy();
+  
+  // 获取并发GC的线程(FlexibleWorkGang源码发现使用WorkerThread来GC)
   FlexibleWorkGang* workers = gch->workers();
+
   assert(workers != NULL, "Need workgang for parallel work");
+  
+  // 计算激活的工作线程数(即计算执行GC的线程数)?如何计算
   int active_workers =
       AdaptiveSizePolicy::calc_active_workers(workers->total_workers(),
                                    workers->active_workers(),
-                                   Threads::number_of_non_daemon_threads());
+                                   Threads::number_of_non_daemon_threads());                                 
   workers->set_active_workers(active_workers);
+  // Par收集目前只适用于单一的旧版本。即分两代: Younger && Old
   assert(gch->n_gens() == 2,
          "Par collection currently only works with single older gen.");
   _next_gen = gch->next_gen(this);
-  // Do we have to avoid promotion_undo?
+  
+  // Do we have to avoid promotion_undo? 这个暂时不明白!!!
   if (gch->collector_policy()->is_concurrent_mark_sweep_policy()) {
     set_avoid_promotion_undo(true);
   }
@@ -958,17 +980,19 @@ void ParNewGeneration::collect(bool   full,
 
   init_assuming_no_promotion_failure();
 
+  // 如果堆使用自适应大小策略
   if (UseAdaptiveSizePolicy) {
     set_survivor_overflow(false);
     size_policy->minor_collection_begin();
   }
 
   GCTraceTime t1(GCCauseString("GC", gch->gc_cause()), PrintGC && !PrintGCDetails, true, NULL);
-  // Capture heap used before collection (for printing).
+  // Capture(捕获，记录) heap used before collection (for printing).
   size_t gch_prev_used = gch->used();
 
   SpecializationStats::clear();
 
+  // 清理ageTable
   age_table()->clear();
   to()->clear(SpaceDecorator::Mangle);
 
@@ -986,6 +1010,8 @@ void ParNewGeneration::collect(bool   full,
                                          *to(), *this, *_next_gen, *task_queues(),
                                          _overflow_stacks, desired_plab_sz(), _term);
 
+  
+  // ParNew GC任务(处理”强引用“)
   ParNewGenTask tsk(this, _next_gen, reserved().end(), &thread_state_set);
   gch->set_par_threads(n_workers);
   gch->rem_set()->prepare_for_younger_refs_iterate(true);
@@ -1013,10 +1039,13 @@ void ParNewGeneration::collect(bool   full,
   set_promo_failure_scan_stack_closure(&scan_without_gc_barrier);
   EvacuateFollowersClosureGeneral evacuate_followers(gch, _level,
     &scan_without_gc_barrier, &scan_with_gc_barrier);
+  // 设置引用清理策略
   rp->setup_policy(clear_all_soft_refs);
   // Can  the mt_degree be set later (at run_task() time would be best)?
   rp->set_active_mt_degree(active_workers);
   ReferenceProcessorStats stats;
+ 
+  // 对“引用对象”(软引用、弱引用、虚引用)进行处理 
   if (rp->processing_is_mt()) {
     ParNewRefProcTaskExecutor task_executor(*this, thread_state_set);
     stats = rp->process_discovered_references(&is_alive, &keep_alive,
@@ -1026,6 +1055,7 @@ void ParNewGeneration::collect(bool   full,
     thread_state_set.flush();
     gch->set_par_threads(0);  // 0 ==> non-parallel.
     gch->save_marks();
+    // >>> 哈哈，这里就是处理JVM其他引用了(软引用、弱引用、虚引用)
     stats = rp->process_discovered_references(&is_alive, &keep_alive,
                                               &evacuate_followers, NULL,
                                               _gc_timer);
@@ -1074,6 +1104,7 @@ void ParNewGeneration::collect(bool   full,
     TASKQUEUE_STATS_ONLY(thread_state_set.print_taskqueue_stats());
   }
 
+  // 是否使用自适应大小策略
   if (UseAdaptiveSizePolicy) {
     size_policy->minor_collection_end(gch->gc_cause());
     size_policy->avg_survived()->sample(from()->used());

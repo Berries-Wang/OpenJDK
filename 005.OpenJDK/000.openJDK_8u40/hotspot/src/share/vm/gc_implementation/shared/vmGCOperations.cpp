@@ -188,6 +188,10 @@ void VM_GC_HeapInspection::doit() {
 }
 
 
+/**
+ * 
+ * @return  返回参数均存储在成员属性上
+ */ 
 void VM_GenCollectForAllocation::doit() {
   SvcGCMarker sgcm(SvcGCMarker::MINOR);
 

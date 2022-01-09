@@ -376,52 +376,82 @@ bool GenCollectedHeap::should_do_concurrent_full_gc(GCCause::Cause cause) {
            ExplicitGCInvokesConcurrent));
 }
 
+/**
+ * 垃圾收集
+ *
+ * @param full  是否是FullGC
+ * @param clear_all_soft_refs 是否清理所有的软引用
+ * @param size  对象大小(给该对象分配内存，分配失败。)
+ * @param is_tlab  是否在tlab中操作
+ * @param max_level 分代数(1:年轻代；2：年轻代+老年代)
+ *
+ */
 void GenCollectedHeap::do_collection(bool full, bool clear_all_soft_refs,
                                      size_t size, bool is_tlab, int max_level) {
   bool prepared_for_verification = false;
   ResourceMark rm;
   DEBUG_ONLY(Thread *my_thread = Thread::current();)
 
+  // 只在安全点执行 
   assert(SafepointSynchronize::is_at_safepoint(), "should be at safepoint");
+  // 只有VM线程且是GC线程
   assert(my_thread->is_VM_thread() || my_thread->is_ConcurrentGC_thread(),
          "incorrect thread type capability");
+  // Heap需要被锁住
   assert(Heap_lock->is_locked(),
          "the requesting thread should have the Heap_lock");
+  // 不可重入:reentrant:可重入
   guarantee(!is_gc_active(), "collection is not reentrant");
+  // 合理性检查
   assert(max_level < n_gens(), "sanity check");
 
   if (GC_locker::check_active_before_gc()) {
     return; // GC is disabled (e.g. JNI GetXXXCritical operation)
   }
 
+  /**
+   * 判断是否要清理所有的软引用,
+   * 并不是直接判断“clear_all_soft_refs”，还会根据GC策略来判断
+   */ 
   const bool do_clear_all_soft_refs =
       clear_all_soft_refs || collector_policy()->should_clear_all_soft_refs();
 
   ClearedAllSoftRefs casr(do_clear_all_soft_refs, collector_policy());
 
+  // 元空间的使用量
   const size_t metadata_prev_used = MetaspaceAux::allocated_used_bytes();
-
+ 
   print_heap_before_gc();
 
   {
     FlagSetting fl(_is_gc_active, true);
 
     bool complete = full && (max_level == (n_gens() - 1));
+    // 判断是Full GC 还是普通的GC
     const char *gc_cause_prefix = complete ? "Full GC" : "GC";
     gclog_or_tty->date_stamp(PrintGC && PrintGCDateStamps);
     TraceCPUTime tcpu(PrintGCDetails, true, gclog_or_tty);
     GCTraceTime t(GCCauseString(gc_cause_prefix, gc_cause()), PrintGCDetails,
                   false, NULL);
 
+    // 统计以及更新TLAB信息
     gc_prologue(complete);
-    increment_total_collections(complete);
 
+    // 更新GC的次数信息
+    increment_total_collections(complete);
+    
+    // 获取JVM堆中已经使用的内存 
     size_t gch_prev_used = used();
 
     int starting_level = 0;
+
+    // 若是Full GC
     if (full) {
-      // Search for the oldest generation which will collect all younger
-      // generations, and start collection loop there.
+      /**
+       *   Search for the oldest generation which will collect all younger
+       *   generations, and start collection loop there.
+       *  搜索最老的需要收集所有年轻代空间的收集器，并从哪里开始循环收集
+       */
       for (int i = max_level; i >= 0; i--) {
         if (_gens[i]->full_collects_younger_generations()) {
           starting_level = i;
@@ -433,13 +463,21 @@ void GenCollectedHeap::do_collection(bool full, bool clear_all_soft_refs,
     bool must_restore_marks_for_biased_locking = false;
 
     int max_level_collected = starting_level;
+
+    // 开始回收内存了
     for (int i = starting_level; i <= max_level; i++) {
+      /**
+       *  是否需要回收内存
+       * 从这里就可以得到各个分区回收内存的规则了
+       */
       if (_gens[i]->should_collect(full, size, is_tlab)) {
-        if (i == n_gens() - 1) { // a major collection is to happen
+        if (i == n_gens() - 1) { // a major collection is to happen.(即Major GC/Old GC)
           if (!complete) {
             // The full_collections increment was missed above.
+            // 计数
             increment_total_full_collections();
           }
+          // 在GC之前dump(即 堆转储)
           pre_full_gc_dump(NULL); // do any pre full gc dumps
         }
         // Timer for individual generations. Last argument is false: no CR
@@ -449,13 +487,22 @@ void GenCollectedHeap::do_collection(bool full, bool clear_all_soft_refs,
         TraceCollectorStats tcs(_gens[i]->counters());
         TraceMemoryManagerStats tmms(_gens[i]->kind(), gc_cause());
 
+        // 获取正在处理的分代已使用的内存空间
         size_t prev_used = _gens[i]->used();
         _gens[i]->stat_record()->invocations++;
         _gens[i]->stat_record()->accumulated_time.start();
 
-        // Must be done anew before each collection because
-        // a previous collection will do mangling and will
-        // change top of some spaces.
+        /**
+         * Must be done anew before each collection because
+         * a previous collection will do mangling and will
+         * change top of some spaces.
+         * 必须在每一次收集前完成，因为之前的收集会破坏一些空间和修改一些空间的“top”
+         * 
+         * anew： 重新
+         * mangling： 压碎；严重受损
+         * 
+         * 在GC之前记录各个JVM堆分区的top信息
+         */ 
         record_gen_tops_before_GC();
 
         if (PrintGC && Verbose) {
@@ -485,7 +532,7 @@ void GenCollectedHeap::do_collection(bool full, bool clear_all_soft_refs,
           BiasedLocking::preserve_marks();
         }
 
-        // Do collection work
+        // Do collection work (执行收集工作)
         {
           // Note on ref discovery: For what appear to be historical reasons,
           // GCH enables and disabled (by enqueing) refs discovery.
@@ -515,7 +562,14 @@ void GenCollectedHeap::do_collection(bool full, bool clear_all_soft_refs,
           } else {
             // collect() below will enable discovery as appropriate
           }
+
+          /**
+           * 重点!!!: 分代收集,这里收集的动作就是由具体的收集器来实现了。
+           *
+           */
           _gens[i]->collect(full, do_clear_all_soft_refs, size, is_tlab);
+
+          // 开始处理软引用对象了
           if (!rp->enqueuing_is_done()) {
             rp->enqueue_discovered_references();
           } else {
@@ -608,11 +662,12 @@ void GenCollectedHeap::do_collection(bool full, bool clear_all_soft_refs,
 }
 
 /**
- *
+ * 见.hpp文件中的代码注释
  */
 HeapWord *GenCollectedHeap::satisfy_failed_allocation(size_t size,
                                                       bool is_tlab) {
   // 这里就和收集策略相关了，即与收集器相关
+  // ParNew + CMS: GenCollectorPolicy::satisfy_failed_allocation(size_t size,bool is_tlab);(collectorPolicy.cpp)
   return collector_policy()->satisfy_failed_allocation(size, is_tlab);
 }
 
@@ -956,6 +1011,7 @@ size_t GenCollectedHeap::tlab_capacity(Thread *thr) const {
   size_t result = 0;
   for (int i = 0; i < _n_gens; i += 1) {
     // 调试(ParNew + CMS的组合)发现，eden区支持tlab
+    // CMS 不支持TLAB
     if (_gens[i]->supports_tlab_allocation()) {
       // 调试(ParNew + CMS的组合)发现，tlab_capacity就是eden区的大小
       result += _gens[i]->tlab_capacity();
@@ -964,10 +1020,18 @@ size_t GenCollectedHeap::tlab_capacity(Thread *thr) const {
   return result;
 }
 
+/**
+ * 
+ * 
+ */ 
 size_t GenCollectedHeap::unsafe_max_tlab_alloc(Thread *thr) const {
   size_t result = 0;
   for (int i = 0; i < _n_gens; i += 1) {
+    // CMS 不支持TLAB
     if (_gens[i]->supports_tlab_allocation()) {
+      /**
+       * ParNew: 返回的是Eden区空闲空间
+       */ 
       result += _gens[i]->unsafe_max_tlab_alloc();
     }
   }
@@ -1181,16 +1245,27 @@ public:
   GenGCPrologueClosure(bool full) : _full(full){};
 };
 
+/**
+ * prologue: n. 开场白；序言;vt. 加上……前言；为……作序
+ * 
+ */ 
 void GenCollectedHeap::gc_prologue(bool full) {
   assert(InlineCacheBuffer::is_empty(), "should have cleaned up ICBuffer");
-
+  
+  // 写屏障?
   always_do_update_barrier = false;
-  // Fill TLAB's and such
+  
+  /**
+   * Fill TLAB's and such 
+   * 
+   * 统计TLAB信息(遍历每一个Java线程)
+   */ 
   CollectedHeap::accumulate_statistics_all_tlabs();
   ensure_parsability(true); // retire TLABs
 
   // Walk generations
   GenGCPrologueClosure blk(full);
+  //  执行每个分代的 do_generation
   generation_iterate(&blk, false); // not old-to-young.
 };
 
@@ -1230,12 +1305,21 @@ void GenCollectedHeap::gc_epilogue(bool full) {
 class GenGCSaveTopsBeforeGCClosure : public GenCollectedHeap::GenClosure {
 private:
 public:
+  /**
+   * 记录分代的top信息
+   */
   void do_generation(Generation *gen) { gen->record_spaces_top(); }
 };
 
+/***
+ * 记录一下各个分代的top
+ * 
+ */ 
 void GenCollectedHeap::record_gen_tops_before_GC() {
   if (ZapUnusedHeapArea) {
     GenGCSaveTopsBeforeGCClosure blk;
+
+    // generation_iterate  迭代执行blk的do_generation方法
     generation_iterate(&blk, false); // not old-to-young.
   }
 }

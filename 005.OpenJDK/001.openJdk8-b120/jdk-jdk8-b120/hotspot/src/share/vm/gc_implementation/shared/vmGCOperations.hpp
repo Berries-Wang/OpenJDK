@@ -161,29 +161,34 @@ class VM_GC_HeapInspection: public VM_GC_Operation {
 };
 
 /**
- * 在对象内存分配失败之后进行一次GC
- *
+ * 
+ * 该VM_Operation是处理给对象分配内存时内存不足时的VM_Operation
+ * 
  */
-class VM_GenCollectForAllocation: public VM_GC_Operation {
- private:
-  HeapWord*   _res;
-  size_t      _size;                       // size of object to be allocated.
-  bool        _tlab;                       // alloc is of a tlab.
- public:
-  VM_GenCollectForAllocation(size_t size,
-                             bool tlab,
+class VM_GenCollectForAllocation : public VM_GC_Operation {
+private:
+  
+  // 分配好内存的对象的地址
+  HeapWord *_res;
+
+  // size of object to be allocated. 即需要分配的对象的大小
+  size_t _size; 
+
+  // alloc is of a tlab. 即是否在TLAB中分配
+  bool _tlab;  
+
+public:
+  VM_GenCollectForAllocation(size_t size, bool tlab,
                              unsigned int gc_count_before)
-    : VM_GC_Operation(gc_count_before, GCCause::_allocation_failure),
-      _size(size),
-      _tlab(tlab) {
+      : VM_GC_Operation(gc_count_before, GCCause::_allocation_failure),
+        _size(size), _tlab(tlab) {
     _res = NULL;
   }
-  ~VM_GenCollectForAllocation()  {}
+  ~VM_GenCollectForAllocation() {}
   virtual VMOp_Type type() const { return VMOp_GenCollectForAllocation; }
   virtual void doit();
-  HeapWord* result() const       { return _res; }
+  HeapWord *result() const { return _res; }
 };
-
 
 // VM operation to invoke a collection of the heap as a
 // GenCollectedHeap heap.

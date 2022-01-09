@@ -389,9 +389,13 @@ class Universe: AllStatic {
   static ReservedSpace reserve_heap(size_t heap_size, size_t alignment);
 
   // Historic gc information
-  static size_t get_heap_capacity_at_last_gc()         { return _heap_capacity_at_last_gc; }
+  static size_t get_heap_capacity_at_last_gc()         {/*返回上一次GC时的堆内存的容量*/ return _heap_capacity_at_last_gc; }
+  
+  // 即上次GC后空闲的物理内存容量
   static size_t get_heap_free_at_last_gc()             { return _heap_capacity_at_last_gc - _heap_used_at_last_gc; }
+  
   static size_t get_heap_used_at_last_gc()             { return _heap_used_at_last_gc; }
+  
   static void update_heap_info_at_gc();
 
   // Testers

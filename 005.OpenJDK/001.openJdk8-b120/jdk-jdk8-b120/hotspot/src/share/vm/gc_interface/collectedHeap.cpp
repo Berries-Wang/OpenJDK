@@ -515,12 +515,18 @@ void CollectedHeap::ensure_parsability(bool retire_tlabs) {
   }
 }
 
+/**
+ * 在GC时统计TLAB信息
+ *
+ */
 void CollectedHeap::accumulate_statistics_all_tlabs() {
+  // 只有当开启了TLAB时才需要
   if (UseTLAB) {
-    assert(SafepointSynchronize::is_at_safepoint() ||
-         !is_init_completed(),
-         "should only accumulate statistics on tlabs at safepoint");
-
+    // 只有在安全点才能执行 
+    assert(SafepointSynchronize::is_at_safepoint() || !is_init_completed(),
+           "should only accumulate statistics on tlabs at safepoint");
+    
+    // 在GC前进行统计,做了什么?
     ThreadLocalAllocBuffer::accumulate_statistics_before_gc();
   }
 }
@@ -535,6 +541,9 @@ void CollectedHeap::resize_all_tlabs() {
   }
 }
 
+/**
+ * 在GC之前dump
+ */ 
 void CollectedHeap::pre_full_gc_dump(GCTimer* timer) {
   if (HeapDumpBeforeFullGC) {
     GCTraceTime tt("Heap Dump (before full gc): ", PrintGCDetails, false, timer);

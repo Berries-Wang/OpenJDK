@@ -129,7 +129,11 @@ protected:
   // for this variable.
   int _strong_roots_parity;
 
-  // If we're doing parallel GC, use this gang of threads.
+  /**
+   * If we're doing parallel GC, use this gang of threads.
+   * 
+   * 如果执行的是并发的GC，那么使用这组线程。
+   */ 
   FlexibleWorkGang* _workers;
 
   // Full initialization is done in a concrete subtype's "initialize"

@@ -90,13 +90,20 @@ AdaptiveSizePolicy::AdaptiveSizePolicy(size_t init_eden_size,
   _young_gen_policy_is_ready = false;
 }
 
-//  If the number of GC threads was set on the command line,
-// use it.
-//  Else
-//    Calculate the number of GC threads based on the number of Java threads.
-//    Calculate the number of GC threads based on the size of the heap.
-//    Use the larger.
-
+/**
+ *
+ * 计算执行GC所需要的线程数
+ *
+ *  If the number of GC threads was set on the command line,
+ * use it.
+ *  Else
+ *    Calculate the number of GC threads based on the number of Java threads.
+ *    Calculate the number of GC threads based on the size of the heap.
+ *    Use the larger.
+ *
+ * JVM参数: HeapSizePerGCThread ,
+ * 即每个GC线程处理的堆的大小，用于计算收集堆需要的线程数
+ */
 int AdaptiveSizePolicy::calc_default_active_workers(uintx total_workers,
                                             const uintx min_workers,
                                             uintx active_workers,
@@ -178,21 +185,40 @@ int AdaptiveSizePolicy::calc_default_active_workers(uintx total_workers,
   return new_active_workers;
 }
 
+/**
+ * 计算执行GC时的线程数
+ *
+ * @param total_workers
+ * @param  active_workers
+ * @param application_workers
+ *
+ */
 int AdaptiveSizePolicy::calc_active_workers(uintx total_workers,
                                             uintx active_workers,
                                             uintx application_workers) {
-  // If the user has specifically set the number of
-  // GC threads, use them.
+  /**
+   * If the user has specifically set the number of
+   * GC threads, use them.
+   * 
+   * 如果用户特别指定了GC的线程数，则使用用户指定的GC线程数
+   */ 
 
-  // If the user has turned off using a dynamic number of GC threads
-  // or the users has requested a specific number, set the active
-  // number of workers to all the workers.
+  /**
+   * If the user has turned off using a dynamic number of GC threads
+   * or the users has requested a specific number, set the active
+   * number of workers to all the workers.
+   * 
+   */ 
 
   int new_active_workers;
   if (!UseDynamicNumberOfGCThreads ||
      (!FLAG_IS_DEFAULT(ParallelGCThreads) && !ForceDynamicNumberOfGCThreads)) {
     new_active_workers = total_workers;
   } else {
+
+    /**
+     * 实际计算执行GC的线程数
+     */ 
     new_active_workers = calc_default_active_workers(total_workers,
                                                      2, /* Minimum number of workers */
                                                      active_workers,

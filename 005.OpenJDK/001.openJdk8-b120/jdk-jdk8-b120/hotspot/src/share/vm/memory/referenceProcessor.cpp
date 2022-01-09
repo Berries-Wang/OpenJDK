@@ -55,8 +55,14 @@ void ReferenceProcessor::init_statics() {
   java_lang_ref_SoftReference::set_clock(_soft_ref_timestamp_clock);
 
   _always_clear_soft_ref_policy = new AlwaysClearPolicy();
+
+  /**
+   * 初始化软引用对象回收策略
+   *
+   */
   _default_soft_ref_policy      = new COMPILER2_PRESENT(LRUMaxHeapPolicy())
                                       NOT_COMPILER2(LRUCurrentHeapPolicy());
+
   if (_always_clear_soft_ref_policy == NULL || _default_soft_ref_policy == NULL) {
     vm_exit_during_initialization("Could not allocate reference policy object");
   }
@@ -190,6 +196,9 @@ size_t ReferenceProcessor::total_count(DiscoveredList lists[]) {
   return total;
 }
 
+/**
+ * 处理在GC期间找到的"引用对象(软引用、弱引用、虚引用)"
+ */
 ReferenceProcessorStats ReferenceProcessor::process_discovered_references(
   BoolObjectClosure*           is_alive,
   OopClosure*                  keep_alive,
@@ -243,7 +252,7 @@ ReferenceProcessorStats ReferenceProcessor::process_discovered_references(
                                  is_alive, keep_alive, complete_gc, task_executor);
   }
 
-  // Phantom references
+  // Phantom references(幽灵引用)
   size_t phantom_count = 0;
   {
     GCTraceTime tt("PhantomReference", trace_time, false, gc_timer);
@@ -546,8 +555,8 @@ void DiscoveredListIterator::clear_referent() {
 // (SoftReferences only) Traverse the list and remove any SoftReferences whose
 // referents are not alive, but that should be kept alive for policy reasons.
 // Keep alive the transitive closure of all such referents.
-void
-ReferenceProcessor::process_phase1(DiscoveredList&    refs_list,
+// 阶段一： 通过清理策略，将需要清理的应用对象从 refs_list 移出，从refs_list中移出，那么也就是不回收
+void ReferenceProcessor::process_phase1(DiscoveredList&    refs_list,
                                    ReferencePolicy*   policy,
                                    BoolObjectClosure* is_alive,
                                    OopClosure*        keep_alive,
@@ -558,8 +567,11 @@ ReferenceProcessor::process_phase1(DiscoveredList&    refs_list,
   while (iter.has_next()) {
     iter.load_ptrs(DEBUG_ONLY(!discovery_is_atomic() /* allow_null_referent */));
     bool referent_is_dead = (iter.referent() != NULL) && !iter.is_referent_alive();
+    
+    // 判断该引用对象是否需要清理。
     if (referent_is_dead &&
-        !policy->should_clear_reference(iter.obj(), _soft_ref_timestamp_clock)) {
+        !policy->should_clear_reference(iter.obj(),_soft_ref_timestamp_clock) /*这里就使用到了应用处理策略了*/
+    ) {
       if (TraceReferenceGC) {
         gclog_or_tty->print_cr("Dropping reference (" INTPTR_FORMAT ": %s"  ") by policy",
                                (void *)iter.obj(), iter.obj()->klass()->internal_name());
@@ -900,10 +912,15 @@ void ReferenceProcessor::balance_all_queues() {
   balance_queues(_discoveredPhantomRefs);
 }
 
+
+/**
+ * 处理应用类型
+ * 
+ */ 
 size_t
 ReferenceProcessor::process_discovered_reflist(
   DiscoveredList               refs_lists[],
-  ReferencePolicy*             policy,
+  ReferencePolicy*             policy, /*引用处理策略*/
   bool                         clear_referent,
   BoolObjectClosure*           is_alive,
   OopClosure*                  keep_alive,
@@ -962,7 +979,7 @@ ReferenceProcessor::process_discovered_reflist(
   }
 
   // Phase 3:
-  // . Traverse the list and process referents as appropriate.
+  // . Traverse the list and process referents as appropriate(合适的).
   if (mt_processing) {
     RefProcPhase3Task phase3(*this, refs_lists, clear_referent, true /*marks_oops_alive*/);
     task_executor->execute(phase3);

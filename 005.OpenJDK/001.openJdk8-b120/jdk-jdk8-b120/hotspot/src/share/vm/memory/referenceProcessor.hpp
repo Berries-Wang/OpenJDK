@@ -282,10 +282,13 @@ class ReferenceProcessor : public CHeapObj<mtGC> {
 
   DiscoveredList* discovered_refs()        { return _discovered_refs; }
 
-  ReferencePolicy* setup_policy(bool always_clear) {
-    _current_soft_ref_policy = always_clear ?
-      _always_clear_soft_ref_policy : _default_soft_ref_policy;
-    _current_soft_ref_policy->setup();   // snapshot the policy threshold
+  /**
+   * 获取软引用对象处理策略
+   * 根据参数来选择对应的处理策略
+   */
+  ReferencePolicy *setup_policy(bool always_clear) {
+    _current_soft_ref_policy =always_clear ? _always_clear_soft_ref_policy : _default_soft_ref_policy;
+    _current_soft_ref_policy->setup(); // snapshot the policy threshold
     return _current_soft_ref_policy;
   }
 
@@ -508,7 +511,11 @@ class ReferenceProcessor : public CHeapObj<mtGC> {
   // Discover a Reference object, using appropriate discovery criteria
   bool discover_reference(oop obj, ReferenceType rt);
 
-  // Process references found during GC (called by the garbage collector)
+  /**
+   * Process references found during GC (called by the garbage collector)
+   *
+   * 处理在GC期间找到的"引用对象(软引用、弱引用、虚引用)"
+   */
   ReferenceProcessorStats
   process_discovered_references(BoolObjectClosure*           is_alive,
                                 OopClosure*                  keep_alive,
