@@ -9,3 +9,6 @@
 **/003.SourceCode/Design-Pattern/.project
 **/.classpath
 **/.settings
+**/.hg
+/.hg/
+*.out
