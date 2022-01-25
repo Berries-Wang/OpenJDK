@@ -639,6 +639,10 @@ void* Universe::non_oop_word() {
   return (void*)_non_oop_bits;
 }
 
+
+/**
+ *JVM universe 初始化
+ */
 jint universe_init() {
   assert(!Universe::_fully_initialized, "called after initialize_vtables");
   guarantee(1 << LogHeapWordSize == sizeof(HeapWord),
