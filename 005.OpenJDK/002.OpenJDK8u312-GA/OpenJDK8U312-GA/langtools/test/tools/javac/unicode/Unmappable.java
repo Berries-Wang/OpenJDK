@@ -27,12 +27,12 @@
  * @summary diagnose encoding errors in Java source files
  * @author gafter
  *
- * @compile              -encoding ascii -source 1.5 Unmappable.java
- * @compile/fail -Werror -encoding ascii -source 1.5 Unmappable.java
- * @compile/fail         -encoding ascii             Unmappable.java
+ * @compile              -encoding utf-8 -source 1.5 Unmappable.java
+ * @compile/fail -Werror -encoding utf-8 -source 1.5 Unmappable.java
+ * @compile/fail         -encoding utf-8             Unmappable.java
  */
 
 // example from 4766897
 public class Unmappable {
-    String s = "zähler";
+    String s = "zï¿½hler";
 }

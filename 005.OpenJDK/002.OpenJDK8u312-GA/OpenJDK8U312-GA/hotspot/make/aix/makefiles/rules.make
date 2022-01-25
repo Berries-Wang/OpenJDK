@@ -128,7 +128,7 @@ RUN.JAR$(MAKE_VERBOSE) += >/dev/null
 # Settings for javac
 BOOT_SOURCE_LANGUAGE_VERSION = 7
 BOOT_TARGET_CLASS_VERSION = 7
-JAVAC_FLAGS = -g -encoding ascii
+JAVAC_FLAGS = -g -encoding utf-8
 BOOTSTRAP_JAVAC_FLAGS = $(JAVAC_FLAGS) -source $(BOOT_SOURCE_LANGUAGE_VERSION) -target $(BOOT_TARGET_CLASS_VERSION)
 
 # With parallel makes, print a message at the end of compilation.
