@@ -1056,6 +1056,7 @@ void ParNewGeneration::collect(bool   full,
     gch->set_par_threads(0);  // 0 ==> non-parallel.
     gch->save_marks();
     // >>> 哈哈，这里就是处理JVM其他引用了(软引用、弱引用、虚引用)
+    // 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/memory/referenceProcessor.cpp
     stats = rp->process_discovered_references(&is_alive, &keep_alive,
                                               &evacuate_followers, NULL,
                                               _gc_timer);
