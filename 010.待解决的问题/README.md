@@ -32,11 +32,7 @@
 + reactor线程模型是什么?
 
 ## GC
-+ CMS GC回收分为哪几个阶段？分别做了什么事情？
-+ CMS有哪些重要参数？
-+ Concurrent Model Failure和ParNew promotion failed什么情况下会发生？
-+ CMS的优缺点？
-+ 有做过哪些GC调优？
+### GC理论
 + 为什么要划分成年轻代和老年代？
 + 年轻代为什么被划分成eden、survivor区域？
 + 年轻代为什么采用的是复制算法？
@@ -44,6 +40,14 @@
 + 什么情况下使用堆外内存？要注意些什么？
 + 堆外内存如何被回收？
 + jvm内存区域划分是怎样的？
+### GC实战
+#### CMS + ParNew
++ CMS GC回收分为哪几个阶段？分别做了什么事情？
++ CMS有哪些重要参数？
++ Concurrent Model Failure和ParNew promotion failed什么情况下会发生？
++ CMS的优缺点？
++ 有做过哪些GC调优？
+
 
 ## 并发
 + 了解偏向锁、轻量级锁、重量级锁的概念以及升级机制、以及和ReentrantLock的区别

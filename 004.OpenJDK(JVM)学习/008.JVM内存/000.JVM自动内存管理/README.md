@@ -14,6 +14,7 @@
 #### 运行时常量池(Runtime Constant Pool)
   1. Class文件中除了有类的版本、字段、方法、接口等描述信息之外，还有一项是常量池表(Constant Pool Table),用来存放编译期间生成的各种字面量和符号引用，这部分信息将在类加载后存放到方法区的运行时常量池中。
   2. 除了保存Class文件中描述的符号引用，还会将由符号引用翻译出来的直接引用也存储在运行时常量池中。
+  3. 参考[004.OpenJDK(JVM)学习/008.JVM内存/000.JVM自动内存管理/004.Metaspace.md](../../../004.OpenJDK(JVM)学习/008.JVM内存/000.JVM自动内存管理/004.Metaspace.md)
 
 ### 5. 本地方法栈
 
@@ -22,7 +23,7 @@
 
 ### 7.CodeCache
 + Codecache最大的用户: JIT,JIT将编译后的方法存放到codecache中，codecache空间不足会导致JIT停止编译方法
-
++ 参考[004.OpenJDK(JVM)学习/008.JVM内存/000.JVM自动内存管理/007.Codecache.md](../../../004.OpenJDK(JVM)学习/008.JVM内存/000.JVM自动内存管理/007.Codecache.md)
 
 ---
 ## 学习目标
