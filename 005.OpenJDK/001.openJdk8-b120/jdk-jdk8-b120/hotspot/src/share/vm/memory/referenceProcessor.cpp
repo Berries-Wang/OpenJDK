@@ -920,6 +920,13 @@ void ReferenceProcessor::balance_all_queues() {
 
 /**
  * 在GC时处理引用类型
+ * 在阅读如下代码的时候，需要注意一个关键词 “referent” ，即“所指对象”，表示的是当前引用对象(Soft、Weak、Final)所关联的对象，
+ * 如代码: 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/jdk/src/share/classes/java/lang/ref/Reference.java
+ * >>> 即需要清楚 
+ * 1. 什么是关联对象
+ * 2. 引用是什么
+ * 3. 关联对象和引用的关系
+ * 
  */
 size_t ReferenceProcessor::process_discovered_reflist(
     DiscoveredList refs_lists[], // 待处理的引用列表
@@ -954,10 +961,13 @@ size_t ReferenceProcessor::process_discovered_reflist(
   }
 
  /**
+  * referent： 所指对象
+  * 
   * Phase 1 (soft refs only):. Traverse the list and remove any SoftReferences whose referents are not alive,
   *  but that should be kept alive for policy reasons. Keep alive the transitive(传递的) closure(关闭，终止) of all such referents.
   * 
-  * 阶段1(仅限软引用): 遍历这个list并且移除不是存活状态(被标记为not alive的?)的软引用，但根据策略的原因，这个引用应该保持存活。保持所有此类引用的传递关闭状态???
+  * 阶段1(仅限软引用): 遍历这个list并且移除关联对象不是存活状态(被标记为not alive的?)的软引用，
+  * 但根据策略的原因，这个引用应该保持存活。保持所有此类引用的传递关闭状态
   */ 
   if (policy != NULL) {
     // 如果是多线程处理
@@ -977,7 +987,7 @@ size_t ReferenceProcessor::process_discovered_reflist(
 
   /**
    * Phase 2:. Traverse the list and remove any refs whose referents are alive.
-   * 阶段二，遍历这个list，并且移除所有对象存活(可达的)的引用
+   * 阶段二，遍历这个list，并且移除所有关联对象存活(可达的)的引用
    */ 
   if (mt_processing) {
     RefProcPhase2Task phase2(*this, refs_lists,
