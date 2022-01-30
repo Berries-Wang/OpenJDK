@@ -684,6 +684,7 @@ GenCollectorPolicy::mem_allocate_work(size_t size, bool is_tlab,
            "Otherwise, must do alloc within heap lock");
     // 此处就与具体的分代收集器相关了
     // ParNew + CMS:  defNewGeneration.hpp#should_allocate
+    // 这里是判断是否可以再gen0中分配
     if (gen0->should_allocate(size, is_tlab)) {
       // 首先从年轻代为对象分配内存
       result = gen0->par_allocate(size, is_tlab);
@@ -1017,8 +1018,7 @@ MetaWord* CollectorPolicy::satisfy_failed_metadata_allocation(
 // . heap memory is tight(堆内存紧张) -- the most recent previous collection
 //   was a full collection because a partial collection (would
 //   have) failed and is likely to fail again
-bool GenCollectorPolicy::should_try_older_generation_allocation(
-    size_t word_size) const {
+bool GenCollectorPolicy::should_try_older_generation_allocation(size_t word_size) const {
   // 获取JVM堆
   GenCollectedHeap *gch = GenCollectedHeap::heap();
   // 获取年轻代内存容量(实际是Eden)
