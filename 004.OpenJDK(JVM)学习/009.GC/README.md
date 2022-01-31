@@ -19,6 +19,7 @@
 
    > 基于1、2分代假说，JVM将堆进行了划分，因此才有了跨代引用问题
 
+---
 ### GC 分类
 1. 部分收集(Partial GC): 指目标不是完整收集整个Java堆的垃圾收集，其中又分为:
    - 新生代收集(Minor GC / Young GC):指目标仅完成新生代的垃圾收集
@@ -31,8 +32,18 @@
 ## JVM GC
 1. 哪些内存需要回收
 2. 什么时候回收
-   1. 当对象内存分配失败了，就会触发GC
+   1. 当对象内存分配失败了，就会触发GC。以此作为分析的切入点
 3. 如何回收
+### 评判GC的两个核心标准
+&nbsp;&nbsp;以下两个评判GC的核心标准，也可作为GC调优的方向，也是学习JVM GC的主要目标。
+1. <font color="red" >**延迟**</font>
+> 也可以理解为最大停顿时间，即垃圾收集过程中一次 STW 的最长时间，越短越好，一定程度上可以接受频次的增大，GC 技术的主要发展方向。
+2. <font color="red" >**吞吐率**</font>
+> 应用系统的生命周期内，由于 GC 线程会占用 Mutator 当前可用的 CPU 时钟周期，吞吐量即为 Mutator 有效花费的时间占系统总运行时间的百分比，例如系统运行了 100 min，GC 耗时 1 min，则系统吞吐量为 99%，吞吐量优先的收集器可以接受较长的停顿。
+>> 吞吐量大不代表响应能力高，吞吐量一般这么描述：在一个时间段内完成了多少个事务操作；在一个小时之内完成了多少批量操作
+3. 备注
+> 除了这两个指标之外还有 Footprint（资源量大小测量）、反应速度等指标，互联网这种实时系统追求低延迟，而很多嵌入式系统则追求 Footprint。
+
 ## JVM内存空间初始化
 > 004.OpenJDK(JVM)学习/003.JVM启动/001.Universe初始化/README.md
 
@@ -60,10 +71,6 @@
        + GenCollectedHeap
        + G1CollectedHeap
     - ParallelScavengeHeap
-
-
-## 学习目标是什么
-1. 针对与不同的垃圾收集器，软引用，弱引用，强引用，虚引用分别在什么时机回收的?
 
 ---
 ## 备注
@@ -182,3 +189,5 @@ libc.so.6!clone() (/build/glibc-eX1tMB/glibc-2.31/sysdeps/unix/sysv/linux/x86_64
 ---
 ## 参考资料
 - [深入理解堆外内存 Metaspace](https://javadoop.com/post/metaspace)
+- https://tech.meituan.com/2017/12/29/jvm-optimize.html
+- https://tech.meituan.com/2020/11/12/java-9-cms-gc.html
