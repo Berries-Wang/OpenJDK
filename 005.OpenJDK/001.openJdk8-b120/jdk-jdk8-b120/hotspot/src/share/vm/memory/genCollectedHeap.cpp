@@ -383,7 +383,7 @@ bool GenCollectedHeap::should_do_concurrent_full_gc(GCCause::Cause cause) {
  * @param clear_all_soft_refs 是否清理所有的软引用
  * @param size  对象大小(给该对象分配内存，分配失败。)
  * @param is_tlab  是否在tlab中操作
- * @param max_level 分代数(1:年轻代；2：年轻代+老年代)
+ * @param max_level 最大层级
  *
  */
 void GenCollectedHeap::do_collection(bool full, bool clear_all_soft_refs,
@@ -410,12 +410,14 @@ void GenCollectedHeap::do_collection(bool full, bool clear_all_soft_refs,
   }
 
   /**
-   * 判断是否要清理所有的软引用,
+   * 判断是否要清理所有的软引用,在这里，并不是根据引用处理策略来判断的
    * 并不是直接判断“clear_all_soft_refs”，还会根据GC策略来判断
+   * 
    */ 
   const bool do_clear_all_soft_refs =
       clear_all_soft_refs || collector_policy()->should_clear_all_soft_refs();
 
+  // 仅仅是构建一个对象 
   ClearedAllSoftRefs casr(do_clear_all_soft_refs, collector_policy());
 
   // 元空间的使用量
@@ -429,6 +431,7 @@ void GenCollectedHeap::do_collection(bool full, bool clear_all_soft_refs,
     bool complete = full && (max_level == (n_gens() - 1));
     // 判断是Full GC 还是普通的GC
     const char *gc_cause_prefix = complete ? "Full GC" : "GC";
+
     gclog_or_tty->date_stamp(PrintGC && PrintGCDateStamps);
     TraceCPUTime tcpu(PrintGCDetails, true, gclog_or_tty);
     GCTraceTime t(GCCauseString(gc_cause_prefix, gc_cause()), PrintGCDetails,
@@ -445,16 +448,27 @@ void GenCollectedHeap::do_collection(bool full, bool clear_all_soft_refs,
 
     int starting_level = 0;
 
-    // 若是Full GC
+    // Full GC
     if (full) {
       /**
        *   Search for the oldest generation which will collect all younger
        *   generations, and start collection loop there.
-       *  搜索最老的需要收集所有年轻代空间的收集器，并从哪里开始循环收集
+       *  搜索最老的需要收集所有年轻代空间的收集器，并从那里开始循环收集
+       *  
+       *  为什么是这个逻辑?
        */
       for (int i = max_level; i >= 0; i--) {
+        /**
+         * 待Debug,注意，这里的方法是: "full_collects_younger_generations"
+         * 通过代码分析:
+         * 1. ParNew 收集器，该方法返回固定值false，且没有进行任何收集动作
+         * 2. 对于CMS并不是固定值,且没有进行任何收集动作
+         * 
+         * 这里主要是判断是否需要对所有的年轻代进行Full GC
+         */ 
         if (_gens[i]->full_collects_younger_generations()) {
           starting_level = i;
+          // break;
           break;
         }
       }
@@ -477,7 +491,7 @@ void GenCollectedHeap::do_collection(bool full, bool clear_all_soft_refs,
             // 计数
             increment_total_full_collections();
           }
-          // 在GC之前dump(即 堆转储)
+          // 在GC之前dump(即 堆转储) 具体功能待补充!!!
           pre_full_gc_dump(NULL); // do any pre full gc dumps
         }
         // Timer for individual generations. Last argument is false: no CR
@@ -489,6 +503,7 @@ void GenCollectedHeap::do_collection(bool full, bool clear_all_soft_refs,
 
         // 获取正在处理的分代已使用的内存空间
         size_t prev_used = _gens[i]->used();
+        // GC信息统计，非主线
         _gens[i]->stat_record()->invocations++;
         _gens[i]->stat_record()->accumulated_time.start();
 
@@ -524,11 +539,15 @@ void GenCollectedHeap::do_collection(bool full, bool clear_all_soft_refs,
 
         if (!must_restore_marks_for_biased_locking &&
             _gens[i]->performs_in_place_marking()) {
-          // We perform this mark word preservation work lazily
-          // because it's only at this point that we know whether we
-          // absolutely have to do it; we want to avoid doing it for
-          // scavenge-only collections where it's unnecessary
+          /**
+           * We perform(演出、表演、执行) this mark word
+           * preservation(保护、维护) work lazily because it's only at this
+           * point that we know whether we absolutely have to do it; we want to
+           * avoid doing it for scavenge-only collections where it's unnecessary
+           */
           must_restore_marks_for_biased_locking = true;
+
+          //将各线程的持有偏向锁的oop的对象头保存起来
           BiasedLocking::preserve_marks();
         }
 
@@ -544,8 +563,12 @@ void GenCollectedHeap::do_collection(bool full, bool clear_all_soft_refs,
           // weak refs more uniform (and indeed remove such concerns
           // from GCH). XXX
 
-          HandleMark hm; // Discard invalid handles created during gc
-          save_marks();  // save marks for all gens
+          HandleMark hm; // Discard(扔掉) invalid handles created during gc
+          /**
+           * save marks for all gens
+           * 保存空间使用情况,如代码: DefNewGeneration::save_marks()
+           */
+          save_marks();
           // We want to discover references, but not process them yet.
           // This mode is disabled in process_discovered_references if the
           // generation does some collection work, or in
@@ -558,6 +581,11 @@ void GenCollectedHeap::do_collection(bool full, bool clear_all_soft_refs,
           if (rp->discovery_is_atomic()) {
             rp->enable_discovery(true /*verify_disabled*/,
                                  true /*verify_no_refs*/);
+            /**
+             * 设置软引用处理策略，详细代码见:
+             * hotspot/src/share/vm/memory/referenceProcessor.hpp
+             * 注意，参数“do_clear_all_soft_refs” 影响着软引用清理策略的选择，详细的请参见代码
+             */ 
             rp->setup_policy(do_clear_all_soft_refs);
           } else {
             // collect() below will enable discovery as appropriate
@@ -569,7 +597,7 @@ void GenCollectedHeap::do_collection(bool full, bool clear_all_soft_refs,
            */
           _gens[i]->collect(full, do_clear_all_soft_refs, size, is_tlab);
 
-          // 开始处理软引用对象了
+          // 
           if (!rp->enqueuing_is_done()) {
             rp->enqueue_discovered_references();
           } else {
@@ -579,7 +607,7 @@ void GenCollectedHeap::do_collection(bool full, bool clear_all_soft_refs,
         }
         max_level_collected = i;
 
-        // Determine if allocation request was met.
+        // Determine if allocation request was met(扔掉).
         if (size > 0) {
           if (!is_tlab || _gens[i]->supports_tlab_allocation()) {
             if (size * HeapWordSize <= _gens[i]->unsafe_max_alloc_nogc()) {

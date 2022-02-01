@@ -654,8 +654,7 @@ void TwoGenerationCollectorPolicy::initialize_size_info() {
  * @param gc_overhead_limit_was_exceeded 传出参数
  *
  */
-HeapWord *
-GenCollectorPolicy::mem_allocate_work(size_t size, bool is_tlab,
+HeapWord * GenCollectorPolicy::mem_allocate_work(size_t size, bool is_tlab,
                                       bool *gc_overhead_limit_was_exceeded) {
   // 获取JVM堆
   GenCollectedHeap *gch = GenCollectedHeap::heap();
@@ -670,21 +669,19 @@ GenCollectorPolicy::mem_allocate_work(size_t size, bool is_tlab,
 
   HeapWord *result = NULL;
 
-  // Loop until the allocation is satisified(感到满意的),
-  // or unsatisfied after GC.
-  for (int try_count = 1, gclocker_stalled_count = 0; /* return or throw */;
-       try_count += 1) {
+  // Loop until the allocation is satisified(感到满意的),or unsatisfied after GC.
+  for (int try_count = 1, gclocker_stalled_count = 0; /* return or throw */;try_count += 1) {
     HandleMark hm; // discard any handles allocated in each iteration
 
     // First allocation attempt is lock-free. // 没有加锁
     // 获取第一个分区: 
     //   DefNew + CMS: 年轻代
     Generation *gen0 = gch->get_gen(0);
-    assert(gen0->supports_inline_contig_alloc(),
-           "Otherwise, must do alloc within heap lock");
+    assert(gen0->supports_inline_contig_alloc(), "Otherwise, must do alloc within heap lock");
     // 此处就与具体的分代收集器相关了
     // ParNew + CMS:  defNewGeneration.hpp#should_allocate
     // 这里是判断是否可以再gen0中分配
+    // should_allocate 是虚函数，由具体的收集器实现
     if (gen0->should_allocate(size, is_tlab)) {
       // 首先从年轻代为对象分配内存
       result = gen0->par_allocate(size, is_tlab);
@@ -718,11 +715,11 @@ GenCollectorPolicy::mem_allocate_work(size_t size, bool is_tlab,
 
       if (GC_locker::is_active_and_needs_gc()) {
         if (is_tlab) {
-          return NULL; // Caller will retry allocating individual object
+          return NULL; // Caller will retry allocating individual(单独的、独特的) object
         }
         if (!gch->is_maximal_no_gc()) {
           // Try and expand(扩大、增加) heap to satisfy(使满意，使满足) request
-          // 堆内存拓展
+          // 堆内存拓展(即申请物理内存)
           result = expand_heap_and_allocate(size, is_tlab);
           // result could be null if we are out of space
           if (result != NULL) {
@@ -732,6 +729,12 @@ GenCollectorPolicy::mem_allocate_work(size_t size, bool is_tlab,
 
         if (gclocker_stalled_count > GCLockerRetryAllocationCount) {
           // 返回NULL会怎样?=>OOM
+          /**
+           * 异常在common_mem_allocate_noinit函数中抛出
+           * HeapWord *CollectedHeap::common_mem_allocate_noinit(KlassHandle klass,
+           *                                         size_t size, TRAPS);
+           * 
+           */ 
           return NULL; // we didn't get to do a GC and we didn't get any memory
         }
 
@@ -766,7 +769,7 @@ GenCollectorPolicy::mem_allocate_work(size_t size, bool is_tlab,
       // Read the gc count while the heap lock is held.
       gc_count_before = Universe::heap()->total_collections();
     }
-    // 见: 004.OpenJDK(JVM)学习/009.GC/006.VM_Operation.md
+    // 对于对象内存申请失败，则使用VM_Operation来申请对象内存(其中会涉及到GC): 见: 004.OpenJDK(JVM)学习/009.GC/006.VM_Operation.md
     // ---->>> 这个操作是处理对象分配的情况(主要是GC,可能会清理软引用)，并重新为对象分配内存
     VM_GenCollectForAllocation op(size, is_tlab, gc_count_before);
     VMThread::execute(&op);
@@ -796,8 +799,7 @@ GenCollectorPolicy::mem_allocate_work(size_t size, bool is_tlab,
         // 不论如何，返回的是NULL
         return NULL;
       }
-      assert(result == NULL || gch->is_in_reserved(result),
-             "result not in heap");
+      assert(result == NULL || gch->is_in_reserved(result),"result not in heap");
       return result;
     }
 
@@ -822,6 +824,7 @@ HeapWord *GenCollectorPolicy::expand_heap_and_allocate(size_t size,
   HeapWord *result = NULL;
   for (int i = number_of_generations() - 1; i >= 0 && result == NULL; i--) {
     Generation *gen = gch->get_gen(i);
+    // should_allocate 是一个虚函数，由具体的垃圾收集器实现
     if (gen->should_allocate(size, is_tlab)) {
       result = gen->expand_and_allocate(size, is_tlab);
     }
@@ -854,7 +857,7 @@ HeapWord *GenCollectorPolicy::satisfy_failed_allocation(size_t size,
 
   assert(size != 0, "Precondition violated");
   // 如果正在GC或需要GC
-  if (GC_locker::is_active_and_needs_gc()) {
+  if (GC_locker::is_active_and_needs_gc()) { // 申请更多的物理内存
     // GC locker is active; instead of a collection we will attempt
     // to expand the heap, if there's room for expansion(扩大).
     if (!gch->is_maximal_no_gc()) {
@@ -862,14 +865,13 @@ HeapWord *GenCollectorPolicy::satisfy_failed_allocation(size_t size,
       result = expand_heap_and_allocate(size, is_tlab);
     }
     return result; // could be null if we are out of space
-  } else if (!gch->incremental_collection_will_fail(
-                 false /* don't consult_young */)) {
+  } else if (!gch->incremental_collection_will_fail(false /* don't consult_young */)) { // 进行Young GC （不存在增量收集失败）
     // Do an incremental(增长的、递增的) collection.
     // 进行一次GC(Young GC)，年轻代(因第一个参数为false)
     gch->do_collection(false /* full */, false /* clear_all_soft_refs */,
                        size /* size */, is_tlab /* is_tlab */,
                        number_of_generations() - 1 /* max_level */);
-  } else {
+  } else { // 进行Full GC
     // 打印GC日志
     if (Verbose && PrintGCDetails) {
       gclog_or_tty->print(" :: Trying full because partial may fail :: ");
@@ -915,7 +917,7 @@ HeapWord *GenCollectorPolicy::satisfy_failed_allocation(size_t size,
   {
     UIntFlagSetting flag_change(MarkSweepAlwaysCompactCount,
                                 1); // Make sure the heap is fully compacted
-    // Full GC 并且清理所有的软引用
+    // Full GC 并且清理所有的软引用,注意，结合前面的代码，只有当内存不足时才会去回收软引用。
     gch->do_collection(true /* full */, true /* clear_all_soft_refs */,
                        size /* size */, is_tlab /* is_tlab */,
                        number_of_generations() - 1 /* max_level */);

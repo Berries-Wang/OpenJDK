@@ -348,11 +348,18 @@ class Generation: public CHeapObj<mtGC> {
   // during a full collection.
   virtual bool full_collects_younger_generations() const { return false; }
 
-  // This generation does in-place marking, meaning that mark words
-  // are mutated during the marking phase and presumably reinitialized
-  // to a canonical value after the GC. This is currently used by the
-  // biased locking implementation to determine whether additional
-  // work is required during the GC prologue and epilogue.
+  /**
+   * This generation does in-place marking, meaning that mark words
+   * are mutated(突变) during the marking phase and presumably(大概)
+   * reinitialized(重新启动) to a canonical(标准的，规范的) value after the GC.
+   * This is currently used by the biased locking implementation to determine
+   * whether additional work is required during the GC prologue(开场白) and
+   * epilogue(结尾).
+   *
+   * 这一分代执行就地标记，意味着mark word
+   * 字段在GC的标记阶段和重新标记阶段被设置为一个标准的值，
+   * 偏置锁定实现目前使用它来确定在GC序言和尾声期间是否需要额外的工作
+   */
   virtual bool performs_in_place_marking() const { return true; }
 
   // Returns "true" iff collect() should subsequently be called on this

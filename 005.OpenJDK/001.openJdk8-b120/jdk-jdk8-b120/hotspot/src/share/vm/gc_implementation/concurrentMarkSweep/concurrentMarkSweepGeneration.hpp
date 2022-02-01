@@ -1190,12 +1190,24 @@ class ConcurrentMarkSweepGeneration: public CardGeneration {
   MemRegion used_region() const;
   MemRegion used_region_at_save_marks() const;
 
-  // Does a "full" (forced) collection invoked on this generation collect
-  // all younger generations as well? Note that the second conjunct is a
-  // hack to allow the collection of the younger gen first if the flag is
-  // set. This is better than using th policy's should_collect_gen0_first()
-  // since that causes us to do an extra unnecessary pair of restart-&-stop-world.
+  /**
+   *
+   * Does a "full" (forced) collection invoked on this generation collect
+   * all younger generations as well? Note that the second conjunct is a
+   * hack to allow the collection of the younger gen first if the flag is
+   * set. This is better than using th policy's should_collect_gen0_first()
+   * since that causes us to do an extra unnecessary pair of
+   * restart-&-stop-world.
+   *
+   * 在这个分代中强制执行一次Full GC是否需要收集所有的年轻代，请注意，第二个条件是一个hack，
+   * 如果这个标志被设置了，那么需要允许优先收集年轻代。这个比策略的“should_collect_gen0_first”
+   * 更好，因为这会导致我们做一下额外的restart-&-stop-world
+   */
   virtual bool full_collects_younger_generations() const {
+    /**
+     * UseCMSCompactAtFullCollection：默认为true，表示FullGC时所使用Mark-Sweep-Compact算法
+     * CollectGen0First: 默认为false，表示是否在FullGC前收集年轻代
+     */
     return UseCMSCompactAtFullCollection && !CollectGen0First;
   }
 

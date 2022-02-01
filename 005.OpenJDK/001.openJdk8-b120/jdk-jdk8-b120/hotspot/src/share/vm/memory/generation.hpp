@@ -346,16 +346,25 @@ class Generation: public CHeapObj<mtGC> {
 
   /**
    * This generation will collect all younger generations
-   *  during a full collection.
+   * during a full collection.
+   * 该分代在Full GC期间收集所有的年轻代
+   * 
    *  是否在Full GC前回收年轻代内存
    */ 
   virtual bool full_collects_younger_generations() const { return false; }
 
-  // This generation does in-place marking, meaning that mark words
-  // are mutated during the marking phase and presumably reinitialized
-  // to a canonical value after the GC. This is currently used by the
-  // biased locking implementation to determine whether additional
-  // work is required during the GC prologue and epilogue.
+    /**
+   * This generation does in-place marking, meaning that mark words
+   * are mutated(突变) during the marking phase and presumably(大概)
+   * reinitialized(重新启动) to a canonical(标准的，规范的) value after the GC.
+   * This is currently used by the biased locking implementation to determine
+   * whether additional work is required during the GC prologue(开场白) and
+   * epilogue(结尾).
+   *
+   * 这一分代执行就地标记，意味着mark word
+   * 字段在GC的标记阶段和重新标记阶段被设置为一个标准的值，
+   * 偏置锁定实现目前使用它来确定在GC序言和尾声期间是否需要额外的工作
+   */
   virtual bool performs_in_place_marking() const { return true; }
 
   // Returns "true" iff collect() should subsequently be called on this
@@ -602,13 +611,15 @@ class Generation: public CHeapObj<mtGC> {
 
   virtual void verify() = 0;
 
+  /**
+   *   用于GC性能跟踪
+   */
   struct StatRecord {
     int invocations;
     elapsedTimer accumulated_time;
-    StatRecord() :
-      invocations(0),
-      accumulated_time(elapsedTimer()) {}
+    StatRecord() : invocations(0), accumulated_time(elapsedTimer()) {}
   };
+
 private:
   StatRecord _stat_record;
 public:

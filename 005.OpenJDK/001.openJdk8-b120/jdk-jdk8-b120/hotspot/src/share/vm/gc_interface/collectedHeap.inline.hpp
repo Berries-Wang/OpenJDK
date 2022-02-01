@@ -137,22 +137,22 @@ HeapWord *CollectedHeap::common_mem_allocate_noinit(KlassHandle klass,
   if (UseTLAB) {
     result = allocate_from_tlab(klass, THREAD, size);
     if (result != NULL) {
-      assert(!HAS_PENDING_EXCEPTION,
-             "Unexpected exception, will result in uninitialized storage");
+      assert(!HAS_PENDING_EXCEPTION, "Unexpected exception, will result in uninitialized storage");
       return result;
     }
   }
+
+  // exceeded: 超过了
   bool gc_overhead_limit_was_exceeded = false;
+
   // 调用堆进行内存分配
   // DefNew + CMS: Universe::heap() = GenCollectedHeap
-  result =
-      Universe::heap()->mem_allocate(size, &gc_overhead_limit_was_exceeded);
+  // gc_overhead_limit_was_exceeded 传出参数
+  result = Universe::heap()->mem_allocate(size, &gc_overhead_limit_was_exceeded);
   
   if (result != NULL) {
-    NOT_PRODUCT(
-        Universe::heap()->check_for_non_bad_heap_word_value(result, size));
-    assert(!HAS_PENDING_EXCEPTION,
-           "Unexpected exception, will result in uninitialized storage");
+    NOT_PRODUCT(Universe::heap()->check_for_non_bad_heap_word_value(result, size));
+    assert(!HAS_PENDING_EXCEPTION, "Unexpected exception, will result in uninitialized storage");
     THREAD->incr_allocated_bytes(size * HeapWordSize);
 
     AllocTracer::send_allocation_outside_tlab_event(klass, size * HeapWordSize);

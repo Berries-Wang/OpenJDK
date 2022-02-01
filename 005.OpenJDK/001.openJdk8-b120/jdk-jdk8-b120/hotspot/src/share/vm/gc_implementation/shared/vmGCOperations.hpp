@@ -178,6 +178,9 @@ private:
   bool _tlab;  
 
 public:
+  /**
+   *  005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/gc_interface/gcCause.hpp
+   */
   VM_GenCollectForAllocation(size_t size, bool tlab,
                              unsigned int gc_count_before)
       : VM_GC_Operation(gc_count_before, GCCause::_allocation_failure),

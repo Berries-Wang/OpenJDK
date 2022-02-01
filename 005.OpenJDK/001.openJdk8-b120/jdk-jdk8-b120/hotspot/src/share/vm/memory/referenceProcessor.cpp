@@ -57,8 +57,7 @@ void ReferenceProcessor::init_statics() {
   _always_clear_soft_ref_policy = new AlwaysClearPolicy();
 
   /**
-   * 初始化软引用对象回收策略
-   *
+   * 初始化默认的软引用对象回收策略
    */
   _default_soft_ref_policy      = new COMPILER2_PRESENT(LRUMaxHeapPolicy())
                                       NOT_COMPILER2(LRUCurrentHeapPolicy());

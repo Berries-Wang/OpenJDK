@@ -98,8 +98,13 @@ class CollectorPolicy : public CHeapObj<mtGC> {
    */ 
   AdaptiveSizePolicy* _size_policy;
 
-  // Set to true when policy wants soft refs cleared.
-  // Reset to false by gc after it clears all soft refs.
+  /**
+   * Set to true when policy wants soft refs cleared.
+   * Reset to false by gc after it clears all soft refs.
+   *
+   * 当策略需要清理软引用时被设置为true。
+   * 在GC清理掉所有的软引用后被重置为false.
+   */
   bool _should_clear_all_soft_refs;
 
   // Set to true by the GC if the just-completed gc cleared all

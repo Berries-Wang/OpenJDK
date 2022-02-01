@@ -2043,7 +2043,8 @@ run:
               // 从当前线程的tlab分配失败
               if (result == NULL) {
                 need_zero = true;
-                // Try allocate in shared eden // 尝试在共享的eden中分配.当对象的大小超过阈值时在老年代分配，代码体现在哪里?
+                // Try allocate in shared eden // 尝试在共享的eden中分配.当对象的大小超过阈值时在老年代分配，代码体现在哪里?这个在具体的收集器中
+                // 参考[004.OpenJDK(JVM)学习/009.GC/003.对象创建源码分析.md] 中 PretenureSizeThreshold
               retry:
                 HeapWord *compare_to = *Universe::heap()->top_addr();
                 HeapWord *new_top = compare_to + obj_size;
@@ -2060,8 +2061,7 @@ run:
                 // Initialize object (if nonzero size and need) and then the header
                 // 如果需要赋零值
                 if (need_zero) {
-                  HeapWord *to_zero =
-                      (HeapWord *)result + sizeof(oopDesc) / oopSize;
+                  HeapWord *to_zero = (HeapWord *)result + sizeof(oopDesc) / oopSize;
                   obj_size -= sizeof(oopDesc) / oopSize;
                   // 赋零值
                   if (obj_size > 0) {
@@ -2089,8 +2089,7 @@ run:
             }
           }
           // Slow case allocation // 执行慢速分配 很重要!!!
-          CALL_VM(InterpreterRuntime::_new(THREAD, METHOD->constants(), index),
-                  handle_exception);
+          CALL_VM(InterpreterRuntime::_new(THREAD, METHOD->constants(), index),handle_exception);
           SET_STACK_OBJECT(THREAD->vm_result(), 0);
           THREAD->set_vm_result(NULL);
           UPDATE_PC_AND_TOS_AND_CONTINUE(3, 1);

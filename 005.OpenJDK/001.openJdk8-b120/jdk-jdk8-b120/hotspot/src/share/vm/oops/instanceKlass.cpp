@@ -1117,8 +1117,10 @@ instanceOop InstanceKlass::allocate_instance(TRAPS) {
 
   // 为对象分配内存(实际的物理内存)
   i = (instanceOop)CollectedHeap::obj_allocate(h_k, size, CHECK_NULL);
+  
   // 如果重写了finalizer方法，则需要注册一下
   if (has_finalizer_flag && !RegisterFinalizersAtInit) {
+    // 执行注册动作
     i = register_finalizer(i, CHECK_NULL);
   }
   

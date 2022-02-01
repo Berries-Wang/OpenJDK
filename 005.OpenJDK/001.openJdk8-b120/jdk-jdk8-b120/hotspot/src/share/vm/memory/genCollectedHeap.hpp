@@ -463,14 +463,24 @@ public:
   // call to "save_marks".
   bool no_allocs_since_save_marks(int level);
 
-  // Returns true if an incremental collection is likely to fail.
-  // We optionally consult the young gen, if asked to do so;
-  // otherwise we base our answer on whether the previous incremental
-  // collection attempt failed with no corrective action as of yet.
+  /**
+   * Returns true if an incremental(增加的) collection is likely(大概，很可能) to fail.
+   * We optionally consult(咨询，讨论) the young gen, if asked to do so;
+   * otherwise we base our answer on whether the previous incremental
+   * collection attempt failed with no corrective action as of yet.
+   * 
+   * 如果返回true，则表示增量收集很可能失败。我们可以选择性地咨询年轻代，如果有这样的要求。
+   * 否则，我们将根据之前的增量收集尝试是否失败而没有采取任何纠正措施来给出答案
+   * */
   bool incremental_collection_will_fail(bool consult_young) {
-    // Assumes a 2-generation system; the first disjunct remembers if an
-    // incremental collection failed, even when we thought (second disjunct)
-    // that it would not.
+    /** 
+     * Assumes(假定) a 2-generation system; the first disjunct(分离的) remembers if an
+     * incremental collection failed, even when we thought (second disjunct)
+     * that it would not.
+     * 
+     * 假如一个有着2个分代系统，如果增量收集失败了，那么第一次分离会被记住，尽管我们认为第二次
+     * 分离不会失败???
+     */
     assert(heap()->collector_policy()->is_two_generation_policy(),
            "the following definition may not be suitable for an n(>2)-generation system");
     return incremental_collection_failed() ||
