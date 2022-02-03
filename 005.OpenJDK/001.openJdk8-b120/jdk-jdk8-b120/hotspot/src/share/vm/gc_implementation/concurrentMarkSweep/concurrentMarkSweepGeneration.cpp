@@ -1641,6 +1641,14 @@ bool ConcurrentMarkSweepGeneration::should_concurrent_collect() const {
   return false;
 }
 
+/**
+ * CMS 垃圾收集动作
+ *
+ * @param full  是否Full GC
+ * @param clear_all_soft_refs 是否清理所有的软引用
+ * @param size  对象大小
+ * @param tlab  是否使用TLAB分配对象内存
+ */
 void ConcurrentMarkSweepGeneration::collect(bool   full,
                                             bool   clear_all_soft_refs,
                                             size_t size,
@@ -1649,11 +1657,22 @@ void ConcurrentMarkSweepGeneration::collect(bool   full,
   collector()->collect(full, clear_all_soft_refs, size, tlab);
 }
 
+/**
+ * CMS 垃圾收集动作
+ *
+ * @param full  是否Full GC
+ * @param clear_all_soft_refs 是否清理所有的软引用
+ * @param size  对象大小
+ * @param tlab  是否使用TLAB分配对象内存
+ */
 void CMSCollector::collect(bool   full,
                            bool   clear_all_soft_refs,
                            size_t size,
                            bool   tlab)
 {
+  /**
+   * UseCMSCollectionPassing 命令行参数
+   */
   if (!UseCMSCollectionPassing && _collectorState > Idling) {
     // For debugging purposes skip the collection if the state
     // is not currently idle
@@ -1664,11 +1683,13 @@ void CMSCollector::collect(bool   full,
     return;
   }
 
-  // The following "if" branch is present for defensive reasons.
-  // In the current uses of this interface, it can be replaced with:
-  // assert(!GC_locker.is_active(), "Can't be called otherwise");
-  // But I am not placing that assert here to allow future
-  // generality in invoking this interface.
+  /**
+   * The following "if" branch is present for defensive(防御的，戒备的) reasons.
+   * In the current uses of this interface, it can be replaced with:
+   * assert(!GC_locker.is_active(), "Can't be called otherwise");
+   * But I am not placing that assert here to allow future
+   * generality(概论,普遍性) in invoking this interface.
+   */
   if (GC_locker::is_active()) {
     // A consistency test for GC_locker
     assert(GC_locker::needs_gc(), "Should have been set already");
@@ -1678,7 +1699,9 @@ void CMSCollector::collect(bool   full,
     compute_new_size();
     return;
   }
+
   acquire_control_and_collect(full, clear_all_soft_refs);
+   
   _full_gcs_since_conc_gc++;
 }
 
@@ -1715,82 +1738,121 @@ void CMSCollector::report_concurrent_mode_interruption() {
 }
 
 
-// The foreground and background collectors need to coordinate in order
-// to make sure that they do not mutually interfere with CMS collections.
-// When a background collection is active,
-// the foreground collector may need to take over (preempt) and
-// synchronously complete an ongoing collection. Depending on the
-// frequency of the background collections and the heap usage
-// of the application, this preemption can be seldom or frequent.
-// There are only certain
-// points in the background collection that the "collection-baton"
-// can be passed to the foreground collector.
-//
-// The foreground collector will wait for the baton before
-// starting any part of the collection.  The foreground collector
-// will only wait at one location.
-//
-// The background collector will yield the baton before starting a new
-// phase of the collection (e.g., before initial marking, marking from roots,
-// precleaning, final re-mark, sweep etc.)  This is normally done at the head
-// of the loop which switches the phases. The background collector does some
-// of the phases (initial mark, final re-mark) with the world stopped.
-// Because of locking involved in stopping the world,
-// the foreground collector should not block waiting for the background
-// collector when it is doing a stop-the-world phase.  The background
-// collector will yield the baton at an additional point just before
-// it enters a stop-the-world phase.  Once the world is stopped, the
-// background collector checks the phase of the collection.  If the
-// phase has not changed, it proceeds with the collection.  If the
-// phase has changed, it skips that phase of the collection.  See
-// the comments on the use of the Heap_lock in collect_in_background().
-//
-// Variable used in baton passing.
-//   _foregroundGCIsActive - Set to true by the foreground collector when
-//      it wants the baton.  The foreground clears it when it has finished
-//      the collection.
-//   _foregroundGCShouldWait - Set to true by the background collector
-//        when it is running.  The foreground collector waits while
-//      _foregroundGCShouldWait is true.
-//  CGC_lock - monitor used to protect access to the above variables
-//      and to notify the foreground and background collectors.
-//  _collectorState - current state of the CMS collection.
-//
-// The foreground collector
-//   acquires the CGC_lock
-//   sets _foregroundGCIsActive
-//   waits on the CGC_lock for _foregroundGCShouldWait to be false
-//     various locks acquired in preparation for the collection
-//     are released so as not to block the background collector
-//     that is in the midst of a collection
-//   proceeds with the collection
-//   clears _foregroundGCIsActive
-//   returns
-//
-// The background collector in a loop iterating on the phases of the
-//      collection
-//   acquires the CGC_lock
-//   sets _foregroundGCShouldWait
-//   if _foregroundGCIsActive is set
-//     clears _foregroundGCShouldWait, notifies _CGC_lock
-//     waits on _CGC_lock for _foregroundGCIsActive to become false
-//     and exits the loop.
-//   otherwise
-//     proceed with that phase of the collection
-//     if the phase is a stop-the-world phase,
-//       yield the baton once more just before enqueueing
-//       the stop-world CMS operation (executed by the VM thread).
-//   returns after all phases of the collection are done
-//
-
+/**
+ * 
+ * CMS阶段: 
+ *   1. 初始标记
+ *      - 初始标记（CMS的第一个STW阶段），标记GC Root直接引用的对象，GC Root直接引用的对象不多，所以很快
+ *   2. 并发标记
+ *      - 由第一阶段标记过的对象出发，所有可达的对象都在本阶段标记。
+ *   3. 并发预清理阶段
+ *      - 并发预清理阶段，也是一个并发执行的阶段。在本阶段，会查找前一阶段执行过程中,从新生代晋升或新分配或被更新的对象。通过并发地重新扫描这些对象，预清理阶段可以减少下一个stop-the-world 重新标记阶段的工作量
+ *   4. 并发可中止的预清理阶段
+ *      - 并发可中止的预清理阶段。这个阶段其实跟上一个阶段做的东西一样，也是为了减少下一个STW重新标记阶段的工作量。增加这一阶段是为了让我们可以控制这个阶段的结束时机，比如扫描多长时间（默认5秒）或者Eden区使用占比达到期望比例（默认50%）就结束本阶段
+ *   5. 重新标记阶段
+ *      - （CMS的第二个STW阶段），暂停所有用户线程，从GC Root开始重新扫描整堆，标记存活的对象。需要注意的是，虽然CMS只回收老年代的垃圾对象，但是这个阶段依然需要扫描新生代，因为很多GC Root都在新生代，而这些GC Root指向的对象又在老年代，这称为“跨代引用”。
+ *   6. 并发清理
+ *   7. 重置
+ * 
+ * The foreground(前景) and background collectors need to coordinate(协调；配合；坐标) in order
+ * to make sure that they do not mutually(相互的；配合的；) interfere(干涉；干扰；阻碍) with CMS collections.
+ * 译:前台和后台收集器需要配合收集，以确保他们不会相互干扰CMS收集。
+ * 
+ * When a background collection is active,
+ * the foreground collector may need to take over (preempt:先占；先取；) and
+ * synchronously(同步地；同时地；) complete an ongoing collection. Depending on the
+ * frequency(出现次数；频繁；频率) of the background collections and the heap usage
+ * of the application, this preemption can be seldom(不常；很少) or frequent.
+ * There are only certain(确定的；无疑的)
+ * points in the background collection that the "collection-baton"
+ * can be passed(经过；通过；传递；) to the foreground collector.
+ * 译: 当后台收集正在进行，前台收集器或许需要抢先并且同步地完成这个正在进行的收集。根据后台收集的频率以及应用堆内存的使用情况
+ *     这个抢占并不少但也不频繁。在后台收集中只有特定的点可以将 "收集指挥棒" 传递给前台收集器
+ * > baton: 指挥棒；接力棒；
+ *
+ * The foreground collector will wait for the baton before
+ * starting any part of the collection.  The foreground collector
+ * will only wait at one location.
+ * 译: 前台收集器将在开始收集的任何部分之前等待接力棒。前台收集器将只在一个位置等待。
+ *
+ * The background collector will yield(产生;让出;) the baton before starting a new
+ * phase of the collection (e.g., before initial marking, marking from roots,
+ * precleaning, final re-mark, sweep etc. 这些阶段请参考CMS阶段)  This is normally done at the head
+ * of the loop which switches(开关;交换器;) the phases. The background collector does some
+ * of the phases (initial mark, final re-mark) with the world stopped.
+ * Because of locking involved in stopping the world,
+ * the foreground collector should not block waiting for the background
+ * collector when it is doing a stop-the-world phase.  The background
+ * collector will yield the baton at an additional point just before
+ * it enters a stop-the-world phase.  Once the world is stopped, the
+ * background collector checks the phase of the collection.  If the
+ * phase has not changed, it proceeds(收入;收益) with the collection.  If the
+ * phase has changed, it skips that phase of the collection.  See
+ * the comments(评论；注解；) on the use of the Heap_lock in collect_in_background().
+ * 译: 后台收集器在开始一个新的收集阶段时将让出接力棒，这通常在收集阶段切换开始时完成的。
+ *     后台收集器在一些阶段(初始标记；重新标记)需要STW.因为STW涉及到锁，前台收集器在STW阶段
+ *     不应该阻塞等待后台收集器。一旦STW,后台收集器校验收集器的阶段。如果阶段没有被改变，他继续收集。
+ *     如果阶段被改变了，他将跳过收集器的这个阶段。请参考注释: collect_in_background
+ * 
+ *注意事项:
+ * 1. 重要的方法: collect_in_background
+ * 2. 前台收集器 && 后台收集器
+ *     
+ * > involved: 复杂的；专心于...的；牵涉；包含
+ * 
+ * Variable used in baton passing.
+ *   _foregroundGCIsActive - Set to true by the foreground collector when
+ *      it wants the baton.  The foreground clears it when it has finished
+ *      the collection.
+ *   _foregroundGCShouldWait - Set to true by the background collector
+ *        when it is running.  The foreground collector waits while
+ *      _foregroundGCShouldWait is true.
+ *  CGC_lock - monitor used to protect access to the above variables
+ *      and to notify the foreground and background collectors.
+ *  _collectorState - current state of the CMS collection.
+ *
+ * The foreground collector
+ *   acquires the CGC_lock
+ *   sets _foregroundGCIsActive
+ *   waits on the CGC_lock for _foregroundGCShouldWait to be false
+ *     various locks acquired in preparation for the collection
+ *     are released so as not to block the background collector
+ *     that is in the midst of a collection
+ *   proceeds with the collection
+ *   clears _foregroundGCIsActive
+ *   returns
+ *
+ * The background collector in a loop iterating on the phases of the
+ *      collection
+ *   acquires the CGC_lock
+ *   sets _foregroundGCShouldWait
+ *   if _foregroundGCIsActive is set
+ *     clears _foregroundGCShouldWait, notifies _CGC_lock
+ *     waits on _CGC_lock for _foregroundGCIsActive to become false
+ *     and exits the loop.
+ *   otherwise
+ *     proceed with that phase of the collection
+ *     if the phase is a stop-the-world phase,
+ *       yield the baton once more just before enqueueing
+ *       the stop-world CMS operation (executed by the VM thread).
+ *   returns after all phases of the collection are done
+ *
+ * 
+ * CMS收集器执行入口.
+ * @param full  是否是Full GC
+ * @param clear_all_soft_refs 是否清理所有的软引用
+ */
 void CMSCollector::acquire_control_and_collect(bool full,
         bool clear_all_soft_refs) {
+  // 必须在安全点上
   assert(SafepointSynchronize::is_at_safepoint(), "should be at safepoint");
+  
+  // 似乎Thread::current()->is_ConcurrentGC_thread()返回的是常量值false. >>> 待Debug
   assert(!Thread::current()->is_ConcurrentGC_thread(),
          "shouldn't try to acquire control from self!");
 
   // Start the protocol for acquiring control of the
-  // collection from the background collector (aka CMS thread).
+  // collection from the background collector (aka(又名;亦称) CMS thread).
   assert(ConcurrentMarkSweepThread::vm_thread_has_cms_token(),
          "VM thread should have CMS token");
   // Remember the possibly interrupted state of an ongoing

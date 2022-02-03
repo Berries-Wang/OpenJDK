@@ -714,6 +714,7 @@ class CMSCollector: public CHeapObj<mtGC> {
   size_t _numDirtyCards;
   size_t _sweep_count;
   // number of full gc's since the last concurrent gc.
+  // 自从上次并发GC依赖Full GC的数量
   uint   _full_gcs_since_conc_gc;
 
   // occupancy used for bootstrapping stats

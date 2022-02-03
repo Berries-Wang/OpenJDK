@@ -899,6 +899,14 @@ class CMSCollector: public CHeapObj<mtGC> {
   // XXXPERM bool should_collect(bool full, size_t size, bool tlab);
   bool shouldConcurrentCollect();
 
+  /**
+   * 垃圾收集动作
+   *
+   * @param full  是否Full GC
+   * @param clear_all_soft_refs 是否清理所有的软引用
+   * @param size  对象大小
+   * @param tlab  是否使用TLAB分配对象内存
+   */
   void collect(bool   full,
                bool   clear_all_soft_refs,
                size_t size,
@@ -1255,6 +1263,15 @@ class ConcurrentMarkSweepGeneration: public CardGeneration {
   bool should_collect(bool full, size_t size, bool tlab);
   virtual bool should_concurrent_collect() const;
   virtual bool is_too_full() const;
+  
+  /**
+   * CMS 垃圾收集动作
+   *
+   * @param full  是否Full GC
+   * @param clear_all_soft_refs 是否清理所有的软引用
+   * @param size  对象大小
+   * @param tlab  是否使用TLAB分配对象内存
+   */
   void collect(bool   full,
                bool   clear_all_soft_refs,
                size_t size,
