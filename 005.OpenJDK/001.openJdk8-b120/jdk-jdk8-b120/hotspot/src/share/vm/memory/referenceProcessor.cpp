@@ -1005,7 +1005,7 @@ size_t ReferenceProcessor::process_discovered_reflist(
     task_executor->execute(phase3);
   } else {
     for (uint i = 0; i < _max_num_q; i++) {
-      process_pha se3(refs_lists[i], clear_referent, is_alive, keep_alive,
+      process_phase3(refs_lists[i], clear_referent, is_alive, keep_alive,
                      complete_gc);
     }
   }
