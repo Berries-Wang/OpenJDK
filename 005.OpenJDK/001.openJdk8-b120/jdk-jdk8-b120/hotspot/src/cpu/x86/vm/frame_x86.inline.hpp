@@ -31,13 +31,16 @@
 
 // Constructors:
 
+/**
+ * 栈帧结构
+ */ 
 inline frame::frame() {
-  _pc = NULL;
-  _sp = NULL;
-  _unextended_sp = NULL;
-  _fp = NULL;
-  _cb = NULL;
-  _deopt_state = unknown;
+  _pc = NULL;                             // 程序计数器，指向下一个要执行的代码地址
+  _sp = NULL;                             // 栈顶指针
+  _unextended_sp = NULL;                  // 异常栈顶指针
+  _fp = NULL;                             // 栈底指针
+  _cb = NULL;                             // 代码块地址
+  _deopt_state = unknown;                 // 描述从编译代码到解释代码的反优化的状态。
 }
 
 inline frame::frame(intptr_t* sp, intptr_t* fp, address pc) {
