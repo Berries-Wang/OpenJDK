@@ -177,7 +177,7 @@ G1CollectorPolicy::G1CollectorPolicy() :
   // aligned with the region size. To get around this we use the
   // unaligned values for the heap.
   /**
-   * 
+   * 设置HR大小
    * 
    */ 
   HeapRegion::setup_heap_region_size(InitialHeapSize, MaxHeapSize);

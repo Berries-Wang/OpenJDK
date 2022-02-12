@@ -109,32 +109,53 @@ size_t HeapRegion::max_region_size() {
 /**
  * 设置HR的大小
  * 
- * @param initial_heap_size
- * @param max_heap_size
+ * @param initial_heap_size 初始堆大小
+ * @param max_heap_size 最大堆大小
  * 
+ * 通过如下代码分析，region_size 最大值为32MB,最小值为1MB,且
+ * region_size必须是2的整数次幂，因此，region_size的范围:[1MB,2MB,4MB,8MB,16MB,32MB]
  */ 
 void HeapRegion::setup_heap_region_size(size_t initial_heap_size, size_t max_heap_size) {
+  // 读取VM参数G1HeapRegionSize，默认值为0
   uintx region_size = G1HeapRegionSize;
+  // 即G1HeapRegionSize是否指定
   if (FLAG_IS_DEFAULT(G1HeapRegionSize)) {
+    // 计算一个平均值
     size_t average_heap_size = (initial_heap_size + max_heap_size) / 2;
+    /**
+     * HeapRegionBounds::target_number(): 2048
+     * HeapRegionBounds::min_size()： 1M
+     */ 
+    // 通过堆的大小计算HR的大小
     region_size = MAX2(average_heap_size / HeapRegionBounds::target_number(),
                        (uintx) HeapRegionBounds::min_size());
   }
 
+  // 对数转换,即1*2^region_size_log<=region_size(这个小于是无限接近)
   int region_size_log = log2_long((jlong) region_size);
-  // Recalculate the region size to make sure it's a power of
-  // 2. This means that region_size is the largest power of 2 that's
-  // <= what we've calculated so far.
+
+  /**
+   *
+   *  Recalculate the region size to make sure it's a power of
+   * 2. This means that region_size is the largest power of 2 that's
+   * <= what we've calculated so far.
+   * 重新计算region_size,确保他是2整数次幂，即region_size 是最接近于上面计算的
+   * region_size的2的整数次幂的一个整数。
+   */
   region_size = ((uintx)1 << region_size_log);
 
-  // Now make sure that we don't go over or under our limits.
+  /**
+   *  Now make sure that we don't go over or under our limits.
+   *  确保region_size是规定的范围内
+   */ 
   if (region_size < HeapRegionBounds::min_size()) {
     region_size = HeapRegionBounds::min_size();
   } else if (region_size > HeapRegionBounds::max_size()) {
+    // HeapRegionBounds::max_size(): 32MB
     region_size = HeapRegionBounds::max_size();
   }
 
-  // And recalculate the log.
+  // And recalculate the log. 重新计算一下对数,用于计算一些变量，如卡表大小
   region_size_log = log2_long((jlong) region_size);
 
   // Now, set up the globals.
