@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "java D",
+            "name": "java D-000.openJDK_8u40",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/005.OpenJDK/000.openJDK_8u40/build/linux-x86_64-normal-server-slowdebug/jdk/bin/java",
@@ -26,7 +26,7 @@
             ]
         },
         {
-            "name": "java Sync",
+            "name": "java Sync-001.openJdk8-b120",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/build/linux-x86_64-normal-server-slowdebug/jdk/bin/java",
@@ -39,6 +39,45 @@
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/build",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "osx": {
+                "MIMode": "lldb",
+                "internalConsoleOptions": "openOnSessionStart",
+            },
+            "linux": {
+                "MIMode": "gdb",
+                "setupCommands": [
+                    {
+                        "text": "handle SIGSEGV noprint nostop",
+                        "description": "Disable stopping on signals handled by the JVM"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "java Sync-001.002.OpenJDK8u312-GA",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/bin/java",
+            "args": [ // 为什么这么指定VM options，请参看 man java的输出
+                // "-XX:+UseParNewGC",
+                //  "-XX:+UseConcMarkSweepGC",
+                //  "-Xms1M",
+                // "-Xms1M",
+                "-XX:+UseG1GC", // 启用G1
+                "Sync"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",

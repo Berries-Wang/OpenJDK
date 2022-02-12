@@ -105,6 +105,14 @@ size_t HeapRegion::max_region_size() {
   return HeapRegionBounds::max_size();
 }
 
+
+/**
+ * 设置HR的大小
+ * 
+ * @param initial_heap_size
+ * @param max_heap_size
+ * 
+ */ 
 void HeapRegion::setup_heap_region_size(size_t initial_heap_size, size_t max_heap_size) {
   uintx region_size = G1HeapRegionSize;
   if (FLAG_IS_DEFAULT(G1HeapRegionSize)) {

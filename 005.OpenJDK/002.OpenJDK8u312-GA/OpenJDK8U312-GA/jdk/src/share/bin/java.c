@@ -250,6 +250,7 @@ JLI_Launch(int argc, char ** argv,              /* main argc, argc */
         start = CounterGet();
     }
 
+    // 解析 libjvm.so,从动态链接库中将完整的ifn解析出来
     if (!LoadJavaVM(jvmpath, &ifn)) {
         return(6);
     }
