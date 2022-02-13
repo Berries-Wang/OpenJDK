@@ -348,18 +348,28 @@ void G1CollectorPolicy::post_heap_initialize() {
   }
 }
 
+/**
+ * G1YoungGenSizer的无参构造函数
+ *
+ * 根据JVM命令行参数，初始化新生代大小
+ */
 G1YoungGenSizer::G1YoungGenSizer() : _sizer_kind(SizerDefaults), _adaptive_size(true),
         _min_desired_young_length(0), _max_desired_young_length(0) {
+
+  // 如果指定了NewRatio
   if (FLAG_IS_CMDLINE(NewRatio)) {
+    // NewSize 和 MaxNewSize会覆盖NewRatio
     if (FLAG_IS_CMDLINE(NewSize) || FLAG_IS_CMDLINE(MaxNewSize)) {
       warning("-XX:NewSize and -XX:MaxNewSize override -XX:NewRatio");
     } else {
+      // 设置新生代初始化方式和是否自适应大小
       _sizer_kind = SizerNewRatio;
       _adaptive_size = false;
       return;
     }
   }
 
+  // 参数异常，最小值大于最大值
   if (NewSize > MaxNewSize) {
     if (FLAG_IS_CMDLINE(MaxNewSize)) {
       warning("NewSize (" SIZE_FORMAT "k) is greater than the MaxNewSize (" SIZE_FORMAT "k). "
@@ -369,36 +379,56 @@ G1YoungGenSizer::G1YoungGenSizer() : _sizer_kind(SizerDefaults), _adaptive_size(
     MaxNewSize = NewSize;
   }
 
+  // 根据参数计算Heap Region的个数
   if (FLAG_IS_CMDLINE(NewSize)) {
-    _min_desired_young_length = MAX2((uint) (NewSize / HeapRegion::GrainBytes),
-                                     1U);
+    _min_desired_young_length = MAX2((uint)(NewSize / HeapRegion::GrainBytes), 1U);
+
     if (FLAG_IS_CMDLINE(MaxNewSize)) {
-      _max_desired_young_length =
-                             MAX2((uint) (MaxNewSize / HeapRegion::GrainBytes),
-                                  1U);
+      _max_desired_young_length = MAX2((uint)(MaxNewSize / HeapRegion::GrainBytes), 1U);
       _sizer_kind = SizerMaxAndNewSize;
       _adaptive_size = _min_desired_young_length != _max_desired_young_length;
     } else {
       _sizer_kind = SizerNewSizeOnly;
     }
   } else if (FLAG_IS_CMDLINE(MaxNewSize)) {
-    _max_desired_young_length =
-                             MAX2((uint) (MaxNewSize / HeapRegion::GrainBytes),
-                                  1U);
+    _max_desired_young_length = MAX2((uint)(MaxNewSize / HeapRegion::GrainBytes), 1U);
     _sizer_kind = SizerMaxNewSizeOnly;
   }
 }
 
+
+/**
+ * 使用 "G1NewSizePercent"计算新生代分区数量的最小值
+ * 
+ * @param new_number_of_heap_regions
+ * 
+ * @return 
+ */ 
 uint G1YoungGenSizer::calculate_default_min_length(uint new_number_of_heap_regions) {
   uint default_value = (new_number_of_heap_regions * G1NewSizePercent) / 100;
   return MAX2(1U, default_value);
 }
 
+/**
+ * 使用"G1MaxNewSizePercent"计算新生代分区数量的最大值
+ * 
+ * @param new_number_of_heap_regions
+ * 
+ * @return 
+ */ 
 uint G1YoungGenSizer::calculate_default_max_length(uint new_number_of_heap_regions) {
   uint default_value = (new_number_of_heap_regions * G1MaxNewSizePercent) / 100;
   return MAX2(1U, default_value);
 }
 
+/**
+ * 重新计算新生代分区数量的最大值和最小值
+ *
+ * @param number_of_heap_regions 堆分区总数
+ * @param min_young_length 指针，传出参数
+ * @param max_young_length 指针，传出参数
+ *
+ */
 void G1YoungGenSizer::recalculate_min_max_young_length(uint number_of_heap_regions, uint* min_young_length, uint* max_young_length) {
   assert(number_of_heap_regions > 0, "Heap must be initialized");
 
@@ -1377,14 +1407,26 @@ void G1CollectorPolicy::update_recent_gc_times(double end_time_sec,
   _prev_collection_pause_end_ms = end_time_sec * 1000.0;
 }
 
+/**
+ * 对新生代内存大小进行拓展
+ *
+ *
+ * @return 拓展的内存大小
+ */
 size_t G1CollectorPolicy::expansion_amount() {
+  // 获取GC时间与运行时间的比率
   double recent_gc_overhead = recent_avg_pause_time_ratio() * 100.0;
+  // 获取阈值
   double threshold = _gc_overhead_perc;
+
+  // 若recent_gc_overhead超过阈值
   if (recent_gc_overhead > threshold) {
     // We will double the existing space, or take
     // G1ExpandByPercentOfAvailable % of the available expansion
     // space, whichever is smaller, bounded below by a minimum
     // expansion (unless that's all that's left.)
+
+    // 拓展的最小值
     const size_t min_expand_bytes = 1*M;
     size_t reserved_bytes = _g1->max_capacity();
     size_t committed_bytes = _g1->capacity();
@@ -1392,6 +1434,8 @@ size_t G1CollectorPolicy::expansion_amount() {
     size_t expand_bytes;
     size_t expand_bytes_via_pct =
       uncommitted_bytes * G1ExpandByPercentOfAvailable / 100;
+    
+    // 拓展的最大值 
     expand_bytes = MIN2(expand_bytes_via_pct, committed_bytes);
     expand_bytes = MAX2(expand_bytes, min_expand_bytes);
     expand_bytes = MIN2(expand_bytes, uncommitted_bytes);

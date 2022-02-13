@@ -33,6 +33,10 @@ AbsSeq::AbsSeq(double alpha) :
   _davg(0.0), _dvariance(0.0), _alpha(alpha) {
 }
 
+/**
+ *
+ *
+ */
 void AbsSeq::add(double val) {
   if (_num == 0) {
     // if the sequence is empty, the davg is the same as the value

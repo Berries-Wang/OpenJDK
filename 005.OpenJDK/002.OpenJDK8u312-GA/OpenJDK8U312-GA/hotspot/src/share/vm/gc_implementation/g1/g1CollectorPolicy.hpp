@@ -121,6 +121,12 @@ class TraceGen1TimeData : public CHeapObj<mtGC> {
 //
 // NewSize and MaxNewSize override NewRatio. So, NewRatio is ignored if it is
 // combined with either NewSize or MaxNewSize. (A warning message is printed.)
+
+/**
+ * G1年轻代大小计算器
+ *
+ * 年轻代的大小还是体现在Heap Region的个数
+ */
 class G1YoungGenSizer : public CHeapObj<mtGC> {
 private:
   enum SizerKind {
@@ -130,12 +136,20 @@ private:
     SizerMaxAndNewSize,
     SizerNewRatio
   };
+   
+  // 新生代大小初始化的策略
   SizerKind _sizer_kind;
+
+  // 最小分区数
   uint _min_desired_young_length;
+  // 最大分区数
   uint _max_desired_young_length;
 
-  // False when using a fixed young generation size due to command-line options,
-  // true otherwise.
+  /**
+   * False when using a fixed young generation size due to command-line options
+   * ,true otherwise.
+   *  由于命令行选项，使用固定的年轻代大小时为false；反之，为true.即为true时为自适应大小。
+   */
   bool _adaptive_size;
 
   uint calculate_default_min_length(uint new_number_of_heap_regions);
@@ -319,6 +333,14 @@ public:
   bool verify_young_ages();
 #endif // PRODUCT
 
+  /**
+   * 预测某个动作需要消耗的时间
+   *
+   * @param seq: 见注释
+   * 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/utilities/numberSeq.hpp
+   *
+   * @return 预测值: 某个动作所需要消耗的时间
+   */
   double get_new_prediction(TruncatedSeq* seq) {
     return MAX2(seq->davg() + sigma() * seq->dsd(),
                 seq->davg() * confidence_factor(seq->num()));
@@ -549,7 +571,8 @@ private:
 
   G1GCPhaseTimes* _phase_times;
 
-  // The ratio of gc time to elapsed time, computed over recent pauses.
+  // The ratio of gc time to elapsed(过去的，经过) time, computed over recent pauses.
+  // 在最近的暂停中计算的GC时间与运行时间的比率
   double _recent_avg_pause_time_ratio;
 
   double recent_avg_pause_time_ratio() {

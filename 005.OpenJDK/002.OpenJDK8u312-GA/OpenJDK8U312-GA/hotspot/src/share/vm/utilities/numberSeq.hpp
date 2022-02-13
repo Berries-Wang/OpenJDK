@@ -29,19 +29,27 @@
 
 /**
  **  This file contains a few classes that represent number sequence,
- **  x1, x2, x3, ..., xN, and can calculate their avg, max, and sd.
+ **  x1, x2, x3, ..., xN, and can calculate their avg, max, and sd(standard deviation).
  **
  **  Here's a quick description of the classes:
  **
- **    AbsSeq: abstract superclass
- **    NumberSeq: the sequence is assumed to be very long and the
- **      maximum, avg, sd, davg, and dsd are calculated over all its elements
+ **    AbsSeq: abstract superclass （抽象超类）
+ **
+ **    NumberSeq: the sequence is assumed(假定，假设) to be very long and the
+ **      maximum, avg, sd, davg(衰减平均值), and dsd(衰减标准差) are calculated over all its elements.（假定该序列非常长，且基于他们计算 最大值、平均值、标准差、衰减平均值、衰减标准差）
+ **
  **    TruncatedSeq: this class keeps track of the last L elements
- **      of the sequence and calculates avg, max, and sd only over them
+ **      of the sequence and calculates avg, max, and sd only over them。（这个类根据序列最后L个元素，且仅基于他们计算平均值、最大值、标准差）
+ ** 
  **/
 
 #define DEFAULT_ALPHA_VALUE 0.7
 
+
+/**
+ * decaying: 衰减的
+ * variance: n. 分歧，不一致；变化幅度，差额；（官方的）特殊许可；（律）（两个供述或证据间的）不符；（统计）方差
+ */ 
 class AbsSeq: public CHeapObj<mtInternal> {
 private:
   void init(double alpha);

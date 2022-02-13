@@ -56,10 +56,18 @@ class CMSIsAliveClosure;
 class PSPromotionManager;
 class ParCompactionManager;
 
+/**
+ *对象头，分为两部分:
+ * 1. Mark Word
+ * 2. 元数据
+ */
 class oopDesc {
   friend class VMStructs;
  private:
+  // _mark这个指针并没有指向任何地方，而是作为变量来存储对象Mark Word数据
   volatile markOop  _mark;
+
+  // 元数据，指向Klass
   union _metadata {
     Klass*      _klass;
     narrowKlass _compressed_klass;

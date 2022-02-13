@@ -43,7 +43,7 @@ PRAGMA_FORMAT_MUTE_WARNINGS_FOR_GCC
 
 int    HeapRegion::LogOfHRGrainBytes = 0;
 int    HeapRegion::LogOfHRGrainWords = 0;
-size_t HeapRegion::GrainBytes        = 0;
+size_t HeapRegion::GrainBytes        = 0; // 即 region_size:单个Heap Region的大小
 size_t HeapRegion::GrainWords        = 0;
 size_t HeapRegion::CardsPerRegion    = 0;
 

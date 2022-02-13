@@ -800,6 +800,11 @@ char* Universe::preferred_heap_base(size_t heap_size, size_t alignment, NARROW_O
   return (char*)base; // also return NULL (don't care) for 32-bit VM
 }
 
+
+/**
+ * 初始化JVM堆
+ * 
+ */ 
 jint Universe::initialize_heap() {
 
   if (UseParallelGC) {
