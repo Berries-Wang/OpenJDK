@@ -142,6 +142,7 @@ void ConcurrentMarkThread::run() {
         if (!cm()->has_aborted()) {
           if (g1_policy->adaptive_young_list_length()) {
             double now = os::elapsedTime();
+            // 预测本次并行标记阶段所耗费的时间
             double remark_prediction_ms = g1_policy->predict_remark_time_ms();
             jlong sleep_time_ms = mmu_tracker->when_ms(now, remark_prediction_ms);
             os::sleep(current_thread, sleep_time_ms, false);

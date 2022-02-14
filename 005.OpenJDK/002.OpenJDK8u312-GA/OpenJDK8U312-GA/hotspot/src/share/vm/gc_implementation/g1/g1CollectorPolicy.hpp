@@ -342,6 +342,11 @@ public:
    * @return 预测值: 某个动作所需要消耗的时间
    */
   double get_new_prediction(TruncatedSeq* seq) {
+    // davg: 衰减均值
+    // sigma: sigma()返回一个系数，来自G1ConfidencePercent(默认50,sigma为0.5)的配置,表示信赖度
+    // dsd: 衰减标准偏差
+    // confidence_factor: 表示可信度相关系数，主要用于弥补样本数据不足，起到补偿的作用。
+
     return MAX2(seq->davg() + sigma() * seq->dsd(),
                 seq->davg() * confidence_factor(seq->num()));
   }
