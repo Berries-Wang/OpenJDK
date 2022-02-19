@@ -38,6 +38,8 @@
 #if INCLUDE_ALL_GCS
 # include "gc_implementation/parallelScavenge/psPromotionManager.hpp"
 #endif // INCLUDE_ALL_GCS
+// 日志
+#include "wei_log/WeiLog.hpp"
 
 PRAGMA_FORMAT_MUTE_WARNINGS_FOR_GCC
 
@@ -112,6 +114,15 @@ void ConstantPoolCacheEntry::set_field(Bytecodes::Code get_code,
                                        bool is_final,
                                        bool is_volatile,
                                        Klass* root_klass) {
+  
+  // 添加调试代码
+  if (put_code == Bytecodes::_putfield) {
+    wei_print_klass_name(root_klass->name());
+    const char *className = "H";
+    if (wei_string_equal(root_klass->name(), className)) {
+      wei_log_info(1, "Bytecodes::_putfield");
+    }
+  }
   set_f1(field_holder());
   set_f2(field_offset);
   assert((field_index & field_index_mask) == field_index,

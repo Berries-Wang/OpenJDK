@@ -61,6 +61,8 @@
 # include "bytes_ppc.hpp"
 #endif
 
+#include "wei_log/WeiLog.hpp"
+
 // Implementation of all inlined member functions defined in oop.hpp
 // We need a separate file to avoid circular references
 
@@ -340,9 +342,22 @@ inline volatile oop oopDesc::obj_field_volatile(int offset) const {
   OrderAccess::acquire();
   return value;
 }
+/**
+ * 引用赋值
+ * 
+ * @param offset 字段
+ * @param value  值
+ */
 inline void oopDesc::obj_field_put(int offset, oop value) {
-  UseCompressedOops ? oop_store(obj_field_addr<narrowOop>(offset), value) :
-                      oop_store(obj_field_addr<oop>(offset),       value);
+  const char *debugKlassName = "G";
+  if (value != 0x0) {
+    if (wei_string_equal(value->klass()->name(), debugKlassName)) {
+      wei_log_info(1, "Debug For G");
+    }
+  }
+
+  UseCompressedOops ? oop_store(obj_field_addr<narrowOop>(offset), value)
+                    : oop_store(obj_field_addr<oop>(offset), value);
 }
 
 inline Metadata* oopDesc::metadata_field(int offset) const {
@@ -526,23 +541,56 @@ inline void update_barrier_set(void* p, oop v, bool release = false) {
   oopDesc::bs()->write_ref_field(p, v, release);
 }
 
+/**
+ * 写前屏障
+ *
+ * @param p 字段
+ * @param v 值
+ * 
+ */
 template <class T> inline void update_barrier_set_pre(T* p, oop v) {
+  /**
+   * 
+   * 
+   */ 
   oopDesc::bs()->write_ref_field_pre(p, v);
 }
 
+/**
+ * 对象字段赋值
+ * @param p 目标字段
+ * @param v 字段值
+ *
+ */
 template <class T> inline void oop_store(T* p, oop v) {
-  if (always_do_update_barrier) {
+  if (always_do_update_barrier) { // always_do_update_barrier固定为false
     oop_store((volatile T*)p, v);
-  } else {
+  } else { // 主线代码
+    // 写前屏障
     update_barrier_set_pre(p, v);
+
+    // 字段赋值
     oopDesc::encode_store_heap_oop(p, v);
-    // always_do_update_barrier == false =>
-    // Either we are at a safepoint (in GC) or CMS is not used. In both
-    // cases it's unnecessary to mark the card as dirty with release sematics.
+    
+    /**
+     * always_do_update_barrier == false =>
+     * Either we are at a safepoint (in GC) or CMS is not used. In both
+     * cases it's unnecessary to mark the card as dirty with release sematics.
+     *
+     * 要么我们在一个安全点(在GC中)，要么CMS没有使用,在这两种情况下，都没有使用发布语意将卡表标记为脏
+     *
+     * 写后屏障
+     */
     update_barrier_set((void*)p, v, false /* release */);  // cast away type
   }
 }
 
+/**
+ * 对象字段赋值
+ * @param p 目标字段
+ * @param v 字段值
+ *
+ */
 template <class T> inline void oop_store(volatile T* p, oop v) {
   update_barrier_set_pre((T*)p, v);   // cast away volatile
   // Used by release_obj_field_put, so use release_store_ptr.

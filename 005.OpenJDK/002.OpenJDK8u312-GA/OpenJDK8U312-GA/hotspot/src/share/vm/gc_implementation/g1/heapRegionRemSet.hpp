@@ -93,30 +93,50 @@ class FromCardCache : public AllStatic {
   }
 };
 
-// The "_coarse_map" is a bitmap with one bit for each region, where set
-// bits indicate that the corresponding region may contain some pointer
-// into the owning region.
+/**
+ *  The "_coarse_map" is a bitmap with one bit for each region, where set
+ * bits indicate that the corresponding region may contain some pointer
+ * into the owning region.
+ *
+ * _coarse_map是个位图，他的每一位对应着一个region,当某一位被设置了表示对应的region可能包含指向
+ * 当前region的指针
+ * 
+ * > 粗粒度: 通过位图来指示，每一位表示对应分区有引用到该分区
+ */
 
-// The "_fine_grain_entries" array is an open hash table of PerRegionTables
-// (PRTs), indicating regions for which we're keeping the RS as a set of
-// cards.  The strategy is to cap the size of the fine-grain table,
-// deleting an entry and setting the corresponding coarse-grained bit when
-// we would overflow this cap.
+/**
+ * coarse-grained： 粗粒度
+ * fine-grain： 细粒度
+ * 
+ * 
+ * The "_fine_grain_entries" array is an open hash table of PerRegionTables
+ * (PRTs), indicating regions for which we're keeping the RS as a set of
+ * cards.  The strategy is to cap the size of the fine-grain table,
+ * deleting an entry and setting the corresponding coarse-grained bit when
+ * we would overflow this cap.
+ * 
+ * _fine_grain_entries数组是一个开放的PerRegionTables（PRT）哈希表,策略是限制细粒度表的大小。
+ * 当超出这个限制的时候，删除一个元素并设置相应的粗粒度位。
+ */
 
-// We use a mixture of locking and lock-free techniques here.  We allow
-// threads to locate PRTs without locking, but threads attempting to alter
-// a bucket list obtain a lock.  This means that any failing attempt to
-// find a PRT must be retried with the lock.  It might seem dangerous that
-// a read can find a PRT that is concurrently deleted.  This is all right,
-// because:
-//
-//   1) We only actually free PRT's at safe points (though we reuse them at
-//      other times).
-//   2) We find PRT's in an attempt to add entries.  If a PRT is deleted,
-//      it's _coarse_map bit is set, so the that we were attempting to add
-//      is represented.  If a deleted PRT is re-used, a thread adding a bit,
-//      thinking the PRT is for a different region, does no harm.
+/**
+ *
+ * We use a mixture of locking and lock-free techniques here.  We allow
+ * threads to locate PRTs without locking, but threads attempting to alter
+ * a bucket list obtain a lock.  This means that any failing attempt to
+ * find a PRT must be retried with the lock.  It might seem dangerous that
+ * a read can find a PRT that is concurrently deleted.  This is all right,
+ * because:
+ *
+ *   1) We only actually free PRT's at safe points (though we reuse them at
+ *      other times).
+ *   2) We find PRT's in an attempt to add entries.  If a PRT is deleted,
+ *      it's _coarse_map bit is set, so the that we were attempting to add
+ *      is represented.  If a deleted PRT is re-used, a thread adding a bit,
+ *      thinking the PRT is for a different region, does no harm.
+ */
 
+// 记录分区所有引用者信息
 class OtherRegionsTable VALUE_OBJ_CLASS_SPEC {
   friend class HeapRegionRemSetIterator;
 

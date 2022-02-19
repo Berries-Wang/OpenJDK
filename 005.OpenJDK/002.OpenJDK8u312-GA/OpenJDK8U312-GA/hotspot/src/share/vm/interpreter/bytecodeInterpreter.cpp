@@ -2152,9 +2152,11 @@ run:
           } else {
             if (tos_type == itos) {
               obj->int_field_put(field_offset, STACK_INT(-1));
-            } else if (tos_type == atos) {
+            } else if (tos_type == atos) { // 如果值得类型是对象,那么就需要使用到写屏障了
               VERIFY_OOP(STACK_OBJECT(-1));
+             
               obj->obj_field_put(field_offset, STACK_OBJECT(-1));
+            
             } else if (tos_type == btos) {
               obj->byte_field_put(field_offset, STACK_INT(-1));
             } else if (tos_type == ztos) {

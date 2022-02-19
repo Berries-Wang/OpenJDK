@@ -53,7 +53,7 @@
   develop(bool, G1TraceMarkStackOverflow, false,                            \
           "If true, extra debugging code for CM restart for ovflw.")        \
                                                                             \
-  develop(bool, G1TraceHeapRegionRememberedSet, false,                      \
+  develop(bool, G1TraceHeapRegionRememberedSet, true,                      \
           "Enables heap region remembered set debug logs")                  \
                                                                             \
   diagnostic(bool, G1SummarizeConcMark, false,                              \
@@ -173,7 +173,7 @@
           "Max number of entries per region in a sparse table."             \
           "Will be set ergonomically by default.")                          \
                                                                             \
-  develop(bool, G1RecordHRRSOops, false,                                    \
+  develop(bool, G1RecordHRRSOops, true,                                    \
           "When true, record recent calls to rem set operations.")          \
                                                                             \
   develop(bool, G1RecordHRRSEvents, false,                                  \

@@ -29,7 +29,7 @@ void wei_print_klass_name(Symbol *klassName) {
   printf("\n");
 }
 
-bool wei_string_equal(Symbol *klassName, char *klassNameStr) {
+bool wei_string_equal(Symbol *klassName, const char *klassNameStr) {
   bool equal = true;
 
   for (int index = 0; index < klassName->utf8_length(); index++) {

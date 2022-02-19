@@ -422,6 +422,11 @@ void OtherRegionsTable::print_from_card_cache() {
   FromCardCache::print();
 }
 
+/**
+ * G1管理RSet
+ * 
+ * 
+ */ 
 void OtherRegionsTable::add_reference(OopOrNarrowOopStar from, int tid) {
   uint cur_hrm_ind = hr()->hrm_index();
 

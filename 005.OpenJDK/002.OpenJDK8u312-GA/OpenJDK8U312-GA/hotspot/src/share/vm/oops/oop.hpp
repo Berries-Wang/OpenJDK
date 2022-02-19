@@ -74,7 +74,7 @@ class oopDesc {
   } _metadata;
 
   // Fast access to barrier set.  Must be initialized.
-  static BarrierSet* _bs;
+  static BarrierSet* _bs; // 用于实现屏障(写前屏障 && 写后屏障)
 
  public:
   markOop  mark() const         { return _mark; }

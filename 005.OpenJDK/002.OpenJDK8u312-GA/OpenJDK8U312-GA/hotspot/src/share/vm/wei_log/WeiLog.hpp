@@ -10,6 +10,6 @@ void wei_log_info(int argc, ...);
 
 void wei_print_klass_name(Symbol* klassName);
 
-bool wei_string_equal(Symbol*,char*);
+bool wei_string_equal(Symbol*,const char*);
 
 #endif // _WEI_LOG_WANG

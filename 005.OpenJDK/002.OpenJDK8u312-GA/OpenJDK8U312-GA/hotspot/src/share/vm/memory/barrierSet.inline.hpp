@@ -27,22 +27,44 @@
 
 #include "memory/barrierSet.hpp"
 #include "memory/cardTableModRefBS.hpp"
+#include "wei_log/WeiLog.hpp"
 
 // Inline functions of BarrierSet, which de-virtualize certain
 // performance-critical calls when the barrier is the most common
 // card-table kind.
 
-template <class T> void BarrierSet::write_ref_field_pre(T* field, oop new_val) {
+/**
+ * 写前屏障
+ */
+template <class T> void BarrierSet::write_ref_field_pre(T *field, oop new_val) {
+  const char *debugKlassName = "G";
+  if (new_val != 0x0) {
+    if (wei_string_equal(new_val->klass()->name(), debugKlassName)) {
+      wei_log_info(1, "Debug For G");
+    }
+  }
+
   if (kind() == CardTableModRef) {
-    ((CardTableModRefBS*)this)->inline_write_ref_field_pre(field, new_val);
+    ((CardTableModRefBS *)this)->inline_write_ref_field_pre(field, new_val);
   } else {
     write_ref_field_pre_work(field, new_val);
   }
 }
 
-void BarrierSet::write_ref_field(void* field, oop new_val, bool release) {
+/**
+ * 写后屏障
+ *
+ */
+void BarrierSet::write_ref_field(void *field, oop new_val, bool release) {
+
+  /**
+   * kind():
+   * G1：G1SATBCTLogging
+   *
+   */
   if (kind() == CardTableModRef) {
-    ((CardTableModRefBS*)this)->inline_write_ref_field(field, new_val, release);
+    ((CardTableModRefBS *)this)
+        ->inline_write_ref_field(field, new_val, release);
   } else {
     write_ref_field_work(field, new_val, release);
   }
