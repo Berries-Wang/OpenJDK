@@ -577,7 +577,7 @@ template <class T> inline void oop_store(T* p, oop v) {
      * Either we are at a safepoint (in GC) or CMS is not used. In both
      * cases it's unnecessary to mark the card as dirty with release sematics.
      *
-     * 要么我们在一个安全点(在GC中)，要么CMS没有使用,在这两种情况下，都没有使用发布语意将卡表标记为脏
+     * 要么我们在一个安全点(在GC中)，要么CMS没有使用,在这两种情况下，都没有必要使用发布语意将卡表标记为脏
      *
      * 写后屏障
      */
