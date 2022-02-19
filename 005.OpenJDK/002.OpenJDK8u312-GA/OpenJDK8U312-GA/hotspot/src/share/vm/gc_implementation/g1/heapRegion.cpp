@@ -175,6 +175,7 @@ void HeapRegion::setup_heap_region_size(size_t initial_heap_size, size_t max_hea
   guarantee((size_t) 1 << LogOfHRGrainWords == GrainWords, "sanity");
 
   guarantee(CardsPerRegion == 0, "we should only set it once");
+  // CardsPerRegion = heap_size >> CardTableModRefBS::card_shift
   CardsPerRegion = GrainBytes >> CardTableModRefBS::card_shift;
 }
 
