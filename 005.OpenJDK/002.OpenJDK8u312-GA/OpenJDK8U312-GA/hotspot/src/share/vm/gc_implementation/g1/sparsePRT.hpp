@@ -49,9 +49,9 @@ public:
     UnrollFactor  =  4
   };
 private:
-  RegionIdx_t _region_ind;
+  RegionIdx_t _region_ind; // Region 索引,表示某一个Region
   int         _next_index;
-  CardIdx_t   _cards[1];
+  CardIdx_t   _cards[1]; // 全局Card Table的索引值
   // WARNING: Don't put any data members beyond this line. Card array has, in fact, variable length.
   // It should always be the last data member.
 public:

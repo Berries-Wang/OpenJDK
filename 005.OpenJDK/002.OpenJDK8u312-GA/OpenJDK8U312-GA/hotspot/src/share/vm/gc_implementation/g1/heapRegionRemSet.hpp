@@ -145,10 +145,16 @@ class OtherRegionsTable VALUE_OBJ_CLASS_SPEC {
   HeapRegion*      _hr;
 
   // These are protected by "_m".
-  BitMap      _coarse_map;
+  /**
+   *  粗粒度位图
+   */
+  BitMap _coarse_map;
   size_t      _n_coarse_entries;
   static jint _n_coarsenings;
 
+  /**
+   * 细粒度PTR
+   */
   PerRegionTable** _fine_grain_regions;
   size_t           _n_fine_entries;
 
@@ -166,7 +172,10 @@ class OtherRegionsTable VALUE_OBJ_CLASS_SPEC {
   static size_t _fine_eviction_stride;
   static size_t _fine_eviction_sample_size;
 
-  SparsePRT   _sparse_table;
+  /**
+   * 稀疏哈希表
+   */
+  SparsePRT _sparse_table;
 
   // These are static after init.
   static size_t _max_fine_entries;

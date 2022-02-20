@@ -38,13 +38,16 @@
 
 PRAGMA_FORMAT_MUTE_WARNINGS_FOR_GCC
 
+/**
+ * 细粒度RSet
+ */
 class PerRegionTable: public CHeapObj<mtGC> {
   friend class OtherRegionsTable;
   friend class HeapRegionRemSetIterator;
 
-  HeapRegion*     _hr;
-  BitMap          _bm;
-  jint            _occupied;
+  HeapRegion*     _hr; // HeapRegion指针
+  BitMap          _bm; // 位图
+  jint            _occupied; // 引用数量
 
   // next pointer for free/allocated 'all' list
   PerRegionTable* _next;
