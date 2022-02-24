@@ -50,7 +50,11 @@ ConcurrentG1Refine::ConcurrentG1Refine(G1CollectedHeap* g1h, CardTableEntryClosu
   set_red_zone(MAX2<int>(G1ConcRefinementRedZone, yellow_zone()));
 
   _n_worker_threads = thread_num();
-  // We need one extra thread to do the young gen rset size sampling.
+  /**
+   * We need one extra thread to do the young gen rset size sampling.
+   * 我们需要一个确切的线程去做年轻代的大小调整的抽样,即：
+   * >> 抽样线程，负责调整新生代分区数量，从而满足指定的响应时间的要求。
+   */ 
   _n_threads = _n_worker_threads + 1;
 
   reset_threshold_step();

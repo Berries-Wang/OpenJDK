@@ -60,6 +60,9 @@ ConcurrentG1RefineThread(ConcurrentG1Refine* cg1r, ConcurrentG1RefineThread *nex
   create_and_start();
 }
 
+/**
+ * Refine线程初始化，计算启动阈值
+ */ 
 void ConcurrentG1RefineThread::initialize() {
   if (_worker_id < cg1r()->worker_thread_num()) {
     // Current thread activation threshold
