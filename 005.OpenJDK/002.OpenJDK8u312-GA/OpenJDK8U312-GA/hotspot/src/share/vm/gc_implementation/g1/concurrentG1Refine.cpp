@@ -73,8 +73,13 @@ ConcurrentG1Refine::ConcurrentG1Refine(G1CollectedHeap* g1h, CardTableEntryClosu
   }
 }
 
+/**
+ * 重置Refine线程消费队列的步长
+ * 
+ */ 
 void ConcurrentG1Refine::reset_threshold_step() {
   if (FLAG_IS_DEFAULT(G1ConcRefinementThresholdStep)) {
+    // 注意，《JVM G1源码分析与调优》书上有错误
     _thread_threshold_step = (yellow_zone() - green_zone()) / (worker_thread_num() + 1);
   } else {
     _thread_threshold_step = G1ConcRefinementThresholdStep;
