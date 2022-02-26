@@ -122,6 +122,11 @@ G1RootProcessor::G1RootProcessor(G1CollectedHeap* g1h) :
     _lock(Mutex::leaf, "G1 Root Scanning barrier lock", false),
     _n_workers_discovered_strong_classes(0) {}
 
+/**
+ * G1 根处理代码
+ * 
+ * 
+ */ 
 void G1RootProcessor::evacuate_roots(OopClosure* scan_non_heap_roots,
                                      OopClosure* scan_non_heap_weak_roots,
                                      CLDClosure* scan_strong_clds,
@@ -141,6 +146,7 @@ void G1RootProcessor::evacuate_roots(OopClosure* scan_non_heap_roots,
   // CodeBlobClosures are not interoperable with BufferingOopClosures
   G1CodeBlobClosure root_code_blobs(scan_non_heap_roots);
 
+  // 处理Java根
   process_java_roots(strong_roots,
                      trace_metadata ? scan_strong_clds : NULL,
                      scan_strong_clds,
@@ -155,6 +161,7 @@ void G1RootProcessor::evacuate_roots(OopClosure* scan_non_heap_roots,
     worker_has_discovered_all_strong_classes();
   }
 
+  // 处理JVM根
   process_vm_roots(strong_roots, weak_roots, phase_times, worker_i);
   process_string_table_roots(weak_roots, phase_times, worker_i);
   {

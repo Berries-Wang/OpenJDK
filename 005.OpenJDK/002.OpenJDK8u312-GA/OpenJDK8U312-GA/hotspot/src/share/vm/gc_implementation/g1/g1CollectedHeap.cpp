@@ -2281,6 +2281,7 @@ void G1CollectedHeap::iterate_dirty_card_closure(CardTableEntryClosure* cl,
   G1HotCardCache* hot_card_cache = _cg1r->hot_card_cache();
   hot_card_cache->drain(worker_i, g1_rem_set(), into_cset_dcq);
 
+  // 处理DCQS剩下的DCQ(剩下的?GC时，Refine线程也不能执行,所以剩下的是Refine没有处理完的吗?)
   DirtyCardQueueSet& dcqs = JavaThread::dirty_card_queue_set();
   size_t n_completed_buffers = 0;
   while (dcqs.apply_closure_to_completed_buffer(cl, worker_i, 0, true)) {
@@ -2836,12 +2837,17 @@ void G1CollectedHeap::collection_set_iterate_from(HeapRegion* r,
   HeapRegion* cur = r;
   while (cur != NULL) {
     HeapRegion* next = cur->next_in_collection_set();
+    /**
+     * ScanRSClosure::doHeapRegion(HeapRegion* r) : 单个分区的处理流程
+     */ 
     if (cl->doHeapRegion(cur) && false) {
       cl->incomplete();
       return;
     }
     cur = next;
   }
+
+  // 如果本线程已经处理完属于自己处理的分区，那么就协助处理其他线程待处理的分区。
   cur = g1_policy()->collection_set();
   while (cur != r) {
     HeapRegion* next = cur->next_in_collection_set();
@@ -4634,11 +4640,21 @@ bool G1ParEvacuateFollowersClosure::offer_termination() {
   return res;
 }
 
+/**
+ *  将Java根和RSet根找到的子对象全部复制到新的分区中
+ * 
+ */ 
 void G1ParEvacuateFollowersClosure::do_void() {
   G1ParScanThreadState* const pss = par_scan_state();
+  
+  // 具体的处理流程: 将每个待处理的对象拿出来进行处理: void G1ParScanThreadState::trim_queue()
   pss->trim_queue();
+  
   do {
+
+    // 线程处理完成了，可以去协助其他线程处理
     pss->steal_and_trim_queue(queues());
+
   } while (!offer_termination());
 }
 

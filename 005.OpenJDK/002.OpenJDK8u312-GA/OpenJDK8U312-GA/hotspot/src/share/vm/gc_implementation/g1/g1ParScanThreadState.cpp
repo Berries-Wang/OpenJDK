@@ -141,6 +141,11 @@ bool G1ParScanThreadState::verify_task(StarTask ref) const {
 }
 #endif // ASSERT
 
+/**
+ * 
+ * 将Java根和RSet根找到的子对象全部复制到新的分区中 > 将每个待处理的对象拿出来处理
+ * 
+ */ 
 void G1ParScanThreadState::trim_queue() {
   assert(_evac_failure_cl != NULL, "not set");
 
@@ -149,6 +154,9 @@ void G1ParScanThreadState::trim_queue() {
     // Drain the overflow stack first, so other threads can steal.
     while (_refs->pop_overflow(ref)) {
       if (!_refs->try_push_to_taskqueue(ref)) {
+        /**
+         * dispatch_reference 会根据不同的对象，做不同的处理，最终调用deal_with_reference
+         */ 
         dispatch_reference(ref);
       }
     }

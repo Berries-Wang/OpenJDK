@@ -137,6 +137,10 @@ public:
 
   void set_try_claimed() { _try_claimed = true; }
 
+/**
+ * 卡表扫描
+ * 
+ */ 
   void scanCard(size_t index, HeapRegion *r) {
     // Stack allocate the DirtyCardToOopClosure instance
     HeapRegionDCTOC cl(_g1h, r, _oc,
@@ -153,6 +157,7 @@ public:
       // scans (the rsets of the regions in the cset can intersect).
       _ct_bs->set_card_claimed(index);
       _cards_done++;
+      // DirtyCardToOopClosure::do_MemRegion(MemRegion mr)
       cl.do_MemRegion(mr);
     }
   }
@@ -174,6 +179,10 @@ public:
     _strong_code_root_scan_time_sec += (os::elapsedTime() - scan_start);
   }
 
+  /**
+   * 单个Heap Region的扫描逻辑
+   * 
+   */ 
   bool doHeapRegion(HeapRegion* r) {
     assert(r->in_collection_set(), "should only be called on elements of CS.");
     HeapRegionRemSet* hrrs = r->rem_set();
@@ -204,7 +213,8 @@ public:
       gclog_or_tty->print("Rem set iteration yielded card [" PTR_FORMAT ", " PTR_FORMAT ").\n",
                           card_start, card_start + CardTableModRefBS::card_size_in_words);
 #endif
-
+     
+     // 找到引用者分区地址，注意，不是引用者对象的地址。
       HeapRegion* card_region = _g1h->heap_region_containing(card_start);
       _cards++;
 
@@ -215,6 +225,7 @@ public:
       // If the card is dirty, then we will scan it during updateRS.
       if (!card_region->in_collection_set() &&
           !_ct_bs->is_card_dirty(card_index)) {
+        // 扫描卡表
         scanCard(card_index, card_region);
       }
     }
@@ -235,14 +246,20 @@ public:
   size_t cards_looked_up() { return _cards;}
 };
 
+/**
+ * 扫描RSet
+ * 
+ */ 
 void G1RemSet::scanRS(G1ParPushHeapRSClosure* oc,
                       CodeBlobClosure* code_root_cl,
                       uint worker_i) {
   double rs_time_start = os::elapsedTime();
+  // 在这里看出，每个GC线程都只会针对于部分分区处理，这也就是为什么他们之间能够并行运行的原因
   HeapRegion *startRegion = _g1->start_cset_region_for_worker(worker_i);
 
   ScanRSClosure scanRScl(oc, code_root_cl, worker_i);
 
+  // 对本线程需要处理的分区逐一进行处理 
   _g1->collection_set_iterate_from(startRegion, &scanRScl);
   scanRScl.set_try_claimed();
   _g1->collection_set_iterate_from(startRegion, &scanRScl);
@@ -290,6 +307,13 @@ public:
   }
 };
 
+/**
+ * YGC 更新RSet
+ *
+ * @param worker_i 0:表示处理所有的DCQ
+ *
+ *
+ */
 void G1RemSet::updateRS(DirtyCardQueue* into_cset_dcq, uint worker_i) {
   G1GCParPhaseTimesTracker x(_g1p->phase_times(), G1GCPhaseTimes::UpdateRS, worker_i);
   // Apply the given closure to all remaining log entries.
@@ -302,6 +326,12 @@ void G1RemSet::cleanupHRRS() {
   HeapRegionRemSet::cleanup();
 }
 
+
+/**
+ * 更新和扫描RSet
+ * 
+ * 
+ */ 
 void G1RemSet::oops_into_collection_set_do(G1ParPushHeapRSClosure* oc,
                                            CodeBlobClosure* code_root_cl,
                                            uint worker_i) {
@@ -323,11 +353,15 @@ void G1RemSet::oops_into_collection_set_do(G1ParPushHeapRSClosure* oc,
   // are wholly 'free' of live objects. In the event of an evacuation
   // failure the cards/buffers in this queue set are passed to the
   // DirtyCardQueueSet that is used to manage RSet updates
+  // 这里使用的DCQ不同于JavaThread里面的DCQ，JavaThread里面的DCQ是为了记录Mutator在运行时的引用关系，而这个DCQ是为了记录过程中发生失败时要保留的引用关系
   DirtyCardQueue into_cset_dcq(&_g1->into_cset_dirty_card_queue_set());
 
   assert((ParallelGCThreads > 0) || worker_i == 0, "invariant");
-
+  
+  // 更新RSet
   updateRS(&into_cset_dcq, worker_i);
+
+  // 扫描RSet
   scanRS(oc, code_root_cl, worker_i);
 
   // We now clear the cached values of _cset_rs_update_cl for this worker

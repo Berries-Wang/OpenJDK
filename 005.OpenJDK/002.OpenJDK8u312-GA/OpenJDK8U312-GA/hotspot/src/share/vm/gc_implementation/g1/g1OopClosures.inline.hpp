@@ -60,14 +60,18 @@ inline void FilterOutOfRegionClosure::do_oop_nv(T* p) {
   }
 }
 
-// This closure is applied to the fields of the objects that have just been copied.
-template <class T>
-inline void G1ParScanClosure::do_oop_nv(T* p) {
+/**
+ * This closure is applied to the fields of the objects that have just been copied.
+ * 
+ * GC时处理对象的Field
+ */ 
+template <class T> inline void G1ParScanClosure::do_oop_nv(T* p) {
   T heap_oop = oopDesc::load_heap_oop(p);
 
   if (!oopDesc::is_null(heap_oop)) {
     oop obj = oopDesc::decode_heap_oop_not_null(heap_oop);
     const InCSetState state = _g1->in_cset_state(obj);
+    // 判断field是否在CSet中
     if (state.is_in_cset()) {
       // We're not going to even bother checking whether the object is
       // already forwarded or not, as this usually causes an immediate
@@ -84,12 +88,14 @@ inline void G1ParScanClosure::do_oop_nv(T* p) {
              (obj->is_forwarded() &&
                  obj->forwardee() == oopDesc::load_decode_heap_oop(p)),
              "p should still be pointing to obj or to its forwardee");
-
+      
+      // 在CSet中，放入PSS队列中，准备后续复制
       _par_scan_state->push_on_queue(p);
     } else {
       if (state.is_humongous()) {
         _g1->set_humongous_is_live(obj);
       }
+      // 不在CSet中，仅仅只需要在之后的步骤中重建RSet，保持引用关系
       _par_scan_state->update_rs(_from, p, _worker_id);
     }
   }

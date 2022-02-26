@@ -75,6 +75,10 @@ HeapWord* DirtyCardToOopClosure::get_actual_top(HeapWord* top,
   return top;
 }
 
+/**
+ * 对内存块进行扫描
+ *
+ */
 void DirtyCardToOopClosure::walk_mem_region(MemRegion mr,
                                             HeapWord* bottom,
                                             HeapWord* top) {
@@ -95,19 +99,29 @@ void DirtyCardToOopClosure::walk_mem_region(MemRegion mr,
     // block alignment or minimum block size restrictions. XXX
     if (_sp->block_is_obj(bottom) &&
         !_sp->obj_allocated_since_save_marks(oop(bottom))) {
+      /*
+       * oop_iterate 将遍历这个引用者的每一个field,当发现field指向的对象(即被引用者)在CSet中则把
+       * 对象放到PSS队列中，如果不在，则跳过这个field
+       * G1ParPushHeapRSClourse::do_oop_nv 
+       */ 
       oop(bottom)->oop_iterate(_cl, mr);
     }
   }
 }
 
-// We get called with "mr" representing the dirty region
-// that we want to process. Because of imprecise marking,
-// we may need to extend the incoming "mr" to the right,
-// and scan more. However, because we may already have
-// scanned some of that extended region, we may need to
-// trim its right-end back some so we do not scan what
-// we (or another worker thread) may already have scanned
-// or planning to scan.
+/**
+ * 
+ * We get called with "mr" representing the dirty region
+ * that we want to process. Because of imprecise marking,
+ * we may need to extend the incoming "mr" to the right,
+ * and scan more. However, because we may already have
+ * scanned some of that extended region, we may need to
+ * trim its right-end back some so we do not scan what
+ * we (or another worker thread) may already have scanned
+ * or planning to scan.
+ * 
+ * 对“脏”区域进行处理: 对内存块进行扫描.
+ */ 
 void DirtyCardToOopClosure::do_MemRegion(MemRegion mr) {
 
   // Some collectors need to do special things whenever their dirty
@@ -168,6 +182,7 @@ void DirtyCardToOopClosure::do_MemRegion(MemRegion mr) {
 
   // Walk the region if it is not empty; otherwise there is nothing to do.
   if (!extended_mr.is_empty()) {
+    // 内存块扫描
     walk_mem_region(extended_mr, bottom_obj, top);
   }
 

@@ -835,12 +835,17 @@ bool Thread::claim_oops_do_par_case(int strong_roots_parity) {
   return false;
 }
 
+/**
+ * 线程栈处理
+ */ 
 void Thread::oops_do(OopClosure* f, CLDClosure* cld_f, CodeBlobClosure* cf) {
   if (active_handles() != NULL) {
+    // 处理JNI本地代码栈
     active_handles()->oops_do(f);
   }
   // Do oop for ThreadShadow
   f->do_oop((oop*)&_pending_exception);
+  // 处理JVM内部本地方法栈
   handle_area()->oops_do(f);
 }
 
@@ -2725,6 +2730,10 @@ public:
   }
 };
 
+/**
+ * Java线程栈处理
+ * 
+ */ 
 void JavaThread::oops_do(OopClosure* f, CLDClosure* cld_f, CodeBlobClosure* cf) {
   // Verify that the deferred card marks have been flushed.
   assert(deferred_card_mark().is_empty(), "Should be empty during GC");
@@ -2732,7 +2741,9 @@ void JavaThread::oops_do(OopClosure* f, CLDClosure* cld_f, CodeBlobClosure* cf) 
   // The ThreadProfiler oops_do is done from FlatProfiler::oops_do
   // since there may be more than one thread using each ThreadProfiler.
 
-  // Traverse the GCHandles
+  /**
+   * Traverse the GCHandles
+   */ 
   Thread::oops_do(f, cld_f, cf);
 
   assert( (!has_last_Java_frame() && java_call_counter() == 0) ||
@@ -2759,7 +2770,10 @@ void JavaThread::oops_do(OopClosure* f, CLDClosure* cld_f, CodeBlobClosure* cf) 
       chunk->oops_do(f);
     }
 
-    // Traverse the execution stack
+    /**
+     *  Traverse the execution stack
+     *  遍历执行栈
+     */ 
     for(StackFrameStream fst(this); !fst.is_done(); fst.next()) {
       fst.current()->oops_do(f, cld_f, cf, fst.register_map());
     }
@@ -4182,6 +4196,11 @@ void Threads::oops_do(OopClosure* f, CLDClosure* cld_f, CodeBlobClosure* cf) {
   VMThread::vm_thread()->oops_do(f, cld_f, cf);
 }
 
+/**
+ * Java线程栈处理：
+ * 处理所有的Java线程以及VMThread
+ *
+ */
 void Threads::possibly_parallel_oops_do(OopClosure* f, CLDClosure* cld_f, CodeBlobClosure* cf) {
   // Introduce a mechanism allowing parallel threads to claim threads as
   // root groups.  Overhead should be small enough to use all the time,
@@ -4197,13 +4216,17 @@ void Threads::possibly_parallel_oops_do(OopClosure* f, CLDClosure* cld_f, CodeBl
          (SharedHeap::heap()->n_par_threads() ==
           SharedHeap::heap()->workers()->active_workers()), "Mismatch");
   int cp = SharedHeap::heap()->strong_roots_parity();
+  // Java线程
   ALL_JAVA_THREADS(p) {
     if (p->claim_oops_do(is_par, cp)) {
       p->oops_do(f, cld_f, cf);
     }
   }
+
+  // VMThread
   VMThread* vmt = VMThread::vm_thread();
   if (vmt->claim_oops_do(is_par, cp)) {
+    // 重要!!!
     vmt->oops_do(f, cld_f, cf);
   }
 }

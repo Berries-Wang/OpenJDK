@@ -29,9 +29,17 @@
 #include "gc_implementation/g1/g1RemSet.inline.hpp"
 #include "oops/oop.inline.hpp"
 
+/**
+ * 将Java根和RSet根找到的子对象全部复制到新的分区中
+ * 
+ * @param p 引用者中field的地址
+ * @param from p所指向的对象所处的分区
+ * 
+ */ 
 template <class T> void G1ParScanThreadState::do_oop_evac(T* p, HeapRegion* from) {
   assert(!oopDesc::is_null(oopDesc::load_decode_heap_oop(p)),
          "Reference should not be NULL here as such are never pushed to the task queue.");
+  // p是引用者中field的地址
   oop obj = oopDesc::load_decode_heap_oop_not_null(p);
 
   // Although we never intentionally push references outside of the collection
@@ -43,11 +51,16 @@ template <class T> void G1ParScanThreadState::do_oop_evac(T* p, HeapRegion* from
     oop forwardee;
     markOop m = obj->mark();
     if (m->is_marked()) {
+      // 如果对象已经被标记了，说明对象已经被复制了
       forwardee = (oop) m->decode_pointer();
     } else {
+      // 如果对象没有被标记，复制对象到新的分区中
       forwardee = copy_to_survivor_space(in_cset_state, obj, m);
     }
+
+    //>>> 更新引用者field所引用对象的地址 ， 看到这段代码，就知道PSS，RSet的操作了
     oopDesc::encode_store_heap_oop(p, forwardee);
+
   } else if (in_cset_state.is_humongous()) {
     _g1h->set_humongous_is_live(obj);
   } else {
@@ -56,6 +69,7 @@ template <class T> void G1ParScanThreadState::do_oop_evac(T* p, HeapRegion* from
   }
 
   assert(obj != NULL, "Must be");
+  // 最后，需要维护一下新生成的对象的RSet，即redirty
   update_rs(from, p, queue_num());
 }
 
@@ -108,18 +122,31 @@ inline void G1ParScanThreadState::do_oop_partial_array(oop* p) {
   to_obj_array->oop_iterate_range(&_scanner, start, end);
 }
 
+/**
+ *  将Java根和RSet根找到的子对象全部复制到新的分区中 
+ * 
+ * @param ref_to_scan 待处理的对象
+ */ 
 template <class T> inline void G1ParScanThreadState::deal_with_reference(T* ref_to_scan) {
+  
   if (!has_partial_array_mask(ref_to_scan)) {
+    //  普通对象处理
     // Note: we can use "raw" versions of "region_containing" because
     // "obj_to_scan" is definitely in the heap, and is not in a
     // humongous region.
     HeapRegion* r = _g1h->heap_region_containing_raw(ref_to_scan);
+    // 重点
     do_oop_evac(ref_to_scan, r);
   } else {
+    // 对象数组处理
     do_oop_partial_array((oop*)ref_to_scan);
   }
 }
 
+/**
+ * 将对象复制到新的分区中
+ * 
+ */ 
 inline void G1ParScanThreadState::dispatch_reference(StarTask ref) {
   assert(verify_task(ref), "sanity");
   if (ref.is_narrow()) {
