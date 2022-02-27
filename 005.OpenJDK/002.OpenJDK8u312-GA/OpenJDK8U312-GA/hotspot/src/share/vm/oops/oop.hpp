@@ -73,7 +73,10 @@ class oopDesc {
     narrowKlass _compressed_klass;
   } _metadata;
 
-  // Fast access to barrier set.  Must be initialized.
+  /**
+   * Fast access to barrier set.  Must be initialized.
+   * 静态字段，不计入实例对象所占内存
+   */ 
   static BarrierSet* _bs; // 用于实现屏障(写前屏障 && 写后屏障)
 
  public:
