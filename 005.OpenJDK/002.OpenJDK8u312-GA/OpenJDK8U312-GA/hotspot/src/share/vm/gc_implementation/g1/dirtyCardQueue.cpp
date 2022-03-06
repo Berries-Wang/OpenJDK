@@ -189,6 +189,7 @@ apply_closure_to_completed_buffer_helper(CardTableEntryClosure* cl,
   if (nd != NULL) {
     void **buf = BufferNode::make_buffer_from_node(nd);
     size_t index = nd->index();
+    // 处理的代码
     bool b =
       DirtyCardQueue::apply_closure_to_buffer(cl, buf,
                                               index, _sz,
@@ -211,6 +212,7 @@ bool DirtyCardQueueSet::apply_closure_to_completed_buffer(CardTableEntryClosure*
                                                           bool during_pause) {
   assert(!during_pause || stop_at == 0, "Should not leave any completed buffers during a pause");
   BufferNode* nd = get_completed_buffer(stop_at);
+  // 处理的代码
   bool res = apply_closure_to_completed_buffer_helper(cl, worker_i, nd);
   if (res) Atomic::inc(&_processed_buffers_rs_thread);
   return res;
