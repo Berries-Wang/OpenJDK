@@ -574,12 +574,16 @@ void ReferenceProcessor::process_phase1(DiscoveredList&    refs_list,
         gclog_or_tty->print_cr("Dropping reference (" INTPTR_FORMAT ": %s"  ") by policy",
                                (void *)iter.obj(), iter.obj()->klass()->internal_name());
       }
-      // Remove Reference object from list
+      // Remove Reference object from list 
+      // 从列表中移出，表示不回收该对象
       iter.remove();
       // Make the Reference object active again
       iter.make_active();
+
       // keep the referent around
+      // 复制到新的地方(如G1是将对象复制到新的分区)
       iter.make_referent_alive();
+
       iter.move_to_next();
     } else {
       iter.next();
@@ -599,10 +603,10 @@ void ReferenceProcessor::process_phase1(DiscoveredList&    refs_list,
 /**
  * Traverse the list and remove any Refs that are not active, or  whose referents are either alive or NULL.
  * 遍历这个列表并且移除非存活的、存活的或者为NULL的引用
- */ 
-void ReferenceProcessor::pp2_work(DiscoveredList&    refs_list,
-                             BoolObjectClosure* is_alive,
-                             OopClosure*        keep_alive) {
+ */
+void ReferenceProcessor::pp2_work(DiscoveredList &refs_list,
+                                  BoolObjectClosure *is_alive,
+                                  OopClosure *keep_alive) {
   assert(discovery_is_atomic(), "Error");
   DiscoveredListIterator iter(refs_list, keep_alive, is_alive);
   while (iter.has_next()) {
@@ -618,11 +622,13 @@ void ReferenceProcessor::pp2_work(DiscoveredList&    refs_list,
                                (void *)iter.obj(), iter.obj()->klass()->internal_name());
       }
       // The referent is reachable after all. Remove Reference object from list.
+      // 将活跃对象从列表中移出
       iter.remove();
       // Update the referent pointer as necessary: Note that this
       // should not entail any recursive marking because the
       // referent must already have been traversed.
       iter.make_referent_alive();
+
       iter.move_to_next();
     } else {
       iter.next();
@@ -694,9 +700,11 @@ void ReferenceProcessor::process_phase3(DiscoveredList &refs_list,
     iter.load_ptrs(DEBUG_ONLY(false /* allow_null_referent */));
     if (clear_referent) {
       // NULL out referent pointer
+      // 若不是软引用，则清理指针，此时除了链表不会有任何对象引用他
       iter.clear_referent();
     } else {
       // keep the referent around
+      // 再次确保对象被赋值: 复制到新的地方(如G1是将对象复制到新的分区)
       iter.make_referent_alive();
     }
     if (TraceReferenceGC) {
@@ -709,6 +717,7 @@ void ReferenceProcessor::process_phase3(DiscoveredList &refs_list,
     iter.next();
   }
   // Remember to update the next pointer of the last ref.
+  // 更新链表
   iter.update_discovered();
   // Close the reachable set
   complete_gc->do_void();
