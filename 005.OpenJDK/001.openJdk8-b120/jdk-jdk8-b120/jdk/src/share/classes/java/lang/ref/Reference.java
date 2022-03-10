@@ -65,15 +65,15 @@ public abstract class Reference<T> {
      *
      *     Active: queue = ReferenceQueue with which instance is registered, or
      *     ReferenceQueue.NULL if it was not registered with a queue; next =
-     *     null.
+     *     null. 对象是活跃的，即是可达的对象或者对象是符合活跃规则的软引用对象
      *
      *     Pending: queue = ReferenceQueue with which instance is registered;
-     *     next = this
+     *     next = this. 指对象进入pending-list,即将被送入引用队列
      *
      *     Enqueued: queue = ReferenceQueue.ENQUEUED; next = Following instance
-     *     in queue, or this if at end of list.
+     *     in queue, or this if at end of list. 指引用线程ReferenceHandler将pending_list的对象加入引用队列
      *
-     *     Inactive: queue = ReferenceQueue.NULL; next = this.
+     *     Inactive: queue = ReferenceQueue.NULL; next = this. 对象不活跃，可以将对象回收了
      *
      * With this scheme the collector need only examine the next field in order
      * to determine whether a Reference instance requires special treatment: If
@@ -87,8 +87,14 @@ public abstract class Reference<T> {
      * field is also used for linking Reference objects in the pending list.
      */
 
+    //Reference 指向的对象 ,即该引用关联的对象
     private T referent;         /* Treated specially by GC */
 
+    /**
+     * Reference所指向的队列，如果创建时没有指定，那么队列就是: ReferenceQueue.NULL,
+     * 这是一个空队列，这个时候所有插入的对象都会被丢弃。这个队列一般是自定义，可以自己处理。
+     * 示例： weakhashmap , FinalReference
+     */
     volatile ReferenceQueue<? super T> queue;
 
     /* When active:   NULL
@@ -96,6 +102,7 @@ public abstract class Reference<T> {
      *    Enqueued:   next reference in queue (or this if last)
      *    Inactive:   this
      */
+    // 用于形成链表
     @SuppressWarnings("rawtypes")
     Reference next;
 
@@ -103,6 +110,7 @@ public abstract class Reference<T> {
      *     pending:   next element in the pending list (or null if last)
      *   otherwise:   NULL
      */
+    // 由JVM使用，目的是发现可回收的引用
     transient private Reference<T> discovered;  /* used by VM */
 
 
@@ -119,6 +127,11 @@ public abstract class Reference<T> {
      * References to this list, while the Reference-handler thread removes
      * them.  This list is protected by the above lock object. The
      * list uses the discovered field to link its elements.
+     * 
+     * 静态变量，垃圾回收线程做的事就是将discovered的元素赋值到pending中，并且把JVM中的pending链表元素放到Reference类中的
+     * Pending链表中
+     * 
+     * pending: 等待被回收
      */
     private static Reference<Object> pending = null;
 
@@ -173,13 +186,17 @@ public abstract class Reference<T> {
         }
     }
 
+    /**
+     * JVM 在启动之后有几个线程，其中一个就是ReferenceHandler,这个线程主要做的工作就是将
+     * 上面提到的pending里面的元素送到队列中
+     */
     static {
         ThreadGroup tg = Thread.currentThread().getThreadGroup();
-        for (ThreadGroup tgn = tg;
-             tgn != null;
-             tg = tgn, tgn = tg.getParent());
+        for (ThreadGroup tgn = tg; tgn != null; tg = tgn, tgn = tg.getParent())
+            ;
         Thread handler = new ReferenceHandler(tg, "Reference Handler");
-        /* If there were a special system-only priority greater than
+        /*
+         * If there were a special system-only priority greater than
          * MAX_PRIORITY, it would be used here
          */
         handler.setPriority(Thread.MAX_PRIORITY);
