@@ -290,7 +290,8 @@ import sun.misc.Unsafe;
  * 
  * 
  * 一个可以被关注的点：
- * >>>1. head节点代表当前正在持有锁的节点。若当前节点的前置节点是head，那么该节点就开始自旋地获取锁。一旦head节点释放，当前节点就能第一时间获取到。
+ * >>>1. head节点代表当前正在持有锁的节点(发生了竞争时且唤醒了下一个节点，此时Head节点是上次持有线程的节点)。若当前节点的前置节点是head，那么该节点就开始自旋地获取锁。一旦head节点释放，当前节点就能第一时间获取到。
+ *>>>>>> 这个应该需要参照CLH队列来分析.
  */
 public abstract class AbstractQueuedSynchronizer
         extends AbstractOwnableSynchronizer
@@ -370,6 +371,7 @@ public abstract class AbstractQueuedSynchronizer
      * effort if there is never contention. Instead, the node
      * is constructed and head and tail pointers are set upon first
      * contention.
+     * > CLH队列需要一个虚拟头节点来启动。但我们不是在建设中创建的，因为如果没有竞争，那就是浪费精力。相反，在第一次争用时构造节点并设置头指针和尾指针。
      *
      * <p>Threads waiting on Conditions use the same nodes, but
      * use an additional link. Conditions only need to link nodes
