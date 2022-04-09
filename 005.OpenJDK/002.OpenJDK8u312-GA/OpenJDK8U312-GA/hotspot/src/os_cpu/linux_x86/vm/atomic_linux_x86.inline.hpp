@@ -112,7 +112,7 @@ inline void*    Atomic::xchg_ptr(void*    exchange_value, volatile void*     des
 inline jint     Atomic::cmpxchg    (jint     exchange_value, volatile jint*     dest, jint     compare_value) {
   
   // 打印一下日志
-  wei_log_info(1,"<---------> atomic_linux_x86.inline.hpp::Atomic::cmpxchg");
+  //wei_log_info(1,"<---------> atomic_linux_x86.inline.hpp::Atomic::cmpxchg");
 
   // // 判断是否是多处理器
   int mp = os::is_MP();
