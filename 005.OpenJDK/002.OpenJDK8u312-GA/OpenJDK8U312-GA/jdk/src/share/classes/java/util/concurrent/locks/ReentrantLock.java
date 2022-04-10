@@ -137,7 +137,7 @@ public class ReentrantLock implements Lock, java.io.Serializable {
             int c = getState();
             // 当临界资源为0，即没有被锁住的时候
             if (c == 0) {
-                // 使用cas的方式去获取锁
+                // 非公平锁体现之二: 使用cas的方式去直接抢占锁
                 if (compareAndSetState(0, acquires)) {
                     // 获取成功，将当前线程设置为独占线程
                     setExclusiveOwnerThread(current);
@@ -222,6 +222,8 @@ public class ReentrantLock implements Lock, java.io.Serializable {
     /**
      * Sync object for non-fair locks
      * 不公平锁
+     *
+     * 有两处地方体现了非公平锁
      */
     static final class NonfairSync extends Sync {
         private static final long serialVersionUID = 7316153563782823691L;
@@ -231,6 +233,7 @@ public class ReentrantLock implements Lock, java.io.Serializable {
          * 执行锁操作。尝试立即获得锁，当获得锁失败的时候(尝试立即获得锁的操作)，会回滚到使用acquire方法来获得锁
          */
         final void lock() {
+            // ----> 非公平锁体现之一： 直接抢占临界资源
             // 尝试获取锁，即：使用CAS方式去判断state是否为0，是0就设置为1(获得锁，表示获取到了临界资源)。
             if (compareAndSetState(0, 1)) {
                 // 成功，则将当前线程设置为独占线程，即该线程可以继续执行
@@ -238,7 +241,7 @@ public class ReentrantLock implements Lock, java.io.Serializable {
             } else {
                 // 锁获取失败，则调用acquire方法。
                 // acquire 方法为AbstractQueuedSynchronizer类的方法，他会调用实现者的tryAcquire方法
-                acquire(1);
+                acquire(1); // ----> 非公平锁体现之二：分析之后，会调用tryAcquire,而在NonfairSync中，会调用nonfairTryAcquire(真正体现是在这个方法)，这也是非公平锁的一种体现
             }
 
         }
@@ -281,6 +284,8 @@ public class ReentrantLock implements Lock, java.io.Serializable {
             // 当临界资源没有被获取，即锁还没有被获取
             if (c == 0) {
                 /**
+                 * 公平锁体现： 判断CLH链表中是否有等待的线程，有则获取临界资源失败；反之，则获取成功；
+                 *
                  * hasQueuedPredecessors 用来判断当前线程是否有前置节点(公平锁，根据入队的顺序来获取锁)
                  * compareAndSetState方法会在没有前置节点的情况下执行，去尝试获取锁
                  */
