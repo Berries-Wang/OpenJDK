@@ -814,7 +814,7 @@ public abstract class AbstractQueuedSynchronizer
                 if (ws == Node.SIGNAL) {
                     if (!compareAndSetWaitStatus(h, Node.SIGNAL, 0))
                         continue;            // loop to recheck cases
-                    unparkSuccessor(h); // 唤醒CLH中的线程(最后一个),但是也只会唤醒一个
+                    unparkSuccessor(h); // 唤醒CLH中的线程,第一个元素,但是也只会唤醒一个
                 } else if (ws == 0 &&
                         !compareAndSetWaitStatus(h, 0, Node.PROPAGATE))
                     continue;                // loop on failed CAS
@@ -998,7 +998,7 @@ public abstract class AbstractQueuedSynchronizer
          *
          * Thread.interrupted()返回线程是否中断(如果中断，再次调用interrupted方法时就会置位)
          *
-         * 这行代码是为了当线程
+         * 这行代码是为了当线程发生中断时将中断反馈给调用方
          */
         return Thread.interrupted();
     }
@@ -1192,7 +1192,7 @@ public abstract class AbstractQueuedSynchronizer
                     int r = tryAcquireShared(arg);
 
                     if (r >= 0) {
-                        // 将node设置为head
+                        // --->>> 将node设置为head,这里有一个"传播"行为，将CLH中的等待线程一个个唤醒 <<<---
                         setHeadAndPropagate(node, r);
                         p.next = null; // help GC
                         failed = false;
@@ -1550,6 +1550,7 @@ public abstract class AbstractQueuedSynchronizer
         }
 
         if (tryAcquireShared(arg) < 0) {
+            // 这个方法很重要，存在一个传播行为。
             doAcquireSharedInterruptibly(arg);
         }
 

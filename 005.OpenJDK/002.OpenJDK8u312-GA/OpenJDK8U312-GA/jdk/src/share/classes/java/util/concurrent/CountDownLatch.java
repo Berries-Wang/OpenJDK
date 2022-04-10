@@ -163,7 +163,7 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
  *
  * @author Doug Lea
  * @since 1.5
- *
+ * <p>
  * 用的是共享模式
  */
 public class CountDownLatch {
@@ -215,6 +215,9 @@ public class CountDownLatch {
     }
 
     /**
+     * 一个比较重要的点就是 "PROPAGATE" , countDown 方法只会唤醒CLH中第一个线程，CLH中其他的线程都是
+     * 由countDown唤醒的线程来唤醒的。
+     * <p>
      * Causes the current thread to wait until the latch has counted down to
      * zero, unless the thread is {@linkplain Thread#interrupt interrupted}.
      *
