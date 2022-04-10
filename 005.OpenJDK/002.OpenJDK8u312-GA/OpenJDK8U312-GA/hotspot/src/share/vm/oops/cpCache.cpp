@@ -117,7 +117,7 @@ void ConstantPoolCacheEntry::set_field(Bytecodes::Code get_code,
   
   // 添加调试代码
   if (put_code == Bytecodes::_putfield) {
-    wei_print_klass_name(root_klass->name());
+    // wei_print_klass_name(root_klass->name());
     const char *className = "H";
     if (wei_string_equal(root_klass->name(), className)) {
       wei_log_info(1, "Bytecodes::_putfield");
