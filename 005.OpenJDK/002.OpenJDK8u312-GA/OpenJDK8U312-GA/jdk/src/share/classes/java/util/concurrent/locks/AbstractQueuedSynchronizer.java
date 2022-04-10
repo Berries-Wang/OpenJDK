@@ -35,12 +35,12 @@
 
 package java.util.concurrent.locks;
 
-import java.util.concurrent.TimeUnit;
+import sun.misc.Unsafe;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-
-import sun.misc.Unsafe;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Provides a framework for implementing blocking locks and related
@@ -287,11 +287,11 @@ import sun.misc.Unsafe;
  *
  * @author Doug Lea
  * @since 1.5
- * 
- * 
+ * <p>
+ * <p>
  * 一个可以被关注的点：
  * >>>1. head节点代表当前正在持有锁的节点(发生了竞争时且唤醒了下一个节点，此时Head节点是上次持有线程的节点)。若当前节点的前置节点是head，那么该节点就开始自旋地获取锁。一旦head节点释放，当前节点就能第一时间获取到。
- *>>>>>> 这个应该需要参照CLH队列来分析.
+ * >>>>>> 这个应该需要参照CLH队列来分析.
  */
 public abstract class AbstractQueuedSynchronizer
         extends AbstractOwnableSynchronizer
@@ -557,7 +557,7 @@ public abstract class AbstractQueuedSynchronizer
      * Note: If head exists, its waitStatus is guaranteed not to be CANCELLED.
      * <p>
      * 备注: 如果head存在，那么他的waitStatus一定不是CANCELLED.那为什么head的状态一定不能是CANCELLED呢?
-     * 
+     * <p>
      * 从方法java.util.concurrent.locks.AbstractQueuedSynchronizer#enq中可以看出,head是一个虚拟头节点,这个head节点不与任何线程相关联的。
      * 从方法java.util.concurrent.locks.AbstractQueuedSynchronizer#shouldParkAfterFailedAcquire中可以看出(将CANCELLED状态的Node全部移除这一步)，如果head允许为CANCELLED状态，
      * 在这一步也会被移除了，这就导致AQS不可用了(可能其他线程获得执行权却发现head为null,其实在shouldParkAfterFailedAcquire如果head节点允许是CANCELLED状态，会报NPE异常的，详细可以查看源代码)
@@ -722,12 +722,12 @@ public abstract class AbstractQueuedSynchronizer
      * 1. 分析时是从方法release开始的
      *
      * @param node “执行完成，并释放了锁的线程对应的Node(release方法中调用的)，传进来的是head节点”
-     * 
-     * 注意
-     * >>> 1. 这个node就是方法java.util.concurrent.locks.AbstractQueuedSynchronizer#acquireQueued中的幸运儿，也就是获得了锁，获得了
-     * 操作共享资源的权限，并且被置为了head(即传进来的就是head节点)
-     * >>> 2. 基于第一点，到release方法被调用的时候，node的使命就已经完成了，这时候head只是作为一个占位的虚节点。所以首先需要将他的waitStatus置为0这个默认值，
-     * 才不会影响其他函数的判断
+     *             <p>
+     *             注意
+     *             >>> 1. 这个node就是方法java.util.concurrent.locks.AbstractQueuedSynchronizer#acquireQueued中的幸运儿，也就是获得了锁，获得了
+     *             操作共享资源的权限，并且被置为了head(即传进来的就是head节点)
+     *             >>> 2. 基于第一点，到release方法被调用的时候，node的使命就已经完成了，这时候head只是作为一个占位的虚节点。所以首先需要将他的waitStatus置为0这个默认值，
+     *             才不会影响其他函数的判断
      */
     private void unparkSuccessor(Node node) {
         /*
@@ -741,18 +741,18 @@ public abstract class AbstractQueuedSynchronizer
          */
         // 获取到node的等待状态
         int ws = node.waitStatus;
-        if (ws < 0){
+        if (ws < 0) {
             /***
-             * 
+             *
              *  将node的waitStatus重置为0，是为了不影响其他函数的判断。
              *  如下： t.waitStatus <= 0 
-             * 
+             *
              * Node.waitStatus == 0 : 当一个Node被初始化的时候的默认值.为什么?参考release方法
              * 在cancelAcquire方法中，node的waitStatus被设置为了Node.CANCELLED
              */
             compareAndSetWaitStatus(node, ws, 0);
         }
-            
+
 
         /*
          * Thread to unpark is held in successor, which is normally
@@ -767,20 +767,20 @@ public abstract class AbstractQueuedSynchronizer
             s = null;
             /**
              * 从尾节点开始查找，找到最靠近head节点的且可以被唤醒的节点
-             * 
+             *
              * 为什么从尾节点开始寻找？
-             * 
+             *
              * 和addWaiter方法中，前后两个节点建立连接的顺序有关：
              * >>> 1. 后节点的pre指向前节点
              * >>> 2. 前节点的next才会指向后节点
              * 这两步操作在多线程环境下并不是原子的，也就是说如果唤醒是从前往后搜索，那么可能前节点的next还没有建立好，那么搜索可能会被中断。
              */
-            for (Node t = tail; t != null && t != node; t = t.prev){
-                if (t.waitStatus <= 0){
-                      s = t;
+            for (Node t = tail; t != null && t != node; t = t.prev) {
+                if (t.waitStatus <= 0) {
+                    s = t;
                 }
             }
-                
+
         }
         // 当node的后继节点为一个可以被唤醒的节点，则进行唤醒操作。可以被唤醒指的是：节点不为null且waitStatus  <= 0
         if (s != null) {
@@ -814,7 +814,7 @@ public abstract class AbstractQueuedSynchronizer
                 if (ws == Node.SIGNAL) {
                     if (!compareAndSetWaitStatus(h, Node.SIGNAL, 0))
                         continue;            // loop to recheck cases
-                    unparkSuccessor(h);
+                    unparkSuccessor(h); // 唤醒CLH中的线程(最后一个),但是也只会唤醒一个
                 } else if (ws == 0 &&
                         !compareAndSetWaitStatus(h, 0, Node.PROPAGATE))
                     continue;                // loop on failed CAS
@@ -995,9 +995,9 @@ public abstract class AbstractQueuedSynchronizer
         // LockSupport.park调用之后，是否线程就被挂起不会执行了?是的，当线程执行了LockSupport.park方法，线程就被挂起了，不会往下执行了
         LockSupport.park(this);
         /**
-         * 
+         *
          * Thread.interrupted()返回线程是否中断(如果中断，再次调用interrupted方法时就会置位)
-         * 
+         *
          * 这行代码是为了当线程
          */
         return Thread.interrupted();
@@ -1171,25 +1171,35 @@ public abstract class AbstractQueuedSynchronizer
 
     /**
      * Acquires in shared interruptible mode.
+     * <p>
+     * 使用共享可中断的模式获取
      *
      * @param arg the acquire argument
      */
     private void doAcquireSharedInterruptibly(int arg)
             throws InterruptedException {
+
+        // 将当前线程添加到CLH列表中
         final Node node = addWaiter(Node.SHARED);
+
         boolean failed = true;
         try {
             for (; ; ) {
                 final Node p = node.predecessor();
-                if (p == head) {
+
+                if (p == head) { // 判断是否是CLH中的第一个元素
+                    // 尝试获取
                     int r = tryAcquireShared(arg);
+
                     if (r >= 0) {
+                        // 将node设置为head
                         setHeadAndPropagate(node, r);
                         p.next = null; // help GC
                         failed = false;
                         return;
                     }
                 }
+
                 if (shouldParkAfterFailedAcquire(p, node) &&
                         parkAndCheckInterrupt())
                     throw new InterruptedException();
@@ -1403,9 +1413,9 @@ public abstract class AbstractQueuedSynchronizer
      */
     public final void acquire(int arg) {
         if (!tryAcquire(arg) &&
-                acquireQueued(addWaiter(Node.EXCLUSIVE), arg)){
-                    selfInterrupt();
-                } 
+                acquireQueued(addWaiter(Node.EXCLUSIVE), arg)) {
+            selfInterrupt();
+        }
     }
 
     /**
@@ -1477,9 +1487,9 @@ public abstract class AbstractQueuedSynchronizer
         //  尝试释放锁
         if (tryRelease(arg)) {
             /**
-             * 
+             *
              * 当释放锁成功，那么就需要唤醒其他的线程
-             * 
+             *
              */
             // 当当前线程完全释放了该临界资源(state =0，即当前线程完全释放了该锁)，关于head的理解，阅读一下acquireQueued方法的代码
             Node h = head;
@@ -1534,10 +1544,15 @@ public abstract class AbstractQueuedSynchronizer
      */
     public final void acquireSharedInterruptibly(int arg)
             throws InterruptedException {
-        if (Thread.interrupted())
+        // 如果线程中断了，则抛出中断异常
+        if (Thread.interrupted()) {
             throw new InterruptedException();
-        if (tryAcquireShared(arg) < 0)
+        }
+
+        if (tryAcquireShared(arg) < 0) {
             doAcquireSharedInterruptibly(arg);
+        }
+
     }
 
     /**
@@ -1574,7 +1589,9 @@ public abstract class AbstractQueuedSynchronizer
      * @return the value returned from {@link #tryReleaseShared}
      */
     public final boolean releaseShared(int arg) {
+        // tryReleaseShared 返回true,表示所有线程都执行完成了,即需要唤醒等待线程了
         if (tryReleaseShared(arg)) {
+            // 唤醒等待线程
             doReleaseShared();
             return true;
         }
