@@ -4081,6 +4081,9 @@ size_t os::read_at(int fd, void *buf, unsigned int nBytes, jlong offset) {
 // generates a SIGUSRx signal. Note that SIGUSR1 can interfere with
 // SIGSEGV, see 4355769.
 
+/**
+ * Thread.sleep 底层实现
+ */ 
 int os::sleep(Thread* thread, jlong millis, bool interruptible) {
   assert(thread == Thread::current(),  "thread consistency check");
 
@@ -4122,6 +4125,7 @@ int os::sleep(Thread* thread, jlong millis, bool interruptible) {
         // cleared by handle_special_suspend_equivalent_condition() or
         // java_suspend_self() via check_and_wait_while_suspended()
 
+        // os::PlatformEvent::park(jlong millis); (本文件)
         slp->park(millis);
 
         // were we externally suspended while we were waiting?
@@ -6002,6 +6006,11 @@ int os::PlatformEvent::TryPark() {
   }
 }
 
+/**
+ * 
+ * Thread.sleep 底层实现
+ * 
+ */ 
 void os::PlatformEvent::park() {       // AKA "down()"
   // Invariant: Only the thread associated with the Event/PlatformEvent
   // may call park().
@@ -6054,6 +6063,7 @@ int os::PlatformEvent::park(jlong millis) {
   compute_abstime(&abst, millis);
 
   int ret = OS_TIMEOUT;
+  // 对互斥量进行加锁
   int status = pthread_mutex_lock(_mutex);
   assert_status(status == 0, status, "mutex_lock");
   guarantee (_nParked == 0, "invariant") ;
@@ -6075,6 +6085,7 @@ int os::PlatformEvent::park(jlong millis) {
   // In that case, we should propagate the notify to another waiter.
 
   while (_Event < 0) {
+    // 阻塞：内部是调用pthread_cond_timedwait函数来实现
     status = os::Linux::safe_cond_timedwait(_cond, _mutex, &abst);
     if (status != 0 && WorkAroundNPTLTimedWaitHang) {
       pthread_cond_destroy (_cond);
@@ -6092,6 +6103,7 @@ int os::PlatformEvent::park(jlong millis) {
      ret = OS_OK;
   }
   _Event = 0 ;
+  // 解锁
   status = pthread_mutex_unlock(_mutex);
   assert_status(status == 0, status, "mutex_unlock");
   assert (_nParked == 0, "invariant") ;
@@ -6234,12 +6246,17 @@ static void unpackTime(timespec* absTime, bool isAbsolute, jlong time) {
   assert(absTime->tv_nsec < NANOSECS_PER_SEC, "tv_nsec >= nanos_per_sec");
 }
 
+/**
+ * sun.misc.Unsafe#park 最终会调用该方法来阻塞线程
+ * 
+ * 注意，该方法是成员方法
+ */ 
 void Parker::park(bool isAbsolute, jlong time) {
   // Ideally we'd do something useful while spinning, such
   // as calling unpackTime().
 
   // Optional fast-path check:
-  // Return immediately if a permit is available.
+  // Return immediately if a permit(批准，许可) is available.
   // We depend on Atomic::xchg() having full barrier semantics
   // since we are doing a lock-free update to _counter.
   if (Atomic::xchg(0, &_counter) > 0) return;
@@ -6248,8 +6265,8 @@ void Parker::park(bool isAbsolute, jlong time) {
   assert(thread->is_Java_thread(), "Must be JavaThread");
   JavaThread *jt = (JavaThread *)thread;
 
-  // Optional optimization -- avoid state transitions if there's an interrupt pending.
-  // Check interrupt before trying to wait
+  // Optional optimization -- avoid state transitions if there's an interrupt pending.  Check interrupt before trying to wait
+  // 如果当前线程被中断，则立即返回
   if (Thread::is_interrupted(thread, false)) {
     return;
   }
@@ -6274,11 +6291,14 @@ void Parker::park(bool isAbsolute, jlong time) {
 
   // Don't wait if cannot get lock since interference arises from
   // unblocking.  Also. check interrupt before trying wait
+  // 当线程中断或者尝试获取锁失败则立即返回
+  // pthread_mutex_trylock： 尝试对互斥量进行加锁，如果调用时互斥量处于未加锁的状态，则pthread_mutex_trylock将锁住互斥量，不会出现阻塞直接返回0. 《UNIX 环境高级编程·第3版》 P321
   if (Thread::is_interrupted(thread, false) || pthread_mutex_trylock(_mutex) != 0) {
     return;
   }
 
   int status ;
+  // _counter 只会为0
   if (_counter > 0)  { // no wait needed
     _counter = 0;
     status = pthread_mutex_unlock(_mutex);
@@ -6302,8 +6322,17 @@ void Parker::park(bool isAbsolute, jlong time) {
   // cleared by handle_special_suspend_equivalent_condition() or java_suspend_self()
 
   assert(_cur_index == -1, "invariant");
-  if (time == 0) {
+  if (time == 0) { // LockSupport.park 调用时，该参数为0
     _cur_index = REL_INDEX; // arbitrary choice when not timed
+    /**
+     * pthread_cond_wait: 该函数等待条件变量为真。
+     * > 调用者将锁住的互斥量传递给函数，函数然后自动把调用线程放到等待条件的线程列表上，对互斥量进行解锁。
+     * > 这就关闭了条件检查和线程进行休眠状态等待条件这两个操作之间的时间通道，这样就不会错过条件的任何变化。
+     * > pthread_cond_wait返回时，互斥量再次被锁住. 《UNIX 环境高级编程·第3版》 P333
+     * 
+     * 
+     * 即线程会阻塞在函数"pthread_cond_wait"的调用，等待被唤醒
+     */ 
     status = pthread_cond_wait (&_cond[_cur_index], _mutex) ;
   } else {
     _cur_index = isAbsolute ? ABS_INDEX : REL_INDEX;
@@ -6338,7 +6367,7 @@ void Parker::park(bool isAbsolute, jlong time) {
 void Parker::unpark() {
   int s, status ;
   status = pthread_mutex_lock(_mutex);
-  assert (status == 0, "invariant") ;
+  assert (status == 0, "invariant(不变的)") ;
   s = _counter;
   _counter = 1;
   if (s < 1) {

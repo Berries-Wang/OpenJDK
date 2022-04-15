@@ -1246,6 +1246,9 @@ static void post_thread_park_event(EventThreadPark* event, const oop obj, jlong 
   event->commit();
 }
 
+/**
+ * sun.misc.Unsafe#park 对应的Cpp代码
+ */
 UNSAFE_ENTRY(void, Unsafe_Park(JNIEnv *env, jobject unsafe, jboolean isAbsolute, jlong time))
   UnsafeWrapper("Unsafe_Park");
   EventThreadPark event;
@@ -1256,7 +1259,8 @@ UNSAFE_ENTRY(void, Unsafe_Park(JNIEnv *env, jobject unsafe, jboolean isAbsolute,
                              (uintptr_t) thread->parker(), (int) isAbsolute, time);
 #endif /* USDT2 */
   JavaThreadParkedState jtps(thread, time != 0);
-  thread->parker()->park(isAbsolute != 0, time);
+  // 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/os/linux/vm/os_linux.cpp#Parker::park
+  thread->parker()->park(isAbsolute != 0, time); 
 #ifndef USDT2
   HS_DTRACE_PROBE1(hotspot, thread__park__end, thread->parker());
 #else /* USDT2 */

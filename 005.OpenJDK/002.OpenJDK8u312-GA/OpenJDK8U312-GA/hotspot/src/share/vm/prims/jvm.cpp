@@ -3326,6 +3326,11 @@ static void post_thread_sleep_event(EventThreadSleep* event, jlong millis) {
   event->commit();
 }
 
+/**
+ * 
+ * java.lang.Thread#sleep(long) 底层实现
+ * 
+ */ 
 JVM_ENTRY(void, JVM_Sleep(JNIEnv* env, jclass threadClass, jlong millis))
   JVMWrapper("JVM_Sleep");
 
@@ -3366,7 +3371,7 @@ JVM_ENTRY(void, JVM_Sleep(JNIEnv* env, jclass threadClass, jlong millis))
   } else {
     ThreadState old_state = thread->osthread()->get_state();
     thread->osthread()->set_state(SLEEPING);
-    if (os::sleep(thread, millis, true) == OS_INTRPT) {
+    if (os::sleep(thread, millis, true) == OS_INTRPT) { // 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/os/linux/vm/os_linux.cpp
       // An asynchronous exception (e.g., ThreadDeathException) could have been thrown on
       // us while we were sleeping. We do not overwrite those.
       if (!HAS_PENDING_EXCEPTION) {
