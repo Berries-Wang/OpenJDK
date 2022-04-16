@@ -10,7 +10,8 @@
     - 见:[011.JDK细节集锦/000.JDK之锁/004.ReentrantLock公平和非公平锁实现.md](../011.JDK细节集锦/000.JDK之锁/004.ReentrantLock公平和非公平锁实现.md)
 + CountDownLatch和CyclicBarrier的区别？各自适用于什么场景？
     - 见:[011.JDK细节集锦/000.JDK之锁/005.CountDownLatch与CyclicBarrier.md](../011.JDK细节集锦/000.JDK之锁/005.CountDownLatch与CyclicBarrier.md)
-+ 适用ThreadLocal时要注意什么？比如说内存泄漏?
++ 使用ThreadLocal时要注意什么？比如说内存泄漏?
+    - 见[011.JDK细节集锦/001.Thread解密/000.ThreadLocal源码剖析.md](../011.JDK细节集锦/001.Thread解密/000.ThreadLocal源码剖析.md)
 + 说一说往线程池里提交一个任务会发生什么？
 + 线程池的几个参数如何设置？
 + 线程池的非核心线程什么时候会被释放？

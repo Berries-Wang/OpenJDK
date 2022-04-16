@@ -182,12 +182,17 @@ class Thread implements Runnable {
     }
 
     /* ThreadLocal values pertaining to this thread. This map is maintained
-     * by the ThreadLocal class. */
+     * by the ThreadLocal class.
+     *
+     * ThreadLocal 关联的ThreadLocalMap
+     * */
     ThreadLocal.ThreadLocalMap threadLocals = null;
 
     /*
-     * InheritableThreadLocal values pertaining to this thread. This map is
-     * maintained by the InheritableThreadLocal class.
+     * InheritableThreadLocal values pertaining(附属的，与...有关) to this thread. This map is
+     * maintained(维护，维修) by the InheritableThreadLocal class.
+     *
+     * InheritableThreadLocal关联的ThreadLocalMap
      */
     ThreadLocal.ThreadLocalMap inheritableThreadLocals = null;
 
