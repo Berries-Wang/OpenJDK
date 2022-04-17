@@ -923,7 +923,7 @@ void ParNewGeneration::handle_promotion_failed(GenCollectedHeap* gch, ParScanThr
  * ParNew 垃圾收集器的内存收集方法
  *
  * @param full 是否是Full GC
- * @param clear_all_soft_refs 是否清理软应用
+ * @param clear_all_soft_refs 是否清理软引用
  * @param size 对象大小(本次分配内存的对象)
  * @param is_tlab  是否tlab
  *
@@ -1120,6 +1120,8 @@ void ParNewGeneration::collect(bool   full,
   SpecializationStats::print();
 
   rp->set_enqueuing_is_done(true);
+  
+  // 以下这行代码与java.lang.ref.Reference#discovered处理相关(enqueue_discovered_references)
   if (rp->processing_is_mt()) {
     ParNewRefProcTaskExecutor task_executor(*this, thread_state_set);
     rp->enqueue_discovered_references(&task_executor);

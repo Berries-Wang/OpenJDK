@@ -678,6 +678,7 @@ ReferenceProcessor::process_phase3(DiscoveredList&    refs_list,
     iter.load_ptrs(DEBUG_ONLY(false /* allow_null_referent */));
     if (clear_referent) {
       // NULL out referent pointer
+      // 将java.lang.ref.Reference#referent字段置为null
       iter.clear_referent();
     } else {
       // keep the referent around

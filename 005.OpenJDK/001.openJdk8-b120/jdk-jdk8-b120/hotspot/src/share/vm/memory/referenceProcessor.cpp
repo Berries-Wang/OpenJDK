@@ -353,8 +353,8 @@ void ReferenceProcessor::enqueue_discovered_reflist(DiscoveredList& refs_list,
                                                     HeapWord* pending_list_addr) {
   // Given a list of refs linked through the "discovered" field
   // (java.lang.ref.Reference.discovered), self-loop their "next" field
-  // thus distinguishing them from active References, then
-  // prepend them to the pending list.
+  // thus distinguishing(区分) them from active References, then
+  // prepend(预先考虑) them to the pending list.
   // BKWRD COMPATIBILITY NOTE: For older JDKs (prior to the fix for 4956777),
   // the "next" field is used to chain the pending list, not the discovered
   // field.
@@ -700,7 +700,7 @@ void ReferenceProcessor::process_phase3(DiscoveredList &refs_list,
     iter.load_ptrs(DEBUG_ONLY(false /* allow_null_referent */));
     if (clear_referent) {
       // NULL out referent pointer
-      // 若不是软引用，则清理指针，此时除了链表不会有任何对象引用他
+      // 将java.lang.ref.Reference#referent置为null
       iter.clear_referent();
     } else {
       // keep the referent around

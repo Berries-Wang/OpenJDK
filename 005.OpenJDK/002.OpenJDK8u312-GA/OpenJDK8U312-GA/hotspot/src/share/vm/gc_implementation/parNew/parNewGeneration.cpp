@@ -910,6 +910,16 @@ void ParNewGeneration::handle_promotion_failed(GenCollectedHeap* gch, ParScanThr
   NOT_PRODUCT(Universe::heap()->reset_promotion_should_fail();)
 }
 
+
+/**
+ * ParNew 垃圾收集器的内存收集方法
+ *
+ * @param full 是否是Full GC
+ * @param clear_all_soft_refs 是否清理软引用
+ * @param size 对象大小(本次分配内存的对象)
+ * @param is_tlab  是否tlab
+ *
+ */
 void ParNewGeneration::collect(bool   full,
                                bool   clear_all_soft_refs,
                                size_t size,
@@ -953,6 +963,7 @@ void ParNewGeneration::collect(bool   full,
 
   init_assuming_no_promotion_failure();
 
+  // 如果堆使用自适应大小策略
   if (UseAdaptiveSizePolicy) {
     set_survivor_overflow(false);
     size_policy->minor_collection_begin();
@@ -981,6 +992,7 @@ void ParNewGeneration::collect(bool   full,
                                          *to(), *this, *_next_gen, *task_queues(),
                                          _overflow_stacks, desired_plab_sz(), _term);
 
+  // ParNew GC任务(处理”强引用“)
   ParNewGenTask tsk(this, _next_gen, reserved().end(), &thread_state_set);
   gch->set_par_threads(n_workers);
   gch->rem_set()->prepare_for_younger_refs_iterate(true);
@@ -1008,10 +1020,12 @@ void ParNewGeneration::collect(bool   full,
   set_promo_failure_scan_stack_closure(&scan_without_gc_barrier);
   EvacuateFollowersClosureGeneral evacuate_followers(gch, _level,
     &scan_without_gc_barrier, &scan_with_gc_barrier);
+   // 设置引用清理策略
   rp->setup_policy(clear_all_soft_refs);
   // Can  the mt_degree be set later (at run_task() time would be best)?
   rp->set_active_mt_degree(active_workers);
   ReferenceProcessorStats stats;
+  // 对“引用对象”(软引用、弱引用、虚引用)进行处理 
   if (rp->processing_is_mt()) {
     ParNewRefProcTaskExecutor task_executor(*this, thread_state_set);
     stats = rp->process_discovered_references(&is_alive, &keep_alive,
@@ -1021,6 +1035,8 @@ void ParNewGeneration::collect(bool   full,
     thread_state_set.flush();
     gch->set_par_threads(0);  // 0 ==> non-parallel.
     gch->save_marks();
+    // >>> 哈哈，这里就是处理JVM其他引用了(软引用、弱引用、虚引用)
+    //OpenJDK8U312-GA/hotspot/src/share/vm/memory/referenceProcessor.cpp#ReferenceProcessor::process_discovered_references
     stats = rp->process_discovered_references(&is_alive, &keep_alive,
                                               &evacuate_followers, NULL,
                                               _gc_timer, gc_tracer.gc_id());
@@ -1083,6 +1099,7 @@ void ParNewGeneration::collect(bool   full,
   SpecializationStats::print();
 
   rp->set_enqueuing_is_done(true);
+  //以下这行代码与java.lang.ref.Reference#discovered处理相关(enqueue_discovered_references)
   if (rp->processing_is_mt()) {
     ParNewRefProcTaskExecutor task_executor(*this, thread_state_set);
     rp->enqueue_discovered_references(&task_executor);
