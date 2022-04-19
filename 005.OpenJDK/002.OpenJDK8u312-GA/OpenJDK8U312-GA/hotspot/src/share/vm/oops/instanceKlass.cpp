@@ -1146,8 +1146,17 @@ instanceOop InstanceKlass::register_finalizer(instanceOop i, TRAPS) {
   return h_i();
 }
 
+/**
+ * 实际创建对象
+ * @param TRAPS 其实就是当前的Java 线程
+ * 
+ * 
+ * @return 对象内存地址或者OOM
+ */
 instanceOop InstanceKlass::allocate_instance(TRAPS) {
+  // 判断当前Class是否重写了java.lang.Object#finalize方法
   bool has_finalizer_flag = has_finalizer(); // Query before possible GC
+  
   int size = size_helper();  // Query before forming handle.
 
   KlassHandle h_k(THREAD, this);
@@ -1155,7 +1164,10 @@ instanceOop InstanceKlass::allocate_instance(TRAPS) {
   instanceOop i;
 
   i = (instanceOop)CollectedHeap::obj_allocate(h_k, size, CHECK_NULL);
+  
+  // 如果Class重写了finalize方法，那么就需要调用java.lang.ref.Finalizer#register方法，将该实例注册到Finalizer上
   if (has_finalizer_flag && !RegisterFinalizersAtInit) {
+    // 执行注册动作
     i = register_finalizer(i, CHECK_NULL);
   }
   return i;

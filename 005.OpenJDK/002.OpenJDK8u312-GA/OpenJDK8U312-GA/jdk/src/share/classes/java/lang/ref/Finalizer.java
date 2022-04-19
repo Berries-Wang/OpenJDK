@@ -31,6 +31,9 @@ import sun.misc.JavaLangAccess;
 import sun.misc.SharedSecrets;
 import sun.misc.VM;
 
+/**
+ * 其实这个类就是用来实现 java.lang.Object#finalize() 机制的
+ */
 final class Finalizer extends FinalReference<Object> { /* Package-private; must be in
                                                           same package as the Reference
                                                           class */
@@ -228,8 +231,13 @@ final class Finalizer extends FinalReference<Object> { /* Package-private; must 
              tgn != null;
              tg = tgn, tgn = tg.getParent());
         Thread finalizer = new FinalizerThread(tg);
+
+        // 设置FinalizerThread 的优先级，再次，优先级并不是最高。
         finalizer.setPriority(Thread.MAX_PRIORITY - 2);
+
+        // 设置为守护线程
         finalizer.setDaemon(true);
+
         finalizer.start();
     }
 
