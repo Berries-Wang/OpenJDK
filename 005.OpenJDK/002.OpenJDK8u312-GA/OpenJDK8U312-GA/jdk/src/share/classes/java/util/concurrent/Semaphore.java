@@ -34,21 +34,28 @@
  */
 
 package java.util.concurrent;
+
 import java.util.Collection;
 import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 
 /**
- * A counting semaphore.  Conceptually, a semaphore maintains a set of
- * permits.  Each {@link #acquire} blocks if necessary until a permit is
+ * A counting semaphore(信号量).  Conceptually(概念上), a semaphore maintains(保持；维持；维护) a set of
+ * permits(许可证).  Each {@link #acquire} blocks if necessary until a permit is
  * available, and then takes it.  Each {@link #release} adds a permit,
- * potentially releasing a blocking acquirer.
+ * potentially(潜在的) releasing a blocking acquirer.
  * However, no actual permit objects are used; the {@code Semaphore} just
- * keeps a count of the number available and acts accordingly.
+ * keeps a count of the number available and acts accordingly(相应的).<p/>
+ * <p>
+ * 计数信号量，从概念上来讲，一个信号量计数器维护着一个许可证的集合。如果有必要，每个acquire操作将会阻塞直到
+ * 又一个许可证可用，然后拿走他。每个release操作将添加一个信号量并释放一个正在阻塞的acquirer.
+ * 然而，没有实际上的许可证对象被使用，该“Semaphore”只是维护可用数量的计数，并采取相应的行动
  *
- * <p>Semaphores are often used to restrict the number of threads than can
+ * <p>Semaphores are often used to restrict(限制) the number of threads than can
  * access some (physical or logical) resource. For example, here is
- * a class that uses a semaphore to control access to a pool of items:
- *  <pre> {@code
+ * a class that uses a semaphore to control access to a pool of items: <p/>
+ * Semaphore 经常被用来限制访问一些资源的线程数量。如下示例:
+ *
+ * <pre> {@code
  * class Pool {
  *   private static final int MAX_AVAILABLE = 100;
  *   private final Semaphore available = new Semaphore(MAX_AVAILABLE, true);
@@ -63,7 +70,7 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
  *       available.release();
  *   }
  *
- *   // Not a particularly efficient data structure; just for demo
+ *   // Not a particularly efficient data structure; just for demo: 不是特别有效的数据结构;只是为了演示
  *
  *   protected Object[] items = ... whatever kinds of items being managed
  *   protected boolean[] used = new boolean[MAX_AVAILABLE];
@@ -92,16 +99,16 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
  *   }
  * }}</pre>
  *
- * <p>Before obtaining an item each thread must acquire a permit from
- * the semaphore, guaranteeing that an item is available for use. When
+ * <p>Before obtaining(获得) an item each thread must acquire a permit from
+ * the semaphore, guaranteeing(担保) that an item is available for use. When
  * the thread has finished with the item it is returned back to the
  * pool and a permit is returned to the semaphore, allowing another
  * thread to acquire that item.  Note that no synchronization lock is
- * held when {@link #acquire} is called as that would prevent an item
- * from being returned to the pool.  The semaphore encapsulates the
- * synchronization needed to restrict access to the pool, separately
- * from any synchronization needed to maintain the consistency of the
- * pool itself.
+ * held(hold的过去分词) when {@link #acquire} is called as that would prevent an item
+ * from being returned to the pool (注意，当acquire被调用时，不会持有同步锁，因为这会阻止项返回到池中。as 有因为的意思).
+ * The semaphore encapsulates(简要描述；封装) the synchronization needed to restrict access to the pool, separately(单独的)
+ * from any synchronization needed to maintain the consistency(一致性) of the
+ * pool itself.(信号量封装了限制对池的访问所需的同步，与维护池本身一致性所需的任何同步分开。)
  *
  * <p>A semaphore initialized to one, and which is used such that it
  * only has at most one permit available, can serve as a mutual
@@ -111,14 +118,16 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
  * binary semaphore has the property (unlike many {@link java.util.concurrent.locks.Lock}
  * implementations), that the &quot;lock&quot; can be released by a
  * thread other than the owner (as semaphores have no notion of
- * ownership).  This can be useful in some specialized contexts, such
- * as deadlock recovery.
+ * ownership:因为信号量没有所有权的概念).  This can be useful in some specialized contexts, such
+ * as deadlock recovery. <p/>
+ * 译：that the &quot;lock&quot; can be released by a  thread other than the owner(“锁”可以由所有者以外的线程释放) <p/>
+ *  at most: 最多
  *
  * <p> The constructor for this class optionally accepts a
- * <em>fairness</em> parameter. When set false, this class makes no
- * guarantees about the order in which threads acquire permits. In
- * particular, <em>barging</em> is permitted, that is, a thread
- * invoking {@link #acquire} can be allocated a permit ahead of a
+ * <em>fairness</em>(公平) parameter. When set false, this class makes no
+ * guarantees(保证) about the order in which threads acquire permits. In
+ * particular, <em>barging</em>(结合下文，意思是非公平) is permitted, that is, a thread
+ * invoking {@link #acquire} can be allocated(allocate(分配、分派) 的过去分词) a permit ahead of a
  * thread that has been waiting - logically the new thread places itself at
  * the head of the queue of waiting threads. When fairness is set true, the
  * semaphore guarantees that threads invoking any of the {@link
@@ -131,31 +140,34 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
  * the other, and similarly upon return from the method.
  * Also note that the untimed {@link #tryAcquire() tryAcquire} methods do not
  * honor the fairness setting, but will take any permits that are
- * available.
+ * available.（构造函数中fair参数决定构造的信号量是否公平，即是否是先进先出)
  *
  * <p>Generally, semaphores used to control resource access should be
- * initialized as fair, to ensure that no thread is starved out from
+ * initialized as fair, to ensure that no thread is starved(饥饿的) out from
  * accessing a resource. When using semaphores for other kinds of
- * synchronization control, the throughput advantages of non-fair
- * ordering often outweigh fairness considerations.
+ * synchronization control, the throughput(吞吐量) advantages(优势，特点) of non-fair
+ * ordering often outweigh(超过) fairness considerations(考虑). (吞吐量，即在一些其他场景下，非公平的吞吐量一般超过公平)
  *
- * <p>This class also provides convenience methods to {@link
+ * <p>This class also provides convenience(方便，便利) methods to {@link
  * #acquire(int) acquire} and {@link #release(int) release} multiple
- * permits at a time.  Beware of the increased risk of indefinite
- * postponement when these methods are used without fairness set true.
+ * permits at a time.  Beware(当心) of the increased risk(风险) of indefinite(不定的，无限期的)
+ * postponement(推迟) when these methods are used without fairness set true.(注意，当这些方法没有设置公平值为真时，会增加无限期延迟的风险)
  *
- * <p>Memory consistency effects: Actions in a thread prior to calling
+ * <p>Memory consistency(一致性) effects: Actions in a thread prior to calling
  * a "release" method such as {@code release()}
  * <a href="package-summary.html#MemoryVisibility"><i>happen-before</i></a>
  * actions following a successful "acquire" method such as {@code acquire()}
- * in another thread.
+ * in another thread.<p/>
+ * > 内存一致性影响:线程中调用“释放”方法(如release())之前的操作发生——在另一个线程中调用成功的“获取”方法(如acquire())之后的操作发生之前。
  *
- * @since 1.5
  * @author Doug Lea
+ * @since 1.5
  */
 public class Semaphore implements java.io.Serializable {
     private static final long serialVersionUID = -3222578661600680210L;
-    /** All mechanics via AbstractQueuedSynchronizer subclass */
+    /**
+     * All mechanics via AbstractQueuedSynchronizer subclass
+     */
     private final Sync sync;
 
     /**
@@ -175,17 +187,17 @@ public class Semaphore implements java.io.Serializable {
         }
 
         final int nonfairTryAcquireShared(int acquires) {
-            for (;;) {
+            for (; ; ) {
                 int available = getState();
                 int remaining = available - acquires;
                 if (remaining < 0 ||
-                    compareAndSetState(available, remaining))
+                        compareAndSetState(available, remaining))
                     return remaining;
             }
         }
 
         protected final boolean tryReleaseShared(int releases) {
-            for (;;) {
+            for (; ; ) {
                 int current = getState();
                 int next = current + releases;
                 if (next < current) // overflow
@@ -196,7 +208,7 @@ public class Semaphore implements java.io.Serializable {
         }
 
         final void reducePermits(int reductions) {
-            for (;;) {
+            for (; ; ) {
                 int current = getState();
                 int next = current - reductions;
                 if (next > current) // underflow
@@ -207,7 +219,7 @@ public class Semaphore implements java.io.Serializable {
         }
 
         final int drainPermits() {
-            for (;;) {
+            for (; ; ) {
                 int current = getState();
                 if (current == 0 || compareAndSetState(current, 0))
                     return current;
@@ -241,13 +253,13 @@ public class Semaphore implements java.io.Serializable {
         }
 
         protected int tryAcquireShared(int acquires) {
-            for (;;) {
+            for (; ; ) {
                 if (hasQueuedPredecessors())
                     return -1;
                 int available = getState();
                 int remaining = available - acquires;
                 if (remaining < 0 ||
-                    compareAndSetState(available, remaining))
+                        compareAndSetState(available, remaining))
                     return remaining;
             }
         }
@@ -258,8 +270,8 @@ public class Semaphore implements java.io.Serializable {
      * permits and nonfair fairness setting.
      *
      * @param permits the initial number of permits available.
-     *        This value may be negative, in which case releases
-     *        must occur before any acquires will be granted.
+     *                This value may be negative, in which case releases
+     *                must occur before any acquires will be granted.
      */
     public Semaphore(int permits) {
         sync = new NonfairSync(permits);
@@ -270,11 +282,11 @@ public class Semaphore implements java.io.Serializable {
      * permits and the given fairness setting.
      *
      * @param permits the initial number of permits available.
-     *        This value may be negative, in which case releases
-     *        must occur before any acquires will be granted.
-     * @param fair {@code true} if this semaphore will guarantee
-     *        first-in first-out granting of permits under contention,
-     *        else {@code false}
+     *                This value may be negative, in which case releases
+     *                must occur before any acquires will be granted.
+     * @param fair    {@code true} if this semaphore will guarantee
+     *                first-in first-out granting of permits under contention,
+     *                else {@code false}
      */
     public Semaphore(int permits, boolean fair) {
         sync = fair ? new FairSync(permits) : new NonfairSync(permits);
@@ -357,7 +369,7 @@ public class Semaphore implements java.io.Serializable {
      * which is almost equivalent (it also detects interruption).
      *
      * @return {@code true} if a permit was acquired and {@code false}
-     *         otherwise
+     * otherwise
      */
     public boolean tryAcquire() {
         return sync.nonfairTryAcquireShared(1) >= 0;
@@ -399,13 +411,13 @@ public class Semaphore implements java.io.Serializable {
      * will not wait at all.
      *
      * @param timeout the maximum time to wait for a permit
-     * @param unit the time unit of the {@code timeout} argument
+     * @param unit    the time unit of the {@code timeout} argument
      * @return {@code true} if a permit was acquired and {@code false}
-     *         if the waiting time elapsed before a permit was acquired
+     * if the waiting time elapsed before a permit was acquired
      * @throws InterruptedException if the current thread is interrupted
      */
     public boolean tryAcquire(long timeout, TimeUnit unit)
-        throws InterruptedException {
+            throws InterruptedException {
         return sync.tryAcquireSharedNanos(1, unit.toNanos(timeout));
     }
 
@@ -459,7 +471,7 @@ public class Semaphore implements java.io.Serializable {
      * permits had been made available by a call to {@link #release()}.
      *
      * @param permits the number of permits to acquire
-     * @throws InterruptedException if the current thread is interrupted
+     * @throws InterruptedException     if the current thread is interrupted
      * @throws IllegalArgumentException if {@code permits} is negative
      */
     public void acquire(int permits) throws InterruptedException {
@@ -518,7 +530,7 @@ public class Semaphore implements java.io.Serializable {
      *
      * @param permits the number of permits to acquire
      * @return {@code true} if the permits were acquired and
-     *         {@code false} otherwise
+     * {@code false} otherwise
      * @throws IllegalArgumentException if {@code permits} is negative
      */
     public boolean tryAcquire(int permits) {
@@ -570,14 +582,14 @@ public class Semaphore implements java.io.Serializable {
      *
      * @param permits the number of permits to acquire
      * @param timeout the maximum time to wait for the permits
-     * @param unit the time unit of the {@code timeout} argument
+     * @param unit    the time unit of the {@code timeout} argument
      * @return {@code true} if all permits were acquired and {@code false}
-     *         if the waiting time elapsed before all permits were acquired
-     * @throws InterruptedException if the current thread is interrupted
+     * if the waiting time elapsed before all permits were acquired
+     * @throws InterruptedException     if the current thread is interrupted
      * @throws IllegalArgumentException if {@code permits} is negative
      */
     public boolean tryAcquire(int permits, long timeout, TimeUnit unit)
-        throws InterruptedException {
+            throws InterruptedException {
         if (permits < 0) throw new IllegalArgumentException();
         return sync.tryAcquireSharedNanos(permits, unit.toNanos(timeout));
     }
@@ -661,7 +673,7 @@ public class Semaphore implements java.io.Serializable {
      * monitoring of the system state.
      *
      * @return {@code true} if there may be other threads waiting to
-     *         acquire the lock
+     * acquire the lock
      */
     public final boolean hasQueuedThreads() {
         return sync.hasQueuedThreads();
