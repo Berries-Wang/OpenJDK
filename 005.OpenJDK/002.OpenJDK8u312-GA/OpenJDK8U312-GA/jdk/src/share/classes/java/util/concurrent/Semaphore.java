@@ -174,6 +174,8 @@ public class Semaphore implements java.io.Serializable {
      * Synchronization implementation for semaphore.  Uses AQS state
      * to represent permits. Subclassed into fair and nonfair
      * versions.
+     * 
+     * semaphore 内同步器的实现，使用AQS的state表示许可证。子类分为公平和非公平版本.(这应该就是核心了)
      */
     abstract static class Sync extends AbstractQueuedSynchronizer {
         private static final long serialVersionUID = 1192457210091910933L;
