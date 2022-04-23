@@ -177,7 +177,7 @@ IRT_ENTRY(void, InterpreterRuntime::_new(JavaThread* thread, ConstantPool* pool,
   oop obj = klass->allocate_instance(CHECK);
   thread->set_vm_result(obj);
 IRT_END
-
+011.JDK细节集锦/000.JDK之锁/006.Java死锁检测.md011.JDK细节集锦/000.JDK之锁/006.Java死锁检测.md
 
 IRT_ENTRY(void, InterpreterRuntime::newarray(JavaThread* thread, BasicType type, jint size))
   oop obj = oopFactory::new_typeArray(type, size, CHECK);
