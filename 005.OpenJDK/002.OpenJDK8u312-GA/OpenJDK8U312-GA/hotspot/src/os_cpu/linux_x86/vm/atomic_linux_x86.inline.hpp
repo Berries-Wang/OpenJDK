@@ -46,7 +46,13 @@ inline void Atomic::store_ptr(intptr_t store_value, volatile intptr_t* dest) { *
 inline void Atomic::store_ptr(void*    store_value, volatile void*     dest) { *(void* volatile *)dest = store_value; }
 
 
-// Adding a lock prefix to an instruction on MP machine
+/**
+ * Adding a lock prefix to an instruction on MP machine
+ * CMP ax, bx: 即 ax-bx。 cmp是比较指令， cmp的功能相当于减法指令，只是不保存结果。cmp指令执行后，将对标志寄存器产生影响。其他相关指令通过识别这些被影响的标志寄存器位来得知比较结果。
+ * 
+ * > je 指令【Jump if Equals】在ZF被置位时跳转。je 是 jz 【Jump if Zero】的别名。
+ * > je 1f或者je 1b 是跳转到对应的标号的地方。这里的1表示标号(label),f和b表示向前还是向后,f(forward）向前，b(backward)向后
+ */ 
 #define LOCK_IF_MP(mp) "cmp $0, " #mp "; je 1f; lock; 1: "
 
 inline jint     Atomic::add    (jint     add_value, volatile jint*     dest) {
