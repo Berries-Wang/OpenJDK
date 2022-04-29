@@ -69,6 +69,8 @@
 #include "utilities/growableArray.hpp"
 #include "utilities/vmError.hpp"
 
+#include  "wei_log/WeiLog.hpp"
+
 // put OS-includes here
 # include <sys/types.h>
 # include <sys/mman.h>
@@ -4085,6 +4087,12 @@ size_t os::read_at(int fd, void *buf, unsigned int nBytes, jlong offset) {
  * Thread.sleep 底层实现
  */ 
 int os::sleep(Thread* thread, jlong millis, bool interruptible) {
+  // Java线程打印线程名字
+  if(thread->is_Java_thread()){
+     const char* threadName = thread->name();
+     wei_log_info(2,threadName," Enter os::sleep(Thread*,jlong,bool)");    
+  }
+  
   assert(thread == Thread::current(),  "thread consistency check");
 
   ParkEvent * const slp = thread->_SleepEvent ;
@@ -6046,6 +6054,12 @@ void os::PlatformEvent::park() {       // AKA "down()"
   guarantee (_Event >= 0, "invariant") ;
 }
 
+
+/**
+ * 
+ * Thread.sleep 底层实现
+ * 
+ */ 
 int os::PlatformEvent::park(jlong millis) {
   guarantee (_nParked == 0, "invariant") ;
 

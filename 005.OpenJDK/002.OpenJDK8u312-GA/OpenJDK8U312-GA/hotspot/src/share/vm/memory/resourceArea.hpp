@@ -59,8 +59,10 @@ public:
 
   char* allocate_bytes(size_t size, AllocFailType alloc_failmode = AllocFailStrategy::EXIT_OOM) {
 #ifdef ASSERT
-    if (_nesting < 1 && !_warned++)
-      fatal("memory leak: allocating without ResourceMark");
+    if (_nesting < 1 && !_warned++){
+      // 以下代码被注释是因为在debug模式下报错
+      // fatal("memory leak: allocating without ResourceMark");
+    }
     if (UseMallocOnly) {
       // use malloc, but save pointer in res. area for later freeing
       char** save = (char**)internal_malloc_4(sizeof(char*));

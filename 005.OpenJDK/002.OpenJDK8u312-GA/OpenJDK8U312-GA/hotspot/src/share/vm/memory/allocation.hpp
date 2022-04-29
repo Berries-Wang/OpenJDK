@@ -587,7 +587,7 @@ class ResourceObj ALLOCATION_SUPER_CLASS_SPEC {
 
   void* operator new(size_t size) throw() {
       address res = (address)resource_allocate_bytes(size);
-      DEBUG_ONLY(set_allocation_type(res, RESOURCE_AREA);)
+       DEBUG_ONLY(set_allocation_type(res, RESOURCE_AREA);)
       return res;
   }
 
