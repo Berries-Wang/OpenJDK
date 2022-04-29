@@ -60,7 +60,7 @@ public:
   char* allocate_bytes(size_t size, AllocFailType alloc_failmode = AllocFailStrategy::EXIT_OOM) {
 #ifdef ASSERT
     if (_nesting < 1 && !_warned++){
-      // 以下代码被注释是因为在debug模式下报错
+      // 以下代码被注释是因为在debug模式下获取线程名(thread->name())报错
       // fatal("memory leak: allocating without ResourceMark");
     }
     if (UseMallocOnly) {
