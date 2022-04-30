@@ -1249,36 +1249,36 @@ static void post_thread_park_event(EventThreadPark* event, const oop obj, jlong 
 /**
  * sun.misc.Unsafe#park 对应的Cpp代码
  */
-UNSAFE_ENTRY(void, Unsafe_Park(JNIEnv *env, jobject unsafe, jboolean isAbsolute, jlong time))
-  UnsafeWrapper("Unsafe_Park");
-  EventThreadPark event;
+UNSAFE_ENTRY(void, Unsafe_Park(JNIEnv *env, jobject unsafe, jboolean isAbsolute,
+                               jlong time))
+UnsafeWrapper("Unsafe_Park");
+EventThreadPark event;
 #ifndef USDT2
-  HS_DTRACE_PROBE3(hotspot, thread__park__begin, thread->parker(), (int) isAbsolute, time);
-#else /* USDT2 */
-   HOTSPOT_THREAD_PARK_BEGIN(
-                             (uintptr_t) thread->parker(), (int) isAbsolute, time);
+HS_DTRACE_PROBE3(hotspot, thread__park__begin, thread->parker(),
+                 (int)isAbsolute, time);
+#else  /* USDT2 */
+HOTSPOT_THREAD_PARK_BEGIN((uintptr_t)thread->parker(), (int)isAbsolute, time);
 #endif /* USDT2 */
-  JavaThreadParkedState jtps(thread, time != 0);
-  // 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/os/linux/vm/os_linux.cpp#Parker::park
-  thread->parker()->park(isAbsolute != 0, time); 
+JavaThreadParkedState jtps(thread, time != 0);
+// 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/os/linux/vm/os_linux.cpp#Parker::park
+thread->parker()->park(isAbsolute != 0, time);
 #ifndef USDT2
-  HS_DTRACE_PROBE1(hotspot, thread__park__end, thread->parker());
-#else /* USDT2 */
-  HOTSPOT_THREAD_PARK_END(
-                          (uintptr_t) thread->parker());
+HS_DTRACE_PROBE1(hotspot, thread__park__end, thread->parker());
+#else  /* USDT2 */
+HOTSPOT_THREAD_PARK_END((uintptr_t)thread->parker());
 #endif /* USDT2 */
-  if (event.should_commit()) {
-    const oop obj = thread->current_park_blocker();
-    if (time == 0) {
-      post_thread_park_event(&event, obj, min_jlong, min_jlong);
+if (event.should_commit()) {
+  const oop obj = thread->current_park_blocker();
+  if (time == 0) {
+    post_thread_park_event(&event, obj, min_jlong, min_jlong);
+  } else {
+    if (isAbsolute != 0) {
+      post_thread_park_event(&event, obj, min_jlong, time);
     } else {
-      if (isAbsolute != 0) {
-        post_thread_park_event(&event, obj, min_jlong, time);
-      } else {
-        post_thread_park_event(&event, obj, time, min_jlong);
-      }
+      post_thread_park_event(&event, obj, time, min_jlong);
     }
   }
+}
 UNSAFE_END
 
 UNSAFE_ENTRY(void, Unsafe_Unpark(JNIEnv *env, jobject unsafe, jobject jthread))

@@ -4085,7 +4085,11 @@ size_t os::read_at(int fd, void *buf, unsigned int nBytes, jlong offset) {
 
 /**
  * Thread.sleep 底层实现
- */ 
+ *
+ * @param thread  当前线程
+ * @param millis 睡眠的毫秒数
+ * @param interruptible 是否响应中断
+ */
 int os::sleep(Thread* thread, jlong millis, bool interruptible) {
   // Java线程打印线程名字
   if(thread->is_Java_thread()){
@@ -4099,10 +4103,12 @@ int os::sleep(Thread* thread, jlong millis, bool interruptible) {
   slp->reset() ;
   OrderAccess::fence() ;
 
+  // 是否响应线程中断
   if (interruptible) {
     jlong prevtime = javaTimeNanos();
 
     for (;;) {
+      // 轮询线程中断位
       if (os::is_interrupted(thread, true)) {
         return OS_INTRPT;
       }
@@ -6031,12 +6037,7 @@ int os::PlatformEvent::TryPark() {
     if (Atomic::cmpxchg (0, &_Event, v) == v) return v  ;
   }
 }
-
-/**
- * 
- * Thread.sleep 底层实现
- * 
- */ 
+ 
 void os::PlatformEvent::park() {       // AKA "down()"
   // Invariant: Only the thread associated with the Event/PlatformEvent
   // may call park().
@@ -6304,9 +6305,9 @@ static void unpackTime(timespec* absTime, bool isAbsolute, jlong time) {
 
 /**
  * sun.misc.Unsafe#park 最终会调用该方法来阻塞线程
- * 
+ *
  * 注意，该方法是成员方法
- */ 
+ */
 void Parker::park(bool isAbsolute, jlong time) {
   // Ideally we'd do something useful while spinning, such
   // as calling unpackTime().
@@ -6315,13 +6316,15 @@ void Parker::park(bool isAbsolute, jlong time) {
   // Return immediately if a permit(批准，许可) is available.
   // We depend on Atomic::xchg() having full barrier semantics
   // since we are doing a lock-free update to _counter.
-  if (Atomic::xchg(0, &_counter) > 0) return;
+  if (Atomic::xchg(0, &_counter) > 0)
+    return;
 
-  Thread* thread = Thread::current();
+  Thread *thread = Thread::current();
   assert(thread->is_Java_thread(), "Must be JavaThread");
   JavaThread *jt = (JavaThread *)thread;
 
-  // Optional optimization -- avoid state transitions if there's an interrupt pending.  Check interrupt before trying to wait
+  // Optional optimization -- avoid state transitions if there's an interrupt
+  // pending.  Check interrupt before trying to wait
   // 如果当前线程被中断，则立即返回
   if (Thread::is_interrupted(thread, false)) {
     return;
@@ -6329,13 +6332,12 @@ void Parker::park(bool isAbsolute, jlong time) {
 
   // Next, demultiplex/decode time arguments
   timespec absTime;
-  if (time < 0 || (isAbsolute && time == 0) ) { // don't wait at all
+  if (time < 0 || (isAbsolute && time == 0)) { // don't wait at all
     return;
   }
   if (time > 0) {
     unpackTime(&absTime, isAbsolute, time);
   }
-
 
   // Enter safepoint region
   // Beware of deadlocks such as 6317397.
@@ -6348,17 +6350,20 @@ void Parker::park(bool isAbsolute, jlong time) {
   // Don't wait if cannot get lock since interference arises from
   // unblocking.  Also. check interrupt before trying wait
   // 当线程中断或者尝试获取锁失败则立即返回
-  // pthread_mutex_trylock： 尝试对互斥量进行加锁，如果调用时互斥量处于未加锁的状态，则pthread_mutex_trylock将锁住互斥量，不会出现阻塞直接返回0. 《UNIX 环境高级编程·第3版》 P321
-  if (Thread::is_interrupted(thread, false) || pthread_mutex_trylock(_mutex) != 0) {
+  // pthread_mutex_trylock：
+  // 尝试对互斥量进行加锁，如果调用时互斥量处于未加锁的状态，则pthread_mutex_trylock将锁住互斥量，不会出现阻塞直接返回0.
+  // 《UNIX 环境高级编程·第3版》 P321
+  if (Thread::is_interrupted(thread, false) ||
+      pthread_mutex_trylock(_mutex) != 0) {
     return;
   }
 
-  int status ;
+  int status;
   // _counter 只会为0
-  if (_counter > 0)  { // no wait needed
+  if (_counter > 0) { // no wait needed
     _counter = 0;
     status = pthread_mutex_unlock(_mutex);
-    assert (status == 0, "invariant") ;
+    assert(status == 0, "invariant");
     // Paranoia to ensure our locked and lock-free paths interact
     // correctly with each other and Java-level accesses.
     OrderAccess::fence();
@@ -6366,50 +6371,56 @@ void Parker::park(bool isAbsolute, jlong time) {
   }
 
 #ifdef ASSERT
-  // Don't catch signals while blocked; let the running threads have the signals.
-  // (This allows a debugger to break into the running thread.)
+  // Don't catch signals while blocked; let the running threads have the
+  // signals. (This allows a debugger to break into the running thread.)
   sigset_t oldsigs;
-  sigset_t* allowdebug_blocked = os::Linux::allowdebug_blocked_signals();
+  sigset_t *allowdebug_blocked = os::Linux::allowdebug_blocked_signals();
   pthread_sigmask(SIG_BLOCK, allowdebug_blocked, &oldsigs);
 #endif
 
   OSThreadWaitState osts(thread->osthread(), false /* not Object.wait() */);
   jt->set_suspend_equivalent();
-  // cleared by handle_special_suspend_equivalent_condition() or java_suspend_self()
+  // cleared by handle_special_suspend_equivalent_condition() or
+  // java_suspend_self()
 
   assert(_cur_index == -1, "invariant");
-  if (time == 0) { // LockSupport.park 调用时，该参数为0
+  if (time == 0) {          // LockSupport.park 调用时，该参数为0
     _cur_index = REL_INDEX; // arbitrary choice when not timed
     /**
      * pthread_cond_wait: 该函数等待条件变量为真。
-     * > 调用者将锁住的互斥量传递给函数，函数然后自动把调用线程放到等待条件的线程列表上，对互斥量进行解锁。
-     * > 这就关闭了条件检查和线程进行休眠状态等待条件这两个操作之间的时间通道，这样就不会错过条件的任何变化。
-     * > pthread_cond_wait返回时，互斥量再次被锁住. 《UNIX 环境高级编程·第3版》 P333
-     * 
-     * 
+     * >
+     * 调用者将锁住的互斥量传递给函数，函数然后自动把调用线程放到等待条件的线程列表上，对互斥量进行解锁。
+     * >
+     * 这就关闭了条件检查和线程进行休眠状态等待条件这两个操作之间的时间通道，这样就不会错过条件的任何变化。
+     * > pthread_cond_wait返回时，互斥量再次被锁住. 《UNIX 环境高级编程·第3版》
+     * P333
+     *
+     *
      * 即线程会阻塞在函数"pthread_cond_wait"的调用，等待被唤醒
-     */ 
-    status = pthread_cond_wait (&_cond[_cur_index], _mutex) ;
+     */
+    status = pthread_cond_wait(&_cond[_cur_index], _mutex);
   } else {
     _cur_index = isAbsolute ? ABS_INDEX : REL_INDEX;
-    status = os::Linux::safe_cond_timedwait (&_cond[_cur_index], _mutex, &absTime) ;
+    status =
+        os::Linux::safe_cond_timedwait(&_cond[_cur_index], _mutex, &absTime);
     if (status != 0 && WorkAroundNPTLTimedWaitHang) {
-      pthread_cond_destroy (&_cond[_cur_index]) ;
-      pthread_cond_init    (&_cond[_cur_index], isAbsolute ? NULL : os::Linux::condAttr());
+      pthread_cond_destroy(&_cond[_cur_index]);
+      pthread_cond_init(&_cond[_cur_index],
+                        isAbsolute ? NULL : os::Linux::condAttr());
     }
   }
   _cur_index = -1;
-  assert_status(status == 0 || status == EINTR ||
-                status == ETIME || status == ETIMEDOUT,
+  assert_status(status == 0 || status == EINTR || status == ETIME ||
+                    status == ETIMEDOUT,
                 status, "cond_timedwait");
 
 #ifdef ASSERT
   pthread_sigmask(SIG_SETMASK, &oldsigs, NULL);
 #endif
 
-  _counter = 0 ;
-  status = pthread_mutex_unlock(_mutex) ;
-  assert_status(status == 0, status, "invariant") ;
+  _counter = 0;
+  status = pthread_mutex_unlock(_mutex);
+  assert_status(status == 0, status, "invariant");
   // Paranoia to ensure our locked and lock-free paths interact
   // correctly with each other and Java-level accesses.
   OrderAccess::fence();

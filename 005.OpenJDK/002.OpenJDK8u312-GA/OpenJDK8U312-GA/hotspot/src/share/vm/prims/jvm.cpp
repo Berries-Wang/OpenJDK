@@ -3356,10 +3356,14 @@ JVM_ENTRY(void, JVM_Sleep(JNIEnv* env, jclass threadClass, jlong millis))
   EventThreadSleep event;
 
   if (millis == 0) {
-    // When ConvertSleepToYield is on, this matches the classic VM implementation of
-    // JVM_Sleep. Critical for similar threading behaviour (Win32)
-    // It appears that in certain GUI contexts, it may be beneficial to do a short sleep
-    // for SOLARIS
+    /**
+     * When ConvertSleepToYield is on, this matches the classic VM
+     * implementation of JVM_Sleep. Critical for similar threading behaviour
+     * (Win32) It appears that in certain GUI contexts, it may be beneficial to
+     * do a short sleep for SOLARIS
+     *
+     */
+    // ConvertSleepToYield默认为True，这也就是为什么Thread.sleep(0)会被用户让出CPU执行权，触发CPU竞争了
     if (ConvertSleepToYield) {
       os::yield();
     } else {
