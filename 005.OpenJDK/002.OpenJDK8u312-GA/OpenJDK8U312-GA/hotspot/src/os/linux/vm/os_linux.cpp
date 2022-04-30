@@ -5967,8 +5967,17 @@ void os::pause() {
 // abstime will be the absolute timeout time
 // TODO: replace compute_abstime() with unpackTime()
 
-static struct timespec* compute_abstime(timespec* abstime, jlong millis) {
-  if (millis < 0)  millis = 0;
+
+/**
+ * 
+ * 计算绝对时间
+ * 
+ * @param abstime 传出参数 
+ * @param millis  毫秒数,即计算millis毫秒之后的某个时间
+ */ 
+static struct timespec *compute_abstime(timespec *abstime, jlong millis) {
+  if (millis < 0)
+    millis = 0;
 
   jlong seconds = millis / 1000;
   millis %= 1000;
@@ -5976,11 +5985,21 @@ static struct timespec* compute_abstime(timespec* abstime, jlong millis) {
     seconds = 50000000;
   }
 
+  // 是否支持使用系统启动时间来计算绝对时间
   if (os::Linux::supports_monotonic_clock()) {
     struct timespec now;
+    /**
+     * 
+     * int clock_gettime(clockid_t clk_id, struct timespec *tp);
+     * 
+     *clk_id : 检索和设置的clk_id指定的时钟时间。
+     *  CLOCK_REALTIME:系统实时时间,随系统实时时间改变而改变
+     *  CLOCK_MONOTONIC:从系统启动这一刻起开始计时,不受系统时间被用户改变的影响。
+     *   .. 余下选项可查看man手册
+     */ 
     int status = os::Linux::clock_gettime(CLOCK_MONOTONIC, &now);
     assert_status(status == 0, status, "clock_gettime");
-    abstime->tv_sec = now.tv_sec  + seconds;
+    abstime->tv_sec = now.tv_sec + seconds;
     long nanos = now.tv_nsec + millis * NANOSECS_PER_MILLISEC;
     if (nanos >= NANOSECS_PER_SEC) {
       abstime->tv_sec += 1;
@@ -5991,7 +6010,7 @@ static struct timespec* compute_abstime(timespec* abstime, jlong millis) {
     struct timeval now;
     int status = gettimeofday(&now, NULL);
     assert(status == 0, "gettimeofday");
-    abstime->tv_sec = now.tv_sec  + seconds;
+    abstime->tv_sec = now.tv_sec + seconds;
     long usec = now.tv_usec + millis * 1000;
     if (usec >= 1000000) {
       abstime->tv_sec += 1;
@@ -6001,7 +6020,6 @@ static struct timespec* compute_abstime(timespec* abstime, jlong millis) {
   }
   return abstime;
 }
-
 
 // Test-and-clear _Event, always leaves _Event set to 0, returns immediately.
 // Conceptually TryPark() should be equivalent to park(0).
@@ -6059,29 +6077,42 @@ void os::PlatformEvent::park() {       // AKA "down()"
  * 
  * Thread.sleep 底层实现
  * 
- */ 
+ */
 int os::PlatformEvent::park(jlong millis) {
-  guarantee (_nParked == 0, "invariant") ;
 
-  int v ;
-  for (;;) {
-      v = _Event ;
-      if (Atomic::cmpxchg (v-1, &_Event, v) == v) break ;
+  Thread *curThread = Thread::current();
+  char *threadName = curThread->name();
+  {
+    if (strcmp(threadName, "--->Thread.sleep<---") == 0) {
+      wei_log_info(2, curThread->name(),
+                   "Enter  os::PlatformEvent::park(jlong millis)");
+    }
   }
-  guarantee (v >= 0, "invariant") ;
-  if (v != 0) return OS_OK ;
+
+  guarantee(_nParked == 0, "invariant");
+
+  int v;
+  for (;;) {
+    v = _Event;
+    if (Atomic::cmpxchg(v - 1, &_Event, v) == v)
+      break;
+  }
+  guarantee(v >= 0, "invariant");
+  if (v != 0)
+    return OS_OK;
 
   // We do this the hard way, by blocking the thread.
   // Consider enforcing a minimum timeout value.
   struct timespec abst;
+  // 计算绝对时间: 但是注意使用的参照时间: 系统启动时间/北京时间(即具体时间)...
   compute_abstime(&abst, millis);
 
   int ret = OS_TIMEOUT;
   // 对互斥量进行加锁
   int status = pthread_mutex_lock(_mutex);
   assert_status(status == 0, status, "mutex_lock");
-  guarantee (_nParked == 0, "invariant") ;
-  ++_nParked ;
+  guarantee(_nParked == 0, "invariant");
+  ++_nParked;
 
   // Object.wait(timo) will return because of
   // (a) notification
@@ -6099,28 +6130,39 @@ int os::PlatformEvent::park(jlong millis) {
   // In that case, we should propagate the notify to another waiter.
 
   while (_Event < 0) {
+
     // 阻塞：内部是调用pthread_cond_timedwait函数来实现
     status = os::Linux::safe_cond_timedwait(_cond, _mutex, &abst);
-    if (status != 0 && WorkAroundNPTLTimedWaitHang) {
-      pthread_cond_destroy (_cond);
-      pthread_cond_init (_cond, os::Linux::condAttr()) ;
+
+    {
+      if (strcmp(threadName, "--->Thread.sleep<---") == 0) {
+        wei_log_info(2, curThread->name(),
+                     "---> Wake From os::Linux::safe_cond_timedwait");
+      }
     }
-    assert_status(status == 0 || status == EINTR ||
-                  status == ETIME || status == ETIMEDOUT,
+
+    if (status != 0 && WorkAroundNPTLTimedWaitHang) {
+      pthread_cond_destroy(_cond);
+      pthread_cond_init(_cond, os::Linux::condAttr());
+    }
+    assert_status(status == 0 || status == EINTR || status == ETIME ||
+                      status == ETIMEDOUT,
                   status, "cond_timedwait");
-    if (!FilterSpuriousWakeups) break ;                 // previous semantics
-    if (status == ETIME || status == ETIMEDOUT) break ;
+    if (!FilterSpuriousWakeups)
+      break; // previous semantics
+    if (status == ETIME || status == ETIMEDOUT)
+      break;
     // We consume and ignore EINTR and spurious wakeups.
   }
-  --_nParked ;
+  --_nParked;
   if (_Event >= 0) {
-     ret = OS_OK;
+    ret = OS_OK;
   }
-  _Event = 0 ;
+  _Event = 0;
   // 解锁
   status = pthread_mutex_unlock(_mutex);
   assert_status(status == 0, status, "mutex_unlock");
-  assert (_nParked == 0, "invariant") ;
+  assert(_nParked == 0, "invariant");
   // Paranoia to ensure our locked and lock-free paths interact
   // correctly with each other.
   OrderAccess::fence();
