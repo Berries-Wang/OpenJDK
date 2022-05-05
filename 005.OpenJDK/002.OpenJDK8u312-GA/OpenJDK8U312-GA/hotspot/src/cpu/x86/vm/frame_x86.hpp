@@ -52,9 +52,9 @@
 //    [oop temp              ]                     (only for native calls)
 //    [locals and parameters ]
 //                               <- sender sp
-// ------------------------------ Asm interpreter ----------------------------------------
+// ------------------------------ Asm interpreter(模板解释器栈帧数) ---------------------------------- 
 
-// ------------------------------ C++ interpreter ----------------------------------------
+// ------------------------------ C++ interpreter(解释器栈帧) ---------------------------------------
 //
 // Layout of C++ interpreter frame: (While executing in BytecodeInterpreter::run)
 //
@@ -75,6 +75,8 @@
 //    [return pc               ] (return to callee of frame manager [1]
 //    [locals and parameters   ]
 //                               <- sender sp
+
+// expression stack 操作数栈
 
 // [1] When the C++ interpreter calls a new method it returns to the frame
 //     manager which allocates a new frame on the stack. In that case there

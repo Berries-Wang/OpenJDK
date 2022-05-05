@@ -1811,105 +1811,219 @@ run:
           UPDATE_PC_AND_CONTINUE(1);
       }
 
-      /* monitorenter and monitorexit for locking/unlocking an object */
-
-      CASE(_monitorenter): {
+      /**
+       *  monitorenter and monitorexit for locking/unlocking an object
+       *
+       *  synchronized 实现: monitorenter , monitorexit
+       * 
+       * _monitorenter:
+       *   1. 系统没有开启偏向所模式，但是锁对象处于偏向所模式。
+       *   2. 批量重偏向，导致epoch过期
+       *   3. 匿名偏向
+       * 
+       **/
+      CASE(_monitorenter) : {
+        // 获取栈顶对象
         oop lockee = STACK_OBJECT(-1);
-        // derefing's lockee ought to provoke implicit null check
+        // derefing's lockee ought to provoke implicit null check. 即判空操作
         CHECK_NULL(lockee);
-        // find a free monitor or one already allocated for this object
-        // if we find a matching object then we need a new monitor
-        // since this is recursive enter
-        BasicObjectLock* limit = istate->monitor_base();
-        BasicObjectLock* most_recent = (BasicObjectLock*) istate->stack_base();
-        BasicObjectLock* entry = NULL;
-        while (most_recent != limit ) {
-          if (most_recent->obj() == NULL) entry = most_recent;
-          else if (most_recent->obj() == lockee) break;
+
+        /**
+         *  // find a free monitor or one already allocated for this object
+         *  // if we find a matching object then we need a new monitor
+         *  // since this is recursive enter
+         *  找到一个空闲的或者已经为该对象分配的一个monitor。如果找到了一个匹配的对象，然而我们需要重新创建一个，因为这是重入了.
+         *
+         * 通过代码发现,“istate”类型是BytecodeInterpreter，即字节码解释器
+         *
+         * 下面的查找方式，得参考:
+         * 004.OpenJDK(JVM)学习/002.JVM内核/003.操作数栈的栈帧.md,即了解操作数栈的栈帧是什么样的
+         */
+        // 遍历栈中的Lock Record , 找到一个空闲的Lock Record(即可以使用的)
+        BasicObjectLock *limit = istate->monitor_base(); // 线程栈的栈顶
+        BasicObjectLock *most_recent =
+            (BasicObjectLock *)istate->stack_base(); // // 线程栈的栈底
+
+        /**
+         * BasicObjectLock: 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/runtime/basicLock.hpp
+         */ 
+        BasicObjectLock *entry = NULL;
+        // 从栈底向栈顶遍历(找到距离栈底最近的一个)
+        while (most_recent != limit) {
+          if (most_recent->obj() == NULL)
+            entry = most_recent;
+          else if (most_recent->obj() == lockee) //
+            break;
           most_recent++;
         }
-        if (entry != NULL) {
-          entry->set_obj(lockee);
-          int success = false;
-          uintptr_t epoch_mask_in_place = (uintptr_t)markOopDesc::epoch_mask_in_place;
 
+        // entry != NULL , 说明栈中有一个空闲的Lock Record
+        if (entry != NULL) {
+          entry->set_obj(lockee); // 设置锁对象
+          int success = false;
+
+          // 获取epoch掩码
+          uintptr_t epoch_mask_in_place =
+              (uintptr_t)markOopDesc::epoch_mask_in_place;
+
+          // 获取锁对象对象头的_markWord部分
           markOop mark = lockee->mark();
-          intptr_t hash = (intptr_t) markOopDesc::no_hash;
-          // implies UseBiasedLocking
+          intptr_t hash = (intptr_t)markOopDesc::no_hash;
+          // implies(意味着) UseBiasedLocking ,
+          // 该锁对象是否处于偏向锁模式(即是否存在线程持有该锁，且锁的类型是偏向锁)
           if (mark->has_bias_pattern()) {
             uintptr_t thread_ident;
             uintptr_t anticipated_bias_locking_value;
-            thread_ident = (uintptr_t)istate->thread();
-            anticipated_bias_locking_value =
-              (((uintptr_t)lockee->klass()->prototype_header() | thread_ident) ^ (uintptr_t)mark) &
-              ~((uintptr_t) markOopDesc::age_mask_in_place);
 
-            if  (anticipated_bias_locking_value == 0) {
+            // 获取当前线程(线程指针)
+            thread_ident = (uintptr_t)istate->thread();
+
+            /**
+             * 通过文件: 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/oops/markOop.hpp 查看对象头之一的 markWord
+             * 
+             * | thread_ident (与当前线程进行或操作): 
+             */
+            anticipated_bias_locking_value =
+                (((uintptr_t)lockee->klass()->prototype_header() | thread_ident)  ^ (uintptr_t)mark) 
+                & ~((uintptr_t)markOopDesc::age_mask_in_place);
+
+            /**
+             * 以下这些if-else if - else 结合对象头markword更好理解.
+             * 
+             */ 
+
+            // 等于0说明当前锁对象偏向的线程就是当前线程，则什么都不需要做.
+            if (anticipated_bias_locking_value == 0) {
               // already biased towards this thread, nothing to do
               if (PrintBiasedLockingStatistics) {
-                (* BiasedLocking::biased_lock_entry_count_addr())++;
+                (*BiasedLocking::biased_lock_entry_count_addr())++;
               }
-              success = true;
-            }
-            else if ((anticipated_bias_locking_value & markOopDesc::biased_lock_mask_in_place) != 0) {
-              // try revoke bias
+              success = true; // 加锁成功
+            } else if ((anticipated_bias_locking_value & // 与操作
+                        markOopDesc::biased_lock_mask_in_place) != 0) {
+              /**
+               * 锁对象处于偏向模式，而
+               * anticipated_bias_locking_value & markOopDesc::biased_lock_mask_in_place  ！= 0
+               * 则说明lockee->klass()->prototype_header不是偏向模式，即没有开启偏向锁，因此需要撤销偏向锁。
+               */
+
+
+              /**
+               * try revoke(撤销) bias
+               * 
+               * header 创建一个新的对象头
+               */ 
               markOop header = lockee->klass()->prototype_header();
               if (hash != markOopDesc::no_hash) {
                 header = header->copy_set_hash(hash);
               }
-              if (Atomic::cmpxchg_ptr(header, lockee->mark_addr(), mark) == mark) {
+
+              /**
+               * Atomic::cmpxchg_ptr函数参考:005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/os_cpu/linux_x86/vm/atomic_linux_x86.inline.hpp
+               * 将锁对象的对象头设置为header
+               * > 但是对象年龄这个确没有设置.
+               */ 
+              if (Atomic::cmpxchg_ptr(header, lockee->mark_addr(), mark) ==
+                  mark) {
                 if (PrintBiasedLockingStatistics)
                   (*BiasedLocking::revoked_lock_entry_count_addr())++;
               }
-            }
-            else if ((anticipated_bias_locking_value & epoch_mask_in_place) !=0) {
+              // 加锁失败
+            } else if ((anticipated_bias_locking_value & epoch_mask_in_place) != 0) {
+              /**
+               * 锁对象和lockee->klass()->prototype_header中的epoch位不一致，说明发生了批量重偏向。
+               * epoch过期了，可以看作是没有偏向任何线程，因此可以重偏向。 
+               * 
+               * > prototype_header epoch位应该是在重偏向时设置的
+               */
+            
               // try rebias
-              markOop new_header = (markOop) ( (intptr_t) lockee->klass()->prototype_header() | thread_ident);
+              markOop new_header = (markOop)(
+                  (intptr_t)lockee->klass()->prototype_header() | thread_ident);
               if (hash != markOopDesc::no_hash) {
                 new_header = new_header->copy_set_hash(hash);
               }
-              if (Atomic::cmpxchg_ptr((void*)new_header, lockee->mark_addr(), mark) == mark) {
+              if (Atomic::cmpxchg_ptr((void *)new_header, lockee->mark_addr(),
+                                      mark) == mark) {
                 if (PrintBiasedLockingStatistics)
-                  (* BiasedLocking::rebiased_lock_entry_count_addr())++;
+                  (*BiasedLocking::rebiased_lock_entry_count_addr())++;
+              } else {
+                CALL_VM(InterpreterRuntime::monitorenter(THREAD, entry),
+                        handle_exception);
               }
-              else {
-                CALL_VM(InterpreterRuntime::monitorenter(THREAD, entry), handle_exception);
-              }
-              success = true;
-            }
-            else {
-              // try to bias towards thread in case object is anonymously biased
-              markOop header = (markOop) ((uintptr_t) mark & ((uintptr_t)markOopDesc::biased_lock_mask_in_place |
-                                                              (uintptr_t)markOopDesc::age_mask_in_place |
-                                                              epoch_mask_in_place));
+              success = true; // 加锁成功
+            } else {
+              /**
+               * try to bias towards thread in case object is anonymously biased
+               * 
+               * anonymously biased: 匿名重偏向。 匿名偏向说明可以偏向但未偏向任何线程
+               */ 
+              markOop header =
+                  (markOop)((uintptr_t)mark &
+                            ((uintptr_t)markOopDesc::biased_lock_mask_in_place |
+                             (uintptr_t)markOopDesc::age_mask_in_place | // 保留对象当前的年龄
+                             epoch_mask_in_place));
               if (hash != markOopDesc::no_hash) {
                 header = header->copy_set_hash(hash);
               }
-              markOop new_header = (markOop) ((uintptr_t) header | thread_ident);
+              
+              // 偏向当前线程 
+              markOop new_header = (markOop)((uintptr_t)header | thread_ident);
               // debugging hint
-              DEBUG_ONLY(entry->lock()->set_displaced_header((markOop) (uintptr_t) 0xdeaddead);)
-              if (Atomic::cmpxchg_ptr((void*)new_header, lockee->mark_addr(), header) == header) {
+              DEBUG_ONLY(entry->lock()->set_displaced_header(
+                  (markOop)(uintptr_t)0xdeaddead);)
+
+              if (Atomic::cmpxchg_ptr((void *)new_header, lockee->mark_addr(),
+                                      header) == header) { // 对象头设置,偏向当前线程
                 if (PrintBiasedLockingStatistics)
-                  (* BiasedLocking::anonymously_biased_lock_entry_count_addr())++;
-              }
-              else {
-                CALL_VM(InterpreterRuntime::monitorenter(THREAD, entry), handle_exception);
+                  (*BiasedLocking::
+                       anonymously_biased_lock_entry_count_addr())++;
+              } else { // 如果执行到此处，说明存在竞争。
+                CALL_VM(InterpreterRuntime::monitorenter(THREAD, entry),
+                        handle_exception);
               }
               success = true;
             }
           }
 
-          // traditional lightweight locking
+          /**
+           * 当前锁对象并不是处于偏向锁模式
+           * 
+           *  traditional lightweight locking (传统的轻量级锁)
+           */ 
           if (!success) {
+            // 将锁对象markword设置为未锁定状态
             markOop displaced = lockee->mark()->set_unlocked();
+
+            /**
+             * 将对象头的markword字段设置到LockRecord中(轻量级锁实现)
+             * 
+             * 这就是将对象头备份到LockRecord 中，在偏向锁的逻辑中并没有这个(虽然在偏向锁中也使用了LockRecord)
+             */ 
             entry->lock()->set_displaced_header(displaced);
+
+            // 虚拟机参数，表示是否只使用重量级锁，默认为false
             bool call_vm = UseHeavyMonitors;
-            if (call_vm || Atomic::cmpxchg_ptr(entry, lockee->mark_addr(), displaced) != displaced) {
-              // Is it simple recursive case?
-              if (!call_vm && THREAD->is_lock_owned((address) displaced->clear_lock_bits())) {
+
+            /**
+             * 轻量级锁，markword 字段指向LockRecord,LockRecord存储锁对象的对象头.
+             */ 
+            if (call_vm || Atomic::cmpxchg_ptr(entry, lockee->mark_addr(),
+                                               displaced) != displaced) {
+              /**
+               * Is it simple recursive case?
+               * 轻量级锁简单的重入
+               * 注意这里的赋值操作。
+               * 通过前面的代码已知，每当代码进入monitorenter时，首先会申请一个LockRecord。因此，这里是重入实现的原理:
+               * > 当第一次进入，entry->obj() 是锁对象，entry->displaced_header()为锁对象的markword字段
+               * > 当第二次进入，entry->obj() 是锁对象，entry->displaced_header()为NULL
+               * >> 因此，是否可以判断当entry->displaced_header()为NULL的LockRecord就是重入的LockRecord呢?
+               */ 
+              if (!call_vm && THREAD->is_lock_owned((address)displaced->clear_lock_bits())) {
                 entry->lock()->set_displaced_header(NULL);
               } else {
-                CALL_VM(InterpreterRuntime::monitorenter(THREAD, entry), handle_exception);
+                CALL_VM(InterpreterRuntime::monitorenter(THREAD, entry),
+                        handle_exception);
               }
             }
           }

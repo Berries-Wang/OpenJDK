@@ -617,18 +617,27 @@ IRT_END
 //%note synchronization_3
 
 //%note monitor_1
+/**
+ * synchronized monitorenter
+ * 
+ * @param thread  当前线程
+ * @param elem  lock Record
+ * 
+ */ 
 IRT_ENTRY_NO_ASYNC(void, InterpreterRuntime::monitorenter(JavaThread* thread, BasicObjectLock* elem))
 #ifdef ASSERT
   thread->last_frame().interpreter_frame_verify_monitor(elem);
 #endif
+  // 是否统计偏向锁信息
   if (PrintBiasedLockingStatistics) {
     Atomic::inc(BiasedLocking::slow_path_entry_count_addr());
   }
   Handle h_obj(thread, elem->obj());
   assert(Universe::heap()->is_in_reserved_or_null(h_obj()),
          "must be NULL or an object");
+  // 是否启用偏向锁
   if (UseBiasedLocking) {
-    // Retry fast entry if bias is revoked to avoid unnecessary inflation
+    // Retry fast entry if bias is revoked(回收，取消) to avoid unnecessary inflation(膨胀)
     ObjectSynchronizer::fast_enter(h_obj, elem->lock(), true, CHECK);
   } else {
     ObjectSynchronizer::slow_enter(h_obj, elem->lock(), CHECK);

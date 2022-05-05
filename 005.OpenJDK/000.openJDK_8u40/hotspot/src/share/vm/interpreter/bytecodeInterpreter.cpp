@@ -1826,7 +1826,7 @@ run:
         }
         // entry 不为null,表明存在可以使用的Lock Record
         if (entry != NULL) {
-          entry->set_obj(lockee); // 设置锁被持有的对象
+          entry->set_obj(lockee); // 设置锁对象
           int success = false;
           uintptr_t epoch_mask_in_place =
               (uintptr_t)markOopDesc::epoch_mask_in_place;
@@ -1929,9 +1929,9 @@ run:
           if (!success) {
             // 获取锁对象的对象头，并重置锁定位
             markOop displaced = lockee->mark()->set_unlocked();
-            // 将对象头村存储到LockRecord上
+            // 将对象头存储到LockRecord上
             entry->lock()->set_displaced_header(displaced);
-            //  虚拟机参数，表示是否只使用重量级锁，默认为false
+            // 虚拟机参数，表示是否只使用重量级锁，默认为false
             bool call_vm = UseHeavyMonitors;
             if (call_vm || Atomic::cmpxchg_ptr(entry, lockee->mark_addr(),
                                                displaced) != displaced) {

@@ -84,8 +84,8 @@
 //    to make room for the age bits & the epoch bits (used in support of
 //    biased locking), and for the CMS "freeness" bit in the 64bVM (+COOPs).
 //
-//    [JavaThread* | epoch | age | 1 | 01]       lock is biased toward given thread
-//    [0           | epoch | age | 1 | 01]       lock is anonymously biased
+//    [JavaThread* | epoch | age | 1 | 01]       lock is biased toward given thread # 偏向指定线程
+//    [0           | epoch | age | 1 | 01]       lock is anonymously biased  # 什么是匿名偏向,也可以查看方法bool is_biased_anonymously()的逻辑
 //
 //  - the two lock bits are used to describe three states: locked/unlocked and monitor.
 //
@@ -177,8 +177,15 @@ class markOopDesc: public oopDesc {
     assert(has_bias_pattern(), "should not call this otherwise");
     return (JavaThread*) ((intptr_t) (mask_bits(value(), ~(biased_lock_mask_in_place | age_mask_in_place | epoch_mask_in_place))));
   }
-  // Indicates that the mark has the bias bit set but that it has not
-  // yet been biased toward a particular thread
+
+  /**
+   *  Indicates that the mark has the bias bit set but that it has not
+   *  yet been biased toward a particular thread
+   * 
+   * 指示标记已设置了偏向位，但尚未偏向于特定的线程
+   * 
+   * @return bool 即当前锁对象是否处于匿名偏向模式
+   */
   bool is_biased_anonymously() const {
     return (has_bias_pattern() && (biased_locker() == NULL));
   }

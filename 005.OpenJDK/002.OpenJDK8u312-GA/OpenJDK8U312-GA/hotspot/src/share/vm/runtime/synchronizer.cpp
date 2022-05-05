@@ -166,6 +166,15 @@ static volatile int MonitorPopulation = 0 ;      // # Extant -- in circulation
 // if the following function is changed. The implementation is
 // extremely sensitive to race condition. Be careful.
 
+/**
+ * 
+ * 快速加锁，避免锁升级(膨胀)
+ * 
+ * @param obj 线程和锁对象信息
+ * @param lock lock record
+ * @param attempt_rebias 是否尝试重偏向
+ * 
+ */ 
 void ObjectSynchronizer::fast_enter(Handle obj, BasicLock* lock, bool attempt_rebias, TRAPS) {
  if (UseBiasedLocking) {
     if (!SafepointSynchronize::is_at_safepoint()) {

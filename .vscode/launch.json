@@ -5,6 +5,7 @@
     "version": "0.2.0",
     "configurations": [
 
+
         {
             "name": "java D-000.openJDK_8u40",
             "type": "cppdbg",
@@ -309,6 +310,47 @@
                "-Xms100M",
                "-Xms100M",
                 "ThreadSleepTest"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "osx": {
+                "MIMode": "lldb",
+                "internalConsoleOptions": "openOnSessionStart",
+            },
+            "linux": {
+                "MIMode": "gdb",
+                "setupCommands": [
+                    {
+                        "text": "handle SIGSEGV noprint nostop",
+                        "description": "Disable stopping on signals handled by the JVM"
+                    }
+                ]
+            }
+        },{
+            "name": "java SynchronizedStu.002.OpenJDK8u312-GA",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/bin/java",
+            "args": [ // 为什么这么指定VM options，请参看 man java的输出
+                //"-XX:+UseG1GC", // 启用G1
+               // "-XX:GCLogLevel=finest", // 实验选项,需要打开-XX:+UnlockExperimentalVMOptions,从而获取更为详细的日志信息
+               // "-XX:+UnlockExperimentalVMOptions",
+               "-XX:+UseParNewGC",
+               "-XX:+UseConcMarkSweepGC",
+               "-XX:TraceBiasedLocking=true", // 追踪偏向所信息,默认为false
+               "-Xms100M",
+               "-Xms100M",
+                "SynchronizedStu"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build",

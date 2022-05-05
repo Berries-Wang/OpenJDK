@@ -168,9 +168,15 @@ class Klass : public Metadata {
 
   // Biased locking implementation and statistics
   // (the 64-bit chunk goes first, to avoid some fragmentation)
-  jlong    _last_biased_lock_bulk_revocation_time;
-  markOop  _prototype_header;   // Used when biased locking is both enabled and disabled for this type
-  jint     _biased_lock_revocation_count;
+  jlong    _last_biased_lock_bulk_revocation_time; // 上次批量重偏向的时间
+  /**
+   *  Used when biased locking is both enabled and disabled for this type(当对该类型启用或禁用偏置锁定时使用)
+   * 
+   * 表示最干净的对象头部
+   * >>>> 对象是Klass的实例,对象是从Klass中fork出来的，所以该_prototype_header的值就是对象实例最原始最干净的对象头部
+   */ 
+  markOop  _prototype_header;  
+  jint     _biased_lock_revocation_count;  // 冲偏向的次数
 
   JFR_ONLY(DEFINE_TRACE_ID_FIELD;)
 

@@ -29,10 +29,18 @@
 #include "runtime/handles.hpp"
 #include "utilities/top.hpp"
 
+/**
+ * 
+ * 功能： 保存对象头部和对象本身
+ * 
+ * BasicLock 和 BasicObjectLock的关系
+ * 
+ */
+
 class BasicLock VALUE_OBJ_CLASS_SPEC {
   friend class VMStructs;
  private:
-  volatile markOop _displaced_header;
+  volatile markOop _displaced_header;   // 锁对象的对象头
  public:
   markOop      displaced_header() const               { return _displaced_header; }
   void         set_displaced_header(markOop header)   { _displaced_header = header; }
@@ -58,7 +66,7 @@ class BasicObjectLock VALUE_OBJ_CLASS_SPEC {
   friend class VMStructs;
  private:
   BasicLock _lock;                                    // the lock, must be double word aligned
-  oop       _obj;                                     // object holds the lock;
+  oop       _obj;                                     // object holds the lock; // 持有这把锁的对象
 
  public:
   // Manipulation
