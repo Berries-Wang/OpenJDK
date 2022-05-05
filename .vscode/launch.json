@@ -347,7 +347,7 @@
                // "-XX:+UnlockExperimentalVMOptions",
                "-XX:+UseParNewGC",
                "-XX:+UseConcMarkSweepGC",
-               "-XX:TraceBiasedLocking=true", // 追踪偏向所信息,默认为false
+               "-XX:+TraceBiasedLocking", // 追踪偏向所信息,默认为false
                "-Xms100M",
                "-Xms100M",
                 "SynchronizedStu"
