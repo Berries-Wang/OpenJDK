@@ -502,6 +502,11 @@ static BiasedLocking::Condition bulk_revoke_or_rebias_at_safepoint(oop o,
           MonitorInfo* mon_info = cached_monitor_info->at(i);
           oop owner = mon_info->owner();
           markOop mark = owner->mark();
+          /**
+           * 如果实例owner的类型是k_o(即是该klass类的实例),那么就需要重新设置一下epoch,即偏向超时了(被批量重偏向)
+           * 
+           * 注意，这里是批量重偏向
+           */ 
           if ((owner->klass() == k_o) && mark->has_bias_pattern()) {
             // We might have encountered this object already in the case of recursive locking
             assert(mark->bias_epoch() == prev_epoch || mark->bias_epoch() == cur_epoch, "error in bias epoch adjustment");
@@ -545,6 +550,10 @@ static BiasedLocking::Condition bulk_revoke_or_rebias_at_safepoint(oop o,
         MonitorInfo* mon_info = cached_monitor_info->at(i);
         oop owner = mon_info->owner();
         markOop mark = owner->mark();
+        /**
+         * 如果实例owner的类型是k_o(即是该klass类的实例)
+         * 批量撤销
+         */ 
         if ((owner->klass() == k_o) && mark->has_bias_pattern()) {
           revoke_bias(owner, false, true, requesting_thread, NULL);
         }
