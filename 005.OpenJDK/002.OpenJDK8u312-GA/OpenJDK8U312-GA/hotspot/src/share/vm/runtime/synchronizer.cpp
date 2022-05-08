@@ -167,29 +167,44 @@ static volatile int MonitorPopulation = 0 ;      // # Extant -- in circulation
 // extremely sensitive to race condition. Be careful.
 
 /**
- * 
+ *
  * 快速加锁，避免锁升级(膨胀)
- * 
+ *
  * @param obj 线程和锁对象信息
  * @param lock lock record
  * @param attempt_rebias 是否尝试重偏向
- * 
- */ 
-void ObjectSynchronizer::fast_enter(Handle obj, BasicLock* lock, bool attempt_rebias, TRAPS) {
- if (UseBiasedLocking) {
+ *
+ */
+void ObjectSynchronizer::fast_enter(Handle obj, BasicLock *lock,
+                                    bool attempt_rebias, TRAPS) {
+  // 如果启用了偏向锁
+  if (UseBiasedLocking) {
     if (!SafepointSynchronize::is_at_safepoint()) {
-      BiasedLocking::Condition cond = BiasedLocking::revoke_and_rebias(obj, attempt_rebias, THREAD);
+      /**
+       * 为什么这里要进行撤销&&重偏向操作呢?
+       * > 使用`revoke_and_rebias`尝试再次获取锁,revoke_and_rebias
+       * 即撤销之前的偏向锁，重新偏向到当前线程.
+       * -->
+       * 即要么撤销，执行slow_enter逻辑；要么就重新偏向到当前线程，即表示当前线程获取到锁了，可以继续执行.反之，如果没有重新偏向，则撤销偏向锁，即暂时释放掉该锁。
+       */
+      BiasedLocking::Condition cond =
+          BiasedLocking::revoke_and_rebias(obj, attempt_rebias, THREAD);
       if (cond == BiasedLocking::BIAS_REVOKED_AND_REBIASED) {
         return;
       }
     } else {
       assert(!attempt_rebias, "can not rebias toward VM thread");
+      /**
+       * 这里为什么需要执行撤销操作呢?
+       * ->
+       * 这里是修正偏向锁的状态(匿名偏向、偏向线程不再存活、状态错误(偏向超时/klass不支持偏向，但锁对象是偏向状态))，并不是真正的撤销操作
+       */
       BiasedLocking::revoke_at_safepoint(obj);
     }
     assert(!obj->mark()->has_bias_pattern(), "biases should be revoked by now");
- }
+  }
 
- slow_enter (obj, lock, THREAD) ;
+  slow_enter(obj, lock, THREAD);
 }
 
 void ObjectSynchronizer::fast_exit(oop object, BasicLock* lock, TRAPS) {
@@ -235,23 +250,32 @@ void ObjectSynchronizer::fast_exit(oop object, BasicLock* lock, TRAPS) {
 // This routine is used to handle interpreter/compiler slow case
 // We don't need to use fast path here, because it must have been
 // failed in the interpreter/compiler code.
-void ObjectSynchronizer::slow_enter(Handle obj, BasicLock* lock, TRAPS) {
+/**
+ * 慢速进入
+ * 
+ * @param obj   线程信息以及锁对象信息 
+ * @param lock  当前锁
+ * 
+ */
+void ObjectSynchronizer::slow_enter(Handle obj, BasicLock *lock, TRAPS) {
   markOop mark = obj->mark();
   assert(!mark->has_bias_pattern(), "should not see bias pattern here");
 
+  // 并不处于偏向锁模式
   if (mark->is_neutral()) {
     // Anticipate successful CAS -- the ST of the displaced mark must
     // be visible <= the ST performed by the CAS.
     lock->set_displaced_header(mark);
-    if (mark == (markOop) Atomic::cmpxchg_ptr(lock, obj()->mark_addr(), mark)) {
-      TEVENT (slow_enter: release stacklock) ;
-      return ;
+    if (mark == (markOop)Atomic::cmpxchg_ptr(lock, obj()->mark_addr(), mark)) {
+      TEVENT(slow_enter : release stacklock);
+      return;
     }
     // Fall through to inflate() ...
-  } else
-  if (mark->has_locker() && THREAD->is_lock_owned((address)mark->locker())) {
+  } else if (mark->has_locker() &&
+             THREAD->is_lock_owned((address)mark->locker())) {
     assert(lock != mark->locker(), "must not re-lock the same lock");
-    assert(lock != (BasicLock*)obj->mark(), "don't relock with same BasicLock");
+    assert(lock != (BasicLock *)obj->mark(),
+           "don't relock with same BasicLock");
     lock->set_displaced_header(NULL);
     return;
   }
@@ -269,9 +293,8 @@ void ObjectSynchronizer::slow_enter(Handle obj, BasicLock* lock, TRAPS) {
   // must be non-zero to avoid looking like a re-entrant lock,
   // and must not look locked either.
   lock->set_displaced_header(markOopDesc::unused_mark());
-  ObjectSynchronizer::inflate(THREAD,
-                              obj(),
-                              inflate_cause_monitor_enter)->enter(THREAD);
+  ObjectSynchronizer::inflate(THREAD, obj(), inflate_cause_monitor_enter)
+      ->enter(THREAD);
 }
 
 // This routine is used to handle interpreter/compiler slow case

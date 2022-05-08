@@ -163,17 +163,19 @@ static GrowableArray<MonitorInfo *>* get_or_compute_monitor_info(JavaThread *thr
  * 调用之后，如果biased_locker !=
  * NULL并且是一个存活的线程，那么biased_locker被设置为obj->mark()->biased_locker()。
  * 否则他将不会更新.
- * 
- * 
- * 重偏向操作
- * 
+ *
+ *
+ * 重偏向操作(意思是撤销偏向锁)
+ * > 当锁还在使用时就不会被撤销;
+ * > 当锁不可用时(匿名偏向、所属线程不再存活),那么需要撤销偏向锁或者匿名偏向
+ *
  * @param obj 锁对象
- * @param allow_rebias
- * @param is_bulk
+ * @param allow_rebias 是否允许重偏向: true重偏向;false:撤销
+ * @param is_bulk    是否批量操作
  * @param requesting_thread 当前判断的线程，即偏向锁偏向的线程是否是该线程
- * @param biased_locker 
- * 
- * @return 
+ * @param biased_locker
+ *
+ * @return
  */
 static BiasedLocking::Condition revoke_bias(oop obj, bool allow_rebias, bool is_bulk, JavaThread* requesting_thread, JavaThread** biased_locker) {
   
@@ -284,6 +286,10 @@ static BiasedLocking::Condition revoke_bias(oop obj, bool allow_rebias, bool is_
       /**
        * Assume recursive case and fix up highest lock later
        * 
+       */ 
+      // 将BasicLock中的markword设置为NULL
+      /**
+       * 如代码    highest_lock->set_displaced_header(unbiased_prototype);，会有一个lockrecord的_displaced_header不为NULL
        */ 
       markOop mark = markOopDesc::encode((BasicLock*) NULL);
       highest_lock = mon_info->lock();
@@ -425,6 +431,11 @@ static HeuristicsResult update_heuristics(oop o, bool allow_rebias) {
 
 /**
  * 批量撤销/重偏向
+ * 
+ * 批量撤销：
+ * -> 即: 取消偏向锁(回到未锁定状态)
+ * 批量重偏向:
+ * -> 即: 设置epoch,使得偏向超时，再将锁对象设置为匿名偏向
  *
  * @param o 线程信息和锁对象信息
  * @param requesting_thread 当前执行线程
@@ -554,8 +565,8 @@ static BiasedLocking::Condition bulk_revoke_or_rebias_at_safepoint(oop o,
          * 如果实例owner的类型是k_o(即是该klass类的实例)
          * 批量撤销
          */ 
-        if ((owner->klass() == k_o) && mark->has_bias_pattern()) {
-          revoke_bias(owner, false, true, requesting_thread, NULL);
+        if ((owner->klass() == k_o) && mark->has_bias_pattern()) { // 对类型为klass的锁对象进行逐个撤消!!!
+          revoke_bias(owner, false, true, requesting_thread, NULL); 
         }
       }
     }
@@ -706,15 +717,14 @@ public:
   }
 };
 
-
 /**
- * 取消偏向锁，进行重偏向
- * 
+ * 取消偏向锁，进行重偏向(重偏向到当前线程)
+ *
  * @param obj 线程信息和锁对象信息
  * @param attempt_rebias 是否尝试重偏向
- * 
- * @return 本函数的操作类型
- */ 
+ *
+ * @return 具体的操作类型
+ */
 BiasedLocking::Condition BiasedLocking::revoke_and_rebias(Handle obj, bool attempt_rebias, TRAPS) {
   assert(!SafepointSynchronize::is_at_safepoint(), "must not be called while at safepoint");
 
@@ -776,7 +786,9 @@ BiasedLocking::Condition BiasedLocking::revoke_and_rebias(Handle obj, bool attem
       if (attempt_rebias) { // 允许重偏向
         assert(THREAD->is_Java_thread(), "");
         markOop biased_value       = mark;
-        // 进行偏向锁撤销和重偏向操作
+        /**
+         * 进行偏向锁撤销和重偏向操作(重偏向到当前线程)
+         */ 
         markOop rebiased_prototype = markOopDesc::encode((JavaThread*) THREAD, mark->age(), prototype_header->bias_epoch());
         markOop res_mark = (markOop) Atomic::cmpxchg_ptr(rebiased_prototype, obj->mark_addr(), mark);
         if (res_mark == biased_value) {
