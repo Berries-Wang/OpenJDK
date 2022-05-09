@@ -259,20 +259,21 @@ void ObjectSynchronizer::fast_exit(oop object, BasicLock* lock, TRAPS) {
  */
 void ObjectSynchronizer::slow_enter(Handle obj, BasicLock *lock, TRAPS) {
   markOop mark = obj->mark();
+  // 执行到此处,锁对象不能是处于偏向锁模式 ???
   assert(!mark->has_bias_pattern(), "should not see bias pattern here");
 
-  // 并不处于偏向锁模式
+  // 并不处于被锁住状态
   if (mark->is_neutral()) {
     // Anticipate successful CAS -- the ST of the displaced mark must
     // be visible <= the ST performed by the CAS.
     lock->set_displaced_header(mark);
-    if (mark == (markOop)Atomic::cmpxchg_ptr(lock, obj()->mark_addr(), mark)) {
+    if (mark == (markOop)Atomic::cmpxchg_ptr(lock, obj()->mark_addr(), mark)) { // 轻量级锁(锁状态位呢,在哪里设置的??)
       TEVENT(slow_enter : release stacklock);
       return;
     }
     // Fall through to inflate() ...
   } else if (mark->has_locker() &&
-             THREAD->is_lock_owned((address)mark->locker())) {
+             THREAD->is_lock_owned((address)mark->locker())) { //锁重入，即之前获取锁的线程是当前线程
     assert(lock != mark->locker(), "must not re-lock the same lock");
     assert(lock != (BasicLock *)obj->mark(),
            "don't relock with same BasicLock");

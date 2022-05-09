@@ -1869,8 +1869,20 @@ run:
           // 获取锁对象对象头的_markWord部分
           markOop mark = lockee->mark();
           intptr_t hash = (intptr_t)markOopDesc::no_hash;
-          // implies(意味着) UseBiasedLocking ,
-          // 该锁对象是否处于偏向锁模式(即是否存在线程持有该锁，且锁的类型是偏向锁)
+
+
+          /**
+           * implies(意味着) UseBiasedLocking ,
+           * 该锁对象是否处于偏向锁模式(即是否存在线程持有该锁，且锁的类型是偏向锁)
+           * 
+           * 
+           * > 如果第一次进入synchronized代码块，mark->has_bias_pattern()应该是返回true的(待验证!!!)
+           * ,因为对象头依赖于klass.property_header(只有该值是偏向(101(见000.Oop-Klass二分模型.md：biased_lock_pattern))的，该类型才支持偏向锁)
+           * 
+           * > 
+           * > 这也是区分当前锁对象是否是处于偏向锁模式还是处于轻量级锁模式（为什么在轻量级锁&&偏向锁时没有见过设置锁状态位）
+           * >>> mark->has_bias_pattern()： true:偏向锁模式;false:轻量级锁or重量级锁
+           */ 
           if (mark->has_bias_pattern()) {
             uintptr_t thread_ident;
             uintptr_t anticipated_bias_locking_value;
@@ -1992,7 +2004,7 @@ run:
            *  traditional lightweight locking (传统的轻量级锁)
            */ 
           if (!success) {
-            // 将锁对象markword设置为未锁定状态
+            // 将锁对象markword设置为未锁定状态(---> 目的应该是重新竞争，抢占锁)
             markOop displaced = lockee->mark()->set_unlocked();
 
             /**

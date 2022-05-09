@@ -147,11 +147,12 @@ class markOopDesc: public oopDesc {
   enum { biased_lock_alignment    = 2 << (epoch_shift + epoch_bits)
   };
 
-  enum { locked_value             = 0,
-         unlocked_value           = 1,
-         monitor_value            = 2,
-         marked_value             = 3,
-         biased_lock_pattern      = 5
+  // 结合： 004.OpenJDK(JVM)学习/004.类和对象/000.Oop-Klass二分模型.md 来分析
+  enum { locked_value             = 0, // 轻量级锁: 00
+         unlocked_value           = 1, // 001 (向前借了一位)
+         monitor_value            = 2, // 10
+         marked_value             = 3, // 11
+         biased_lock_pattern      = 5  // 101  (向前借了一位)
   };
 
   enum { no_hash                  = 0 };  // no hash value assigned
