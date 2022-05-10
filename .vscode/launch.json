@@ -81,7 +81,7 @@
                 "Sync"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build",
+            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/practice-code",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -120,7 +120,7 @@
                 "H"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build",
+            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/practice-code",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -157,7 +157,7 @@
                 "Sync2"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build",
+            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/practice-code",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -194,7 +194,7 @@
                 "CountDownLatchStu"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build",
+            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/practice-code",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -231,7 +231,7 @@
                 "ThreadStu"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build",
+            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/practice-code",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -272,7 +272,7 @@
                 "ReferenceStu"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build",
+            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/practice-code",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -312,7 +312,7 @@
                 "ThreadSleepTest"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build",
+            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/practice-code",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -353,7 +353,7 @@
                 "SynchronizedStu"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build",
+            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/practice-code",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",

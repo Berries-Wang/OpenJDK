@@ -1,14 +1,11 @@
 **/.idea
 **/.iml
 **/**/*.iml
-**/buildDir
-**/build
+**/wei-openJDK-buildDir
+**/wei-openJDK-build
 .idea
-.vscode
 **/target
 **/003.SourceCode/Design-Pattern/.project
 **/.classpath
 **/.settings
-**/.hg
-/.hg/
-*.out
+**/linux-x86_64-normal-server-slowdebug

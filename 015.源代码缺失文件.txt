@@ -1,0 +1,27 @@
+git reset --hard 的灾难
+-> 已经修正，特此记录，作为日后排查方向&&慎用git reset --hard
+        新文件：   005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/build/.attach_pid174142
+        新文件：   005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/build/.hide-configure-performance-hints
+        新文件：   005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/build/Sync.class
+        新文件：   005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/build/Sync.java
+        新文件：   005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/build/build.log
+
+        新文件：   005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/corba/make/tools/src/build/tools/stripproperties/StripPropertiesCorba.java
+
+        
+      
+        新文件：   005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/CountDownLatchStu.java
+        新文件：   005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/H.java
+        新文件：   005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/ReferenceStu.java
+        新文件：   005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/Sync.java
+        新文件：   005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/Sync2.java
+        新文件：   005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/SynchronizedLockTest.java
+        新文件：   005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/SynchronizedStu.class
+        新文件：   005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/SynchronizedStu.java
+        新文件：   005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/ThreadSleepTest.class
+        新文件：   005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/ThreadSleepTest.java
+        新文件：   005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/ThreadStu.java
+        新文件：   005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/build.log
+
+
+        

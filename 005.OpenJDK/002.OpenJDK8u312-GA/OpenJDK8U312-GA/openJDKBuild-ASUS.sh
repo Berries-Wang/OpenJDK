@@ -16,6 +16,7 @@ FREETYPELIB='/usr/lib/x86_64-linux-gnu/'
 BOOTJDK='/home/wei/workspace/Temp/jdk7/jdk1.7.0_80'
 # 构建文件输出目录
 BUILDOUTPUTDIR=`pwd`/build
+echo ${BUILDOUTPUTDIR}
 
 # Step2. 运行configure,可能会缺依赖，缺什么就装什么.使用‘\’换行后，注意注释的写法
 ./configure  --with-debug-level=slowdebug    `# 指定可以生成最多的调试信息` \
@@ -74,5 +75,3 @@ else
     echo "构建成功"
     exit
 fi
-
-# ./configure  --with-target-bits=64 --with-freetype-include=/usr/X11/include/freetype2 --with-freetype-lib=/usr/X11/lib --disable-warnings-as-errors --with-debug-level=slowdebug  --with-native-debug-symbols=internal
