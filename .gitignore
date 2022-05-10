@@ -1,11 +1,6 @@
 **/.idea
-**/.iml
-**/**/*.iml
-**/wei-openJDK-buildDir
-**/wei-openJDK-build
 .idea
-**/target
-**/003.SourceCode/Design-Pattern/.project
-**/.classpath
-**/.settings
-**/linux-x86_64-normal-server-slowdebug
+005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/build
+005.OpenJDK/000.openJDK_8u40/build
+005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build
+002.Java设计模式/003.SourceCode/Design-Pattern/target
