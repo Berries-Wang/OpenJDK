@@ -69,8 +69,8 @@ class oopDesc {
 
   // 元数据，指向Klass
   union _metadata {
-    Klass*      _klass;
-    narrowKlass _compressed_klass;
+    Klass*      _klass;  
+    narrowKlass _compressed_klass; // 4字节
   } _metadata;
 
   /**

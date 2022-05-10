@@ -34,6 +34,8 @@
 #include "runtime/thread.inline.hpp"
 #include "utilities/top.hpp"
 
+#include "wei_log/WeiLog.hpp"
+
 // The InterpreterRuntime is called by the interpreter for everything
 // that cannot/should not be dealt with in assembly and needs C support.
 

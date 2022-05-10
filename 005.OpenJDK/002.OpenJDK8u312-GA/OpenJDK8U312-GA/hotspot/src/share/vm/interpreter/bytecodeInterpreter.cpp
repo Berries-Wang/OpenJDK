@@ -1876,7 +1876,7 @@ run:
            * 该锁对象是否处于偏向锁模式(即是否存在线程持有该锁，且锁的类型是偏向锁)
            * 
            * 
-           * > 如果第一次进入synchronized代码块，mark->has_bias_pattern()应该是返回true的(待验证!!!)
+           * > 如果第一次进入synchronized代码块，mark->has_bias_pattern()应该是返回true的(待验证!!!: 是这样的)
            * ,因为对象头依赖于klass.property_header(只有该值是偏向(101(见000.Oop-Klass二分模型.md：biased_lock_pattern))的，该类型才支持偏向锁)
            * 
            * > 
@@ -1964,7 +1964,7 @@ run:
                         handle_exception);
               }
               success = true; // 加锁成功
-            } else {
+            } else { // 最后才是偏向当前线程操作
               /**
                * try to bias towards thread in case object is anonymously biased
                * 
@@ -1979,7 +1979,7 @@ run:
                 header = header->copy_set_hash(hash);
               }
               
-              // 偏向当前线程 
+              // ---> 偏向当前线程 
               markOop new_header = (markOop)((uintptr_t)header | thread_ident);
               // debugging hint
               DEBUG_ONLY(entry->lock()->set_displaced_header(
