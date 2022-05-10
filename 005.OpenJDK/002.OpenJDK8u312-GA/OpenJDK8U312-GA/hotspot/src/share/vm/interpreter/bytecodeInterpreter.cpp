@@ -1876,7 +1876,7 @@ run:
            * 该锁对象是否处于偏向锁模式(即是否存在线程持有该锁，且锁的类型是偏向锁)
            * 
            * 
-           * > 如果第一次进入synchronized代码块，mark->has_bias_pattern()应该是返回true的(待验证!!!: 是这样的)
+           * > 如果第一次进入synchronized代码块，mark->has_bias_pattern()应该是返回true的(待验证!!!: 是这样的，请参考:005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/practice-code/SynchronizedLockTest.java)
            * ,因为对象头依赖于klass.property_header(只有该值是偏向(101(见000.Oop-Klass二分模型.md：biased_lock_pattern))的，该类型才支持偏向锁)
            * 
            * > 
