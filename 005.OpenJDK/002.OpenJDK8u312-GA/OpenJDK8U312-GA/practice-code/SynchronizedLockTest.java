@@ -15,7 +15,7 @@ public class SynchronizedStu {
     private static final SynchronizedStu obj = new SynchronizedStu();
 
     /**
-     * VM参数:  -XX:BiasedLockingStartupDelay=0 
+     * VM参数:  -XX:BiasedLockingStartupDelay=0  即立即启动偏向锁
      */
     public static void main(String[] args) {
 
@@ -31,6 +31,7 @@ public class SynchronizedStu {
          * Instance size: 16 bytes
          * Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
          * </pre>
+         * 从输出可以看出，obj初始化就是偏向锁锁定的状态(101),且没有偏向任何线程,而不是无锁状态 
          */
         System.out.println("Main->: " + ClassLayout.parseInstance(obj).toPrintable());
 
