@@ -387,6 +387,7 @@ class PlatformEvent : public CHeapObj<mtInternal> {
 
   public:
     // Exercise caution using reset() and fired() -- they may require MEMBARs
+    // 小心使用 reset() and fired()
     void reset() { _Event = 0 ; }
     int  fired() { return _Event; }
     void park () ;

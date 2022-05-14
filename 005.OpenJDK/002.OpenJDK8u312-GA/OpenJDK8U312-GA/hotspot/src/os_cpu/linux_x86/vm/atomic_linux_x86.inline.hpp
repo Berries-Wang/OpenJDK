@@ -114,9 +114,10 @@ inline void*    Atomic::xchg_ptr(void*    exchange_value, volatile void*     des
 
 *>>>>> 即： 将dest指向的值与compare_value比较，如果相等，则将exchange_value写入到dest指向的地址，返回compare_value；如果不相等，则返回dest地址指向的值，即原值；
  * 
- */ 
-inline jint     Atomic::cmpxchg    (jint     exchange_value, volatile jint*     dest, jint     compare_value) {
-  
+ */
+inline jint Atomic::cmpxchg(jint exchange_value, volatile jint *dest,
+                            jint compare_value) {
+
   // 打印一下日志
   //wei_log_info(1,"<---------> atomic_linux_x86.inline.hpp::Atomic::cmpxchg");
 

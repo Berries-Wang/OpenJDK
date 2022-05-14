@@ -634,32 +634,34 @@ protected:
   JFR_ONLY(DEFINE_THREAD_LOCAL_OFFSET_JFR;)
 
  public:
-  volatile intptr_t _Stalled ;
-  volatile int _TypeTag ;
-  ParkEvent * _ParkEvent ;                     // for synchronized()
-  ParkEvent * _SleepEvent ;                    // for Thread.sleep
-  ParkEvent * _MutexEvent ;                    // for native internal Mutex/Monitor
-  ParkEvent * _MuxEvent ;                      // for low-level muxAcquire-muxRelease
-  int NativeSyncRecursion ;                    // diagnostic
+  /**
+  *   一个指针，记录需要抢占的Monitor指针?
+  */
+   volatile intptr_t _Stalled;
+   volatile int _TypeTag;
+   ParkEvent *_ParkEvent;   // for synchronized()
+   ParkEvent *_SleepEvent;  // for Thread.sleep
+   ParkEvent *_MutexEvent;  // for native internal Mutex/Monitor
+   ParkEvent *_MuxEvent;    // for low-level muxAcquire-muxRelease
+   int NativeSyncRecursion; // diagnostic
 
-  volatile int _OnTrap ;                       // Resume-at IP delta
-  jint _hashStateW ;                           // Marsaglia Shift-XOR thread-local RNG
-  jint _hashStateX ;                           // thread-specific hashCode generator state
-  jint _hashStateY ;
-  jint _hashStateZ ;
-  void * _schedctl ;
+   volatile int _OnTrap; // Resume-at IP delta
+   jint _hashStateW;     // Marsaglia Shift-XOR thread-local RNG
+   jint _hashStateX;     // thread-specific hashCode generator state
+   jint _hashStateY;
+   jint _hashStateZ;
+   void *_schedctl;
 
+   volatile jint rng[4]; // RNG for spin loop
 
-  volatile jint rng [4] ;                      // RNG for spin loop
-
-  // Low-level leaf-lock primitives used to implement synchronization
-  // and native monitor-mutex infrastructure.
-  // Not for general synchronization use.
-  static void SpinAcquire (volatile int * Lock, const char * Name) ;
-  static void SpinRelease (volatile int * Lock) ;
-  static void muxAcquire  (volatile intptr_t * Lock, const char * Name) ;
-  static void muxAcquireW (volatile intptr_t * Lock, ParkEvent * ev) ;
-  static void muxRelease  (volatile intptr_t * Lock) ;
+   // Low-level leaf-lock primitives used to implement synchronization
+   // and native monitor-mutex infrastructure.
+   // Not for general synchronization use.
+   static void SpinAcquire(volatile int *Lock, const char *Name);
+   static void SpinRelease(volatile int *Lock);
+   static void muxAcquire(volatile intptr_t *Lock, const char *Name);
+   static void muxAcquireW(volatile intptr_t *Lock, ParkEvent *ev);
+   static void muxRelease(volatile intptr_t *Lock);
 };
 
 // Inline implementation of Thread::current()
@@ -880,8 +882,8 @@ class JavaThread: public Thread {
   // _vm_exited is a special value to cover the case of a JavaThread
   // executing native code after the VM itself is terminated.
   volatile TerminatedTypes _terminated;
-  // suspend/resume support
-  volatile bool         _suspend_equivalent;     // Suspend equivalent condition
+  // suspend(暂停)/resume(恢复) support
+  volatile bool         _suspend_equivalent;     // Suspend equivalent condition(暂停等价条件)
   jint                  _in_deopt_handler;       // count of deoptimization
                                                  // handlers thread is in
   volatile bool         _doing_unsafe_access;    // Thread may fault due to unsafe access

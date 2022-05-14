@@ -135,7 +135,7 @@ class ObjectMonitor {
   // initialize the monitor, exception the semaphore, all other fields
   // are simple integers or pointers
   ObjectMonitor() {
-    _header       = NULL;
+    _header       = NULL;   // 
     _count        = 0;
     _waiters      = 0,
     _recursions   = 0;
@@ -161,6 +161,9 @@ class ObjectMonitor {
   }
 
 private:
+  /**
+   * Recycle: 回收
+   */ 
   void Recycle () {
     // TODO: add stronger asserts ...
     // _cxq == 0 _succ == NULL _owner == NULL _waiters == 0
@@ -230,8 +233,8 @@ public:
   // WARNING: this must be the very first word of ObjectMonitor
   // This means this class can't use any virtual member functions.
 
-  volatile markOop   _header;       // displaced object header word - mark
-  void*     volatile _object;       // backward object pointer - strong root
+  volatile markOop   _header;       // displaced object header word - mark // 锁对象头
+  void*     volatile _object;       // backward object pointer - strong root // 锁对象指针
 
   double SharingPad [1] ;           // temp to reduce false sharing
 
@@ -240,45 +243,73 @@ public:
   // read from other threads.
 
  protected:                         // protected for jvmtiRawMonitor
-  void *  volatile _owner;          // pointer to owning thread OR BasicLock
+  void *  volatile _owner;          // pointer to owning thread OR BasicLock // 指向BasicLock或者获取锁的线程
   volatile jlong _previous_owner_tid; // thread id of the previous owner of the monitor
-  volatile intptr_t  _recursions;   // recursion count, 0 for first entry
+  volatile intptr_t  _recursions;   // recursion count, 0 for first entry  // 锁重入计数，首次进入为0
  private:
-  int OwnerIsThread ;               // _owner is (Thread *) vs SP/BasicLock
-  ObjectWaiter * volatile _cxq ;    // LL of recently-arrived threads blocked on entry.
-                                    // The list is actually composed of WaitNodes, acting
-                                    // as proxies for Threads.
+  int OwnerIsThread ;               // _owner is (Thread *) vs SP/BasicLock // 即 标记_owner的类型
+
+  /**
+   * LL of recently-arrived threads blocked on entry.
+   * The list is actually composed of WaitNodes, acting
+   * as proxies for Threads.
+   * 
+   * 最近到达的线程在进入时被阻塞。该列表实际由WaitNodes组成，他们充当线程的代理
+   */
+  ObjectWaiter * volatile _cxq ;  
+
  protected:
-  ObjectWaiter * volatile _EntryList ;     // Threads blocked on entry or reentry.
+  /**
+   * Threads blocked on entry or reentry. // 被阻塞的线程或重入
+   *  用来获取锁的缓冲区, 用来将cxq和waitSet中的数据移动到entryList进行排队。这个是统一获取锁的入口。
+   */ 
+  ObjectWaiter * volatile _EntryList ;    
+
  private:
-  Thread * volatile _succ ;          // Heir presumptive thread - used for futile wakeup throttling
+  Thread * volatile _succ ;          // Heir(继承的) presumptive(假定) thread - used for futile(徒劳的) wakeup throttling(节流)
+  
+  /**
+   * _Responsible线程调用的是有时间限制的park方法，其目的是防止出现搁浅现象?
+   */ 
   Thread * volatile _Responsible ;
+  
   int _PromptDrain ;                // rqst to drain cxq into EntryList ASAP
 
-  volatile int _Spinner ;           // for exit->spinner handoff optimization
+  volatile int _Spinner ;           // for exit->spinner handoff(切换) optimization(优化)
   volatile int _SpinFreq ;          // Spin 1-out-of-N attempts: success rate
   volatile int _SpinClock ;
-  volatile int _SpinDuration ;
+  volatile int _SpinDuration ;      // 用来控制自旋的总次数
   volatile intptr_t _SpinState ;    // MCS/CLH list of spinners
 
   // TODO-FIXME: _count, _waiters and _recursions should be of
   // type int, or int32_t but not intptr_t.  There's no reason
   // to use 64-bit fields for these variables on a 64-bit JVM.
 
-  volatile intptr_t  _count;        // reference count to prevent reclaimation/deflation
+  volatile intptr_t  _count;        // reference count to prevent(预防) reclaimation(开垦;改良)/deflation
                                     // at stop-the-world time.  See deflate_idle_monitors().
-                                    // _count is approximately |_WaitSet| + |_EntryList|
+                                    // _count is approximately(大约) |_WaitSet| + |_EntryList|
  protected:
-  volatile intptr_t  _waiters;      // number of waiting threads
+  volatile intptr_t  _waiters;      // number of waiting threads // 等待的线程数量
  private:
  protected:
-  ObjectWaiter * volatile _WaitSet; // LL of threads wait()ing on the monitor
+  /**
+   * LL of threads wait()ing on the monitor
+   * 
+   * 指已经获得一次锁了，调用了锁对象的wait方法，将当前线程挂起了就进入了等待队列
+   */ 
+  ObjectWaiter * volatile _WaitSet;
+
  private:
   volatile int _WaitSetLock;        // protects Wait Queue - simple spinlock
 
  public:
   int _QMix ;                       // Mixed prepend queue discipline
-  ObjectMonitor * FreeNext ;        // Free list linkage
+
+  /**
+   * Free list linkage
+   */
+  ObjectMonitor *FreeNext;
+
   intptr_t StatA, StatsB ;
 
  public:

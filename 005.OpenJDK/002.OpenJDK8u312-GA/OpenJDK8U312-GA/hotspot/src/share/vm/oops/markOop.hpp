@@ -226,13 +226,18 @@ class markOopDesc: public oopDesc {
   // Code that looks at mark outside a lock need to take this into account.
   bool is_being_inflated() const { return (value() == 0); }
 
-  // Distinguished markword value - used when inflating over
-  // an existing stacklock.  0 indicates the markword is "BUSY".
-  // Lockword mutators that use a LD...CAS idiom should always
-  // check for and avoid overwriting a 0 value installed by some
-  // other thread.  (They should spin or block instead.  The 0 value
-  // is transient and *should* be short-lived).
-  static markOop INFLATING() { return (markOop) 0; }    // inflate-in-progress
+  /**
+   *  Distinguished markword value - used when inflating over
+   * an existing stacklock.  0 indicates(表明) the markword is "BUSY".
+   * Lockword mutators that use a LD...CAS idiom should always
+   * check for and avoid overwriting a 0 value installed by some
+   * other thread.  (They should spin or block instead.  The 0 value
+   * is transient and *should* be short-lived).
+   *
+   * 有别于其他的markword值，被用于锁升级。0表明markword是"BUSY"状态。
+   * 
+   */
+  static markOop INFLATING() { return (markOop)0; } // inflate-in-progress
 
   // Should this header be preserved during GC?
   inline bool must_be_preserved(oop obj_containing_mark) const;
