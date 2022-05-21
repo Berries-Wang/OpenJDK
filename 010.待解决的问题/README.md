@@ -51,7 +51,9 @@
 
 ## 并发
 + 了解synchronized(偏向锁、轻量级锁、重量级锁的概念以及升级机制)和ReentrantLock的区别
+   - [011.JDK细节集锦/000.JDK之锁/001.synchronized/008.JDK之synchronized解析.md](../011.JDK细节集锦/000.JDK之锁/001.synchronized/008.JDK之synchronized解析.md)
 + 了解AtomicInteger实现原理、CAS适用场景、如何实现乐观锁
+   - [011.JDK细节集锦/002.atomic/000.AtomicInteger解析.md](../011.JDK细节集锦/002.atomic/000.AtomicInteger解析.md)
 ## 集合
 ### HashMap
 + hashmap如何解决hash冲突，为什么hashmap中的链表需要转成红黑树？

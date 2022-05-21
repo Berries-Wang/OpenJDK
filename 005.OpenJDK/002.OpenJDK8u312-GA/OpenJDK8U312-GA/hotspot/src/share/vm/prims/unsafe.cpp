@@ -314,65 +314,87 @@ UNSAFE_ENTRY(void, Unsafe_SetObjectVolatile(JNIEnv *env, jobject unsafe, jobject
   OrderAccess::fence();
 UNSAFE_END
 
-#ifndef SUPPORTS_NATIVE_CX8
+/**
+ */ 
+#ifndef SUPPORTS_NATIVE_CX8   // 判断CPU是否支持8字节的原子操作
 
-// VM_Version::supports_cx8() is a surrogate for 'supports atomic long memory ops'.
-//
-// On platforms which do not support atomic compare-and-swap of jlong (8 byte)
-// values we have to use a lock-based scheme to enforce atomicity. This has to be
-// applied to all Unsafe operations that set the value of a jlong field. Even so
-// the compareAndSwapLong operation will not be atomic with respect to direct stores
-// to the field from Java code. It is important therefore that any Java code that
-// utilizes these Unsafe jlong operations does not perform direct stores. To permit
-// direct loads of the field from Java code we must also use Atomic::store within the
-// locked regions. And for good measure, in case there are direct stores, we also
-// employ Atomic::load within those regions. Note that the field in question must be
-// volatile and so must have atomic load/store accesses applied at the Java level.
-//
-// The locking scheme could utilize a range of strategies for controlling the locking
-// granularity: from a lock per-field through to a single global lock. The latter is
-// the simplest and is used for the current implementation. Note that the Java object
-// that contains the field, can not, in general, be used for locking. To do so can lead
-// to deadlocks as we may introduce locking into what appears to the Java code to be a
-// lock-free path.
-//
-// As all the locked-regions are very short and themselves non-blocking we can treat
-// them as leaf routines and elide safepoint checks (ie we don't perform any thread
-// state transitions even when blocking for the lock). Note that if we do choose to
-// add safepoint checks and thread state transitions, we must ensure that we calculate
-// the address of the field _after_ we have acquired the lock, else the object may have
-// been moved by the GC
-
+/**
+* VM_Version::supports_cx8() is a surrogate(代理人;替代者;) for 'supports atomic long memory ops'.
+** > VM_Version::supports_cx8() 是 支持long类型内存操作原子性的代理
+*
+* On platforms which do not support atomic compare-and-swap of jlong (8 byte)
+* values we have to use a lock-based scheme to enforce atomicity.
+* > 在不支持8字节CAS操作的平台上，我们必须使用基于锁的方案来强制原子性。
+* 
+* This has to be  applied to all Unsafe operations that set the value of a jlong field.
+* > 这必须是应用于jlong类型字段的所有不安全操作。
+* 
+* Even so  the compareAndSwapLong operation will not be atomic with respect to direct stores
+* to the field from Java code. 
+* > 即便如此，从java代码直接存储到字段而言，compareAndSwapLong操作也不是原子的
+* 
+* It is important therefore that any Java code that
+* utilizes(利用;使用) these Unsafe jlong operations does not perform direct stores.
+* > 因此，任何使用这些不安全jlong操作的Java代码都不能执行直接存储，这一点很重要。
+*
+* To permit(准许;许可) direct loads of the field from Java code we must also use Atomic::store within the
+* locked regions(地区;区域).
+* > 为了能够直接从java代码中加载属性，我们必须在获取锁的情况下使用Atomic::store
+*
+* And for good measure, in case there are direct stores, we also
+* employ(使用;利用) Atomic::load within those regions. Note that the field in question must be
+* volatile and so must have atomic load/store accesses applied at the Java level.
+* > 另外如果有直接存储，我们也在获取锁的区域使用Atomic::load，请注意，所讨论的字段必须是volatile，因此必须在Java级别应用原子加载/存储访问。
+*
+* The locking scheme could utilize a range of strategies for controlling the locking
+* granularity: from a lock per-field through to a single global lock. The latter is
+* the simplest and is used for the current implementation. Note that the Java object
+* that contains the field, can not, in general, be used for locking. To do so can lead(引领;导致)
+* to deadlocks as we may introduce locking into what appears to the Java code to be a
+* lock-free path.
+* > 锁定方案可以利用一系列策略来控制锁定粒度: 从每个字段的锁到单个全局锁。后者是最简单的并且也是正在使用的实现。
+*   注意，包含该字段的Java对象通常不能用于锁定(volatile修饰的字段?)。这样做可能会导致死锁，因为我们可能会在Java代码看来是无锁路径的地方引入锁。
+*
+* As all the locked-regions are very short and themselves non-blocking we can treat
+* them as leaf routines and elide safepoint checks (ie we don't perform any thread
+* state transitions even when blocking for the lock). Note that if we do choose to
+* add safepoint checks and thread state transitions, we must ensure that we calculate
+* the address of the field _after_ we have acquired the lock, else the object may have
+* been moved by the GC
+* > 因为所有的锁定区域都很短，而且它们本身是非阻塞的，我们可以把它们当作叶例程(叶子程序)，
+*   省略安全点检查(也就是说，即使在锁阻塞的时候，我们也不执行任何线程状态转换)。
+*   注意，如果我们选择添加安全点检查和线程状态转换，我们必须确保在获得锁后计算字段_after_的地址，否则对象可能已经被GC移动了
+* > 叶子程序: 不调用其他子程序 (即它们处于 树的末端)。
+*/
 UNSAFE_ENTRY(jlong, Unsafe_GetLongVolatile(JNIEnv *env, jobject unsafe, jobject obj, jlong offset))
-  UnsafeWrapper("Unsafe_GetLongVolatile");
-  {
-    if (VM_Version::supports_cx8()) {
-      GET_FIELD_VOLATILE(obj, offset, jlong, v);
-      return v;
-    }
-    else {
-      Handle p (THREAD, JNIHandles::resolve(obj));
-      jlong* addr = (jlong*)(index_oop_from_field_offset_long(p(), offset));
-      MutexLockerEx mu(UnsafeJlong_lock, Mutex::_no_safepoint_check_flag);
-      jlong value = Atomic::load(addr);
-      return value;
-    }
-  }
+   UnsafeWrapper("Unsafe_GetLongVolatile");
+   {
+     if (VM_Version::supports_cx8()) {
+       GET_FIELD_VOLATILE(obj, offset, jlong, v);
+       return v;
+     } else {
+       Handle p(THREAD, JNIHandles::resolve(obj));
+       jlong *addr = (jlong *)(index_oop_from_field_offset_long(p(), offset));
+       // MutexLockerEx 加锁，解锁是在析构函数中(该对象是在栈中创建的,生命周期为当前作用域)
+       MutexLockerEx mu(UnsafeJlong_lock, Mutex::_no_safepoint_check_flag);
+       jlong value = Atomic::load(addr);
+       return value;
+     }
+   }
 UNSAFE_END
 
 UNSAFE_ENTRY(void, Unsafe_SetLongVolatile(JNIEnv *env, jobject unsafe, jobject obj, jlong offset, jlong x))
-  UnsafeWrapper("Unsafe_SetLongVolatile");
-  {
-    if (VM_Version::supports_cx8()) {
-      SET_FIELD_VOLATILE(obj, offset, jlong, x);
-    }
-    else {
-      Handle p (THREAD, JNIHandles::resolve(obj));
-      jlong* addr = (jlong*)(index_oop_from_field_offset_long(p(), offset));
-      MutexLockerEx mu(UnsafeJlong_lock, Mutex::_no_safepoint_check_flag);
-      Atomic::store(x, addr);
-    }
-  }
+   UnsafeWrapper("Unsafe_SetLongVolatile");
+   {
+     if (VM_Version::supports_cx8()) {
+       SET_FIELD_VOLATILE(obj, offset, jlong, x);
+     } else {
+       Handle p(THREAD, JNIHandles::resolve(obj));
+       jlong *addr = (jlong *)(index_oop_from_field_offset_long(p(), offset));
+       MutexLockerEx mu(UnsafeJlong_lock, Mutex::_no_safepoint_check_flag);
+       Atomic::store(x, addr);
+     }
+   }
 UNSAFE_END
 
 #endif // not SUPPORTS_NATIVE_CX8
@@ -416,6 +438,7 @@ DEFINE_GETSETOOP(jdouble, Double);
 
 #undef DEFINE_GETSETOOP
 
+// -------------------------------------------->   <------------------------------------------
 #define DEFINE_GETSETOOP_VOLATILE(jboolean, Boolean) \
  \
 UNSAFE_ENTRY(jboolean, Unsafe_Get##Boolean##Volatile(JNIEnv *env, jobject unsafe, jobject obj, jlong offset)) \
@@ -431,6 +454,7 @@ UNSAFE_END \
  \
 // END DEFINE_GETSETOOP_VOLATILE.
 
+// ----------------------------> 函数定义 <-----------------------
 DEFINE_GETSETOOP_VOLATILE(jboolean, Boolean)
 DEFINE_GETSETOOP_VOLATILE(jbyte, Byte)
 DEFINE_GETSETOOP_VOLATILE(jshort, Short);
@@ -444,6 +468,7 @@ DEFINE_GETSETOOP_VOLATILE(jlong, Long);
 #endif
 
 #undef DEFINE_GETSETOOP_VOLATILE
+// -------------------------------------------->   <------------------------------------------
 
 // The non-intrinsified versions of setOrdered just use setVolatile
 
@@ -1210,6 +1235,10 @@ UNSAFE_ENTRY(jboolean, Unsafe_CompareAndSwapObject(JNIEnv *env, jobject unsafe, 
   return success;
 UNSAFE_END
 
+/**
+ * sun.misc.Unsafe#compareAndSwapInt
+ * 
+ */ 
 UNSAFE_ENTRY(jboolean, Unsafe_CompareAndSwapInt(JNIEnv *env, jobject unsafe, jobject obj, jlong offset, jint e, jint x))
   UnsafeWrapper("Unsafe_CompareAndSwapInt");
   oop p = JNIHandles::resolve(obj);
@@ -1217,6 +1246,7 @@ UNSAFE_ENTRY(jboolean, Unsafe_CompareAndSwapInt(JNIEnv *env, jobject unsafe, job
   return (jint)(Atomic::cmpxchg(x, addr, e)) == e;
 UNSAFE_END
 
+// @see Unsafe_GetLongVolatile
 UNSAFE_ENTRY(jboolean, Unsafe_CompareAndSwapLong(JNIEnv *env, jobject unsafe, jobject obj, jlong offset, jlong e, jlong x))
   UnsafeWrapper("Unsafe_CompareAndSwapLong");
   Handle p (THREAD, JNIHandles::resolve(obj));
@@ -1228,6 +1258,8 @@ UNSAFE_ENTRY(jboolean, Unsafe_CompareAndSwapLong(JNIEnv *env, jobject unsafe, jo
     return (jlong)(Atomic::cmpxchg(x, addr, e)) == e;
   else {
     jboolean success = false;
+    // 加锁在构造函数中,解锁在析构函数中;该对象是在栈中创建的，生命周期就是当前作用域(跳出当前作用域，即自动调用析构函数)
+    // 009.C_C-plus-plus/xigou.cpp
     MutexLockerEx mu(UnsafeJlong_lock, Mutex::_no_safepoint_check_flag);
     jlong val = Atomic::load(addr);
     if (val == e) { Atomic::store(x, addr); success = true; }

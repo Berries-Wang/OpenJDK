@@ -225,6 +225,9 @@ class MutexLockerEx: public StackObj {
  private:
   Monitor * _mutex;
  public:
+  /**
+   * 构造函数:加锁
+   */ 
   MutexLockerEx(Monitor * mutex, bool no_safepoint_check = !Mutex::_no_safepoint_check_flag) {
     _mutex = mutex;
     if (_mutex != NULL) {
@@ -237,6 +240,9 @@ class MutexLockerEx: public StackObj {
     }
   }
 
+  /**
+   * 析构函数：解锁
+   */ 
   ~MutexLockerEx() {
     if (_mutex != NULL) {
       _mutex->unlock();

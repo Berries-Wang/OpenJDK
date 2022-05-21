@@ -54,7 +54,21 @@
         "thread": "cpp",
         "mutex": "cpp",
         "shared_mutex": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "strstream": "cpp",
+        "chrono": "cpp",
+        "complex": "cpp",
+        "condition_variable": "cpp",
+        "cstring": "cpp",
+        "ctime": "cpp",
+        "iomanip": "cpp",
+        "cfenv": "cpp",
+        "bit": "cpp",
+        "cstddef": "cpp",
+        "map": "cpp",
+        "set": "cpp",
+        "iterator": "cpp",
+        "memory_resource": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

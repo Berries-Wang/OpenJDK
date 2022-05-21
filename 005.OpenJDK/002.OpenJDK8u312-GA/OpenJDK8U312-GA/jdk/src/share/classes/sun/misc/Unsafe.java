@@ -42,6 +42,9 @@ import java.security.ProtectionDomain;
  * @see #getUnsafe
  */
 
+/**
+ * native代码: 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/prims/unsafe.cpp
+ */
 public final class Unsafe {
 
     private static native void registerNatives();
@@ -1160,7 +1163,7 @@ public final class Unsafe {
      * elapsed(运行，消逝，过去), or if absolute, the given deadline in milliseconds
      * since Epoch has passed, or spuriously(不合逻辑的) (i.e., returning for no
      * "reason").
-     *
+     * <p>
      * <p/>
      * <pre>
      * Note: This operation is in the Unsafe class only because <tt>unpark</tt> is, so it would be strange to place it elsewhere.
@@ -1192,6 +1195,9 @@ public final class Unsafe {
      * Atomically adds the given value to the current value of a field
      * or array element within the given object <code>o</code>
      * at the given <code>offset</code>.
+     * <pre>
+     *     在给定的偏移量处，原子地将给定的值添加到给定对象o中的字段或数组元素的当前值
+     * </pre>
      *
      * @param o      object/array to update the field/element in
      * @param offset field/element offset
