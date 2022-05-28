@@ -26,7 +26,7 @@
 + 答案请参考: [004.OpenJDK(JVM)学习/010.类加载](../004.OpenJDK(JVM)学习/010.类加载)
 
 ## IO
-+ 同步阻塞、同步非阻塞、异步的区别？
++ 同步阻塞、非阻塞、异步的区别？
 + select、poll、eopll的区别？
 + java NIO与BIO的区别？
 + reactor线程模型是什么?
