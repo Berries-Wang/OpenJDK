@@ -43,6 +43,12 @@ int main(int argc, char **argv) {
   // 套接字绑定
   bind(listenfd, (struct sockaddr *)&servaddr, sizeof(servaddr));
 
+  /**
+   * listen 函数仅由TCP服务器调用，主要做两件事:
+   *   1. 将一个未连接的套接字转换为一个被动套接字
+   *   2. 第二个参数规定了内核应该为相应套接字排队的最大连接个数 
+   * 《Unix 网络编程 第三版 卷一》  P84
+   */ 
   listen(listenfd, 128);
 
   maxfd = listenfd;
@@ -67,7 +73,8 @@ int main(int argc, char **argv) {
       printf("有连接请求到达\n");
 
       clilen = sizeof(cliaddr);
-
+      
+      // 返回一个已完成的连接
       connfd = accept(listenfd, (struct sockaddr *)&cliaddr, &clilen);
 
       printf("--> %d\n", connfd);
