@@ -105,7 +105,13 @@ int main(int argc, char **argv) {
       if ((sockfd = client[fdindex]) < 0) {
         continue;
       }
+      
 
+      /**
+       * select 缺点：
+       *   无法明确知道哪些套接字有I/O事件发生，只能一个个轮询.
+       * 
+       */ 
       if (FD_ISSET(sockfd, &rset)) {
         if ((msglen = read(sockfd, buff, MAXLINE)) == 0) {
           printf("[%d] closed", sockfd);

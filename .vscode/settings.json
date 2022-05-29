@@ -68,7 +68,8 @@
         "map": "cpp",
         "set": "cpp",
         "iterator": "cpp",
-        "memory_resource": "cpp"
+        "memory_resource": "cpp",
+        "cerrno": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }
