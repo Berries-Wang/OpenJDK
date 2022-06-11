@@ -26,18 +26,22 @@
 package sun.nio.ch;
 
 import java.io.IOException;
-import java.nio.channels.*;
-import java.nio.channels.spi.*;
-import java.util.*;
-import sun.misc.*;
+import java.nio.channels.ClosedSelectorException;
+import java.nio.channels.SelectableChannel;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.spi.AbstractSelectionKey;
+import java.nio.channels.spi.SelectorProvider;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * An implementation of Selector for Linux 2.6+ kernels that uses
  * the epoll event notification facility.
  */
 class EPollSelectorImpl
-    extends SelectorImpl
-{
+        extends SelectorImpl {
 
     // File descriptors used for interrupt
     protected int fd0;
@@ -47,7 +51,7 @@ class EPollSelectorImpl
     EPollArrayWrapper pollWrapper;
 
     // Maps from file descriptors to keys
-    private Map<Integer,SelectionKeyImpl> fdToKey;
+    private Map<Integer, SelectionKeyImpl> fdToKey;
 
     // True if this Selector has been closed
     private volatile boolean closed = false;
@@ -115,7 +119,7 @@ class EPollSelectorImpl
     private int updateSelectedKeys() {
         int entries = pollWrapper.updated;
         int numKeysUpdated = 0;
-        for (int i=0; i<entries; i++) {
+        for (int i = 0; i < entries; i++) {
             int nextFD = pollWrapper.getDescriptor(i);
             SelectionKeyImpl ski = fdToKey.get(Integer.valueOf(nextFD));
             // ski is null in the case of an interrupt
@@ -157,11 +161,11 @@ class EPollSelectorImpl
         // Deregister channels
         Iterator<SelectionKey> i = keys.iterator();
         while (i.hasNext()) {
-            SelectionKeyImpl ski = (SelectionKeyImpl)i.next();
+            SelectionKeyImpl ski = (SelectionKeyImpl) i.next();
             deregister(ski);
             SelectableChannel selch = ski.channel();
             if (!selch.isOpen() && !selch.isRegistered())
-                ((SelChImpl)selch).kill();
+                ((SelChImpl) selch).kill();
             i.remove();
         }
 
@@ -188,10 +192,10 @@ class EPollSelectorImpl
         ski.setIndex(-1);
         keys.remove(ski);
         selectedKeys.remove(ski);
-        deregister((AbstractSelectionKey)ski);
+        deregister((AbstractSelectionKey) ski);
         SelectableChannel selch = ski.channel();
         if (!selch.isOpen() && !selch.isRegistered())
-            ((SelChImpl)selch).kill();
+            ((SelChImpl) selch).kill();
     }
 
     public void putEventOps(SelectionKeyImpl ski, int ops) {
