@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
 
   std::cout << "Hello World" << std::endl;
 
-  // 此时，a 的值为 0x7b ，0x7b转换为10进制就是123。即当类型指针当做方法名来调用，就是构建一个指定值得指针.
+  // 此时，a 的值(Debug)为 0x7b ，0x7b转换为10进制就是123。即当类型指针当做方法名来调用，就是构建一个指定值的指针.
 
   return 0;
 }
