@@ -30,6 +30,7 @@
 + select、poll、eopll的区别？
 + java NIO与BIO的区别？
 + reactor线程模型是什么?
++ 参考:[014.Unix网络](../014.Unix网络)
 
 ## GC
 ### GC理论
