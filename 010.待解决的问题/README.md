@@ -54,6 +54,7 @@
 + Concurrent Model Failure和ParNew promotion failed什么情况下会发生？
 + CMS的优缺点？
 + 有做过哪些GC调优？
+  - [004.OpenJDK(JVM)学习/009.GC/004.ParNew+CMS/001.CMS介绍.md](../004.OpenJDK(JVM)学习/009.GC/004.ParNew+CMS/001.CMS介绍.md)
 
 
 ## 并发
