@@ -27,7 +27,7 @@ Note: Recompile with -Xlint:deprecation for details.
 Creating langtools/dist/lib/classes.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished langtools (build time 00:00:38)
+## Finished langtools (build time 00:00:32)
 
 ## Starting hotspot
 make[2]: warning: -j1 forced in submake: resetting jobserver mode.
@@ -123,17 +123,17 @@ Making adlc
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/jvmtiEnv.hpp
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/jvmtiEnter.cpp
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/jvmtiEnterTrace.cpp
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Generating /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/jvmtiEnvRecommended.cpp
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/bytecodeInterpreterWithChecks.cpp
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/jvmti.h
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Generating /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/jvmtiEnvRecommended.cpp
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating jfrEventClasses.hpp
@@ -171,8 +171,8 @@ INFO: ALT_OBJCOPY=/usr/bin/objcopy
 INFO: /usr/bin/objcopy cmd found so will create .debuginfo files.
 INFO: STRIP_POLICY=min_strip
 INFO: ZIP_DEBUGINFO_FILES=0
-Compiling /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/compiler/abstractCompiler.cpp
 Compiling /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/wei_log/WeiLog.cpp
+Compiling /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/compiler/abstractCompiler.cpp
 Compiling /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/utilities/accessFlags.cpp
 Compiling ../generated/adfiles/ad_x86_64.cpp
 Compiling ../generated/adfiles/ad_x86_64_clone.cpp
@@ -871,16 +871,16 @@ Compiling /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-G
 Compiling /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/utilities/xmlstream.cpp
 Compiling /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/utilities/yieldingWorkgroup.cpp
 Making signal interposition lib...
+cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C [enabled by default]
 Making SA debugger back-end...
+cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C [enabled by default]
+cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C [enabled by default]
+cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C [enabled by default]
 **NOTICE** Dtrace support disabled: /usr/include/sys/sdt.h not found
 cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C [enabled by default]
 cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C [enabled by default]
 cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C [enabled by default]
 Compiling /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/runtime/vm_version.cpp
-cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C [enabled by default]
-cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C [enabled by default]
-cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C [enabled by default]
-cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C [enabled by default]
 cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C [enabled by default]
 Linking vm...
 All done.
@@ -897,7 +897,7 @@ INFO: ALT_OBJCOPY=/usr/bin/objcopy
 INFO: /usr/bin/objcopy cmd found so will create .debuginfo files.
 INFO: STRIP_POLICY=min_strip
 INFO: ZIP_DEBUGINFO_FILES=0
-## Finished hotspot (build time 00:03:36)
+## Finished hotspot (build time 00:02:41)
 
 ## Starting corba
 Compiling 6 files for BUILD_LOGUTIL
@@ -965,7 +965,7 @@ Creating corba/dist/lib/classes.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating bin.zip
-## Finished corba (build time 00:00:25)
+## Finished corba (build time 00:00:22)
 
 ## Starting jaxp
 Compiling 1868 files for BUILD_JAXP
@@ -978,7 +978,7 @@ Note: Recompile with -Xlint:unchecked for details.
 Creating jaxp/dist/lib/classes.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished jaxp (build time 00:00:15)
+## Finished jaxp (build time 00:00:14)
 
 ## Starting jaxws
 Compiling 24 files for BUILD_JAF
@@ -996,7 +996,7 @@ Creating jaxws/dist/lib/classes.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished jaxws (build time 00:00:21)
+## Finished jaxws (build time 00:00:18)
 
 ## Starting jdk
 Importing CORBA classes.jar
@@ -1013,22 +1013,22 @@ Importing JAXWS classes.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Importing JAXWS src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Importing LANGTOOLS classes.jar
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Importing LANGTOOLS src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Importing LANGTOOLS classes.jar
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Compiling 165 files for BUILD_TOOLS
 Generating charsetmapping classes
 Generating buffer classes
-Compiling 165 files for BUILD_TOOLS
 Generating exceptions classes
-Generating icon classes
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Generating icon classes
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
-Copying and cleaning 53 properties
 Compiling 521 properties into resource bundles
-Creating sun/util/LocaleDataMetaInfo.java from 423 found resources.
+Copying and cleaning 53 properties
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Creating sun/util/LocaleDataMetaInfo.java from 423 found resources.
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -1052,8 +1052,8 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Classes: Table size 32 (5 bits), shift 1, max chain depth 3
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Cache: Table size 32 (5 bits), shift 1, max chain depth 3
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -1206,10 +1206,10 @@ Verifying /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-G
 Generating HTML DTD file
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Compiling 4 files for BUILD_BREAKITERATOR
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-[Parsed DTD html32 in 132ms]
+[Parsed DTD html32 in 185ms]
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -1249,11 +1249,11 @@ Note: Recompile with -Xlint:deprecation for details.
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/jni.cpp:313:3: warning: converting to non-pointer type 'long int' from NULL [-Wconversion-null]
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/jni.cpp:313:3: warning: converting to non-pointer type 'long int' from NULL [-Wconversion-null]
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/utils.cpp: In function 'int assert_failed(const char*)':
-/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/utils.cpp:84:28: warning: format not a string literal and no format arguments [-Wformat-security]
-/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In member function 'void unpacker::read_file_header()':
+/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/utils.cpp:84:28: warning: format not a string literal and no format arguments [-Wformat-security]/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In member function 'void unpacker::read_file_header()':
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:736:24: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In member function 'void cpool::init(unpacker*, int*)':
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:988:24: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In member function 'char* entry::string()':
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:3719:44: warning: format not a string literal and no format arguments [-Wformat-security]
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In function 'void print_cp_entry(int)':
@@ -1264,13 +1264,13 @@ Note: Recompile with -Xlint:deprecation for details.
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/bin/java_md_solinux.c:822:41: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/bin/java_md_solinux.c: In function 'ContinueInNewThread0':
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/bin/java_md_solinux.c:1046:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/parse_manifest.c: In function 'compute_cen':
-/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/parse_manifest.c:236:7: warning: pointer targets in assignment differ in signedness [-Wpointer-sign]
-/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/parse_manifest.c:279:11: warning: pointer targets in assignment differ in signedness [-Wpointer-sign]
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/splashscreen_stubs.c: In function 'DoSplashLoadMemory':
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/splashscreen_stubs.c:64:5: warning: return makes integer from pointer without a cast [enabled by default]
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/splashscreen_stubs.c: In function 'DoSplashLoadFile':
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/splashscreen_stubs.c:68:5: warning: return makes integer from pointer without a cast [enabled by default]
+/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/parse_manifest.c: In function 'compute_cen':
+/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/parse_manifest.c:236:7: warning: pointer targets in assignment differ in signedness [-Wpointer-sign]
+/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/parse_manifest.c:279:11: warning: pointer targets in assignment differ in signedness [-Wpointer-sign]
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/net/spi/DefaultProxySelector.c:127:0: warning: "CHECK_NULL" redefined [enabled by default]
 In file included from /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/net/spi/DefaultProxySelector.c:27:0:
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/common/jni_util.h:293:0: note: this is the location of the previous definition
@@ -1419,9 +1419,9 @@ In file included from /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.Op
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/awt/fontpath.c: In function 'AddFontsToX11FontPath':
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/awt/fontpath.c:288:9: warning: comparison of unsigned expression >= 0 is always true [-Wtype-limits]
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/awt/gtk2_interface.c: In function 'gtk2_load':
-/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/awt/gtk3_interface.c: In function 'gtk3_load':/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/awt/gtk2_interface.c:764:13: warning: comparison of unsigned expression >= 0 is always true [-Wtype-limits]
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/awt/gtk2_interface.c:764:13: warning: comparison of unsigned expression >= 0 is always true [-Wtype-limits]
-
+/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/awt/gtk2_interface.c:764:13: warning: comparison of unsigned expression >= 0 is always true [-Wtype-limits]
+/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/awt/gtk3_interface.c: In function 'gtk3_load':
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/awt/gtk3_interface.c:606:13: warning: comparison of unsigned expression >= 0 is always true [-Wtype-limits]
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/awt/gtk3_interface.c:606:13: warning: comparison of unsigned expression >= 0 is always true [-Wtype-limits]
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/awt/gtk3_interface.c: In function 'recode_color':
@@ -1467,10 +1467,10 @@ In file included from /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.Op
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/CanonShaping.cpp: In static member function 'static void CanonShaping::reorderMarks(const LEUnicode*, le_int32, le_bool, LEUnicode*, LEGlyphStorage&)':
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/CanonShaping.cpp:65:34: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/CanonShaping.cpp:66:25: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
-/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/IndicLayoutEngine.cpp: In member function 'virtual le_int32 IndicOpenTypeLayoutEngine::characterProcessing(const LEUnicode*, le_int32, le_int32, le_int32, le_bool, LEUnicode*&, LEGlyphStorage&, LEErrorCode&)':
-/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/IndicLayoutEngine.cpp:133:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/HangulLayoutEngine.cpp: In member function 'virtual le_int32 HangulOpenTypeLayoutEngine::characterProcessing(const LEUnicode*, le_int32, le_int32, le_int32, le_bool, LEUnicode*&, LEGlyphStorage&, LEErrorCode&)':
+/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/HangulLayoutEngine.cpp: In member function 'virtual le_int32 HangulOpenTypeLayoutEngine::characterProcessing(const LEUnicode*, le_int32, le_int32, le_int32, le_bool, LEUnicode*&, LEGlyphStorage&, LEErrorCode&)':
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/HangulLayoutEngine.cpp:248:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
-
+/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/IndicLayoutEngine.cpp: In member function 'virtual le_int32 IndicOpenTypeLayoutEngine::characterProcessing(const LEUnicode*, le_int32, le_int32, le_int32, le_bool, LEUnicode*&, LEGlyphStorage&, LEErrorCode&)':
+/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/IndicLayoutEngine.cpp:133:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 In file included from /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/IndicRearrangementProcessor2.cpp:38:0:
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/IndicRearrangementProcessor2.h: In constructor 'IndicRearrangementProcessor2::IndicRearrangementProcessor2(const LEReferenceTo<MorphSubtableHeader2>&, LEErrorCode&)':
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/IndicRearrangementProcessor2.h:83:54: warning: 'IndicRearrangementProcessor2::indicRearrangementSubtableHeader' will be initialized after [-Wreorder]
@@ -1521,13 +1521,13 @@ In file included from /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.Op
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/StateTableProcessor2.h:74:32: warning: 'StateTableProcessor2::classTable' will be initialized after [-Wreorder]
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/StateTableProcessor2.h:68:15: warning:   'le_uint16 StateTableProcessor2::format' [-Wreorder]
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/StateTableProcessor2.cpp:48:1: warning:   when initialized here [-Wreorder]
-/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/ThaiLayoutEngine.cpp: In member function 'virtual le_int32 ThaiLayoutEngine::computeGlyphs(const LEUnicode*, le_int32, le_int32, le_int32, le_bool, LEGlyphStorage&, LEErrorCode&)':
-/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/ThaiLayoutEngine.cpp:100:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 In file included from /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/SubtableProcessor2.cpp:34:0:
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/SubtableProcessor2.h: In constructor 'SubtableProcessor2::SubtableProcessor2(const LEReferenceTo<MorphSubtableHeader2>&, LEErrorCode&)':
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/SubtableProcessor2.h:61:47: warning: 'SubtableProcessor2::subtableHeader' will be initialized after [-Wreorder]
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/SubtableProcessor2.h:57:15: warning:   'le_uint32 SubtableProcessor2::length' [-Wreorder]
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/SubtableProcessor2.cpp:43:1: warning:   when initialized here [-Wreorder]
+/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/ThaiLayoutEngine.cpp: In member function 'virtual le_int32 ThaiLayoutEngine::computeGlyphs(const LEUnicode*, le_int32, le_int32, le_int32, le_bool, LEGlyphStorage&, LEErrorCode&)':
+/home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/ThaiLayoutEngine.cpp:100:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/TibetanLayoutEngine.cpp: In member function 'virtual le_int32 TibetanOpenTypeLayoutEngine::characterProcessing(const LEUnicode*, le_int32, le_int32, le_int32, le_bool, LEUnicode*&, LEGlyphStorage&, LEErrorCode&)':
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/TibetanLayoutEngine.cpp:89:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/sunFont.c: In function 'Java_sun_font_StrikeCache_freeIntPointer':
@@ -1588,10 +1588,10 @@ stubs. See the documentation for java.rmi.server.UnicastRemoteObject.
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/jce/unsigned/policy/unlimited/US_export_policy.jar
 Creating jdk/jce/unsigned/policy/limited/local_policy.jar
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Creating jdk/jce/unsigned/sunpkcs11.jar
 Creating jdk/jce/unsigned/policy/unlimited/local_policy.jar
+Creating jdk/jce/unsigned/sunpkcs11.jar
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -1599,22 +1599,22 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/jce/unsigned/sunec.jar
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/jce/unsigned/sunjce_provider.jar
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/jce/unsigned/jce.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished jdk (build time 00:02:24)
+## Finished jdk (build time 00:02:10)
 
 ## Starting demos
 Compiling 1 files for BUILD_DEMO_APPLET_ArcTest
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Compiling 1 files for BUILD_DEMO_APPLET_BarChart
-Compiling 1 files for BUILD_DEMO_APPLET_Blink
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Compiling 1 files for BUILD_DEMO_APPLET_Blink
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Compiling 1 files for BUILD_DEMO_APPLET_CardTest
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -1639,15 +1639,15 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Compiling 3 files for BUILD_DEMO_CodePointIM
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating jdk/demo/jfc/CodePointIM/src.zip
-Updating jdk/demo/applets/MoleculeViewer/src.zip
 Compiling 2 files for BUILD_DEMO_MoleculeViewer
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Updating jdk/demo/applets/MoleculeViewer/src.zip
 Compiling 2 files for BUILD_DEMO_WireFrame
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating jdk/demo/applets/WireFrame/src.zip
-Updating jdk/demo/jfc/SwingApplet/src.zip
 Compiling 1 files for BUILD_DEMO_SwingApplet
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Updating jdk/demo/jfc/SwingApplet/src.zip
 Compiling 3 files for BUILD_DEMO_FileChooserDemo
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating jdk/demo/jfc/FileChooserDemo/src.zip
@@ -1669,17 +1669,17 @@ Note: Recompile with -Xlint:unchecked for details.
 Updating jdk/demo/jfc/SampleTree/src.zip
 Compiling 8 files for BUILD_DEMO_TableExample
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Updating jdk/demo/jfc/TableExample/src.zip
 Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
-Updating jdk/demo/jfc/TableExample/src.zip
 Updating jdk/demo/jfc/TransparentRuler/src.zip
 Compiling 1 files for BUILD_DEMO_TransparentRuler
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Updating jdk/demo/scripting/jconsole-plugin/src.zip
 Compiling 3 files for BUILD_DEMO_jconsole-plugin
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Updating jdk/demo/scripting/jconsole-plugin/src.zip
 Compiling 3 files for BUILD_DEMO_FullThreadDump
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating jdk/demo/management/FullThreadDump/src.zip
@@ -1688,13 +1688,13 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Note: /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/demo/jfc/TableExample/TableExample4.java uses unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
 Updating jdk/demo/management/JTop/src.zip
-Compiling 1 files for BUILD_DEMO_MemoryMonitor
 Updating jdk/demo/management/MemoryMonitor/src.zip
+Compiling 1 files for BUILD_DEMO_MemoryMonitor
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Compiling 2 files for BUILD_DEMO_VerboseGC
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating jdk/demo/management/VerboseGC/src.zip
-Compiling 2 files for BUILD_DEMO_VerboseGC
 Compiling 12 files for BUILD_DEMO_zipfs
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating jdk/demo/nio/zipfs/src.zip
 /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/demo/jvmti/compiledMethodLoad/compiledMethodLoad.c: In function 'print_inline_info_record':
@@ -1714,34 +1714,34 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating jdk/demo/jvmti/minst/src.zip
 Compiling 1 files for BUILD_DEMO_JVMTI_mtrace_JAVA
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Updating jdk/demo/jvmti/mtrace/src.zip
 Note: /home/wei/workspace/SOURCE_CODE/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/demo/nio/zipfs/src/com/sun/nio/zipfs/ZipUtils.java uses or overrides a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
-Updating jdk/demo/jvmti/mtrace/src.zip
 Updating jdk/demo/jvmti/waiters/src.zip
 Updating jdk/demo/jvmti/versionCheck/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Creating jdk/demo/applets/MoleculeViewer/src.zip
+Creating jdk/demo/applets/WireFrame/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jfc/CodePointIM/src.zip
-Creating jdk/demo/applets/WireFrame/src.zip
-Creating jdk/demo/applets/MoleculeViewer/src.zip
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jfc/SwingApplet/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jfc/FileChooserDemo/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jfc/Font2DTest/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Creating jdk/demo/jfc/Metalworks/src.zip
-Creating jdk/demo/jfc/Notepad/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Creating jdk/demo/jfc/Metalworks/src.zip
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Creating jdk/demo/jfc/Notepad/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -1749,23 +1749,21 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jfc/SampleTree/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Creating jdk/demo/jfc/TransparentRuler/src.zip
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jfc/TableExample/src.zip
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/scripting/jconsole-plugin/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Creating jdk/demo/jfc/TransparentRuler/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/management/FullThreadDump/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Creating jdk/demo/management/JTop/src.zip
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/management/MemoryMonitor/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Creating jdk/demo/management/JTop/src.zip
 Creating jdk/demo/management/VerboseGC/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -1773,11 +1771,12 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/nio/zipfs/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jvmti/heapTracker/heapTracker.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jvmti/minst/minst.jar
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jvmti/mtrace/mtrace.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -1785,7 +1784,8 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished demos (build time 00:00:19)
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+## Finished demos (build time 00:00:15)
 
 ## Starting nashorn
 Compiling 491 files for BUILD_NASHORN
@@ -1798,16 +1798,16 @@ Creating version.properties
 Creating nashorn/dist/nashorn.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished nashorn (build time 00:00:15)
+## Finished nashorn (build time 00:00:13)
 
 ## Starting images
+Creating images/lib/charsets.jar
 Creating images/lib/ext/dnsns.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Creating images/lib/charsets.jar
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Creating images/lib/jfr.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating images/lib/ext/cldrdata.jar
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Creating images/lib/jfr.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -1838,8 +1838,8 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating images/src.zip
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 WARNING: Path does not exist as file or directory: sun/misc/PostVMInitHook.class
 WARNING: Path does not exist as file or directory: sun/usagetracker/UsageTrackerClient.class
 WARNING: Path does not exist as file or directory: sun/usagetracker/UsageTrackerClient$1.class
@@ -1855,9 +1855,9 @@ WARNING: Path does not exist as file or directory: sun/security/ec
 WARNING: Path does not exist as file or directory: sun/security/internal
 WARNING: Path does not exist as file or directory: sun/security/mscapi
 WARNING: Path does not exist as file or directory: sun/security/pkcs11
+Creating resources.jar
 Creating rt.jar Compressed=false
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Creating resources.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 warning: package javax.crypto does not exist
@@ -1999,21 +1999,21 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished images (build time 00:00:27)
+## Finished images (build time 00:00:23)
 
 ----- Build times -------
-Start 2022-06-18 10:34:23
-End   2022-06-18 10:43:03
-00:00:25 corba
-00:00:19 demos
-00:03:36 hotspot
-00:00:27 images
-00:00:15 jaxp
-00:00:21 jaxws
-00:02:24 jdk
-00:00:38 langtools
-00:00:15 nashorn
-00:08:40 TOTAL
+Start 2022-06-25 12:05:39
+End   2022-06-25 12:12:47
+00:00:22 corba
+00:00:15 demos
+00:02:41 hotspot
+00:00:23 images
+00:00:14 jaxp
+00:00:18 jaxws
+00:02:10 jdk
+00:00:32 langtools
+00:00:13 nashorn
+00:07:08 TOTAL
 -------------------------
 Finished building OpenJDK for target 'images'
 
