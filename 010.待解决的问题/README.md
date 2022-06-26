@@ -52,6 +52,8 @@
 + CMS GC回收分为哪几个阶段？分别做了什么事情？
 + CMS有哪些重要参数？
 + Concurrent Model Failure和ParNew promotion failed什么情况下会发生？
+  - ParNew promotion failed： 空间分配担保 
+  - Concurrent Model Failure：并发失败，用户线程和GC线程并发执行，用户线程无法申请到足够的内存而导致并发失败
 + CMS的优缺点？
 + 有做过哪些GC调优？
   - [004.OpenJDK(JVM)学习/009.GC/004.ParNew+CMS/001.CMS介绍.md](../004.OpenJDK(JVM)学习/009.GC/004.ParNew+CMS/001.CMS介绍.md)
