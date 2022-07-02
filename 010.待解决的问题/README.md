@@ -67,10 +67,19 @@
 ## 集合
 ### HashMap
 + hashmap如何解决hash冲突，为什么hashmap中的链表需要转成红黑树？
+  > 红黑树相比于AVL树，插入性能较好(AVL树每次插入、删除都要做调整，比较复杂、耗时)，但是查找性能不如AVL树，因为红黑树不是一个绝对平衡的二叉树(黑平衡)。
 + hashmap什么时候会触发扩容？
-+ jdk1.8之前并发操作hashmap时为什么会有死循环的问题？
+  ```txt
+    -> java.util.HashMap#put,通过研究代码发现，在以下情况下会触发扩容:
+       1. 添加元素且内部java.util.HashMap#table数组没有初始化或数组长度为0时
+       2. 桶的数量未达到64 且 对应桶中的元素数量达到了8
+  ```
 + hashmap扩容时每个entry需要再计算一次hash吗？
+  ```java
+     // 不会，只会计算一次，将hash值存放在java.util.HashMap.Node#hash(final修饰)中，后续使用计算好的hash值
+  ```
 + hashmap的数组长度为什么要保证是2的幂？
+  - 见:[001.Java源码分析/004.HashMap/000.高效程序的奥秘-取余.md](../001.Java源码分析/004.HashMap/000.高效程序的奥秘-取余.md)
 + 如何用LinkedHashMap实现LRU？
 + 如何用TreeMap实现一致性hash？
 ### ConcurrentHashMap
