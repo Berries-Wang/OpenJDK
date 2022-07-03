@@ -80,8 +80,70 @@
   ```
 + hashmap的数组长度为什么要保证是2的幂？
   - 见:[001.Java源码分析/004.HashMap/000.高效程序的奥秘-取余.md](../001.Java源码分析/004.HashMap/000.高效程序的奥秘-取余.md)
-+ 如何用LinkedHashMap实现LRU？
++ 如何用LinkedHashMap实现LRU
+  ```java
+     // LinkedHashMap 是在HashMap的基础上添加了一个双向链表
+     //通过钩子函数: java.util.LinkedHashMap#afterNodeAccess (根据配置，将最近访问的元素放到队列尾部),因此可以来实现LRU,测试代码如下:
+        // true，表示遍历的顺序: true: 按访问顺序;false:按照插入顺序
+        LinkedHashMap<Integer, Integer> map = new LinkedHashMap<>(16, 0.75f, true);
+        map.put(1, 1);
+        map.put(2, 2);
+        map.put(3, 3);
+        map.put(4, 4);
+
+        map.get(1);
+
+        map.forEach((key, value) -> System.out.println(key));
+        //  输出: 2,3,4,1
+
+  ```
 + 如何用TreeMap实现一致性hash？
+  ```java
+     // TreeMap 是一个有序的Map,想象成一个环
+     package link.bosswang.wei;
+
+    import java.util.SortedMap;
+    import java.util.TreeMap;
+    
+    public class Consistent_Hash {
+
+    private static TreeMap<Long, String> Consistent_Hash = new TreeMap<>();
+
+    private static long hash(Object key) {
+        int h;
+        return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+    }
+
+    private static String getServerName(Long hash) {
+        if (Consistent_Hash.isEmpty()) {
+            return null;
+        }
+
+        // 返回此地图部分的视图，其键大于等于 fromKey
+        SortedMap<Long, String> tailMap = Consistent_Hash.tailMap(hash);
+
+        // 如果为空，则表示已经到了Hash环的末尾，那么需要使用第一个Key
+        if (!tailMap.isEmpty()) {
+            return tailMap.get(tailMap.firstKey());
+        }
+
+        return Consistent_Hash.firstEntry().getValue();
+    }
+
+
+    public static void main(String[] args) {
+        // 初始化服务器 2^n
+        for (long i = 0; i < 8; i++) {
+            Consistent_Hash.put(i, "Server-" + i);
+        }
+
+        System.out.println(getServerName((hash(4) & (8 - 1))));
+        System.out.println(getServerName(hash(5) & (8 - 1)));
+        System.out.println(getServerName(hash(6) & (8 - 1)));
+
+    }
+}
+  ```
 ### ConcurrentHashMap
 + ConcurrentHashMap：了解实现原理、扩容时做的优化、与HashTable对比。
 + BlockingQueue： 了解LinkedBlockingQueue、ArrayBlockingQueue、DelayQueue、SynchronousQueue

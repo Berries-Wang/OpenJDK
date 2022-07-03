@@ -1945,12 +1945,15 @@ public class HashMap<K, V> extends AbstractMap<K, V>
     }
 
     // Callbacks to allow LinkedHashMap post-actions
+    // 钩子函数,LinkedHashMap实现
     void afterNodeAccess(Node<K, V> p) {
     }
 
+    // 钩子函数，LinkedHashMap实现
     void afterNodeInsertion(boolean evict) {
     }
 
+    // 钩子函数,LinkedHashMap实现
     void afterNodeRemoval(Node<K, V> p) {
     }
 
