@@ -142,8 +142,9 @@
         System.out.println(getServerName(hash(6) & (8 - 1)));
 
     }
-}
+   }
   ```
+
 ### ConcurrentHashMap
 + ConcurrentHashMap：了解实现原理、扩容时做的优化、与HashTable对比。
 + BlockingQueue： 了解LinkedBlockingQueue、ArrayBlockingQueue、DelayQueue、SynchronousQueue
