@@ -55,33 +55,40 @@ import java.util.stream.StreamSupport;
  * global {@link java.util.Random} generator used by the {@link
  * java.lang.Math} class, a {@code ThreadLocalRandom} is initialized
  * with an internally(在内部) generated(产生;生成;) seed that may not otherwise be
- * modified. When applicable, use of {@code ThreadLocalRandom} rather
+ * modified. When applicable(适当的;适用的;), use of {@code ThreadLocalRandom} rather
  * than shared {@code Random} objects in concurrent programs will
- * typically encounter much less overhead and contention.  Use of
- * {@code ThreadLocalRandom} is particularly appropriate when multiple
+ * typically(典型地;一般;) encounter(冲突;经历;体验) much less overhead(开支;在空中；在头顶上;) and contention.  Use of
+ * {@code ThreadLocalRandom} is particularly(非常;尤其;特别;清楚地;) appropriate(合适的;相称的;) when multiple
  * tasks (for example, each a {@link ForkJoinTask}) use random numbers
- * in parallel in thread pools.
+ * in parallel(平行的;同时发生的;并行的(计算机)) in thread pools.
  *
  * <p>
- * 与当前线程隔离的随机数生成器.类似于通过Math类实现的全局随机数生成器，ThreadLocalRandom是
- * 通过内部生成的一个随机数种子初始化的。
+ * > 与当前线程隔离的随机数生成器.类似于通过Math类实现的全局随机数生成器，ThreadLocalRandom是
+ * 通过内部生成的一个随机数种子初始化的，否则无法修改该种子。在并发程序中使用ThreadLocalRandom
+ * 而不是共享的Random对象，一般可以减少性能的损耗了减少并发。ThreadLocalRandom特别适用于线程池中的多任务并发使用随机数的场景。
  * </p>
  *
  * <p>Usages of this class should typically be of the form:
  * {@code ThreadLocalRandom.current().nextX(...)} (where
  * {@code X} is {@code Int}, {@code Long}, etc).
  * When all usages are of this form, it is never possible to
- * accidently share a {@code ThreadLocalRandom} across multiple threads.
+ * accidently(意外地；偶然地;) share a {@code ThreadLocalRandom} across multiple threads.
+ *
+ * <p>>这个类的用法通常应该是这种形式: ThreadLocalRandom.current().nextX(...)(X是Int、Long等)。当所有的用法都是这种形式时，
+ * 不可能在多个线程之间意外地共享一个ThreadLocalRandom: 线程隔离
+ *
  *
  * <p>This class also provides additional commonly used bounded random
  * generation methods.
  *
  * <p>Instances of {@code ThreadLocalRandom} are not cryptographically
- * secure.  Consider instead using {@link java.security.SecureRandom}
- * in security-sensitive applications. Additionally,
- * default-constructed instances do not use a cryptographically random
+ * secure.  Consider instead(代替;) using {@link java.security.SecureRandom}
+ * in security-sensitive(安全相关的;) applications. Additionally,
+ * default-constructed instances do not use a cryptographically(密码的;用暗号地;) random
  * seed unless the {@linkplain System#getProperty system property}
  * {@code java.util.secureRandomSeed} is set to {@code true}.
+ *
+ * <p>> ThreadLocalRandom实例并不是密码安全的，如果是安全相关的应用,需要使用java.security.SecureRandom
  *
  * <p>ThreadLocalRandom类是jdk7在JUC包下新增的随机数生成器，弥补了Random类在多线程下的缺陷。
  *
