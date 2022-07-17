@@ -38,37 +38,46 @@ import sun.misc.Unsafe;
 
 /**
  * An instance of this class is used to generate a stream of
- * pseudorandom numbers. The class uses a 48-bit seed, which is
- * modified using a linear congruential formula. (See Donald Knuth,
+ * pseudorandom(adj:伪随机的;n:伪随机;假散乱) numbers. The class uses a 48-bit seed, which is
+ * modified using a linear congruential(一致的) formula.(该类使用了一个48位的种子，该种子是用线性同余公式修改的。)
+ * (See Donald Knuth,
  * <i>The Art of Computer Programming, Volume 2</i>, Section 3.2.1.)
+ *
  * <p>
  * If two instances of {@code Random} are created with the same
  * seed, and the same sequence of method calls is made for each, they
- * will generate and return identical sequences of numbers. In order to
- * guarantee this property, particular algorithms are specified for the
+ * will generate and return identical(adj:完全相同的；同一的；恒等的;) sequences of numbers.
+ * In order to guarantee(确保;保证;) this property, particular(特定的;特别的) algorithms are specified for the
  * class {@code Random}. Java implementations must use all the algorithms
- * shown here for the class {@code Random}, for the sake of absolute
- * portability of Java code. However, subclasses of class {@code Random}
- * are permitted to use other algorithms, so long as they adhere to the
- * general contracts for all the methods.
+ * shown here for the class {@code Random}(Java实现必须使用这里展示的Random类的所有算法),
+ * for the sake(目的;好处;) of absolute portability(可移植性;轻便；) of Java code. However, subclasses of class {@code Random}
+ * are permitted(v.允许;有可能;) to use other algorithms, so long as they adhere to the
+ * general contracts for all the methods(只要它们遵守所有方法的通用契约。).
  * <p>
  * The algorithms implemented by class {@code Random} use a
- * {@code protected} utility method that on each invocation can supply
- * up to 32 pseudorandomly generated bits.
+ * {@code protected} utility(n.公共服务;adj.有用的，多功能的;) method that on each invocation can supply
+ * up to 32 pseudorandomly(伪随机的) generated bits(每次调用可以提供多达32个伪随机生成的位。).
  * <p>
- * Many applications will find the method {@link Math#random} simpler to use.
+ * Many applications will find the method {@link Math#random} simpler(adj.更简单的) to use.
  *
  * <p>Instances of {@code java.util.Random} are threadsafe.
  * However, the concurrent use of the same {@code java.util.Random}
- * instance across threads may encounter contention and consequent
- * poor performance. Consider instead using
+ * instance across(跨越;从一边到另一边;) threads may encounter(v.遭遇;n.偶遇;体验) contention(n.看法;观点;争论;竞争：) and consequent(adj.随之发生的;由此引起的：n.推断;)
+ * poor performance. Consider instead(adv.代替;顶替；) using
  * {@link java.util.concurrent.ThreadLocalRandom} in multithreaded
  * designs.
  *
- * <p>Instances of {@code java.util.Random} are not cryptographically
+ * <p>Instances of {@code java.util.Random} are not cryptographically(adv.密码地;)
  * secure.  Consider instead using {@link java.security.SecureRandom} to
  * get a cryptographically secure pseudo-random number generator for use
  * by security-sensitive applications.
+ * <p>
+ *    pseudo: adj.假的；伪装的
+ * <p>
+ *   sensitive: adj.过敏的；灵敏的；敏感的，需谨慎对待的;机密的;
+ * <p>
+ *    cryptographically  secure: 密码安全
+ * </p>
  *
  * @author  Frank Yellin
  * @since   1.0

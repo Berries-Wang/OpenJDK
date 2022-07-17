@@ -74,7 +74,7 @@ import java.util.stream.StreamSupport;
  * When all usages are of this form, it is never possible to
  * accidently(意外地；偶然地;) share a {@code ThreadLocalRandom} across multiple threads.
  *
- * <p>>这个类的用法通常应该是这种形式: ThreadLocalRandom.current().nextX(...)(X是Int、Long等)。当所有的用法都是这种形式时，
+ * <p>这个类的用法通常应该是这种形式: ThreadLocalRandom.current().nextX(...)(X是Int、Long等)。当所有的用法都是这种形式时，
  * 不可能在多个线程之间意外地共享一个ThreadLocalRandom: 线程隔离
  *
  *

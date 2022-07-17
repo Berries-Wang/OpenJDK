@@ -62,6 +62,7 @@ import sun.security.util.Debug;
  * to produce a pseudo-random sequence from a true random seed.
  * Other implementations may produce true random numbers,
  * and yet others may use a combination of both techniques.
+ *<p>许多SecureRandom实现采用伪随机数生成器(PRNG)的形式，这意味着它们使用确定性算法从真正的随机种子产生伪随机序列。其他实现可能产生真正的随机数，还有一些可能使用这两种技术的组合。
  *
  * <p> Typical callers of SecureRandom invoke the following methods
  * to retrieve random bytes:
@@ -83,6 +84,7 @@ import sun.security.util.Debug;
  * {@code nextBytes} methods may block as entropy is being gathered,
  * for example, if they need to read from /dev/random on various Unix-like
  * operating systems.
+ * <p>根据实现的不同，generateSeed和nextBytes方法可能会在熵被收集时阻塞，例如，如果它们需要从各种类unix操作系统上的/dev/random读取。
  *
  * @see java.security.SecureRandomSpi
  * @see java.util.Random
