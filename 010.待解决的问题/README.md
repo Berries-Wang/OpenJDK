@@ -130,7 +130,6 @@
         return Consistent_Hash.firstEntry().getValue();
     }
 
-
     public static void main(String[] args) {
         // 初始化服务器 2^n
         for (long i = 0; i < 8; i++) {
@@ -145,10 +144,27 @@
    }
   ```
 
+
 ### ConcurrentHashMap
-+ ConcurrentHashMap：了解实现原理、扩容时做的优化、与HashTable对比。
-+ BlockingQueue： 了解LinkedBlockingQueue、ArrayBlockingQueue、DelayQueue、SynchronousQueue
-+ ConcurrentHashMap是如何在保证并发安全的同时提高性能？ ConcurrentHashMap是如何让多线程同时参与扩容？
++ ConcurrentHashMap：了解实现原理、扩容时做的优化、与HashTable对比。ConcurrentHashMap是如何在保证并发安全的同时提高性能？ ConcurrentHashMap是如何让多线程同时参与扩容？
+    - HashTable 是在方法上添加了synchronized关键字,锁的粒度较大，同一时间只能有一个线程操作
+    - ConcurrentHashMap 内部使用的数据结构和HashMap一致,ConcurrentHashMap使用了CAS操作和synchronized关键字，且synchronized锁住的是单个桶，这样就使得其他桶是可以操作的，且采用了协助扩容的方案，提升了扩容的效率.
+    - ConcurrentHashMap是如何让多线程同时参与扩容？
+        ```txt
+            通过方法: ConcurrentHashMap#put ,ConcurrentHashMap#helpTransfer,ConcurrentHashMap#transfer 方法可知。
+               关键： ConcurrentHashMap#MOVED 
+               添加元素时(ConcurrentHashMap#put )如果table[i].hash == ConcurrentHashMap#MOVED , 说明Map正在扩容，且当前桶已经扩容完成了，如果需要往这个桶中添加元素，得先协助扩容。
+               扩容(ConcurrentHashMap#transfer )时，桶元素迁移完成，会将table(新)[i]置为ConcurrentHashMap.ForwardingNode(.hash 为MOVED),然后再迁移其他桶
+               
+               且
+
+               在添加元素 或 迁移桶数据的时候，都会使用synchronized将桶锁住,避免发生线程不安全事故
+        ```
+
++ BlockingQueue： 了解LinkedBlockingQueue、ArrayBlockingQueue、DelayQueue、SynchronousQueue 
+  ```txt
+     
+  ```
 
 ### CopyOnWriteArrayList
 + CopyOnWriteArrayList： 了解写时复制机制、了解其适用场景、是如何保证线程安全的？思考为什么没有ConcurrentArrayList
