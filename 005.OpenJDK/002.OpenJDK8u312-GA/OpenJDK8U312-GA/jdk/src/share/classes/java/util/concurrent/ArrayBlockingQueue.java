@@ -34,38 +34,47 @@
  */
 
 package java.util.concurrent;
+
+import java.lang.ref.WeakReference;
+import java.util.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.AbstractQueue;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.lang.ref.WeakReference;
-import java.util.Spliterators;
-import java.util.Spliterator;
 
 /**
- * A bounded {@linkplain BlockingQueue blocking queue} backed by an
+ * <p>
+ * 重要
+ * <li>1. 基于链表实现
+ * <li>2. FIFO
+ * <li>3. 容量固定
+ * <li>4. 公平/非公平(指生产者及消费者) 可选
+ * <p>
+ * A bounded {@linkplain BlockingQueue blocking queue} backed(adj.有背的;有财力支持的;v.支持;使后退,back的过去分词) by an
  * array.  This queue orders elements FIFO (first-in-first-out).  The
  * <em>head</em> of the queue is that element that has been on the
  * queue the longest time.  The <em>tail</em> of the queue is that
  * element that has been on the queue the shortest time. New elements
  * are inserted at the tail of the queue, and the queue retrieval
  * operations obtain elements at the head of the queue.
+ * <p> 基于数组实现的容量有限的阻塞队列。队列元素按照FIFO排序，队列头部的元素是最先加入到队列中的元素，队列尾部的元素加入队列的时间最短。
+ * 新的元素被插入到队列尾部，且从队列获取元素的操作都是从队列头部获取。
  *
- * <p>This is a classic &quot;bounded buffer&quot;, in which a
- * fixed-sized array holds elements inserted by producers and
- * extracted by consumers.  Once created, the capacity cannot be
+ * <p>This is a classic(adj.典型的；有代表性的;) &quot;bounded buffer&quot;, in which a
+ * fixed-sized(固定尺寸的) array holds elements inserted by producers and
+ * extracted(adj.引出的；萃取的;vt.提取，extract的过去式和过去分词) by consumers.  Once created, the capacity cannot be
  * changed.  Attempts to {@code put} an element into a full queue
  * will result in the operation blocking; attempts to {@code take} an
- * element from an empty queue will similarly block.
+ * element from an empty queue will similarly(adv.相似地；同样) block.
+ * <p> 这是一个典型的有界缓冲区，由生产者将元素插入到固定尺寸的数组并由消费者提取出来.
+ * 一旦被创建，容量就不允许被改变。尝试往一个满的队列执行put操作会被阻塞，同样，对空的队列执行take操作也会被阻塞.
  *
- * <p>This class supports an optional fairness policy for ordering
+ * <p>This class supports an optional fairness(n.公平;公正;) policy for ordering
  * waiting producer and consumer threads.  By default, this ordering
  * is not guaranteed. However, a queue constructed with fairness set
  * to {@code true} grants threads access in FIFO order. Fairness
  * generally decreases throughput but reduces variability and avoids
  * starvation.
+ * <p> 该类支持可选公平策略去排序正在等待的消费者和生产者，默认的顺序是随机的。
+ * 然而，将公平性设置为true的队列以FIFO顺序授予线程访问权。公平通常会降低吞吐量，但会减少可变性并避免饥饿。
  *
  * <p>This class and its iterator implement all of the
  * <em>optional</em> methods of the {@link Collection} and {@link
@@ -75,9 +84,9 @@ import java.util.Spliterator;
  * <a href="{@docRoot}/../technotes/guides/collections/index.html">
  * Java Collections Framework</a>.
  *
- * @since 1.5
- * @author Doug Lea
  * @param <E> the type of elements held in this collection
+ * @author Doug Lea
+ * @since 1.5
  */
 public class ArrayBlockingQueue<E> extends AbstractQueue<E>
         implements BlockingQueue<E>, java.io.Serializable {
@@ -90,16 +99,24 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
      */
     private static final long serialVersionUID = -817911632652898426L;
 
-    /** The queued items */
+    /**
+     * The queued items
+     */
     final Object[] items;
 
-    /** items index for next take, poll, peek or remove */
+    /**
+     * items index for next take, poll, peek or remove
+     */
     int takeIndex;
 
-    /** items index for next put, offer, or add */
+    /**
+     * items index for next put, offer, or add
+     */
     int putIndex;
 
-    /** Number of elements in the queue */
+    /**
+     * Number of elements in the queue
+     */
     int count;
 
     /*
@@ -107,13 +124,19 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
      * found in any textbook.
      */
 
-    /** Main lock guarding all access */
+    /**
+     * Main lock guarding all access
+     */
     final ReentrantLock lock;
 
-    /** Condition for waiting takes */
+    /**
+     * Condition for waiting takes
+     */
     private final Condition notEmpty;
 
-    /** Condition for waiting puts */
+    /**
+     * Condition for waiting puts
+     */
     private final Condition notFull;
 
     /**
@@ -208,7 +231,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
 
             // slide over all others up through putIndex.
             final int putIndex = this.putIndex;
-            for (int i = removeIndex;;) {
+            for (int i = removeIndex; ; ) {
                 int next = i + 1;
                 if (next == items.length)
                     next = 0;
@@ -244,9 +267,9 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
      * capacity and the specified access policy.
      *
      * @param capacity the capacity of this queue
-     * @param fair if {@code true} then queue accesses for threads blocked
-     *        on insertion or removal, are processed in FIFO order;
-     *        if {@code false} the access order is unspecified.
+     * @param fair     if {@code true} then queue accesses for threads blocked
+     *                 on insertion or removal, are processed in FIFO order;
+     *                 if {@code false} the access order is unspecified.
      * @throws IllegalArgumentException if {@code capacity < 1}
      */
     public ArrayBlockingQueue(int capacity, boolean fair) {
@@ -255,7 +278,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
         this.items = new Object[capacity];
         lock = new ReentrantLock(fair);
         notEmpty = lock.newCondition();
-        notFull =  lock.newCondition();
+        notFull = lock.newCondition();
     }
 
     /**
@@ -265,14 +288,14 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
      * added in traversal order of the collection's iterator.
      *
      * @param capacity the capacity of this queue
-     * @param fair if {@code true} then queue accesses for threads blocked
-     *        on insertion or removal, are processed in FIFO order;
-     *        if {@code false} the access order is unspecified.
-     * @param c the collection of elements to initially contain
+     * @param fair     if {@code true} then queue accesses for threads blocked
+     *                 on insertion or removal, are processed in FIFO order;
+     *                 if {@code false} the access order is unspecified.
+     * @param c        the collection of elements to initially contain
      * @throws IllegalArgumentException if {@code capacity} is less than
-     *         {@code c.size()}, or less than 1.
-     * @throws NullPointerException if the specified collection or any
-     *         of its elements are null
+     *                                  {@code c.size()}, or less than 1.
+     * @throws NullPointerException     if the specified collection or any
+     *                                  of its elements are null
      */
     public ArrayBlockingQueue(int capacity, boolean fair,
                               Collection<? extends E> c) {
@@ -306,7 +329,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
      * @param e the element to add
      * @return {@code true} (as specified by {@link Collection#add})
      * @throws IllegalStateException if this queue is full
-     * @throws NullPointerException if the specified element is null
+     * @throws NullPointerException  if the specified element is null
      */
     public boolean add(E e) {
         return super.add(e);
@@ -366,7 +389,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
      * @throws NullPointerException {@inheritDoc}
      */
     public boolean offer(E e, long timeout, TimeUnit unit)
-        throws InterruptedException {
+            throws InterruptedException {
 
         checkNotNull(e);
         long nanos = unit.toNanos(timeout);
@@ -435,6 +458,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
 
     // this doc comment is overridden to remove the reference to collections
     // greater in size than Integer.MAX_VALUE
+
     /**
      * Returns the number of elements in this queue.
      *
@@ -452,6 +476,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
 
     // this doc comment is a modified copy of the inherited doc comment,
     // without the reference to unlimited queues.
+
     /**
      * Returns the number of additional elements that this queue can ideally
      * (in the absence of memory or resource constraints) accept without
@@ -598,8 +623,8 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
      * The following code can be used to dump the queue into a newly
      * allocated array of {@code String}:
      *
-     *  <pre> {@code String[] y = x.toArray(new String[0]);}</pre>
-     *
+     * <pre> {@code String[] y = x.toArray(new String[0]);}</pre>
+     * <p>
      * Note that {@code toArray(new Object[0])} is identical in function to
      * {@code toArray()}.
      *
@@ -607,9 +632,9 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
      *          be stored, if it is big enough; otherwise, a new array of the
      *          same runtime type is allocated for this purpose
      * @return an array containing all of the elements in this queue
-     * @throws ArrayStoreException if the runtime type of the specified array
-     *         is not a supertype of the runtime type of every element in
-     *         this queue
+     * @throws ArrayStoreException  if the runtime type of the specified array
+     *                              is not a supertype of the runtime type of every element in
+     *                              this queue
      * @throws NullPointerException if the specified array is null
      */
     @SuppressWarnings("unchecked")
@@ -621,8 +646,8 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
             final int count = this.count;
             final int len = a.length;
             if (len < count)
-                a = (T[])java.lang.reflect.Array.newInstance(
-                    a.getClass().getComponentType(), count);
+                a = (T[]) java.lang.reflect.Array.newInstance(
+                        a.getClass().getComponentType(), count);
             int n = items.length - takeIndex;
             if (count <= n)
                 System.arraycopy(items, takeIndex, a, 0, count);
@@ -769,7 +794,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
     /**
      * Shared data between iterators and their queue, allowing queue
      * modifications to update iterators when elements are removed.
-     *
+     * <p>
      * This adds a lot of complexity for the sake of correctly
      * handling some uncommon operations, but the combination of
      * circular-arrays and supporting interior removes (i.e., those
@@ -777,33 +802,33 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
      * places and/or (re)report elements they shouldn't.  To avoid
      * this, when a queue has one or more iterators, it keeps iterator
      * state consistent by:
-     *
+     * <p>
      * (1) keeping track of the number of "cycles", that is, the
-     *     number of times takeIndex has wrapped around to 0.
+     * number of times takeIndex has wrapped around to 0.
      * (2) notifying all iterators via the callback removedAt whenever
-     *     an interior element is removed (and thus other elements may
-     *     be shifted).
-     *
+     * an interior element is removed (and thus other elements may
+     * be shifted).
+     * <p>
      * These suffice to eliminate iterator inconsistencies, but
      * unfortunately add the secondary responsibility of maintaining
      * the list of iterators.  We track all active iterators in a
      * simple linked list (accessed only when the queue's lock is
      * held) of weak references to Itr.  The list is cleaned up using
      * 3 different mechanisms:
-     *
+     * <p>
      * (1) Whenever a new iterator is created, do some O(1) checking for
-     *     stale list elements.
-     *
+     * stale list elements.
+     * <p>
      * (2) Whenever takeIndex wraps around to 0, check for iterators
-     *     that have been unused for more than one wrap-around cycle.
-     *
+     * that have been unused for more than one wrap-around cycle.
+     * <p>
      * (3) Whenever the queue becomes empty, all iterators are notified
-     *     and this entire data structure is discarded.
-     *
+     * and this entire data structure is discarded.
+     * <p>
      * So in addition to the removedAt callback that is necessary for
      * correctness, iterators have the shutdown and takeIndexWrapped
      * callbacks that help remove stale iterators from the list.
-     *
+     * <p>
      * Whenever a list element is examined, it is expunged if either
      * the GC has determined that the iterator is discarded, or if the
      * iterator reports that it is "detached" (does not need any
@@ -812,7 +837,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
      * exhausted, and all removals are interior removes, in which case
      * all stale iterators are discovered by the GC.  But even in this
      * case we don't increase the amortized complexity.
-     *
+     * <p>
      * Care must be taken to keep list sweeping methods from
      * reentrantly invoking another such method, causing subtle
      * corruption bugs.
@@ -831,13 +856,19 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
             }
         }
 
-        /** Incremented whenever takeIndex wraps around to 0 */
+        /**
+         * Incremented whenever takeIndex wraps around to 0
+         */
         int cycles = 0;
 
-        /** Linked list of weak iterator references */
+        /**
+         * Linked list of weak iterator references
+         */
         private Node head;
 
-        /** Used to expunge stale iterators */
+        /**
+         * Used to expunge stale iterators
+         */
         private Node sweeper = null;
 
         private static final int SHORT_SWEEP_PROBES = 4;
@@ -853,7 +884,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
          * Called only from iterating thread.
          *
          * @param tryHarder whether to start in try-harder mode, because
-         * there is known to be at least one iterator to collect
+         *                  there is known to be at least one iterator to collect
          */
         void doSomeSweeping(boolean tryHarder) {
             // assert lock.getHoldCount() == 1;
@@ -896,8 +927,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
                             itrs = null;
                             return;
                         }
-                    }
-                    else
+                    } else
                         o.next = next;
                 } else {
                     o = p;
@@ -918,13 +948,13 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
 
         /**
          * Called whenever takeIndex wraps around to 0.
-         *
+         * <p>
          * Notifies all iterators, and expunges any that are now stale.
          */
         void takeIndexWrapped() {
             // assert lock.getHoldCount() == 1;
             cycles++;
-            for (Node o = null, p = head; p != null;) {
+            for (Node o = null, p = head; p != null; ) {
                 final Itr it = p.get();
                 final Node next = p.next;
                 if (it == null || it.takeIndexWrapped()) {
@@ -947,11 +977,11 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
 
         /**
          * Called whenever an interior remove (not at takeIndex) occurred.
-         *
+         * <p>
          * Notifies all iterators, and expunges any that are now stale.
          */
         void removedAt(int removedIndex) {
-            for (Node o = null, p = head; p != null;) {
+            for (Node o = null, p = head; p != null; ) {
                 final Itr it = p.get();
                 final Node next = p.next;
                 if (it == null || it.removedAt(removedIndex)) {
@@ -974,7 +1004,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
 
         /**
          * Called whenever the queue becomes empty.
-         *
+         * <p>
          * Notifies all active iterators that the queue is empty,
          * clears all weak refs, and unlinks the itrs datastructure.
          */
@@ -1005,11 +1035,11 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
 
     /**
      * Iterator for ArrayBlockingQueue.
-     *
+     * <p>
      * To maintain weak consistency with respect to puts and takes, we
      * read ahead one slot, so as to not report hasNext true but then
      * not have an element to return.
-     *
+     * <p>
      * We switch into "detached" mode (allowing prompt unlinking from
      * itrs without help from the GC) when all indices are negative, or
      * when hasNext returns false for the first time.  This allows the
@@ -1022,28 +1052,44 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
      * interior remove while in detached mode.
      */
     private class Itr implements Iterator<E> {
-        /** Index to look for new nextItem; NONE at end */
+        /**
+         * Index to look for new nextItem; NONE at end
+         */
         private int cursor;
 
-        /** Element to be returned by next call to next(); null if none */
+        /**
+         * Element to be returned by next call to next(); null if none
+         */
         private E nextItem;
 
-        /** Index of nextItem; NONE if none, REMOVED if removed elsewhere */
+        /**
+         * Index of nextItem; NONE if none, REMOVED if removed elsewhere
+         */
         private int nextIndex;
 
-        /** Last element returned; null if none or not detached. */
+        /**
+         * Last element returned; null if none or not detached.
+         */
         private E lastItem;
 
-        /** Index of lastItem, NONE if none, REMOVED if removed elsewhere */
+        /**
+         * Index of lastItem, NONE if none, REMOVED if removed elsewhere
+         */
         private int lastRet;
 
-        /** Previous value of takeIndex, or DETACHED when detached */
+        /**
+         * Previous value of takeIndex, or DETACHED when detached
+         */
         private int prevTakeIndex;
 
-        /** Previous value of iters.cycles */
+        /**
+         * Previous value of iters.cycles
+         */
         private int prevCycles;
 
-        /** Special index value indicating "not available" or "undefined" */
+        /**
+         * Special index value indicating "not available" or "undefined"
+         */
         private static final int NONE = -1;
 
         /**
@@ -1052,7 +1098,9 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
          */
         private static final int REMOVED = -2;
 
-        /** Special value for prevTakeIndex indicating "detached mode" */
+        /**
+         * Special value for prevTakeIndex indicating "detached mode"
+         */
         private static final int DETACHED = -3;
 
         Itr() {
@@ -1136,7 +1184,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
                 // how far takeIndex has advanced since the previous
                 // operation of this iterator
                 long dequeues = (cycles - prevCycles) * len
-                    + (takeIndex - prevTakeIndex);
+                        + (takeIndex - prevTakeIndex);
 
                 // Check indices for invalidation
                 if (invalidated(lastRet, prevTakeIndex, dequeues, len))
@@ -1323,7 +1371,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
             if (removedIndex < takeIndex)
                 cycleDiff++;
             final int removedDistance =
-                (cycleDiff * len) + (removedIndex - prevTakeIndex);
+                    (cycleDiff * len) + (removedIndex - prevTakeIndex);
             // assert removedDistance >= 0;
             int cursor = this.cursor;
             if (cursor >= 0) {
@@ -1331,8 +1379,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
                 if (x == removedDistance) {
                     if (cursor == putIndex)
                         this.cursor = cursor = NONE;
-                }
-                else if (x > removedDistance) {
+                } else if (x > removedDistance) {
                     // assert cursor != prevTakeIndex;
                     this.cursor = cursor = dec(cursor);
                 }
@@ -1352,8 +1399,7 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
                     this.nextIndex = nextIndex = REMOVED;
                 else if (x > removedDistance)
                     this.nextIndex = nextIndex = dec(nextIndex);
-            }
-            else if (cursor < 0 && nextIndex < 0 && lastRet < 0) {
+            } else if (cursor < 0 && nextIndex < 0 && lastRet < 0) {
                 this.prevTakeIndex = DETACHED;
                 return true;
             }
@@ -1401,30 +1447,28 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
      * <p>The {@code Spliterator} reports {@link Spliterator#CONCURRENT},
      * {@link Spliterator#ORDERED}, and {@link Spliterator#NONNULL}.
      *
-     * @implNote
-     * The {@code Spliterator} implements {@code trySplit} to permit limited
-     * parallelism.
-     *
      * @return a {@code Spliterator} over the elements in this queue
+     * @implNote The {@code Spliterator} implements {@code trySplit} to permit limited
+     * parallelism.
      * @since 1.8
      */
     public Spliterator<E> spliterator() {
         return Spliterators.spliterator
-            (this, Spliterator.ORDERED | Spliterator.NONNULL |
-             Spliterator.CONCURRENT);
+                (this, Spliterator.ORDERED | Spliterator.NONNULL |
+                        Spliterator.CONCURRENT);
     }
 
     /**
      * Deserializes this queue and then checks some invariants.
      *
      * @param s the input stream
-     * @throws ClassNotFoundException if the class of a serialized object
-     *         could not be found
+     * @throws ClassNotFoundException         if the class of a serialized object
+     *                                        could not be found
      * @throws java.io.InvalidObjectException if invariants are violated
-     * @throws java.io.IOException if an I/O error occurs
+     * @throws java.io.IOException            if an I/O error occurs
      */
     private void readObject(java.io.ObjectInputStream s)
-        throws java.io.IOException, ClassNotFoundException {
+            throws java.io.IOException, ClassNotFoundException {
 
         // Read in items array and various fields
         s.defaultReadObject();
@@ -1432,11 +1476,11 @@ public class ArrayBlockingQueue<E> extends AbstractQueue<E>
         // Check invariants over count and index fields. Note that
         // if putIndex==takeIndex, count can be either 0 or items.length.
         if (items.length == 0 ||
-            takeIndex < 0 || takeIndex >= items.length ||
-            putIndex  < 0 || putIndex  >= items.length ||
-            count < 0     || count     >  items.length ||
-            Math.floorMod(putIndex - takeIndex, items.length) !=
-            Math.floorMod(count, items.length)) {
+                takeIndex < 0 || takeIndex >= items.length ||
+                putIndex < 0 || putIndex >= items.length ||
+                count < 0 || count > items.length ||
+                Math.floorMod(putIndex - takeIndex, items.length) !=
+                        Math.floorMod(count, items.length)) {
             throw new java.io.InvalidObjectException("invariants violated");
         }
     }

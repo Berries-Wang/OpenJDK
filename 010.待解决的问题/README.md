@@ -163,6 +163,8 @@
 
 + BlockingQueue： 了解LinkedBlockingQueue、ArrayBlockingQueue、DelayQueue、SynchronousQueue 
   ```txt
+     均实现了接口java.util.concurrent.BlockingQueue , 定义了四种模式的方法
+     具体差异各实现代码的注释.
      
   ```
 

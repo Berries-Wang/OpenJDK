@@ -29,7 +29,7 @@ import java.util.function.Consumer;
 import sun.misc.SharedSecrets;
 
 /**
- * An unbounded priority {@linkplain Queue queue} based on a priority heap.
+ * An unbounded priority {@linkplain Queue queue} based on a priority heap(优先级堆).
  * The elements of the priority queue are ordered according to their
  * {@linkplain Comparable natural ordering}, or by a {@link Comparator}
  * provided at queue construction time, depending on which constructor is
