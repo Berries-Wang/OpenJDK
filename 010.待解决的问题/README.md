@@ -170,3 +170,24 @@
 
 ### CopyOnWriteArrayList
 + CopyOnWriteArrayList： 了解写时复制机制、了解其适用场景、是如何保证线程安全的？思考为什么没有ConcurrentArrayList
+  ```txt
+   * // java.util.concurrent.CopyOnWriteArrayList
+   * <pre>
+   *     重点!!!
+   *  1. 底层使用数组实现 
+   *  2. copy on write  ， 即创建迭代器时会生成底层数组的快照(因为每添加一个元素，会新生成一个数组并替换底层数组，所以，之前的数组就是一个快照了;),后续迭代是迭代该快照.所以是线程安全的 
+   *  3. 每添加一个元素时，会创建一个新数组，并替换原来的数据。过程中使用锁控制并发 
+   * </pre>
+   * <pre>
+   *   
+   *  * 适用场景:
+   *  * 1. 读多写少，不适用实时读的场景;例如: 黑名单场景(其他list存在并发问题.)
+   *  * 2. 数据量不大,因为每次修改都要生成新的底层数组，耗费内存.
+   * </pre>
+  
+   为什么没有ConcurrentArrayList?
+    > 没有ConcurrentArrayList的主要原因：很难开发一个通用并且没有并发瓶颈的线程安全的List。
+    >> !!! 1. ConcurrentHashMap的真正价值并不是他们保障了线程安全，而是在保障了线程安全的同时不存在并发瓶颈。如ConcurrentHashMap使用了分段锁和弱一致性的Map迭代器去规避并发瓶颈.
+    >>> 所以问题在于，像“Array List”这样的数据结构，你不知道如何去规避并发的瓶颈。拿contains() 这样一个操作来说，当你进行搜索的时候如何避免锁住整个list？
+    >> !!! 2. 另一方面，Queue 和Deque (基于Linked List)有并发的实现是因为他们的接口相比List的接口有更多的限制，这些限制使得实现并发成为可能。
+  ```
