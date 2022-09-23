@@ -35,6 +35,9 @@ class HeapRegionType VALUE_OBJ_CLASS_SPEC {
 private:
   // We encode the value of the heap region type so the generation can be
   // determined quickly. The tag is split into two parts:
+  // > 我们编码这个值是为了快速区分分区类型。标签被切分为两部分:
+  //     major: 高N-1位，用于区分是新生代分区/大对象分区
+  //     minor: 低一位，用于区分具体类型: 对于新生代,用于分区eden/survivor,对于大对象分区，用于区分是头部分区还是连续分区。
   //
   //   major type (young, humongous)                         : top N-1 bits
   //   minor type (eden / survivor, starts / cont hum, etc.) : bottom 1 bit
@@ -42,18 +45,19 @@ private:
   // If there's need to increase the number of minor types in the
   // future, we'll have to increase the size of the latter and hence
   // decrease the size of the former.
+  // > 如果后续需要增加minor类型的数量，minor需要使用更多的位，那么major使用的位就减少了
   //
   // 0000 0 [ 0] Free
   //
-  // 0001 0      Young Mask
-  // 0001 0 [ 2] Eden
-  // 0001 1 [ 3] Survivor
+  // 0001 0      Young Mask               // 新生代
+  // 0001 0 [ 2] Eden                     // 新生代-Eden区
+  // 0001 1 [ 3] Survivor                 // 新生代-Survivor区
   //
-  // 0010 0      Humongous Mask
-  // 0010 0 [ 4] Humongous Starts
-  // 0010 1 [ 5] Humongous Continues
+  // 0010 0      Humongous Mask           // 大对象区
+  // 0010 0 [ 4] Humongous Starts         // 大对象-头分区
+  // 0010 1 [ 5] Humongous Continues      // 大对象-连续分区
   //
-  // 01000 [ 8] Old
+  // 01000 [ 8] Old                       // 老生代分区
   typedef enum {
     FreeTag       = 0,
 

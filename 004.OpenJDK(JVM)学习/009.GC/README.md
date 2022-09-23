@@ -192,6 +192,16 @@ libpthread.so.0!start_thread(void * arg) (/build/glibc-eX1tMB/glibc-2.31/nptl/pt
 libc.so.6!clone() (/build/glibc-eX1tMB/glibc-2.31/sysdeps/unix/sysv/linux/x86_64/clone.S:95)
 ```
 
+## 附录
+### GC分类
+1. 部分收集(Partial GC): 指目标不是完整收集整个Java堆的垃圾收集，其中又分为:
+   - 新生代收集(Minor GC / Young GC):指目标仅完成新生代的垃圾收集
+   - 老年代收集(Major GC/Old GC):指目标仅完成老年代的垃圾收集，注意:
+      + 目前仅有CMS垃圾收集器会有单独收集老年代的行为
+   - 混合收集(Mixed GC):指目标是收集整个新生代以及部分老年代的垃圾收集，目前仅有G1收集器会有这种收集行为
+2. 整堆收集(Full GC):收集整个Java堆和方法区的垃圾收集
+
+
 ---
 ## 参考资料
 - [深入理解堆外内存 Metaspace](https://javadoop.com/post/metaspace)

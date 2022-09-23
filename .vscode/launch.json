@@ -120,7 +120,7 @@
                 "H"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/practice-code",
+            "cwd": "${workspaceFolder}/005.OpenJDK/003.prictice-code",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
