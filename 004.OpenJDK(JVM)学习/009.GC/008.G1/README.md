@@ -5,6 +5,14 @@
 1. 熟悉G1的原理，只有熟悉原理才能知道调优的方向。
 2. 能分析和解读G1运行的日志信息，根据日志信息找到G1运行过程中的异常信息，并推断哪些参数可以解决这些异常。
 
+## Garbage-First 即垃圾优先收集器，为什么叫垃圾优先收集器?
+```txt
+  / /  004.OpenJDK(JVM)学习/009.GC/008.G1/docs-en/Getting-Started-with-the-G1-Garbage-Collector.pdf
+   G1 performs a concurrent global marking phase to determine the liveness of objects throughout the heap. After the mark phase completes, G1 knows which regions are mostly empty. It collects in these regions first, which usually yields a large amount of free space. This is why this method of garbage collection is called Garbage-First. 
+
+   在G1对全局进行标记并决定堆上对象的活跃度后，它立刻就知道堆上的哪些区域几乎是空闲的。在标记阶段完成之后，G1知道哪些区域大部分是空的。他首先在这些区域收集，这通常会产生大量的空闲空间。这就是为什么这种垃圾收集方式叫做 Garbage-First
+```
+---
 ## G1基本概念
 ### 分区
 见[G1分区](./002.G1分区.md)

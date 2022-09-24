@@ -375,7 +375,7 @@ protected:
 
   Chunk *_first;                // First chunk
   Chunk *_chunk;                // current chunk
-  char *_hwm, *_max;            // High water mark and max in current chunk
+  char *_hwm, *_max;            // High water mark and max in current chunk // 高水位标志和当前区块的最大值,即： 已经使用到哪里呢以及最大是多少;(analysis by Amalloc_4)
   // Get a new Chunk of at least size x
   void* grow(size_t x, AllocFailType alloc_failmode = AllocFailStrategy::EXIT_OOM);
   size_t _size_in_bytes;        // Size of arena (used for native memory tracking)

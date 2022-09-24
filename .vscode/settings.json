@@ -69,7 +69,14 @@
         "set": "cpp",
         "iterator": "cpp",
         "memory_resource": "cpp",
-        "cerrno": "c"
+        "cerrno": "c",
+        "defines.h": "c",
+        "java.h": "c",
+        "version_comp.h": "c",
+        "jli_util.h": "c",
+        "manifest_info.h": "c",
+        "java_md.h": "c",
+        "types.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

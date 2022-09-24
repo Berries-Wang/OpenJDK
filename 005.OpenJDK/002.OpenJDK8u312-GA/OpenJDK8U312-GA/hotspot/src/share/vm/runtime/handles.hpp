@@ -28,17 +28,20 @@
 #include "oops/klass.hpp"
 
 //------------------------------------------------------------------------------------------------------------------------
-// In order to preserve oops during garbage collection, they should be
+// In order to preserve(vt.	保护; 维护; 保留; 维持…的原状;) oops during garbage collection, they should be
 // allocated and passed around via Handles within the VM. A handle is
-// simply an extra indirection allocated in a thread local handle area.
+// simply an extra indirection allocated in a thread local handle area.(handle(句柄)是在线程本地HandleArea分配的一个简单的额外的链接)
 //
 // A handle is a ValueObj, so it can be passed around as a value, can
 // be used as a parameter w/o using &-passing, and can be returned as a
 // return value.
+// 句柄是一个值对象，因此他可以作为一个值被传递，可以作为参数，也可以作为返回值.
+// > 004.OpenJDK(JVM)学习/002.JVM内核/005.JVM常见的对象类型.md
 //
-// oop parameters and return types should be Handles whenever feasible.
+// oop parameters and return types should be Handles whenever feasible(可行的).
 //
-// Handles are declared in a straight-forward manner, e.g.
+// 
+// Handles are declared in a straight-forward manner, e.g. // 句柄使用直接的方式声明: 
 //
 //   oop obj = ...;
 //   Handle h1(obj);              // allocate new handle
@@ -52,6 +55,7 @@
 // Handles are specialized for different oop types to provide extra type
 // information and avoid unnecessary casting. For each oop type xxxOop
 // there is a corresponding handle called xxxHandle, e.g.
+// 不同的句柄用于不同的Oop类型，以提供额外的类型信息并避免不必要的类型转换
 //
 //   oop           Handle
 //   Method*       methodHandle
@@ -60,10 +64,13 @@
 //------------------------------------------------------------------------------------------------------------------------
 // Base class for all handles. Provides overloading of frequently
 // used operators for ease of use.
-
+/**
+ * 
+ * #define VALUE_OBJ_CLASS_SPEC    : public _ValueObj : 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/utilities/globalDefinitions_visCPP.hpp
+ */ 
 class Handle VALUE_OBJ_CLASS_SPEC {
  private:
-  oop* _handle;
+  oop* _handle;   // OOP对象
 
  protected:
   oop     obj() const                            { return _handle == NULL ? (oop)NULL : *_handle; }
@@ -285,11 +292,11 @@ class HandleArea: public Arena {
 
 class HandleMark {
  private:
-  Thread *_thread;              // thread that owns this mark
-  HandleArea *_area;            // saved handle area
-  Chunk *_chunk;                // saved arena chunk
-  char *_hwm, *_max;            // saved arena info
-  size_t _size_in_bytes;        // size of handle area
+  Thread *_thread;              // thread that owns this mark // HandleMark形成链表的字段.
+  HandleArea *_area;            // saved handle area  // 保存句柄的区域
+  Chunk *_chunk;                // saved arena chunk  // Chunk 和 Area配合，获得准确的内存地址
+  char *_hwm, *_max;            // saved arena info   // 句柄区域的属性
+  size_t _size_in_bytes;        // size of handle area // 句柄区域的大小
   // Link to previous active HandleMark in thread
   HandleMark* _previous_handle_mark;
 
