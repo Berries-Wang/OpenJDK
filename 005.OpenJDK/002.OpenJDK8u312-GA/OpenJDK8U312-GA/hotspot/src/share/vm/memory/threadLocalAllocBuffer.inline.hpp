@@ -31,9 +31,15 @@
 #include "runtime/thread.hpp"
 #include "utilities/copy.hpp"
 
+/**
+ * 从TLAB 中分配内存空间。
+ * 
+ * @return 分配成功,返回对象地址;失败,返回NULL;
+ */ 
 inline HeapWord* ThreadLocalAllocBuffer::allocate(size_t size) {
   invariants();
   HeapWord* obj = top();
+  // 判断是否有足够空间
   if (pointer_delta(end(), obj) >= size) {
     // successful thread-local allocation
 #ifdef ASSERT
@@ -53,18 +59,29 @@ inline HeapWord* ThreadLocalAllocBuffer::allocate(size_t size) {
   return NULL;
 }
 
+/**
+ * 为Thread重新分配一个TLAB
+ * 
+ * @param obj_size:待分配内存空间的对象大小.
+ * 
+ * Q: 新分配的TLAB的大小计算公式是什么样子的呢?
+ */ 
 inline size_t ThreadLocalAllocBuffer::compute_size(size_t obj_size) {
   const size_t aligned_obj_size = align_object_size(obj_size);
 
   // Compute the size for the new TLAB.
   // The "last" tlab may be smaller to reduce fragmentation.
   // unsafe_max_tlab_alloc is just a hint.
+  // 当前堆中剩余可以给TLAB可分配的空间
   const size_t available_size = Universe::heap()->unsafe_max_tlab_alloc(myThread()) /
                                                   HeapWordSize;
+  // TLAB 期望大小(desired_size() ) + 当前需要分配的空间大小 
   size_t new_tlab_size = MIN2(available_size, desired_size() + aligned_obj_size);
 
   // Make sure there's enough room for object and filler int[].
   const size_t obj_plus_filler_size = aligned_obj_size + alignment_reserve();
+  
+  // 确保大小大于 dummy obj 对象头
   if (new_tlab_size < obj_plus_filler_size) {
     // If there isn't enough room for the allocation, return failure.
     if (PrintTLAB && Verbose) {
@@ -83,11 +100,19 @@ inline size_t ThreadLocalAllocBuffer::compute_size(size_t obj_size) {
 }
 
 
+/**
+ * TLAB 慢速分配记录
+ * 
+ * @param obj_size ，慢速分配失败的对象大小.
+ * 
+ */ 
 void ThreadLocalAllocBuffer::record_slow_allocation(size_t obj_size) {
-  // Raise size required to bypass TLAB next time. Why? Else there's
-  // a risk that a thread that repeatedly allocates objects of one
+  // Raise(提高) size required to bypass(绕开，避过) TLAB next time. Why? Else there's
+  // a risk(危险，隐患) that a thread that repeatedly allocates objects of one
   // size will get stuck on this slow path.
+  //提高下次绕过TLAB所需的尺寸。为什么?否则，重复分配一个大小相同的对象的线程将有被卡在这条缓慢路径上的风险。
 
+  // 重新设置refill_waste_limit的值,避免重复进入到该代码分支，从而浪费性能
   set_refill_waste_limit(refill_waste_limit() + refill_waste_limit_increment());
 
   _slow_allocations++;

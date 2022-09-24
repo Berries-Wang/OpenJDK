@@ -1163,6 +1163,7 @@ instanceOop InstanceKlass::allocate_instance(TRAPS) {
 
   instanceOop i;
 
+  // 从JVM堆上为对象分配内存空间
   i = (instanceOop)CollectedHeap::obj_allocate(h_k, size, CHECK_NULL);
   
   // 如果Class重写了finalize方法，那么就需要调用java.lang.ref.Finalizer#register方法，将该实例注册到Finalizer上

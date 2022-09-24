@@ -2307,28 +2307,41 @@ run:
 
       // 请参考: 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/hotspot/src/share/vm/interpreter/bytecodeInterpreter.cpp
       CASE(_new): {
+        // pc，即程序计数器，定义于 /vm/interpreter/bytecodeInterpreter.hpp 中BytecodeInterpreter类_bcp字段,搜索 "CACHE_PC"
+        // 根据程序计数器从常量池中获取class的索引
         u2 index = Bytes::get_Java_u2(pc+1);
+        // 获取常量池
         ConstantPool* constants = istate->method()->constants();
+        
+        // 判断Klass是否被加载
         if (!constants->tag_at(index).is_unresolved_klass()) {
           // Make sure klass is initialized and doesn't have a finalizer
           Klass* entry = constants->slot_at(index).get_klass();
           assert(entry->is_klass(), "Should be resolved klass");
           Klass* k_entry = (Klass*) entry;
           assert(k_entry->oop_is_instance(), "Should be InstanceKlass");
+          // 强制类型转换
           InstanceKlass* ik = (InstanceKlass*) k_entry;
+          /**
+            * ik->is_initialized(): class 是否初始化完成
+            * ik->can_be_fastpath_allocated() 是否允许被快速分配,即是否允许在TLAB中分配
+          */ 
           if ( ik->is_initialized() && ik->can_be_fastpath_allocated() ) {
+            // 获取对象大小
             size_t obj_size = ik->size_helper();
             oop result = NULL;
             // If the TLAB isn't pre-zeroed then we'll have to do it
             bool need_zero = !ZeroTLAB;
+            // 若使用TLAB进行快速分配
             if (UseTLAB) {
+              // 从TLAB中分配内存,若分配失败，则返回NULL
               result = (oop) THREAD->tlab().allocate(obj_size);
             }
             // Disable non-TLAB-based fast-path, because profiling requires that all
             // allocations go through InterpreterRuntime::_new() if THREAD->tlab().allocate
             // returns NULL.
 #ifndef CC_INTERP_PROFILE
-            if (result == NULL) {
+            if (result == NULL) { // 从TLAB中分配失败
               need_zero = true;
               // Try allocate in shared eden
             retry:
@@ -2366,7 +2379,7 @@ run:
             }
           }
         }
-        // Slow case allocation
+        // Slow case allocation (慢速分配)
         CALL_VM(InterpreterRuntime::_new(THREAD, METHOD->constants(), index),
                 handle_exception);
         // Must prevent reordering of stores for object initialization

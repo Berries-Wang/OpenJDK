@@ -121,6 +121,15 @@ void CollectedHeap::post_allocation_setup_array(KlassHandle klass,
   post_allocation_notify(klass, new_obj, new_obj->size());
 }
 
+/**
+ * 为对象分配内存空间
+ * 
+ * @param klass 对象类型Klass句柄
+ * @param size 对象大小
+ * 
+ * @return 对象地址
+ * 
+ */ 
 HeapWord* CollectedHeap::common_mem_allocate_noinit(KlassHandle klass, size_t size, TRAPS) {
 
   // Clear unhandled oops for memory allocation.  Memory allocation might
@@ -133,7 +142,9 @@ HeapWord* CollectedHeap::common_mem_allocate_noinit(KlassHandle klass, size_t si
   }
 
   HeapWord* result = NULL;
+  // 若使用TLAB快速分配
   if (UseTLAB) {
+    // 从TLAB上快速分配
     result = allocate_from_tlab(klass, THREAD, size);
     if (result != NULL) {
       assert(!HAS_PENDING_EXCEPTION,
@@ -186,14 +197,24 @@ HeapWord* CollectedHeap::common_mem_allocate_init(KlassHandle klass, size_t size
   return obj;
 }
 
+/**
+ * 从TLAB上为对象分配内存空间，目前和垃圾收集器无关
+ * 
+ * @param klass 对象Klass句柄
+ * @param thread 当前执行线程
+ * @param size 对象大小
+ * 
+ * @return 对象地址
+ */ 
 HeapWord* CollectedHeap::allocate_from_tlab(KlassHandle klass, Thread* thread, size_t size) {
   assert(UseTLAB, "should use UseTLAB");
-
+  
+  // 从当前线程绑定的TLAB上分配内存
   HeapWord* obj = thread->tlab().allocate(size);
   if (obj != NULL) {
     return obj;
   }
-  // Otherwise...
+  // Otherwise...  // 从线程当前绑定的TLAB上分配失败,则再尝试从TLAB上慢速分配
   return allocate_from_tlab_slow(klass, thread, size);
 }
 
@@ -205,6 +226,12 @@ void CollectedHeap::init_obj(HeapWord* obj, size_t size) {
   Copy::fill_to_aligned_words(obj + hs, size - hs);
 }
 
+/**
+ * @param klass  对象Klass 句柄
+ * @param size   待分配空间大小
+ * 
+ * @return 分配好的对象地址.
+ */ 
 oop CollectedHeap::obj_allocate(KlassHandle klass, int size, TRAPS) {
   debug_only(check_for_valid_allocation_state());
   assert(!Universe::heap()->is_gc_active(), "Allocation during gc not allowed");

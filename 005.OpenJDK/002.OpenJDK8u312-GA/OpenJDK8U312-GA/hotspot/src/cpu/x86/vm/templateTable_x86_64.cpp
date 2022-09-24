@@ -37,6 +37,9 @@
 #include "runtime/synchronizer.hpp"
 #include "utilities/macros.hpp"
 
+// wei_log 
+#include  "wei_log/WeiLog.hpp"
+
 #ifndef CC_INTERP
 
 #define __ _masm->
@@ -3361,6 +3364,7 @@ void TemplateTable::_new() {
     Universe::heap()->supports_inline_contig_alloc() && !CMSIncrementalMode;
 
   if (UseTLAB) {
+    wei_log_info(1,"alloc from TLAB...");
     __ movptr(rax, Address(r15_thread, in_bytes(JavaThread::tlab_top_offset())));
     __ lea(rbx, Address(rax, rdx, Address::times_1));
     __ cmpptr(rbx, Address(r15_thread, in_bytes(JavaThread::tlab_end_offset())));

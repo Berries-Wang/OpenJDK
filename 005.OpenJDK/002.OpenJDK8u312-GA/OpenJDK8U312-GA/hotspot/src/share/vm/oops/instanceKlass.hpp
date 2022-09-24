@@ -992,11 +992,11 @@ class InstanceKlass: public Klass {
     return layout_helper_to_size_helper(layout_helper());
   }
 
-  // This bit is initialized in classFileParser.cpp.
-  // It is false under any of the following conditions:
+  // This bit is initialized in classFileParser.cpp. (这个bit在classFileParser.cpp中被初始化)
+  // It is false under any of the following conditions:(在如下任意一个条件下返回FALSE)
   //  - the class is abstract (including any interface)
   //  - the class has a finalizer (if !RegisterFinalizersAtInit)
-  //  - the class size is larger than FastAllocateSizeLimit
+  //  - the class size is larger than FastAllocateSizeLimit (class大小超过 FastAllocateSizeLimit),定义于005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/runtime/globals.hpp，大小为128K
   //  - the class is java/lang/Class, which cannot be allocated directly
   bool can_be_fastpath_allocated() const {
     return !layout_helper_needs_slow_path(layout_helper());

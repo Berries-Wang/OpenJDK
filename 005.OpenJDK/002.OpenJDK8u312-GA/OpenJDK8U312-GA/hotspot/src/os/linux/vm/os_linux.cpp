@@ -236,7 +236,7 @@ julong os::physical_memory() {
 
   phys_mem = Linux::physical_memory();
   if (Verbose) {
-    tty->print_cr("total system memory: " JLONG_FORMAT, phys_mem);
+    tty->print_cr("total system memory(byte): " JLONG_FORMAT, phys_mem);
   }
   return phys_mem;
 }
