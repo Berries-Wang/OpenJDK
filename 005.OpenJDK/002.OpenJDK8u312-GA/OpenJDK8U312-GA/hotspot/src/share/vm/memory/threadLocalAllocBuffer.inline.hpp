@@ -62,7 +62,7 @@ inline HeapWord* ThreadLocalAllocBuffer::allocate(size_t size) {
 /**
  * 为Thread重新分配一个TLAB
  * 
- * @param obj_size:待分配内存空间的对象大小.
+ * @param obj_size:待分配内存空间的对象大小.单位(HeapWord),真实大小= obj_size * HeapWordSize * 8字节
  * 
  * Q: 新分配的TLAB的大小计算公式是什么样子的呢?
  */ 
@@ -72,10 +72,10 @@ inline size_t ThreadLocalAllocBuffer::compute_size(size_t obj_size) {
   // Compute the size for the new TLAB.
   // The "last" tlab may be smaller to reduce fragmentation.
   // unsafe_max_tlab_alloc is just a hint.
-  // 当前堆中剩余可以给TLAB可分配的空间
+  // 当前HR中剩余可以给TLAB可分配的空间,即当前HeapRegion中可以使用的内存大小
   const size_t available_size = Universe::heap()->unsafe_max_tlab_alloc(myThread()) /
                                                   HeapWordSize;
-  // TLAB 期望大小(desired_size() ) + 当前需要分配的空间大小 
+  // TLAB 期望大小(desired_size()) + 当前需要分配的空间大小 
   size_t new_tlab_size = MIN2(available_size, desired_size() + aligned_obj_size);
 
   // Make sure there's enough room for object and filler int[].

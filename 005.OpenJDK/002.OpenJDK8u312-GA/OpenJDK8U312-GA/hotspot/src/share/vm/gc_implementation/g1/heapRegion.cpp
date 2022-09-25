@@ -116,6 +116,7 @@ size_t HeapRegion::max_region_size() {
  * region_size必须是2的整数次幂，因此，region_size的范围:[1MB,2MB,4MB,8MB,16MB,32MB]
  */ 
 void HeapRegion::setup_heap_region_size(size_t initial_heap_size, size_t max_heap_size) {
+  gclog_or_tty->print_cr("Wei Say: 正在设置HeapRegion大小, initial_heap_size: " SIZE_FORMAT "byte, max_heap_size:" SIZE_FORMAT "byte",initial_heap_size,max_heap_size);
   // 读取VM参数G1HeapRegionSize，默认值为0
   uintx region_size = G1HeapRegionSize;
   // 即G1HeapRegionSize是否指定
@@ -149,14 +150,19 @@ void HeapRegion::setup_heap_region_size(size_t initial_heap_size, size_t max_hea
    *  确保region_size是规定的范围内
    */ 
   if (region_size < HeapRegionBounds::min_size()) {
+    gclog_or_tty->print_cr("Wei Say: region_size 小于HeapRegion最值( " SIZE_FORMAT ")byte , 需要重置", HeapRegionBounds::min_size());
     region_size = HeapRegionBounds::min_size();
   } else if (region_size > HeapRegionBounds::max_size()) {
+    gclog_or_tty->print_cr("Wei Say: region_size 大于HeapRegion最值( " SIZE_FORMAT ")byte , 需要重置", HeapRegionBounds::max_size());
     // HeapRegionBounds::max_size(): 32MB
     region_size = HeapRegionBounds::max_size();
   }
 
   // And recalculate the log. 重新计算一下对数,用于计算一些变量，如卡表大小
   region_size_log = log2_long((jlong) region_size);
+
+  // 最终值打印日志
+  gclog_or_tty->print_cr("Wei Say: HeapRegion大小计算完成, region_size: " SIZE_FORMAT " byte, 对数region_size_log: :" SIZE_FORMAT ,region_size,region_size_log);
 
   // Now, set up the globals.
   guarantee(LogOfHRGrainBytes == 0, "we should only set it once");

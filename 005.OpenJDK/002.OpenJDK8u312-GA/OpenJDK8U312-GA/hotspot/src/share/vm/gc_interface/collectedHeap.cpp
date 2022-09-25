@@ -276,7 +276,7 @@ HeapWord* CollectedHeap::allocate_from_tlab_slow(KlassHandle klass, Thread* thre
    * Retain(v.保持，保留；保存) tlab and allocate object in shared space if
    * the amount free in the tlab is too large to discard(v.扔掉，弃置).
    */
-  // 若当前TLAB空闲空间大于refill_waste，则需要去共享堆空间去为该对象分配空间
+  // 注意，这里有自动调整机制, 若当前TLAB空闲空间大于refill_waste，则需要去共享堆空间去为该对象分配空间
   if (thread->tlab().free() > thread->tlab().refill_waste_limit()) {
     // TLAB慢速分配记录: 日志打印&&向上调整refill_waste_limit，避免后续重复进入到该分支
     thread->tlab().record_slow_allocation(size);
@@ -286,15 +286,17 @@ HeapWord* CollectedHeap::allocate_from_tlab_slow(KlassHandle klass, Thread* thre
   // TLAB 剩余的空间很小了，则需要重新分配一个TLAB。老的TLAB不用处理，因为他属于Eden区，GC可以正常回收空间 
   // Discard(v.丢弃) tlab and allocate a new one.
   // To minimize fragmentation(碎片化), the last TLAB may be smaller than the rest.
+  // 计算新的TLAB的大小
   size_t new_tlab_size = thread->tlab().compute_size(size);
 
   thread->tlab().clear_before_allocation();
 
+  // 即TLAB拓展失败
   if (new_tlab_size == 0) {
     return NULL;
   }
 
-  // Allocate a new TLAB...
+  // Allocate a new TLAB... // 为新的TLAB分配内存
   HeapWord* obj = Universe::heap()->allocate_new_tlab(new_tlab_size);
   if (obj == NULL) {
     return NULL;

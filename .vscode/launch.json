@@ -119,6 +119,8 @@
                 "-XX:+UseG1GC", // 启用G1
                 "-XX:+PrintTLAB" , // 打印TLAB日志
                 "-XX:+Verbose",
+                "-XX:-UseTLAB",
+                "-XX:+PrintGCDetails",
                 "H"
             ],
             "stopAtEntry": false,

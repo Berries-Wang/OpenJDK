@@ -806,6 +806,7 @@ char* Universe::preferred_heap_base(size_t heap_size, size_t alignment, NARROW_O
  * 
  */ 
 jint Universe::initialize_heap() {
+  tty->print_cr("Wei Say: 开始初始化JVM堆空间.....");
 
   if (UseParallelGC) {
 #if INCLUDE_ALL_GCS
@@ -816,7 +817,7 @@ jint Universe::initialize_heap() {
 
   } else if (UseG1GC) {
 #if INCLUDE_ALL_GCS
-    G1CollectorPolicyExt* g1p = new G1CollectorPolicyExt();
+    G1CollectorPolicyExt* g1p = new G1CollectorPolicyExt(); // 进行GC策略初始化,如HeapRegion设置
     g1p->initialize_all();
     G1CollectedHeap* g1h = new G1CollectedHeap(g1p);
     Universe::_collectedHeap = g1h;
@@ -847,6 +848,7 @@ jint Universe::initialize_heap() {
     Universe::_collectedHeap = new GenCollectedHeap(gc_policy);
   }
 
+  // 设置单个TLAB的最大值
   ThreadLocalAllocBuffer::set_max_size(Universe::heap()->max_tlab_size());
 
   jint status = Universe::heap()->initialize();
@@ -855,7 +857,7 @@ jint Universe::initialize_heap() {
   }
 
 #ifdef _LP64
-  if (UseCompressedOops) {
+  if (UseCompressedOops) { // 使用指针压缩
     // Subtract a page because something can get allocated at heap base.
     // This also makes implicit null checking work, because the
     // memory+1 page below heap_base needs to cause a signal.

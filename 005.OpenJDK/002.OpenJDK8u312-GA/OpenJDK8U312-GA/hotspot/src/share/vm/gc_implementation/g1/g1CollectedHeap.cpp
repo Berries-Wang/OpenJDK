@@ -833,11 +833,12 @@ G1CollectedHeap::mem_allocate(size_t word_size,
                               bool*  gc_overhead_limit_was_exceeded) {
   assert_heap_not_locked_and_not_at_safepoint();
 
-  // Loop until the allocation is satisfied, or unsatisfied after GC.
+  // Loop until the allocation is satisfied(满意), or unsatisfied after GC.
   for (uint try_count = 1, gclocker_retry_count = 0; /* we'll return */; try_count += 1) {
     uint gc_count_before;
 
     HeapWord* result = NULL;
+    // 如果不是大对象
     if (!isHumongous(word_size)) {
       result = attempt_allocation(word_size, &gc_count_before, &gclocker_retry_count);
     } else {
@@ -2898,19 +2899,29 @@ size_t G1CollectedHeap::tlab_used(Thread* ignored) const {
   return young_list()->eden_used_bytes();
 }
 
-// For G1 TLABs should not contain humongous objects, so the maximum TLAB size
-// must be smaller than the humongous object limit.
+/**
+ * For G1 TLABs should not contain humongous objects, so the maximum TLAB size
+ * must be smaller than the humongous object limit.
+ *  G1 TLAB不能包含大对象，所以TLAB的最大值必须小于大对象的限制
+ */ 
 size_t G1CollectedHeap::max_tlab_size() const {
   return align_size_down(_humongous_object_threshold_in_words - 1, MinObjAlignment);
 }
 
+
+/**
+ * 计算当前HeapRegion中剩余可以使用的内存大小
+ * 
+ */ 
 size_t G1CollectedHeap::unsafe_max_tlab_alloc(Thread* ignored) const {
   // Return the remaining space in the cur alloc region, but not less than
   // the min TLAB size.
+  // > 返回剩余当前分配内存的HeapRegion中剩余内存，但是不少于TLAB大小的最小值.
 
   // Also, this value can be at most the humongous object threshold,
   // since we can't allow tlabs to grow big enough to accommodate
   // humongous objects.
+  // > 并且，这个值最多达到humongous object的阈值，因为我们不能允许TLAB拓展到能分配大对象.
 
   HeapRegion* hr = _allocator->mutator_alloc_region(AllocationContext::current())->get();
   size_t max_tlab = max_tlab_size() * wordSize;

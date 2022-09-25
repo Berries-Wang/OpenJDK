@@ -45,6 +45,10 @@
 #include "gc_implementation/concurrentMarkSweep/cmsGCAdaptivePolicyCounters.hpp"
 #endif // INCLUDE_ALL_GCS
 
+#ifndef WEI_BYTE_TO_MB
+#define WEI_BYTE_TO_MB (1024*1024)
+#endif
+
 // CollectorPolicy methods.
 
 CollectorPolicy::CollectorPolicy() :
@@ -142,10 +146,13 @@ void CollectorPolicy::initialize_flags() {
 
 void CollectorPolicy::initialize_size_info() {
   if (PrintGCDetails && Verbose) {
-    gclog_or_tty->print_cr("Minimum heap " SIZE_FORMAT "  Initial heap "
-      SIZE_FORMAT "  Maximum heap " SIZE_FORMAT,
+    gclog_or_tty->print_cr("Minimum heap(byte) " SIZE_FORMAT "  Initial heap(byte) "
+      SIZE_FORMAT "  Maximum heap(byte) " SIZE_FORMAT,
       _min_heap_byte_size, _initial_heap_byte_size, _max_heap_byte_size);
   }
+  gclog_or_tty->print_cr("Minimum heap(MB) " SIZE_FORMAT "  Initial heap(MB) "
+      SIZE_FORMAT "  Maximum heap(MB) " SIZE_FORMAT,
+      _min_heap_byte_size/WEI_BYTE_TO_MB, _initial_heap_byte_size/WEI_BYTE_TO_MB, _max_heap_byte_size/WEI_BYTE_TO_MB);
 
   DEBUG_ONLY(CollectorPolicy::assert_size_info();)
 }

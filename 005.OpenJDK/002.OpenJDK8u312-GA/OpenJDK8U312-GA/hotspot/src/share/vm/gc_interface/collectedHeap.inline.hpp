@@ -142,17 +142,24 @@ HeapWord* CollectedHeap::common_mem_allocate_noinit(KlassHandle klass, size_t si
   }
 
   HeapWord* result = NULL;
-  // 若使用TLAB快速分配
+  // 若使用TLAB分配
   if (UseTLAB) {
-    // 从TLAB上快速分配
+    // 从TLAB上分配(TLAB 快速分配/慢速分配)
     result = allocate_from_tlab(klass, THREAD, size);
+    // 从TLAB上分配成功
     if (result != NULL) {
       assert(!HAS_PENDING_EXCEPTION,
              "Unexpected exception, will result in uninitialized storage");
       return result;
     }
   }
+
+  // 从TLAB 上分配失败
   bool gc_overhead_limit_was_exceeded = false;
+
+  // TLAB 上分配失败，需要从共享的堆空间(Eden)上分配对象内存空间
+  // 虚方法，由派生类实现
+  // G1: 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/g1CollectedHeap.cpp#mem_allocate
   result = Universe::heap()->mem_allocate(size,
                                           &gc_overhead_limit_was_exceeded);
   if (result != NULL) {
