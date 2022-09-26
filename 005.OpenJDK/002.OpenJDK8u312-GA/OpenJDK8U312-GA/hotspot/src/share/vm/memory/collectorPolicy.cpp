@@ -150,7 +150,7 @@ void CollectorPolicy::initialize_size_info() {
       SIZE_FORMAT "  Maximum heap(byte) " SIZE_FORMAT,
       _min_heap_byte_size, _initial_heap_byte_size, _max_heap_byte_size);
   }
-  gclog_or_tty->print_cr("Minimum heap(MB) " SIZE_FORMAT "  Initial heap(MB) "
+  gclog_or_tty->print_cr("Wei Say: Minimum heap(MB) " SIZE_FORMAT "  Initial heap(MB) "
       SIZE_FORMAT "  Maximum heap(MB) " SIZE_FORMAT,
       _min_heap_byte_size/WEI_BYTE_TO_MB, _initial_heap_byte_size/WEI_BYTE_TO_MB, _max_heap_byte_size/WEI_BYTE_TO_MB);
 

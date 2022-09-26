@@ -2905,7 +2905,11 @@ size_t G1CollectedHeap::tlab_used(Thread* ignored) const {
  *  G1 TLAB不能包含大对象，所以TLAB的最大值必须小于大对象的限制
  */ 
 size_t G1CollectedHeap::max_tlab_size() const {
-  return align_size_down(_humongous_object_threshold_in_words - 1, MinObjAlignment);
+  size_t max_tlab_size = align_size_down(_humongous_object_threshold_in_words - 1, MinObjAlignment);
+  gclog_or_tty->print_cr("Wei Say: TLAB的最大值计算完成,大小: " SIZE_FORMAT 
+  ",单位: HeapRegion::GrainWords(see hotspot/src/share/vm/gc_implementation/g1/heapRegion.cpp),即" SIZE_FORMAT 
+  " byte",max_tlab_size,(max_tlab_size << LogHeapWordSize));
+  return max_tlab_size;
 }
 
 

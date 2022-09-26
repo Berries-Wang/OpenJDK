@@ -44,7 +44,7 @@ PRAGMA_FORMAT_MUTE_WARNINGS_FOR_GCC
 int    HeapRegion::LogOfHRGrainBytes = 0;
 int    HeapRegion::LogOfHRGrainWords = 0;
 size_t HeapRegion::GrainBytes        = 0; // 即 region_size:单个Heap Region的大小
-size_t HeapRegion::GrainWords        = 0;
+size_t HeapRegion::GrainWords        = 0; // heapgion_size 的另一种表示方式 , GrainWords = GrainBytes >> LogHeapWordSize,see HeapRegion::setup_heap_region_size
 size_t HeapRegion::CardsPerRegion    = 0;
 
 HeapRegionDCTOC::HeapRegionDCTOC(G1CollectedHeap* g1,
@@ -162,7 +162,7 @@ void HeapRegion::setup_heap_region_size(size_t initial_heap_size, size_t max_hea
   region_size_log = log2_long((jlong) region_size);
 
   // 最终值打印日志
-  gclog_or_tty->print_cr("Wei Say: HeapRegion大小计算完成, region_size: " SIZE_FORMAT " byte, 对数region_size_log: :" SIZE_FORMAT ,region_size,region_size_log);
+  gclog_or_tty->print_cr("Wei Say: HeapRegion大小计算完成, region_size: " SIZE_FORMAT " byte, 对数region_size_log:" SIZE_FORMAT ,region_size,region_size_log);
 
   // Now, set up the globals.
   guarantee(LogOfHRGrainBytes == 0, "we should only set it once");
