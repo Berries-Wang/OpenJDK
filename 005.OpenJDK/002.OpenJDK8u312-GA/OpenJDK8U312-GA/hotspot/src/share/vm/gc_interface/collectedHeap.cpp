@@ -289,6 +289,14 @@ HeapWord* CollectedHeap::allocate_from_tlab_slow(KlassHandle klass, Thread* thre
   // 计算新的TLAB的大小
   size_t new_tlab_size = thread->tlab().compute_size(size);
 
+  /**
+   * 分配之前先清理老的TLAB，目的是为了让堆保持parsable可解析
+   * > 清理就是把尚未分配的空间分配一个对象(一般是int[]),这样做是为了GC在进行某些需要线性扫描堆里对象的操作时，
+   * 如 查看Region对象、并行标记等，需要堆里哪些地方有对象，哪些地方是空白。对于对象，扫描之后可以直接跳过对象的长度，
+   * 对于空白的地方只能一个字一个字的扫描，这会非常慢。所以将这部分空白的地方也分配一个dummy对象(哑元对象)，
+   * 这样GC在线性遍历的时候就能做到快速遍历了,这样也能统一处理。
+   */ 
+  gclog_or_tty->print_cr("Wei Say: 正在执行 thread->tlab().clear_before_allocation()  ,会进行哑元对象的填充...");
   thread->tlab().clear_before_allocation();
 
   // 即TLAB拓展失败

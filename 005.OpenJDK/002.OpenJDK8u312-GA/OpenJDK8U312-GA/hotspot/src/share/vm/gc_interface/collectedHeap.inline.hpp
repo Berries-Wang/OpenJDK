@@ -222,6 +222,7 @@ HeapWord* CollectedHeap::allocate_from_tlab(KlassHandle klass, Thread* thread, s
     return obj;
   }
   // Otherwise...  // 从线程当前绑定的TLAB上分配失败,则再尝试从TLAB上慢速分配
+  // 可能会重新分配TLAB，重要操作: 1. 哑元对象的填充
   return allocate_from_tlab_slow(klass, thread, size);
 }
 
