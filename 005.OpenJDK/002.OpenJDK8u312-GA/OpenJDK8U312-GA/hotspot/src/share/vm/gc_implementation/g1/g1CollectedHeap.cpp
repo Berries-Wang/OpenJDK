@@ -819,6 +819,12 @@ HeapWord* G1CollectedHeap::humongous_obj_allocate(size_t word_size, AllocationCo
   return result;
 }
 
+/**
+ * 尝试分配一个新的TLAB
+ * 
+ * @param word_size  即将分配的TLAB的大小
+ * 
+ */ 
 HeapWord* G1CollectedHeap::allocate_new_tlab(size_t word_size) {
   assert_heap_not_locked_and_not_at_safepoint();
   assert(!isHumongous(word_size), "we do not allow humongous TLABs");

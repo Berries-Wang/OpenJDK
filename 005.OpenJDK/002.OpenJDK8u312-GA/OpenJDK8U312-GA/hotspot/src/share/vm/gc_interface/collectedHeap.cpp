@@ -305,6 +305,7 @@ HeapWord* CollectedHeap::allocate_from_tlab_slow(KlassHandle klass, Thread* thre
   }
 
   // Allocate a new TLAB... // 为新的TLAB分配内存
+  // 不同堆有不同的实现
   HeapWord* obj = Universe::heap()->allocate_new_tlab(new_tlab_size);
   if (obj == NULL) {
     return NULL;

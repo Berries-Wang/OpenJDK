@@ -130,6 +130,10 @@ inline bool G1CollectedHeap::obj_in_cs(oop obj) {
   return r != NULL && r->in_collection_set();
 }
 
+/** 
+ * 分配一块内存区域
+ * 
+ */ 
 inline HeapWord* G1CollectedHeap::attempt_allocation(size_t word_size,
                                                      uint* gc_count_before_ret,
                                                      uint* gclocker_retry_count_ret) {
