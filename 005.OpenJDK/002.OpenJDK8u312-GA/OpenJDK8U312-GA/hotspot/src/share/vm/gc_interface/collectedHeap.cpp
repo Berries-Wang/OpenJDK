@@ -276,6 +276,7 @@ HeapWord* CollectedHeap::allocate_from_tlab_slow(KlassHandle klass, Thread* thre
    * Retain(v.保持，保留；保存) tlab and allocate object in shared space if
    * the amount free in the tlab is too large to discard(v.扔掉，弃置).
    */
+  // 代码执行到这里，是因为TLAB快速分配失败，即 对象大小大于TLAB剩余空间。
   // 注意，这里有自动调整机制, 若当前TLAB空闲空间大于refill_waste，则需要去共享堆空间去为该对象分配空间
   if (thread->tlab().free() > thread->tlab().refill_waste_limit()) {
     // TLAB慢速分配记录: 日志打印&&向上调整refill_waste_limit，避免后续重复进入到该分支
@@ -324,6 +325,7 @@ HeapWord* CollectedHeap::allocate_from_tlab_slow(KlassHandle klass, Thread* thre
     Copy::fill_to_words(obj + hdr_size, new_tlab_size - hdr_size, badHeapWordVal);
 #endif // ASSERT
   }
+  // 设置新TLAB信息，即 哪些空间是使用了的，总空间是多少;同时也是为新对象分配空间；
   thread->tlab().fill(obj, obj + size, new_tlab_size);
   return obj;
 }
