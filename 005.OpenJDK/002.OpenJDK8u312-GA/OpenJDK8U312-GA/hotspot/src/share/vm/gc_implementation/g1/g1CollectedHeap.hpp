@@ -1433,11 +1433,12 @@ public:
 
   // Returns "true" iff the given word_size is "very large".
   static bool isHumongous(size_t word_size) {
-    // Note this has to be strictly greater-than as the TLABs
-    // are capped at the humongous thresold and we want to
+    // Note this has to be strictly(严格地;完全地;) greater-than as(因为) the TLABs
+    // are capped(有上限的;) at the humongous thresold and we want to
     // ensure that we don't try to allocate a TLAB as
     // humongous and that we don't allocate a humongous
     // object in a TLAB.
+    // 注意，这里是严格大于，因为TLAB的上限是humongous的阈值，我们希望确保不会分配一个和humongous一样大的TLAB，且不希望在TLAB中分配一个humongous对象
     return word_size > _humongous_object_threshold_in_words;
   }
 
