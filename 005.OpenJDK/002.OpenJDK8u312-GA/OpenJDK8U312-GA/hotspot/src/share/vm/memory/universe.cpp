@@ -848,7 +848,7 @@ jint Universe::initialize_heap() {
     Universe::_collectedHeap = new GenCollectedHeap(gc_policy);
   }
 
-  // 设置单个TLAB的最大值
+  // 计算&&设置单个TLAB的最大值
   ThreadLocalAllocBuffer::set_max_size(Universe::heap()->max_tlab_size());
 
   jint status = Universe::heap()->initialize();

@@ -1894,6 +1894,9 @@ G1CollectedHeap::G1CollectedHeap(G1CollectorPolicy* policy_) :
 
   _allocator = G1Allocator::create_allocator(_g1h);
   _humongous_object_threshold_in_words = HeapRegion::GrainWords / 2;
+  
+  gclog_or_tty->print_cr("Wei Say: _humongous_object_threshold_in_words 计算完成, _humongous_object_threshold_in_words = HeapRegion::GrainWords / 2;即: " SIZE_FORMAT
+  "(单位不是byte)",_humongous_object_threshold_in_words);
 
   int n_queues = MAX2((int)ParallelGCThreads, 1);
   _task_queues = new RefToScanQueueSet(n_queues);

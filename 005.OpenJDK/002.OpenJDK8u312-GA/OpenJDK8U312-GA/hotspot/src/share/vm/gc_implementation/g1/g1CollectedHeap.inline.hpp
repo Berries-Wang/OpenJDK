@@ -133,6 +133,8 @@ inline bool G1CollectedHeap::obj_in_cs(oop obj) {
 /** 
  * 分配一块内存区域
  * 
+ * 1. 对象慢速分配会执行该方法.
+ * 
  */ 
 inline HeapWord* G1CollectedHeap::attempt_allocation(size_t word_size,
                                                      uint* gc_count_before_ret,

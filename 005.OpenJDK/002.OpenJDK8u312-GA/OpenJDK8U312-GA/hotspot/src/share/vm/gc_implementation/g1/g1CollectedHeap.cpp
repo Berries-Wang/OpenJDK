@@ -735,62 +735,77 @@ G1CollectedHeap::humongous_obj_allocate_initialize_regions(uint first,
 // If could fit into free regions w/o expansion, try.
 // Otherwise, if can expand, do so.
 // Otherwise, if using ex regions might help, try with ex given back.
-HeapWord* G1CollectedHeap::humongous_obj_allocate(size_t word_size, AllocationContext_t context) {
+/**
+ * G1 大对象分配
+ *
+ */
+HeapWord *G1CollectedHeap::humongous_obj_allocate(size_t word_size,
+                                                  AllocationContext_t context) {
   assert_heap_locked_or_at_safepoint(true /* should_be_vm_thread */);
 
   verify_region_sets_optional();
 
   uint first = G1_NO_HRM_INDEX;
-  uint obj_regions = (uint)(align_size_up_(word_size, HeapRegion::GrainWords) / HeapRegion::GrainWords);
+  // 计算分配该大对象需要多少个Heap Region
+  uint obj_regions = (uint)(align_size_up_(word_size, HeapRegion::GrainWords) /
+                            HeapRegion::GrainWords);
 
   if (obj_regions == 1) {
-    // Only one region to allocate, try to use a fast path by directly allocating
-    // from the free lists. Do not try to expand here, we will potentially do that
-    // later.
-    HeapRegion* hr = new_region(word_size, true /* is_old */, false /* do_expand */);
+    // Only one region to allocate, try to use a fast path by directly
+    // allocating from the free lists. Do not try to expand here, we will
+    // potentially do that later.
+    HeapRegion *hr =
+        new_region(word_size, true /* is_old */, false /* do_expand */);
     if (hr != NULL) {
       first = hr->hrm_index();
     }
   } else {
-    // We can't allocate humongous regions spanning more than one region while
+    // We can't allocate humongous regions spanning(横跨;跨越;) more than one region while
     // cleanupComplete() is running, since some of the regions we find to be
-    // empty might not yet be added to the free list. It is not straightforward
+    // empty might not yet be added to the free list. It is not straightforward(简单的;易懂的;)
     // to know in which list they are on so that we can remove them. We only
-    // need to do this if we need to allocate more than one region to satisfy the
-    // current humongous allocation request. If we are only allocating one region
-    // we use the one-region region allocation code (see above), that already
-    // potentially waits for regions from the secondary free list.
+    // need to do this if we need to allocate more than one region to satisfy(使满意;)
+    // the current humongous allocation request. If we are only allocating one
+    // region we use the one-region region allocation code (see above), that
+    // already potentially(可能地;) waits for regions from the secondary free list.
     wait_while_free_regions_coming();
     append_secondary_free_list_if_not_empty_with_lock();
 
     // Policy: Try only empty regions (i.e. already committed first). Maybe we
     // are lucky enough to find some.
+    /**
+     * contiguous: 连续的;
+     */ 
+    // 找到一块连续的空间,返回这块连续空间的第一个Heap Region
     first = _hrm.find_contiguous_only_empty(obj_regions);
+    // 当找到连续的空间
     if (first != G1_NO_HRM_INDEX) {
       _hrm.allocate_free_regions_starting_at(first, obj_regions);
     }
   }
 
+  /**
+   * 从下面代码可以发现，上面查找的是已提交内存的Heap Region中查找;那么下面就要从已提交且空闲的Heap Region和未提交内存的Heap Region中查找;
+   */ 
   if (first == G1_NO_HRM_INDEX) {
     // Policy: We could not find enough regions for the humongous object in the
-    // free list. Look through the heap to find a mix of free and uncommitted regions.
-    // If so, try expansion.
+    // free list. Look through the heap to find a mix of free and uncommitted(未提交的;即未实际映射物理内存的Heap Region)
+    // regions. If so, try expansion.
     first = _hrm.find_contiguous_empty_or_unavailable(obj_regions);
     if (first != G1_NO_HRM_INDEX) {
       // We found something. Make sure these regions are committed, i.e. expand
       // the heap. Alternatively we could do a defragmentation GC.
-      ergo_verbose1(ErgoHeapSizing,
-                    "attempt heap expansion",
+      ergo_verbose1(ErgoHeapSizing, "attempt heap expansion",
                     ergo_format_reason("humongous allocation request failed")
-                    ergo_format_byte("allocation request"),
+                        ergo_format_byte("allocation request"),
                     word_size * HeapWordSize);
-
+      // 
       _hrm.expand_at(first, obj_regions);
       g1_policy()->record_new_heap_size(num_regions());
 
 #ifdef ASSERT
       for (uint i = first; i < first + obj_regions; ++i) {
-        HeapRegion* hr = region_at(i);
+        HeapRegion *hr = region_at(i);
         assert(hr->is_free(), "sanity");
         assert(hr->is_empty(), "sanity");
         assert(is_on_master_free_list(hr), "sanity");
@@ -802,7 +817,7 @@ HeapWord* G1CollectedHeap::humongous_obj_allocate(size_t word_size, AllocationCo
     }
   }
 
-  HeapWord* result = NULL;
+  HeapWord *result = NULL;
   if (first != G1_NO_HRM_INDEX) {
     result = humongous_obj_allocate_initialize_regions(first, obj_regions,
                                                        word_size, context);
@@ -834,26 +849,40 @@ HeapWord* G1CollectedHeap::allocate_new_tlab(size_t word_size) {
   return attempt_allocation(word_size, &dummy_gc_count_before, &dummy_gclocker_retry_count);
 }
 
-HeapWord*
-G1CollectedHeap::mem_allocate(size_t word_size,
-                              bool*  gc_overhead_limit_was_exceeded) {
+/**
+ * G1 对象慢速分配,TLAB上分配失败会执行到此处.
+ *
+ * @param word_size 对象大小
+ * @param gc_overhead_limit_was_exceeded 传出参数
+ *
+ * @return 对象地址.
+ *
+ */
+HeapWord *G1CollectedHeap::mem_allocate(size_t word_size,
+                                        bool *gc_overhead_limit_was_exceeded) {
   assert_heap_not_locked_and_not_at_safepoint();
 
   // Loop until the allocation is satisfied(满意), or unsatisfied after GC.
-  for (uint try_count = 1, gclocker_retry_count = 0; /* we'll return */; try_count += 1) {
+  for (uint try_count = 1, gclocker_retry_count = 0; /* we'll return */;
+       try_count += 1) {
     uint gc_count_before;
 
-    HeapWord* result = NULL;
+    HeapWord *result = NULL;
     // 如果不是大对象
     if (!isHumongous(word_size)) {
-      result = attempt_allocation(word_size, &gc_count_before, &gclocker_retry_count);
-    } else {
-      result = attempt_allocation_humongous(word_size, &gc_count_before, &gclocker_retry_count);
+      result = attempt_allocation(word_size, &gc_count_before,
+                                  &gclocker_retry_count);
+    } else {// 大对象分配
+      result = attempt_allocation_humongous(word_size, &gc_count_before,
+                                            &gclocker_retry_count);
     }
+
+    // 对象分配成功
     if (result != NULL) {
       return result;
     }
 
+    // 对象分配失败,执行garbage collection（GC）
     // Create the garbage collection operation...
     VM_G1CollectForAllocation op(gc_count_before, word_size);
     op.set_allocation_context(AllocationContext::current());
@@ -865,7 +894,7 @@ G1CollectedHeap::mem_allocate(size_t word_size,
       // If the operation was successful we'll return the result even
       // if it is NULL. If the allocation attempt failed immediately
       // after a Full GC, it's unlikely we'll be able to allocate now.
-      HeapWord* result = op.result();
+      HeapWord *result = op.result();
       if (result != NULL && !isHumongous(word_size)) {
         // Allocations that take place on VM operations do not do any
         // card dirtying and we have to do it here. We only have to do
@@ -1009,25 +1038,40 @@ HeapWord* G1CollectedHeap::attempt_allocation_slow(size_t word_size,
   return NULL;
 }
 
-HeapWord* G1CollectedHeap::attempt_allocation_humongous(size_t word_size,
-                                                        uint* gc_count_before_ret,
-                                                        uint* gclocker_retry_count_ret) {
-  // The structure of this method has a lot of similarities to
-  // attempt_allocation_slow(). The reason these two were not merged
-  // into a single one is that such a method would require several "if
-  // allocation is not humongous do this, otherwise do that"
-  // conditional paths which would obscure its flow. In fact, an early
-  // version of this code did use a unified method which was harder to
-  // follow and, as a result, it had subtle bugs that were hard to
-  // track down. So keeping these two methods separate allows each to
-  // be more readable. It will be good to keep these two in sync as
-  // much as possible.
+/**
+ * G1 大对象分配
+ * 
+ * @param  word_size
+ * @param  gc_count_before_ret
+ * @param  gclocker_retry_count_ret
+ * 
+ * @return
+ * 
+ */ 
+HeapWord * G1CollectedHeap::attempt_allocation_humongous(size_t word_size,
+                                              uint *gc_count_before_ret,
+                                              uint *gclocker_retry_count_ret) {
+
+  /* 啥意思:
+   * 就是该方法逻辑和“attempt_allocation_slow”基本一致，但是在分配大对象上有所不同;使用同一个逻辑会造成不易察觉的bugs;
+   * The structure of this method has a lot of similarities(相似之处) to
+   * attempt_allocation_slow(). The reason these two were not merged into a
+   * single one is that such a method would require several "if allocation is
+   * not humongous do this, otherwise do that" conditional paths which would
+   * obscure its flow. In fact, an early version of this code did use a
+   * unified(一致的;统一的;) method which was harder to follow and, as a
+   * result(结果), it had subtle(不易察觉的) bugs that were hard to track down.
+   * So keeping these two methods separate(单独的;分开的;) allows each to be
+   * more readable. It will be good to keep these two in sync as much as
+   * possible.
+   */
 
   assert_heap_not_locked_and_not_at_safepoint();
-  assert(isHumongous(word_size), "attempt_allocation_humongous() "
+  assert(isHumongous(word_size),
+         "attempt_allocation_humongous() "
          "should only be called for humongous allocations");
 
-  // Humongous objects can exhaust the heap quickly, so we should check if we
+  // Humongous objects can exhaust(耗尽) the heap quickly, so we should check if we
   // need to start a marking cycle at each humongous object allocation. We do
   // the check before we do the actual allocation. The reason for doing it
   // before the allocation is that we avoid having to keep track of the newly
@@ -1041,26 +1085,29 @@ HeapWord* G1CollectedHeap::attempt_allocation_humongous(size_t word_size,
   // allocation or b) we successfully schedule a collection which
   // fails to perform the allocation. b) is the only case when we'll
   // return NULL.
-  HeapWord* result = NULL;
+  HeapWord *result = NULL;
   for (int try_count = 1; /* we'll return */; try_count += 1) {
     bool should_try_gc;
     uint gc_count_before;
 
     {
+      // 加堆锁,即加锁分配
       MutexLockerEx x(Heap_lock);
 
       // Given that humongous objects are not allocated in young
       // regions, we'll first try to do the allocation without doing a
       // collection hoping that there's enough space in the heap.
       result = humongous_obj_allocate(word_size, AllocationContext::current());
+      // 大对象分配成功
       if (result != NULL) {
         return result;
       }
 
+      // 大对象分配失败
       if (GC_locker::is_active_and_needs_gc()) {
         should_try_gc = false;
       } else {
-         // The GCLocker may not be active but the GCLocker initiated
+        // The GCLocker may not be active but the GCLocker initiated
         // GC may not yet have been performed (GCLocker::needs_gc()
         // returns true). In this case we do not try this GC and
         // wait until the GCLocker initiated GC is performed, and
@@ -1068,7 +1115,7 @@ HeapWord* G1CollectedHeap::attempt_allocation_humongous(size_t word_size,
         if (GC_locker::needs_gc()) {
           should_try_gc = false;
         } else {
-          // Read the GC count while still holding the Heap_lock.
+          // Read the GC count while still holding the Heap_lock.  // 加锁分配
           gc_count_before = total_collections();
           should_try_gc = true;
         }
@@ -1077,7 +1124,7 @@ HeapWord* G1CollectedHeap::attempt_allocation_humongous(size_t word_size,
 
     if (should_try_gc) {
       // If we failed to allocate the humongous object, we should try to
-      // do a collection pause (if we're allowed) in case it reclaims
+      // do a collection pause (if we're allowed) in case it reclaims(回收)
       // enough space for the allocation to succeed after the pause.
 
       bool succeeded;
@@ -1103,7 +1150,7 @@ HeapWord* G1CollectedHeap::attempt_allocation_humongous(size_t word_size,
         return NULL;
       }
       // The GCLocker is either active or the GCLocker initiated
-      // GC has not yet been performed. Stall until it is and
+      // GC has not yet been performed. Stall(拖延) until it is and
       // then retry the allocation.
       GC_locker::stall_until_clear();
       (*gclocker_retry_count_ret) += 1;
@@ -1119,7 +1166,8 @@ HeapWord* G1CollectedHeap::attempt_allocation_humongous(size_t word_size,
     if ((QueuedAllocationWarningCount > 0) &&
         (try_count % QueuedAllocationWarningCount == 0)) {
       warning("G1CollectedHeap::attempt_allocation_humongous() "
-              "retries %d times", try_count);
+              "retries %d times",
+              try_count);
     }
   }
 
@@ -1885,6 +1933,9 @@ G1CollectedHeap::G1CollectedHeap(G1CollectorPolicy* policy_) :
 
   _allocator = G1Allocator::create_allocator(_g1h);
   _humongous_object_threshold_in_words = HeapRegion::GrainWords / 2;
+  
+  gclog_or_tty->print_cr("Wei Say: _humongous_object_threshold_in_words 计算完成, _humongous_object_threshold_in_words = HeapRegion::GrainWords / 2;即: " SIZE_FORMAT
+  "(单位不是byte)",_humongous_object_threshold_in_words);
 
   int n_queues = MAX2((int)ParallelGCThreads, 1);
   _task_queues = new RefToScanQueueSet(n_queues);
@@ -2913,7 +2964,7 @@ size_t G1CollectedHeap::tlab_used(Thread* ignored) const {
 size_t G1CollectedHeap::max_tlab_size() const {
   size_t max_tlab_size = align_size_down(_humongous_object_threshold_in_words - 1, MinObjAlignment);
   gclog_or_tty->print_cr("Wei Say: TLAB的最大值计算完成,大小: " SIZE_FORMAT 
-  ",单位: HeapRegion::GrainWords(see hotspot/src/share/vm/gc_implementation/g1/heapRegion.cpp),即" SIZE_FORMAT 
+  "(即，HeapRegion_Size/2),单位: HeapRegion::GrainWords(see hotspot/src/share/vm/gc_implementation/g1/heapRegion.cpp),即" SIZE_FORMAT 
   " byte",max_tlab_size,(max_tlab_size << LogHeapWordSize));
   return max_tlab_size;
 }

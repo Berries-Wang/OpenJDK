@@ -155,6 +155,7 @@ HeapWord* CollectedHeap::common_mem_allocate_noinit(KlassHandle klass, size_t si
   }
 
   // 从TLAB 上分配失败
+
   bool gc_overhead_limit_was_exceeded = false;
 
   // TLAB 上分配失败，需要从共享的堆空间(Eden)上分配对象内存空间
@@ -162,6 +163,7 @@ HeapWord* CollectedHeap::common_mem_allocate_noinit(KlassHandle klass, size_t si
   // G1: 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/g1CollectedHeap.cpp#mem_allocate
   result = Universe::heap()->mem_allocate(size,
                                           &gc_overhead_limit_was_exceeded);
+  // 对象内存分配成功;
   if (result != NULL) {
     NOT_PRODUCT(Universe::heap()->
       check_for_non_bad_heap_word_value(result, size));
@@ -172,6 +174,7 @@ HeapWord* CollectedHeap::common_mem_allocate_noinit(KlassHandle klass, size_t si
     return result;
   }
 
+  // 内存分配失败; OOM
 
   if (!gc_overhead_limit_was_exceeded) {
     // -XX:+HeapDumpOnOutOfMemoryError and -XX:OnOutOfMemoryError support

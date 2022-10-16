@@ -353,18 +353,25 @@ void CollectedHeap::flush_deferred_store_barrier(JavaThread* thread) {
   assert(thread->deferred_card_mark().is_empty(), "invariant");
 }
 
+/**
+ * 计算TLAB的最大值，执行这段逻辑的收集器:
+ * > UseParallelGC  
+ * > CMS
+ * 
+ */ 
 size_t CollectedHeap::max_tlab_size() const {
   // TLABs can't be bigger than we can fill with a int[Integer.MAX_VALUE].
-  // This restriction could be removed by enabling filling with multiple arrays.
+  // > TLAB 的大小不能超过int[Integer.MAX_VALUE](因为int[Integer.MAX_VALUE]是进行哑元对象填充时最大的哑元对象.)
+
+  // This restriction(限制) could be removed by enabling filling with multiple(多个的,多重的) arrays.
   // If we compute that the reasonable way as
   //    header_size + ((sizeof(jint) * max_jint) / HeapWordSize)
-  // we'll overflow on the multiply, so we do the divide first.
+  // we'll overflow on the multiply, so we do the divide first. // 乘的时候会溢出，所以先做除法
   // We actually lose a little by dividing first,
   // but that just makes the TLAB  somewhat smaller than the biggest array,
   // which is fine, since we'll be able to fill that.
-  size_t max_int_size = typeArrayOopDesc::header_size(T_INT) +
-              sizeof(jint) *
-              ((juint) max_jint / (size_t) HeapWordSize);
+  // 其实就是计算int[Integer.MAX_VALUE]所占的空间, typeArrayOopDesc::header_size(T_INT) 就是对象头大小.
+  size_t max_int_size = typeArrayOopDesc::header_size(T_INT) + sizeof(jint) * ((juint) max_jint / (size_t) HeapWordSize);
   return align_size_down(max_int_size, MinObjAlignment);
 }
 

@@ -124,6 +124,7 @@ void HeapRegion::setup_heap_region_size(size_t initial_heap_size, size_t max_hea
     gclog_or_tty->print_cr("Wei Say: G1HeapRegionSize: " UINTX_FORMAT " 未指定(为默认值),需要自行计算HeapRegion的大小", G1HeapRegionSize);
     // 计算一个平均值: 如下计算公式，HeapSize大小和堆的大小有关
     size_t average_heap_size = (initial_heap_size + max_heap_size) / 2;
+    gclog_or_tty->print_cr("Wei Say: average_heap_size = (initial_heap_size + max_heap_size) / 2");
 
     /**
      * HeapRegionBounds::target_number(): 2048
