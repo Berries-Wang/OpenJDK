@@ -859,8 +859,12 @@ class JavaThread: public Thread {
   AsyncRequests _special_runtime_exit_condition; // Enum indicating pending async. request
   oop           _pending_async_exception;
 
-  // Safepoint support
+  // Safepoint support // 安全点支持
  public:                                         // Expose _thread_state for SafeFetchInt()
+  /**
+   * _thread_state： 跟踪Java线程正在执行代码的哪一部分
+   * 
+   */ 
   volatile JavaThreadState _thread_state;
  private:
   ThreadSafepointState *_safepoint_state;        // Holds information about a thread during a safepoint

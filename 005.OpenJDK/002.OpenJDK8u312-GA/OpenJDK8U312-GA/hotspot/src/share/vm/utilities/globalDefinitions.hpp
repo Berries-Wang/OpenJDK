@@ -882,15 +882,15 @@ TosState as_TosState(BasicType type);
 // JavaThreadState keeps track of which part of the code a thread is executing in. This
 // information is needed by the safepoint code.
 //
-// There are 4 essential states:
+// There are 4 essential(必不可少的) states:
 //
 //  _thread_new         : Just started, but not executed init. code yet (most likely still in OS init code)
 //  _thread_in_native   : In native code. This is a safepoint region, since all oops will be in jobject handles
 //  _thread_in_vm       : Executing in the vm
 //  _thread_in_Java     : Executing either interpreted or compiled Java code (or could be in a stub)
 //
-// Each state has an associated xxxx_trans state, which is an intermediate state used when a thread is in
-// a transition from one state to another. These extra states makes it possible for the safepoint code to
+// Each state has an associated xxxx_trans state, which is an intermediate(中间的) state used when a thread is in
+// a transition(过渡;转变;) from one state to another. These extra states makes it possible for the safepoint code to
 // handle certain thread_states without having to suspend the thread - making the safepoint code faster.
 //
 // Given a state, the xxx_trans state can always be found by adding 1.
@@ -906,7 +906,7 @@ enum JavaThreadState {
   _thread_in_Java           =  8, // running in Java or in stub code
   _thread_in_Java_trans     =  9, // corresponding transition state (not used, included for completness)
   _thread_blocked           = 10, // blocked in vm
-  _thread_blocked_trans     = 11, // corresponding transition state
+  _thread_blocked_trans     = 11, // corresponding transition(过渡;转变;) state
   _thread_max_state         = 12  // maximum thread state+1 - used for statistics allocation
 };
 

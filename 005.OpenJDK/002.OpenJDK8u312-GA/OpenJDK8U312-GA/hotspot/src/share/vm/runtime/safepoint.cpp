@@ -167,7 +167,11 @@ static volatile int PageArmed = 0 ;        // safepoint polling page is RO|RW vs
 static volatile int TryingToBlock = 0 ;    // proximate value -- for advisory use only
 static bool timeout_error_printed = false;
 
-// Roll all threads forward to a safepoint and suspend them all
+/**
+ * Roll all threads forward to a safepoint and suspend them all
+ * 遍历所有的线程，并将他们全部挂起
+ * 
+ */ 
 void SafepointSynchronize::begin() {
   EventSafepointBegin begin_event;
   Thread* myThread = Thread::current();
