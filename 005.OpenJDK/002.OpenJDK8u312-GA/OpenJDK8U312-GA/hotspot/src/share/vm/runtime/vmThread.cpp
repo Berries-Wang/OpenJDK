@@ -423,6 +423,10 @@ void VMThread::evaluate_operation(VM_Operation* op) {
 }
 
 
+/**
+ * 循环处理VM_Operation
+ * 
+ */ 
 void VMThread::loop() {
   assert(_cur_vm_operation == NULL, "no current one should be executing");
 

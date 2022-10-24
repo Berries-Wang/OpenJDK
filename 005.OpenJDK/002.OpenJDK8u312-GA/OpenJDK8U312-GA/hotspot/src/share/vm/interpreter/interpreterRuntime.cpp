@@ -1019,6 +1019,10 @@ IRT_ENTRY(MethodCounters*, InterpreterRuntime::build_method_counters(JavaThread*
 IRT_END
 
 
+/**
+ * 解释执行线程（Java线程）进入安全点方式
+ * 
+ */ 
 IRT_ENTRY(void, InterpreterRuntime::at_safepoint(JavaThread* thread))
   // We used to need an explict preserve_arguments here for invoke bytecodes. However,
   // stack traversal automatically takes care of preserving arguments for invoke, so
