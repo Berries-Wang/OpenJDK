@@ -3,6 +3,8 @@
 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/build
 005.OpenJDK/000.openJDK_8u40/build
 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build
+005.OpenJDK/005.OpenJDK18-GA/OpenJDK18-GA/build
+005.OpenJDK/006.OpenJDK17-GA/OpenJDK17-GA/build
 002.Java设计模式/003.SourceCode/Design-Pattern/target
 014.Unix网络/000.IO复用/app
 014.Unix网络/000.IO复用/client
