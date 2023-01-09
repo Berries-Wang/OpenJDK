@@ -193,6 +193,12 @@ libpthread.so.0!start_thread(void * arg) (/build/glibc-eX1tMB/glibc-2.31/nptl/pt
 libc.so.6!clone() (/build/glibc-eX1tMB/glibc-2.31/sysdeps/unix/sysv/linux/x86_64/clone.S:95)
 ```
 
+## 注意事项
+### FULL GC 是串行的
+> [004.OpenJDK(JVM)学习/009.GC/008.G1/008.Full-GC-G1.md](../../004.OpenJDK(JVM)学习/009.GC/008.G1/008.Full-GC-G1.md)
+
+---
+
 ## 附录
 ### GC分类
 1. 部分收集(Partial GC): 指目标不是完整收集整个Java堆的垃圾收集，其中又分为:
