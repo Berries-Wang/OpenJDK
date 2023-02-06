@@ -1,6 +1,5 @@
 **/.idea
 .idea
-commit-git.sh
 005.OpenJDK/001.openJdk8-b120/jdk-jdk8-b120/build
 005.OpenJDK/000.openJDK_8u40/build
 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build
