@@ -5,10 +5,15 @@ public class JitStu {
 
     public static void loop(int count) {
         int sum = 0;
-        for (int i = 0; i <= 1000000; i++) {
-            sum += i;
+        for (;;) {
+            sum += 1;
+            try{
+Thread.sleep(100);
+            }catch(Exception e){
+
+            }
+            
         }
-        System.out.print("------------->" + sum + "\n");
     }
 }
 
