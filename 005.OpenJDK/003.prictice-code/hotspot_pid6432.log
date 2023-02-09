@@ -1,0 +1,1506 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hotspot_log version='160 1' process='6432' time_ms='1675978943156'>
+<vm_version>
+<name>
+OpenJDK 64-Bit Server VM
+</name>
+<release>
+25.71-b00-debug
+</release>
+<info>
+OpenJDK 64-Bit Server VM (25.71-b00-debug) for linux-amd64 JRE (1.8.0-internal-ei_2022_10_22_23_07-b00), built on Oct 22 2022 23:11:37 by &quot;wei&quot; with gcc 4.7.4
+</info>
+</vm_version>
+<vm_arguments>
+<args>
+-XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+TraceBiasedLocking -XX:+PrintCompilation -XX:+UnlockCommercialFeatures -XX:+FlightRecorder -Dcom.sun.management.jmxremote.rmi.port=1099 -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.port=1099 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.local.only=false -Xms100M -Xms100M 
+</args>
+<command>
+JitStu
+</command>
+<launcher>
+SUN_STANDARD
+</launcher>
+<properties>
+java.vm.specification.name=Java Virtual Machine Specification
+java.vm.version=25.71-b00-debug
+java.vm.name=OpenJDK 64-Bit Server VM
+java.vm.info=mixed mode, sharing
+java.ext.dirs=/home/wei/WorkSpace/open_source/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/lib/ext:/usr/java/packages/lib/ext
+java.endorsed.dirs=/home/wei/WorkSpace/open_source/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/lib/endorsed
+sun.boot.library.path=/home/wei/WorkSpace/open_source/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/lib/amd64
+java.library.path=/usr/java/packages/lib/amd64:/usr/lib64:/lib64:/lib:/usr/lib
+java.home=/home/wei/WorkSpace/open_source/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk
+java.class.path=.:/opt/wei/jdk/jdk1.8.0_341/lib:/opt/wei/jdk/jdk1.8.0_341/jre/lib:/opt/wei/maven/apache-maven-3.8.6/lib
+sun.boot.class.path=/home/wei/WorkSpace/open_source/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/lib/resources.jar:/home/wei/WorkSpace/open_source/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/lib/rt.jar:/home/wei/WorkSpace/open_source/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/lib/sunrsasign.jar:/home/wei/WorkSpace/open_source/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/lib/jsse.jar:/home/wei/WorkSpace/open_source/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/lib/jce.jar:/home/wei/WorkSpace/open_source/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/lib/charsets.jar:/home/wei/WorkSpace/open_source/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/lib/jfr.jar:/home/wei/WorkSpace/open_source/OpenJdk/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/classes
+java.vm.specification.vendor=Oracle Corporation
+java.vm.specification.version=1.8
+java.vm.vendor=Oracle Corporation
+sun.java.launcher.diag=true
+com.sun.management.jmxremote.rmi.port=1099
+com.sun.management.jmxremote=true
+com.sun.management.jmxremote.port=1099
+com.sun.management.jmxremote.ssl=false
+com.sun.management.jmxremote.authenticate=false
+com.sun.management.jmxremote.local.only=false
+sun.java.command=JitStu
+sun.java.launcher=SUN_STANDARD
+</properties>
+</vm_arguments>
+<tty>
+Aligned thread 0x00007ffff0010120 to 0x00007ffff0010800
+<writer thread='140737327298304'/>
+Wei Say: 开始初始化JVM堆空间.....
+Wei Say: Minimum heap(MB) 100  Initial heap(MB) 100  Maximum heap(MB) 1962
+Aligned thread 0x00007ffff001ecd0 to 0x00007ffff001f000
+Aligned thread 0x00007ffff00214a0 to 0x00007ffff0021800
+Aligned thread 0x00007ffff00277e0 to 0x00007ffff0027800
+Aligned thread 0x00007ffff00296c0 to 0x00007ffff0029800
+Aligned thread 0x00007ffff0079110 to 0x00007ffff0079800
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+Aligned thread 0x00007ffff01471f0 to 0x00007ffff0147800
+Aligned thread 0x00007ffff0156a40 to 0x00007ffff0157000
+Aligned thread 0x00007ffff015be40 to 0x00007ffff015c000
+Aligned thread 0x00007ffff019b210 to 0x00007ffff019b800
+Aligned thread 0x00007ffff01ad4d0 to 0x00007ffff01ad800
+Aligned thread 0x00007ffff01b03b0 to 0x00007ffff01b0800
+Aligned thread 0x00007ffff01b2ed0 to 0x00007ffff01b3000
+Aligned thread 0x00007ffff01b59f0 to 0x00007ffff01b6000
+<blob name='MethodHandlesAdapterBlob' size='182000'>
+<sect index='1' size='182000' free='177714'/>
+</blob>
+Aligned thread 0x00007ffff01eac90 to 0x00007ffff01eb000
+<writer thread='140736686745344'/>
+    702    1       3       java.lang.String::equals (81 bytes)
+    721    2       3       java.lang.String::charAt (29 bytes)
+    729    4       3       java.lang.String::indexOf (70 bytes)
+    743    5       3       java.lang.String::hashCode (55 bytes)
+    748    3       3       java.lang.Object::&lt;init&gt; (1 bytes)
+    761    6       3       java.lang.Math::min (11 bytes)
+    763    7       3       java.lang.String::length (6 bytes)
+    765    8       1       java.lang.ref.Reference::get (5 bytes)
+    769    9       1       java.lang.Object::&lt;init&gt; (1 bytes)
+    770    3       3       java.lang.Object::&lt;init&gt; (1 bytes)   made not entrant
+<writer thread='140737327298304'/>
+    789   10     n 0       java.lang.System::arraycopy (native)   (static)
+<writer thread='140736686745344'/>
+    860   11       1       java.util.logging.LogManager$LoggerContext::getOwner (5 bytes)
+    861   12       3       java.lang.AbstractStringBuilder::ensureCapacityInternal (27 bytes)
+    867   14       3       java.lang.String::&lt;init&gt; (82 bytes)
+    878   13       3       java.lang.System::getSecurityManager (4 bytes)
+    879   15       1       java.util.logging.Logger::getName (5 bytes)
+    953   16       3       java.lang.ref.Reference::&lt;init&gt; (25 bytes)
+    968   17       3       java.util.HashMap::hash (20 bytes)
+    974   18       3       java.lang.CharacterData::of (120 bytes)
+<writer thread='140737327298304'/>
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+<writer thread='140736686745344'/>
+    978   19       3       java.lang.CharacterDataLatin1::getProperties (11 bytes)
+    980   20       1       java.util.TreeMap::access$100 (5 bytes)
+    982   21       1       java.lang.reflect.Method::getName (5 bytes)
+    984   23       1       java.lang.reflect.Method::getDeclaringClass (5 bytes)
+    984   22       1       java.lang.reflect.Method::getReturnType (5 bytes)
+    987   24       3       java.lang.Character::toLowerCase (6 bytes)
+    990   27       3       java.lang.CharacterDataLatin1::toLowerCase (39 bytes)
+    994   25       3       java.util.Arrays::copyOfRange (63 bytes)
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+   1011   26       3       java.util.TreeMap$PrivateEntryIterator::hasNext (13 bytes)
+   1012   28       1       java.lang.String::length (6 bytes)
+   1013    7       3       java.lang.String::length (6 bytes)   made not entrant
+   1019   29       1       java.lang.Class::getClassLoader0 (5 bytes)
+   1026   30       3       java.lang.String::getChars (62 bytes)
+   1034   31       3       java.util.HashMap::getNode (148 bytes)
+<writer thread='140736687798016'/>
+   1037   38       4       java.lang.String::charAt (29 bytes)
+   1042    2       3       java.lang.String::charAt (29 bytes)   made not entrant
+<writer thread='140736686745344'/>
+   1051   40       3       java.io.ByteArrayOutputStream::ensureCapacity (16 bytes)
+   1054   39       3       java.io.DataOutputStream::incCount (20 bytes)
+   1056   41  s    3       java.io.ByteArrayOutputStream::write (32 bytes)
+   1061   37       3       java.util.HashMap::get (23 bytes)
+   1067   36       1       java.lang.Short::shortValue (5 bytes)
+   1068   44       1       java.lang.reflect.Method::getModifiers (5 bytes)
+   1069   45       1       java.lang.Class$MethodArray::length (5 bytes)
+   1069   33       3       java.lang.AbstractStringBuilder::append (50 bytes)
+   1082   47       3       java.util.HashMap::putVal (300 bytes)
+   1122   51       3       java.lang.Character::toUpperCase (6 bytes)
+   1126   35       1       java.util.ArrayList::access$000 (5 bytes)
+   1127   32       3       java.lang.StringBuilder::append (8 bytes)
+   1129   48       3       java.util.HashMap$Node::&lt;init&gt; (26 bytes)
+   1132   55       1       javax.management.MBeanFeatureInfo::getDescription (5 bytes)
+   1132   46       1       java.util.TreeMap::size (5 bytes)
+   1133   50       1       java.util.HashMap$Node::getValue (5 bytes)
+   1134   57       1       java.lang.ThreadLocal::access$400 (5 bytes)
+   1134   49       1       java.lang.reflect.Method::getGenericSignature (5 bytes)
+   1135   56       1       java.util.HashMap$Node::getKey (5 bytes)
+   1149   58       1       java.lang.reflect.Field::getName (5 bytes)
+   1159   59       3       java.lang.Number::&lt;init&gt; (5 bytes)
+   1161   60       3       java.lang.Byte::&lt;init&gt; (10 bytes)
+   1163   61       3       java.lang.Short::&lt;init&gt; (10 bytes)
+   1173   62       3       java.lang.Long::&lt;init&gt; (10 bytes)
+   1175   63       3       java.lang.Class::getName (21 bytes)
+<writer thread='140737327298304'/>
+   1177   64     n 0       java.lang.Object::getClass (native)   
+   1181   65     n 0       java.lang.Object::hashCode (native)   
+   1182   66     n 0       java.lang.invoke.MethodHandle::linkToStatic(LLLLLLL)L (native)   (static)
+<writer thread='140736686745344'/>
+   1191   67       3       java.lang.StringBuilder::&lt;init&gt; (7 bytes)
+<writer thread='140737327298304'/>
+   1204   68     n 0       java.lang.invoke.MethodHandle::linkToStatic(LLLL)L (native)   (static)
+   1207   69     n 0       sun.misc.Unsafe::getObjectVolatile (native)   
+<writer thread='140736686745344'/>
+   1207   70       3       java.util.concurrent.ConcurrentHashMap::tabAt (21 bytes)
+<writer thread='140737327298304'/>
+   1208   71     n 0       java.lang.invoke.MethodHandle::linkToStatic(LL)L (native)   (static)
+<writer thread='140736686745344'/>
+   1243   72       3       java.lang.String::replace (127 bytes)
+<writer thread='140737327298304'/>
+   1246   73     n 0       java.lang.invoke.MethodHandle::linkToStatic(LL)V (native)   (static)
+   1247   74     n 0       java.lang.Class::isPrimitive (native)   
+   1248   75     n 0       java.lang.Class::isInterface (native)   
+   1249   77     n 0       java.lang.invoke.MethodHandle::linkToStatic(LL)J (native)   (static)
+   1250   78     n 0       java.lang.Object::clone (native)   
+   1251   80     n 0       java.lang.invoke.MethodHandle::linkToStatic(LLL)L (native)   (static)
+   1254   82     n 0       java.lang.invoke.MethodHandle::linkToVirtual(LLL)L (native)   (static)
+<writer thread='140736686745344'/>
+   1259   79       3       java.lang.Class::getClassLoader (28 bytes)
+<writer thread='140736688850688'/>
+   1260   87       4       java.lang.String::hashCode (55 bytes)
+   1275    5       3       java.lang.String::hashCode (55 bytes)   made not entrant
+<writer thread='140736686745344'/>
+   1277   83       3       java.util.AbstractCollection::&lt;init&gt; (5 bytes)
+   1279   81       1       java.lang.Enum::ordinal (5 bytes)
+   1281   88       3       java.lang.AbstractStringBuilder::&lt;init&gt; (12 bytes)
+   1285   90       3       java.lang.StringBuilder::toString (17 bytes)
+<writer thread='140737327298304'/>
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+<writer thread='140736686745344'/>
+   1290   91       3       jdk.internal.org.objectweb.asm.ByteVector::putUTF8 (142 bytes)
+<writer thread='140737327298304'/>
+   1310   98     n 0       java.lang.invoke.MethodHandle::linkToVirtual(LL)L (native)   (static)
+<writer thread='140736686745344'/>
+   1311   97       3       java.lang.invoke.MemberName::testFlags (16 bytes)
+   1314   92       3       jdk.internal.org.objectweb.asm.ByteVector::putShort (52 bytes)
+<writer thread='140737327298304'/>
+   1318   99     n 0       java.lang.invoke.MethodHandle::linkToStatic(LLL)V (native)   (static)
+   1320  102     n 0       java.lang.invoke.MethodHandle::invokeBasic(L)L (native)   
+   1320  103     n 0       java.lang.invoke.MethodHandle::linkToSpecial(LLL)L (native)   (static)
+<writer thread='140736686745344'/>
+   1323  101       3       jdk.internal.org.objectweb.asm.ClassWriter::get (49 bytes)
+<writer thread='140737327298304'/>
+   1325  104     n 0       java.lang.invoke.MethodHandle::linkToStatic(L)L (native)   (static)
+   1327  107     n 0       java.lang.invoke.MethodHandle::invokeBasic()L (native)   
+   1327  108     n 0       java.lang.invoke.MethodHandle::linkToSpecial(LL)L (native)   (static)
+<writer thread='140736686745344'/>
+   1329  100       3       jdk.internal.org.objectweb.asm.Item::set (143 bytes)
+<writer thread='140737327298304'/>
+   1330  110     n 0       java.lang.invoke.MethodHandle::invokeBasic(LL)L (native)   
+   1330  111     n 0       java.lang.invoke.MethodHandle::linkToSpecial(LLLL)L (native)   (static)
+   1332  113     n 0       java.lang.invoke.MethodHandle::invokeBasic(LLL)L (native)   
+   1333  114     n 0       java.lang.invoke.MethodHandle::linkToSpecial(LLLLL)L (native)   (static)
+   1336  118     n 0       java.lang.invoke.MethodHandle::linkToStatic(LLLLL)L (native)   (static)
+   1338  120     n 0       java.lang.invoke.MethodHandle::invokeBasic(LLLL)L (native)   
+   1338  121     n 0       java.lang.invoke.MethodHandle::linkToSpecial(LLLLLL)L (native)   (static)
+   1341  126     n 0       java.lang.invoke.MethodHandle::linkToStatic(LLLLLL)L (native)   (static)
+   1343  127     n 0       java.lang.invoke.MethodHandle::invokeBasic(LLLLL)L (native)   
+   1343  128     n 0       java.lang.invoke.MethodHandle::linkToSpecial(LLLLLLL)L (native)   (static)
+<writer thread='140736686745344'/>
+   1343  116       3       jdk.internal.org.objectweb.asm.ClassWriter::put (152 bytes)
+<writer thread='140737327298304'/>
+   1345  129     n 0       java.lang.invoke.MethodHandle::invokeBasic(LLLLLL)L (native)   
+   1346  130     n 0       java.lang.invoke.MethodHandle::linkToSpecial(LLLLLLLL)L (native)   (static)
+   1348  131     n 0       java.lang.invoke.MethodHandle::linkToStatic(LLLLLLLL)L (native)   (static)
+   1350  132     n 0       java.lang.invoke.MethodHandle::invokeBasic(LLLLLLL)L (native)   
+   1350  134     n 0       java.lang.invoke.MethodHandle::linkToSpecial(LLLLLLLLL)L (native)   (static)
+   1353  136     n 0       java.lang.invoke.MethodHandle::linkToStatic(LLLLLLLLL)L (native)   (static)
+   1355  137     n 0       java.lang.invoke.MethodHandle::invokeBasic(LLLLLLLL)L (native)   
+   1356  138     n 0       java.lang.invoke.MethodHandle::linkToSpecial(LLLLLLLLLL)L (native)   (static)
+<writer thread='140736687798016'/>
+   1357  140       4       java.lang.String::indexOf (70 bytes)
+<writer thread='140736686745344'/>
+   1357  139       3       java.lang.AbstractStringBuilder::append (29 bytes)
+<writer thread='140737327298304'/>
+   1361  141     n 0       java.lang.invoke.MethodHandle::linkToStatic(LLLLLLLLLL)L (native)   (static)
+   1363  142     n 0       java.lang.invoke.MethodHandle::invokeBasic(LLLLLLLLL)L (native)   
+   1363  143     n 0       java.lang.invoke.MethodHandle::linkToSpecial(LLLLLLLLLLL)L (native)   (static)
+   1366  145     n 0       java.lang.invoke.MethodHandle::linkToStatic(LLLLLLLLLLL)L (native)   (static)
+<writer thread='140736687798016'/>
+   1370    4       3       java.lang.String::indexOf (70 bytes)   made not entrant
+<writer thread='140736686745344'/>
+   1370  115       3       jdk.internal.org.objectweb.asm.Item::&lt;init&gt; (66 bytes)
+<writer thread='140737327298304'/>
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+   1372  146     n 0       java.lang.invoke.MethodHandle::invokeBasic(LLLLLLLLLL)L (native)   
+   1372  147     n 0       java.lang.invoke.MethodHandle::linkToSpecial(LLLLLLLLLLLL)L (native)   (static)
+   1373  148     n 0       java.lang.Class::isArray (native)   
+<writer thread='140736686745344'/>
+   1373  133       3       java.lang.invoke.MemberName::testAnyFlags (15 bytes)
+   1377  149       3       java.lang.StringBuilder::append (8 bytes)
+<writer thread='140737327298304'/>
+   1386  154     n 0       java.lang.invoke.MethodHandle::linkToStatic(LLLLLLLLLLLL)L (native)   (static)
+<writer thread='140736686745344'/>
+   1388  153       3       java.lang.Object::equals (11 bytes)
+<writer thread='140737327298304'/>
+   1389  155     n 0       java.lang.invoke.MethodHandle::linkToStatic(LLLLLLLLLLLLL)L (native)   (static)
+<writer thread='140736686745344'/>
+   1389  144       3       java.lang.invoke.MemberName::isInvocable (7 bytes)
+   1393  150       3       jdk.internal.org.objectweb.asm.ClassWriter::newUTF8 (70 bytes)
+<writer thread='140737327298304'/>
+   1394  157     n 0       java.lang.invoke.MethodHandle::linkToStatic(LIL)V (native)   (static)
+   1395  159     n 0       java.lang.invoke.MethodHandle::linkToStatic(ILL)I (native)   (static)
+<writer thread='140736688850688'/>
+   1397  160       4       jdk.internal.org.objectweb.asm.ByteVector::putUTF8 (142 bytes)
+<writer thread='140736686745344'/>
+   1401  158       3       jdk.internal.org.objectweb.asm.ByteVector::putByte (39 bytes)
+   1406  156       3       java.util.Objects::requireNonNull (14 bytes)
+   1408  112       1       java.lang.invoke.LambdaForm$Name::index (5 bytes)
+   1409  105       3       java.lang.String::indexOf (7 bytes)
+   1411  117       1       sun.invoke.util.Wrapper::basicTypeChar (5 bytes)
+   1412  119       1       java.lang.invoke.LambdaForm$Name::type (5 bytes)
+   1413  122       1       java.lang.invoke.LambdaForm$Name::access$000 (5 bytes)
+   1415  125       1       java.lang.invoke.LambdaForm$BasicType::basicTypeClass (5 bytes)
+   1417   76       3       java.lang.ref.Reference::&lt;init&gt; (7 bytes)
+   1422   86       1       java.lang.invoke.MemberName::getDeclaringClass (5 bytes)
+   1424   89       1       java.lang.invoke.MethodType$ConcurrentWeakInternSet$WeakEntry::hashCode (5 bytes)
+   1425   85       1       java.lang.invoke.MethodType::returnType (5 bytes)
+   1426  123       1       java.lang.invoke.LambdaForm$BasicType::basicTypeChar (5 bytes)
+   1427  151       1       java.util.ArrayList::size (5 bytes)
+   1429   84       3       java.util.AbstractMap::&lt;init&gt; (5 bytes)
+   1431  135       1       java.lang.invoke.MethodHandle::type (5 bytes)
+   1433  124       1       java.lang.invoke.LambdaForm$BasicType::access$100 (5 bytes)
+   1435  106       1       java.lang.invoke.MethodType::form (5 bytes)
+   1437  152       1       java.lang.invoke.MethodTypeForm::erasedType (5 bytes)
+   1439  161       3       jdk.internal.org.objectweb.asm.Frame::type (416 bytes)
+<writer thread='140737327298304'/>
+   1442  168     n 0       java.lang.invoke.MethodHandle::linkToStatic(ILLL)L (native)   (static)
+   1444  171     n 0       java.lang.invoke.MethodHandle::invokeBasic(ILL)L (native)   
+   1445  174     n 0       java.lang.invoke.MethodHandle::linkToSpecial(LILLL)L (native)   (static)
+<writer thread='140736688850688'/>
+   1454   91       3       jdk.internal.org.objectweb.asm.ByteVector::putUTF8 (142 bytes)   made not entrant
+<writer thread='140736686745344'/>
+   1482  179       3       java.lang.String::lastIndexOf (52 bytes)
+<writer thread='140736687798016'/>
+   1483  183       4       java.lang.String::equals (81 bytes)
+<writer thread='140736686745344'/>
+   1494  177       3       java.lang.String::indexOf (166 bytes)
+<writer thread='140737327298304'/>
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+<writer thread='140736687798016'/>
+   1504    1       3       java.lang.String::equals (81 bytes)   made not entrant
+<writer thread='140736686745344'/>
+   1514  165       3       java.util.concurrent.ConcurrentHashMap::get (162 bytes)
+   1537  162       3       jdk.internal.org.objectweb.asm.Item::isEqualTo (354 bytes)
+   1561  181       3       java.lang.AbstractStringBuilder::newCapacity (39 bytes)
+   1569  180       3       java.lang.String::&lt;init&gt; (10 bytes)
+   1571  182       3       jdk.internal.org.objectweb.asm.Frame::execute (2252 bytes)
+<writer thread='140737327298304'/>
+   1606  187     n 0       java.lang.invoke.MethodHandle::linkToStatic(LL)I (native)   (static)
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+<writer thread='140736688850688'/>
+   1702  201       4       java.lang.Math::min (11 bytes)
+   1703    6       3       java.lang.Math::min (11 bytes)   made not entrant
+   1736  205       4       java.lang.CharacterData::of (120 bytes)
+   1738   18       3       java.lang.CharacterData::of (120 bytes)   made not entrant
+<writer thread='140736687798016'/>
+   1743  209       4       java.lang.CharacterDataLatin1::toLowerCase (39 bytes)
+   1746   27       3       java.lang.CharacterDataLatin1::toLowerCase (39 bytes)   made not entrant
+   1746  210       4       java.lang.Character::toLowerCase (6 bytes)
+   1754   24       3       java.lang.Character::toLowerCase (6 bytes)   made not entrant
+<writer thread='140736688850688'/>
+   1790  216       4       java.lang.Character::toUpperCase (6 bytes)
+   1795   51       3       java.lang.Character::toUpperCase (6 bytes)   made not entrant
+<writer thread='140737327298304'/>
+Aligned thread 0x00007ffff04b65f0 to 0x00007ffff04b6800
+<writer thread='140736684308224'/>
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+<writer thread='140736688850688'/>
+   2130  224       4       java.util.Arrays::copyOfRange (63 bytes)
+   2155   25       3       java.util.Arrays::copyOfRange (63 bytes)   made not entrant
+<writer thread='140737327298304'/>
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+Aligned thread 0x00007ffff04f5ff0 to 0x00007ffff04f6000
+Aligned thread 0x00007ffff0504c50 to 0x00007ffff0505000
+<writer thread='140736686745344'/>
+   2436  190       1       java.lang.CharacterDataLatin1::getProperties (11 bytes)
+   2438   19       3       java.lang.CharacterDataLatin1::getProperties (11 bytes)   made not entrant
+   2438  222       1       java.lang.System::getSecurityManager (4 bytes)
+   2438   13       3       java.lang.System::getSecurityManager (4 bytes)   made not entrant
+   2438  194       2       java.lang.String$CaseInsensitiveComparator::compare (111 bytes)
+   2456  208       3       java.util.TreeMap::successor (66 bytes)
+   2462  217       3       java.lang.String::compareTo (78 bytes)
+   2468  185       3       java.lang.invoke.MethodType::hashCode (53 bytes)
+   2475  211       3       java.util.TreeMap::put (247 bytes)
+   2514  109       1       java.lang.invoke.MethodType::ptypes (5 bytes)
+<writer thread='140736689903360'/>
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+<writer thread='140737289213696'/>
+Biased locking enabled
+<writer thread='140736689903360'/>
+Aligned thread 0x00007fffb0000eb0 to 0x00007fffb0001000
+<writer thread='140735873537792'/>
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+<writer thread='140736686745344'/>
+   6553  228       1       java.util.Hashtable::access$500 (5 bytes)
+   6555  229  s    3       java.util.Hashtable::get (69 bytes)
+   6567  230       3       java.io.BufferedInputStream::getBufIfOpen (21 bytes)
+   6571  231  s    3       java.io.BufferedInputStream::read (49 bytes)
+<writer thread='140736687798016'/>
+   6571  233       4       java.lang.String::&lt;init&gt; (82 bytes)
+<writer thread='140736686745344'/>
+   6579  232       3       java.io.DataInputStream::readUTF (501 bytes)
+<writer thread='140736687798016'/>
+   6590   14       3       java.lang.String::&lt;init&gt; (82 bytes)   made not entrant
+   6682  246       4       java.util.HashMap::hash (20 bytes)
+<writer thread='140736686745344'/>
+   6685  238       3       java.io.DataInputStream::readFully (63 bytes)
+<writer thread='140736687798016'/>
+   6686   17       3       java.util.HashMap::hash (20 bytes)   made not entrant
+   6692  252       4       java.lang.AbstractStringBuilder::append (29 bytes)
+<writer thread='140736686745344'/>
+   6714  251  s    2       java.lang.StringBuffer::append (13 bytes)
+<writer thread='140736687798016'/>
+   6722  139       3       java.lang.AbstractStringBuilder::append (29 bytes)   made not entrant
+<writer thread='140736686745344'/>
+   6726  240       3       java.util.HashMap::put (13 bytes)
+   6736  245       1       java.util.LinkedHashMap::removeEldestEntry (2 bytes)
+   6737  247       3       java.util.LinkedHashMap::newNode (23 bytes)
+   6744  234  s    3       java.io.BufferedInputStream::read (113 bytes)
+   6770  248       3       java.util.LinkedHashMap$Entry::&lt;init&gt; (10 bytes)
+   6810  253       3       java.util.Properties::saveConvert (434 bytes)
+<writer thread='140737327298304'/>
+  30390  254     n 0       java.lang.Thread::sleep (native)   (static)
+<writer thread='140735877740288'/>
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+<writer thread='140736686745344'/>
+  32118  255       3       java.lang.Integer::stringSize (21 bytes)
+  32120  256       3       java.lang.Integer::getChars (131 bytes)
+<writer thread='140735877740288'/>
+Aligned thread 0x00007fff98001b50 to 0x00007fff98002000
+<writer thread='140735872485120'/>
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+<writer thread='140737289213696'/>
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085c686d0 , mark 0x00007ffff04f6005 , type java.lang.Thread , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-unlocked object
+<writer thread='140736686745344'/>
+  32132  257       3       java.util.AbstractList$Itr::hasNext (20 bytes)
+  34728  258   !   3       java.util.concurrent.ConcurrentHashMap::putVal (362 bytes)
+<writer thread='140735872485120'/>
+  34730  261     n 0       java.lang.Class::getComponentType (native)   
+<writer thread='140736688850688'/>
+  34782  268       4       java.lang.String::indexOf (166 bytes)
+<writer thread='140735872485120'/>
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085d14f10 , mark 0x00007fff98002005 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085d1af58 , mark 0x00007fff98002005 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085d156d0 , mark 0x00007fff98002005 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+<writer thread='140736687798016'/>
+  34792  272       4       sun.reflect.ClassFileAssembler::emitByte (11 bytes)
+<writer thread='140735872485120'/>
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085d21df0 , mark 0x00007fff98002005 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085d1bce0 , mark 0x00007fff98002005 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085d27838 , mark 0x00007fff98002005 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085d22ac8 , mark 0x00007fff98002005 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085d2e610 , mark 0x00007fff98002005 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085d28598 , mark 0x00007fff98002005 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085d2ef60 , mark 0x00007fff98002005 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+<writer thread='140736687798016'/>
+  34807  273       4       sun.reflect.ByteVectorImpl::add (38 bytes)
+<writer thread='140736686745344'/>
+  34813  266       3       java.lang.String::startsWith (72 bytes)
+  34819  274       3       sun.reflect.ClassFileAssembler::emitShort (24 bytes)
+<writer thread='140735872485120'/>
+Aligned thread 0x00007fff880a9680 to 0x00007fff880a9800
+<writer thread='140736686745344'/>
+  34829  275       3       sun.reflect.ClassFileAssembler::cpi (22 bytes)
+  34836  271       3       java.io.BufferedInputStream::read1 (108 bytes)
+<writer thread='140735871432448'/>
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+<writer thread='140736686745344'/>
+  34863  269       3       java.util.ArrayList$Itr::checkForComodification (23 bytes)
+  34868  278       3       java.lang.ref.SoftReference::get (29 bytes)
+  34871  263       3       java.lang.ref.SoftReference::&lt;init&gt; (13 bytes)
+  34877  259       3       jdk.internal.org.objectweb.asm.Item::&lt;init&gt; (5 bytes)
+  34881  279       3       java.lang.Integer::reverseBytes (26 bytes)
+<writer thread='140736688850688'/>
+  34898  177       3       java.lang.String::indexOf (166 bytes)   made not entrant
+<writer thread='140736686745344'/>
+  36382  280       3       java.lang.String::indexOf (7 bytes)
+<writer thread='140735872485120'/>
+Aligned thread 0x00007fff880acb80 to 0x00007fff880ad000
+<writer thread='140735870379776'/>
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+<writer thread='140736686745344'/>
+  36386  281       3       sun.reflect.ReflectionFactory::copyMethod (10 bytes)
+<writer thread='140735872485120'/>
+  36387  286     n 0       sun.misc.Unsafe::getInt (native)   
+<writer thread='140736688850688'/>
+  36392  297       4       java.lang.String::replace (127 bytes)
+<writer thread='140736687798016'/>
+  36393  298       4       java.lang.Integer::reverseBytes (26 bytes)
+  36395  279       3       java.lang.Integer::reverseBytes (26 bytes)   made not entrant
+<writer thread='140735872485120'/>
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085d520e0 , mark 0x00007fff98002005 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+  36396  300     n 0       sun.misc.Unsafe::putObjectVolatile (native)   
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085d524f0 , mark 0x00007fff98002005 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+<writer thread='140736686745344'/>
+  36400  285       3       java.io.DataOutputStream::writeUTF (435 bytes)
+<writer thread='140735872485120'/>
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085d52268 , mark 0x00007fff98002005 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+<writer thread='140736688850688'/>
+  36454   72       3       java.lang.String::replace (127 bytes)   made not entrant
+<writer thread='140736686745344'/>
+  36508  295       3       java.util.HashMap::newNode (13 bytes)
+  36512  296       3       java.util.HashMap::afterNodeInsertion (1 bytes)
+  36513  287       3       sun.reflect.ReflectionFactory::langReflectAccess (15 bytes)
+  36516  293       3       java.lang.reflect.Executable::&lt;init&gt; (5 bytes)
+  36518  282       3       java.lang.reflect.ReflectAccess::copyMethod (5 bytes)
+<writer thread='140735872485120'/>
+  36543  301     n 0       java.lang.Class::isAssignableFrom (native)   
+<writer thread='140736686745344'/>
+  36544  302       3       java.util.Arrays::copyOf (19 bytes)
+<writer thread='140735872485120'/>
+  36545  304     n 0       java.lang.Class::forName0 (native)   (static)
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085d36c68 , mark 0x00007fff98002005 , type sun.rmi.transport.Target , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+  36545  306     n 0       java.lang.System::identityHashCode (native)   (static)
+<writer thread='140736686745344'/>
+  36549  303   !   3       java.lang.ref.ReferenceQueue::poll (28 bytes)
+  36553  305       3       java.util.logging.Logger::isLoggable (25 bytes)
+  39207  308       3       sun.reflect.UTF8::utf8Length (81 bytes)
+<writer thread='140735872485120'/>
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085d65db8 , mark 0x00007fff98002005 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+<writer thread='140736686745344'/>
+  39222  309   !   3       sun.reflect.UTF8::encode (191 bytes)
+  39244  310       3       sun.reflect.ClassFileAssembler::emitConstantPoolUTF8 (50 bytes)
+  39262  307       3       sun.reflect.ClassFileAssembler::emitConstantPoolNameAndType (28 bytes)
+  43372  312       3       java.lang.String::lastIndexOf (13 bytes)
+  43374  314       3       sun.reflect.ByteVectorImpl::getLength (7 bytes)
+  43375  313       3       sun.reflect.ByteVectorImpl::get (26 bytes)
+<writer thread='140735872485120'/>
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085d6e0e8 , mark 0x00007fff98002005 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+<writer thread='140736686745344'/>
+  43379  315       3       java.lang.Class::searchMethods (90 bytes)
+<writer thread='140735872485120'/>
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+  43381  322     n 0       java.lang.String::intern (native)   
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085e8db00 , mark 0x00007fff98002005 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085d75b20 , mark 0x00007fff98002005 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085e8f300 , mark 0x00007fff98002005 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+  43384  326     n 0       sun.reflect.Reflection::getCallerClass (native)   (static)
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085e95528 , mark 0x00007fff98002005 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+<writer thread='140737289213696'/>
+* Beginning bulk revocation (kind == rebias) because of object 0x0000000085e8ffb0 , mark 0x00007fff98002005 , type java.io.ObjectStreamClass$EntryFuture
+* Ending bulk revocation
+<writer thread='140735872485120'/>
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085e9d2d0 , mark 0x00007fff98002105 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000105 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085e8fec8 , mark 0x00007fff98002105 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000105 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085e9dcd8 , mark 0x00007fff98002105 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000105 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085e9e7f8 , mark 0x00007fff98002105 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000105 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085ea5f58 , mark 0x00007fff98002105 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000105 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085e9f420 , mark 0x00007fff98002105 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000105 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+<writer thread='140736688850688'/>
+  43399  331       4       java.lang.String::getChars (62 bytes)
+<writer thread='140735872485120'/>
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085e9f2c0 , mark 0x00007fff98002105 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000105 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085eb74b0 , mark 0x00007fff98002105 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000105 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085eadfc0 , mark 0x00007fff98002105 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000105 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+<writer thread='140736688850688'/>
+  43408   30       3       java.lang.String::getChars (62 bytes)   made not entrant
+<writer thread='140735872485120'/>
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085ec00b0 , mark 0x00007fff98002105 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000105 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085eb86a8 , mark 0x00007fff98002105 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000105 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085ecd268 , mark 0x00007fff98002105 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000105 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085ec0db8 , mark 0x00007fff98002105 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000105 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085ecde80 , mark 0x00007fff98002105 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000105 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+<writer thread='140736686745344'/>
+  43422  329       1       sun.reflect.ByteVectorImpl::getLength (7 bytes)
+<writer thread='140735872485120'/>
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085ecea70 , mark 0x00007fff98002105 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000105 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+<writer thread='140736686745344'/>
+  43424  314       3       sun.reflect.ByteVectorImpl::getLength (7 bytes)   made not entrant
+  43425  320       3       sun.reflect.ClassFileAssembler::setStack (25 bytes)
+<writer thread='140735872485120'/>
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085ed6008 , mark 0x00007fff98002105 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000105 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085ecf648 , mark 0x00007fff98002105 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000105 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085ed6718 , mark 0x00007fff98002105 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000105 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+<writer thread='140736686745344'/>
+  43428  321       3       java.lang.Class::reflectionData (49 bytes)
+<writer thread='140736687798016'/>
+  43430  337       4       java.lang.AbstractStringBuilder::append (50 bytes)
+<writer thread='140736688850688'/>
+  43433  338       4       java.lang.String::lastIndexOf (52 bytes)
+<writer thread='140735872485120'/>
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085edefe8 , mark 0x00007fff98002105 , type java.io.ObjectStreamClass$EntryFuture , prototype header 0x0000000000000105 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-locked object
+<writer thread='140737289213696'/>
+* Beginning bulk revocation (kind == revoke) because of object 0x0000000085ed72e0 , mark 0x00007fff98002105 , type java.io.ObjectStreamClass$EntryFuture
+* Disabling biased locking for type java.io.ObjectStreamClass$EntryFuture
+  (Skipping revocation of object of type java.io.ObjectStreamClass$EntryFuture because it&apos;s no longer biased)
+* Ending bulk revocation
+<writer thread='140736686745344'/>
+  43440  330       3       java.lang.reflect.AccessibleObject::&lt;init&gt; (5 bytes)
+  43442  316       3       java.util.ArrayList::ensureCapacityInternal (13 bytes)
+<writer thread='140736688850688'/>
+  43446  179       3       java.lang.String::lastIndexOf (52 bytes)   made not entrant
+<writer thread='140736686745344'/>
+  43449  317       3       java.util.ArrayList::calculateCapacity (16 bytes)
+  43452  318       3       java.util.ArrayList::ensureExplicitCapacity (26 bytes)
+  43455  319       3       java.util.ArrayList::add (29 bytes)
+  43466  325       3       java.lang.String::substring (79 bytes)
+  43474  334       3       java.util.ArrayList$Itr::hasNext (20 bytes)
+  43476  339       3       java.util.AbstractList::&lt;init&gt; (10 bytes)
+  43479  324       3       java.util.concurrent.ConcurrentHashMap::putIfAbsent (8 bytes)
+  43482  327       1       java.lang.reflect.Field::getModifiers (5 bytes)
+  43484  323       1       java.io.ObjectStreamField::getName (5 bytes)
+  43485  340       1       java.lang.reflect.Constructor::getDeclaringClass (5 bytes)
+  43487  328       1       sun.reflect.ClassFileAssembler::getStack (5 bytes)
+  43488  336       1       java.io.ObjectStreamClass$WeakClassKey::hashCode (5 bytes)
+  43489  332       1       java.io.ObjectStreamField::getField (5 bytes)
+  43490  333       1       java.lang.reflect.Constructor::getModifiers (5 bytes)
+  43491  335       1       java.lang.reflect.Field::getType (5 bytes)
+<writer thread='140736687798016'/>
+  43495   33       3       java.lang.AbstractStringBuilder::append (50 bytes)   made not entrant
+<writer thread='140736686745344'/>
+  44567  341       3       java.util.HashSet::contains (9 bytes)
+<writer thread='140735872485120'/>
+  44570  350     n 0       java.lang.Thread::currentThread (native)   (static)
+<writer thread='140736686745344'/>
+  44573  342       3       java.io.ObjectOutputStream$BlockDataOutputStream::getUTFLength (124 bytes)
+  44590  343       3       java.io.ObjectOutputStream$BlockDataOutputStream::writeBytes (144 bytes)
+  44612  349       3       java.io.ObjectOutputStream$HandleTable::lookup (56 bytes)
+  44623  344       3       java.io.ObjectOutputStream$BlockDataOutputStream::setBlockDataMode (35 bytes)
+  44627  345       3       java.io.ObjectOutputStream$HandleTable::hash (8 bytes)
+  44650  351       3       java.util.HashMap::&lt;init&gt; (11 bytes)
+<writer thread='140735872485120'/>
+  44655  358     n 0       java.lang.Class::getSuperclass (native)   
+<writer thread='140736686745344'/>
+  44661  359       3       java.io.ObjectOutputStream$HandleTable::insert (39 bytes)
+  44668  360       3       java.io.ObjectOutputStream$BlockDataOutputStream::drain (45 bytes)
+  44675  353       3       java.io.ObjectOutputStream$BlockDataOutputStream::writeByte (33 bytes)
+  44680  355       3       java.io.ObjectStreamClass::requireInitialized (18 bytes)
+  44684  354       3       java.lang.String$CaseInsensitiveComparator::compare (13 bytes)
+  44687  352  s    3       java.io.BufferedOutputStream::write (67 bytes)
+  44701  364       1       java.io.ObjectStreamField::isUnshared (5 bytes)
+<writer thread='140736688850688'/>
+  44702  368       4       java.lang.CharacterDataLatin1::toUpperCase (53 bytes)
+<writer thread='140736686745344'/>
+  44702  365       3       java.io.Bits::putShort (16 bytes)
+  44705  356       3       java.io.ObjectStreamClass$Caches::access$200 (4 bytes)
+  44707  369       3       java.io.Bits::putInt (36 bytes)
+  44714  366   !   3       java.io.ObjectOutputStream::writeObject0 (619 bytes)
+<writer thread='140736687798016'/>
+  44786  383  s    4       java.io.BufferedInputStream::read (49 bytes)
+<writer thread='140735872485120'/>
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+<writer thread='140736688850688'/>
+  44789  384       4       java.io.Bits::putInt (36 bytes)
+<writer thread='140736687798016'/>
+  44816  231  s    3       java.io.BufferedInputStream::read (49 bytes)   made not entrant
+  44816  389       4       sun.reflect.UTF8::utf8Length (81 bytes)
+<writer thread='140736688850688'/>
+  44817  369       3       java.io.Bits::putInt (36 bytes)   made not entrant
+  44817  385       4       java.io.ObjectOutputStream$BlockDataOutputStream::getUTFLength (124 bytes)
+<writer thread='140736687798016'/>
+  44851  308       3       sun.reflect.UTF8::utf8Length (81 bytes)   made not entrant
+  44864  394       4       java.io.ObjectOutputStream$HandleTable::lookup (56 bytes)
+  44891  349       3       java.io.ObjectOutputStream$HandleTable::lookup (56 bytes)   made not entrant
+  44898  395       4       java.io.ObjectOutputStream$BlockDataOutputStream::setBlockDataMode (35 bytes)
+<writer thread='140736688850688'/>
+  44910  342       3       java.io.ObjectOutputStream$BlockDataOutputStream::getUTFLength (124 bytes)   made not entrant
+<writer thread='140736687798016'/>
+  44923  344       3       java.io.ObjectOutputStream$BlockDataOutputStream::setBlockDataMode (35 bytes)   made not entrant
+<writer thread='140736686745344'/>
+  45126  382       1       java.io.ObjectStreamClass$Caches::access$200 (4 bytes)
+  45127  356       3       java.io.ObjectStreamClass$Caches::access$200 (4 bytes)   made not entrant
+  45127  367       3       java.io.ObjectOutputStream$ReplaceTable::lookup (24 bytes)
+  45130  370       3       java.io.ObjectOutputStream$BlockDataOutputStream::writeInt (46 bytes)
+  45134  376       3       java.io.ObjectOutputStream::writeHandle (21 bytes)
+  45139  361       3       java.lang.ref.WeakReference::&lt;init&gt; (7 bytes)
+  45143  373       3       java.io.ObjectOutputStream$HandleTable::assign (52 bytes)
+  45149  371       3       java.io.ObjectOutputStream$BlockDataOutputStream::writeShort (47 bytes)
+  45158  393       3       java.util.TreeMap$PrivateEntryIterator::nextEntry (54 bytes)
+  45164  378       3       java.io.ObjectStreamClass::processQueue (21 bytes)
+  45171  379       3       java.io.ObjectStreamClass::forClass (52 bytes)
+  45260  357       3       sun.reflect.AccessorGenerator::sub (5 bytes)
+  45292  396       3       java.io.ObjectStreamClass::getSerialVersionUID (33 bytes)
+<writer thread='140735872485120'/>
+  45295  404     n 0       java.lang.Class::isInstance (native)   
+  45295  407     n 0       sun.misc.Unsafe::getObject (native)   
+<writer thread='140736688850688'/>
+  45297  410       4       java.io.ObjectOutputStream$BlockDataOutputStream::writeBytes (144 bytes)
+<writer thread='140736686745344'/>
+  45298  411       3       java.io.ObjectStreamClass$WeakClassKey::&lt;init&gt; (15 bytes)
+  45307  421       3       java.util.Arrays::binarySearch0 (95 bytes)
+<writer thread='140736687798016'/>
+  45313  415       4       java.io.ObjectOutputStream$BlockDataOutputStream::writeByte (33 bytes)
+<writer thread='140736686745344'/>
+  45316  405   !   3       java.io.ObjectStreamClass::lookup (335 bytes)
+<writer thread='140736687798016'/>
+  45318  353       3       java.io.ObjectOutputStream$BlockDataOutputStream::writeByte (33 bytes)   made not entrant
+<writer thread='140736688850688'/>
+  45364  343       3       java.io.ObjectOutputStream$BlockDataOutputStream::writeBytes (144 bytes)   made not entrant
+<writer thread='140736686745344'/>
+  45529  397       3       java.io.ObjectOutputStream::writeUTF (9 bytes)
+<writer thread='140736688850688'/>
+  45567  425       4       java.lang.StringBuilder::append (8 bytes)
+<writer thread='140736686745344'/>
+  45567  423       3       java.io.ObjectInputStream$BlockDataInputStream::setBlockDataMode (74 bytes)
+<writer thread='140736687798016'/>
+  45572  429       4       sun.reflect.ClassFileAssembler::emitShort (24 bytes)
+<writer thread='140736686745344'/>
+  45581  427       3       java.util.HashMap$HashIterator::nextNode (100 bytes)
+  45593  434   !   3       java.io.ObjectOutputStream::defaultWriteFields (270 bytes)
+<writer thread='140736687798016'/>
+  45595  274       3       sun.reflect.ClassFileAssembler::emitShort (24 bytes)   made not entrant
+<writer thread='140736688850688'/>
+  45631   32       3       java.lang.StringBuilder::append (8 bytes)   made not entrant
+<writer thread='140736686745344'/>
+  45643  440       3       java.io.ObjectStreamClass$WeakClassKey::equals (42 bytes)
+  45650  426       3       java.util.HashMap$HashIterator::hasNext (13 bytes)
+  45657  443       3       java.util.Properties::loadConvert (505 bytes)
+<writer thread='140735872485120'/>
+  45658  425       4       java.lang.StringBuilder::append (8 bytes)   made not entrant
+  45663  337       4       java.lang.AbstractStringBuilder::append (50 bytes)   made not entrant
+<writer thread='140736686745344'/>
+  45679  453       3       java.lang.StringBuilder::append (8 bytes)
+  45681  451       3       java.util.StringTokenizer::scanToken (179 bytes)
+<writer thread='140737289213696'/>
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085c16350 , mark 0x00007fffb0001005 , type sun.util.locale.provider.JRELocaleProviderAdapter , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-unlocked object
+<writer thread='140736686745344'/>
+  45738  454       3       java.lang.AbstractStringBuilder::append (50 bytes)
+<writer thread='140737289213696'/>
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085be7010 , mark 0x00007fffb0001005 , type java.lang.Class , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-unlocked object
+<writer thread='140736686745344'/>
+  45751  452       3       java.util.StringTokenizer::skipDelimiters (116 bytes)
+<writer thread='140735872485120'/>
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+<writer thread='140736686745344'/>
+  45779  456       3       java.util.concurrent.ConcurrentHashMap::setTabAt (19 bytes)
+  45781  458       3       java.lang.String::startsWith (7 bytes)
+  45783  442       3       java.lang.String::substring (56 bytes)
+  45789  457       3       java.io.DataInputStream::readInt (72 bytes)
+  45798  459       3       java.util.Arrays::copyOf (13 bytes)
+  45801  422       3       java.lang.Float::isNaN (12 bytes)
+  46278  460       3       java.lang.Long::valueOf (40 bytes)
+  46283  462       3       java.io.ObjectInputStream$PeekInputStream::readFully (48 bytes)
+  46290  466       3       sun.reflect.ClassFileAssembler::emitConstantPoolMethodref (28 bytes)
+  46307  461       3       java.io.ObjectInputStream$PeekInputStream::peek (49 bytes)
+  46311  464       3       java.io.ObjectInputStream$BlockDataInputStream::readByte (20 bytes)
+  46315  465       3       java.io.ObjectInputStream$BlockDataInputStream::read (62 bytes)
+<writer thread='140735872485120'/>
+  46318  467     n 0       java.security.AccessController::doPrivileged (native)   (static)
+<writer thread='140736686745344'/>
+  46321  468       3       java.util.HashMap::resize (359 bytes)
+<writer thread='140736688850688'/>
+  46325  482       4       java.lang.String$CaseInsensitiveComparator::compare (13 bytes)
+<writer thread='140735872485120'/>
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085fb8030 , mark 0x00007fff98002005 , type com.sun.jmx.remote.internal.ArrayNotificationBuffer , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-unlocked object
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000085fb7d78 , mark 0x00007fff98002005 , type java.lang.Object , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-unlocked object
+<writer thread='140736687798016'/>
+  46334  489       4       java.lang.String$CaseInsensitiveComparator::compare (111 bytes)
+<writer thread='140736686745344'/>
+  46369  487       1       java.util.HashMap::afterNodeInsertion (1 bytes)
+  46370  296       3       java.util.HashMap::afterNodeInsertion (1 bytes)   made not entrant
+  46372  472       3       java.util.TreeMap::getEntryUsingComparator (74 bytes)
+  46380  484       3       java.util.TreeMap::fixAfterInsertion (267 bytes)
+<writer thread='140736688850688'/>
+  46401  354       3       java.lang.String$CaseInsensitiveComparator::compare (13 bytes)   made not entrant
+<writer thread='140736687798016'/>
+  46413  194       2       java.lang.String$CaseInsensitiveComparator::compare (111 bytes)   made not entrant
+<writer thread='140736686745344'/>
+  46580  494       3       jdk.internal.org.objectweb.asm.ByteVector::put12 (64 bytes)
+  46586  493       3       java.lang.invoke.MemberName::testAllFlags (7 bytes)
+  46589  492       3       java.lang.invoke.MethodType::parameterType (7 bytes)
+  46591  470       3       java.util.AbstractSet::&lt;init&gt; (5 bytes)
+  46593  463       3       java.lang.AbstractStringBuilder::append (40 bytes)
+  46605  496       3       java.lang.Class::checkInitted (19 bytes)
+  46609  469       1       java.util.concurrent.locks.ReentrantReadWriteLock::readLock (5 bytes)
+  46609  495       1       java.io.ObjectStreamClass$FieldReflectorKey::hashCode (5 bytes)
+  46731  498       3       sun.rmi.runtime.Log$LoggerLog::isLoggable (9 bytes)
+  46735  500       3       java.io.ObjectInputStream$BlockDataInputStream::peekByte (20 bytes)
+  46739  501       3       java.io.ObjectInputStream$BlockDataInputStream::peek (55 bytes)
+  46744  502   !   3       java.io.ObjectOutputStream::writeObject (38 bytes)
+  46750  497       3       java.io.ObjectStreamField::getTypeCode (9 bytes)
+  46755  499       1       java.io.ObjectInputStream$BlockDataInputStream::getBlockDataMode (5 bytes)
+  46862  503       3       java.lang.Class::forName (53 bytes)
+  46874  509       3       java.io.ObjectOutputStream$BlockDataOutputStream::writeUTF (46 bytes)
+  46883  508       3       java.util.HashSet::add (20 bytes)
+  46889  504       3       java.io.ObjectInputStream$PeekInputStream::read (115 bytes)
+  46898  510       3       java.io.ObjectOutputStream::writeString (74 bytes)
+  46919  521       3       java.io.ObjectStreamClass$FieldReflector::getObjFieldValues (99 bytes)
+  46927  520       3       java.io.ObjectStreamClass$FieldReflector::getPrimFieldValues (317 bytes)
+<writer thread='140735877740288'/>
+Aligned thread 0x00007fff98003810 to 0x00007fff98004000
+<writer thread='140737289213696'/>
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085c68c98 , mark 0x00007ffff04f6005 , type java.lang.Thread , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98004000
+  Revoked bias of currently-unlocked object
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085d01850 , mark 0x00007fff98002005 , type java.lang.Object , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98004000
+  Revoked bias of currently-unlocked object
+<writer thread='140736686745344'/>
+  46960    7       3       java.lang.String::length (6 bytes)   made zombie
+  46960    3       3       java.lang.Object::&lt;init&gt; (1 bytes)   made zombie
+  46960    5       3       java.lang.String::hashCode (55 bytes)   made zombie
+  46961    4       3       java.lang.String::indexOf (70 bytes)   made zombie
+  46961    2       3       java.lang.String::charAt (29 bytes)   made zombie
+  46961  516       3       sun.rmi.server.MarshalOutputStream::replaceObject (33 bytes)
+  46982  519       3       java.io.ObjectOutputStream$BlockDataOutputStream::write (152 bytes)
+  47000  514       3       java.io.ObjectOutputStream::writeClassDesc (60 bytes)
+  47016  505       3       java.io.ObjectInputStream$PeekInputStream::read (47 bytes)
+  47256  523       3       java.io.ObjectInputStream$HandleTable::lookupException (29 bytes)
+<writer thread='140736687798016'/>
+  47258  528       4       java.io.ObjectStreamClass::requireInitialized (18 bytes)
+  47260  355       3       java.io.ObjectStreamClass::requireInitialized (18 bytes)   made not entrant
+<writer thread='140736686745344'/>
+  47260  526       3       java.lang.String::toCharArray (25 bytes)
+  47262  524       3       javax.management.ObjectName::hashCode (8 bytes)
+  47265  527       3       java.util.HashMap$KeyIterator::next (8 bytes)
+  47272  525       1       com.sun.jmx.mbeanserver.NamedObject::getName (5 bytes)
+  48117  529       3       java.io.InputStream::&lt;init&gt; (5 bytes)
+  48119  532       3       java.io.ObjectStreamClass::isExternalizable (9 bytes)
+  48124  533       3       java.io.ObjectStreamClass::getClassDataLayout (20 bytes)
+  48127  531       3       java.util.HashMap$ValueIterator::next (8 bytes)
+  48130  534       3       java.io.SerialCallbackContext::&lt;init&gt; (22 bytes)
+  48133  535       3       java.io.SerialCallbackContext::setUsed (6 bytes)
+  48134  530       3       java.util.HashMap::&lt;init&gt; (8 bytes)
+  48214  536       3       java.lang.reflect.Array::newInstance (6 bytes)
+<writer thread='140735872485120'/>
+  48214  537     n 0       java.lang.reflect.Array::newArray (native)   (static)
+<writer thread='140736686745344'/>
+  48216  542       3       java.io.Bits::getShort (18 bytes)
+  48218  539       3       java.io.SerialCallbackContext::getObj (9 bytes)
+  48223  543   !   3       java.io.ObjectInputStream$BlockDataInputStream::readUTFSpan (502 bytes)
+<writer thread='140735877740288'/>
+Aligned thread 0x00007fff98005960 to 0x00007fff98006000
+<writer thread='140737289213696'/>
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085c691f0 , mark 0x00007ffff04f6005 , type java.lang.Thread , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+<writer thread='140736686745344'/>
+  48261  544   !   3       java.io.ObjectInputStream::readObject0 (671 bytes)
+<writer thread='140737289213696'/>
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085d0c9f8 , mark 0x00007fff98002005 , type java.lang.Class , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+<writer thread='140736686745344'/>
+  48513  546       3       java.util.Arrays::equals (78 bytes)
+  48523  547       3       java.util.HashMap$HashIterator::&lt;init&gt; (79 bytes)
+  48529  540       3       java.io.SerialCallbackContext::checkAndSetUsed (26 bytes)
+  48531  541       1       java.io.SerialCallbackContext::getDesc (5 bytes)
+  48532  545       3       java.io.ObjectInputStream$HandleTable::markDependency (171 bytes)
+  48547  538       1       java.io.ObjectStreamField::getSignature (5 bytes)
+  50080  548   !   3       java.io.ObjectInputStream$BlockDataInputStream::refill (136 bytes)
+  50092  549       1       java.io.ObjectStreamClass::getResolveException (5 bytes)
+  51416  550       3       sun.reflect.ClassFileAssembler::append (30 bytes)
+<writer thread='140736687798016'/>
+  51418  551   !   4       sun.reflect.UTF8::encode (191 bytes)
+<writer thread='140736688850688'/>
+  51426  552       4       sun.reflect.ClassFileAssembler::emitConstantPoolUTF8 (50 bytes)
+<writer thread='140736686745344'/>
+  51439  553       3       sun.reflect.ClassFileAssembler::getLength (11 bytes)
+  51442  554       3       java.io.ObjectStreamClass::hasWriteObjectMethod (17 bytes)
+<writer thread='140737289213696'/>
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085eae000 , mark 0x00007fff98002005 , type java.util.concurrent.ConcurrentHashMap$Node , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085d75b60 , mark 0x00007fff98002005 , type java.util.concurrent.ConcurrentHashMap$Node , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085eae170 , mark 0x00007fff98002005 , type java.util.concurrent.ConcurrentHashMap$Node , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085e8fff0 , mark 0x00007fff98002005 , type java.util.concurrent.ConcurrentHashMap$Node , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x000000008600a080 , mark 0x00007fff98002005 , type java.util.concurrent.ConcurrentHashMap$Node , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085e9dd18 , mark 0x00007fff98002005 , type java.util.concurrent.ConcurrentHashMap$Node , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085eceab0 , mark 0x00007fff98002005 , type java.util.concurrent.ConcurrentHashMap$Node , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085fa4050 , mark 0x00007fff98002005 , type java.util.concurrent.ConcurrentHashMap$Node , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085d1bd20 , mark 0x00007fff98002005 , type java.util.concurrent.ConcurrentHashMap$Node , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085ecf688 , mark 0x00007fff98002005 , type java.util.concurrent.ConcurrentHashMap$Node , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085e8f340 , mark 0x00007fff98002005 , type java.util.concurrent.ConcurrentHashMap$Node , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085fa2f38 , mark 0x00007fff98002005 , type java.util.concurrent.ConcurrentHashMap$Node , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085d52378 , mark 0x00007fff98002005 , type java.util.concurrent.ConcurrentHashMap$Node , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085e9f300 , mark 0x00007fff98002005 , type java.util.concurrent.ConcurrentHashMap$Node , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085ff6918 , mark 0x00007fff98002005 , type java.util.concurrent.ConcurrentHashMap$Node , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085d285d8 , mark 0x00007fff98002005 , type java.util.concurrent.ConcurrentHashMap$Node , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085ed7320 , mark 0x00007fff98002005 , type java.util.concurrent.ConcurrentHashMap$Node , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085ff5f48 , mark 0x00007fff98002005 , type java.util.concurrent.ConcurrentHashMap$Node , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+<writer thread='140735868274432'/>
+  51457  556     n 0       sun.misc.Unsafe::compareAndSwapObject (native)   
+<writer thread='140737289213696'/>
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085d15710 , mark 0x00007fff98002005 , type java.util.concurrent.ConcurrentHashMap$Node , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+* Beginning bulk revocation (kind == rebias) because of object 0x0000000085ecdec0 , mark 0x00007fff98002005 , type java.util.concurrent.ConcurrentHashMap$Node
+* Ending bulk revocation
+  Rebiased object toward thread 0x00007fff98006000
+<writer thread='140736686745344'/>
+  51461    1       3       java.lang.String::equals (81 bytes)   made zombie
+<writer thread='140736687798016'/>
+  51473  309   !   3       sun.reflect.UTF8::encode (191 bytes)   made not entrant
+  51474  555       4       java.util.TreeMap$PrivateEntryIterator::hasNext (13 bytes)
+  51475   26       3       java.util.TreeMap$PrivateEntryIterator::hasNext (13 bytes)   made not entrant
+<writer thread='140736686745344'/>
+  51475    6       3       java.lang.Math::min (11 bytes)   made zombie
+  51475   18       3       java.lang.CharacterData::of (120 bytes)   made zombie
+  51475   24       3       java.lang.Character::toLowerCase (6 bytes)   made zombie
+  51475  558       3       java.lang.Class::checkMemberAccess (49 bytes)
+<writer thread='140736687798016'/>
+  51476  560       4       sun.reflect.ClassFileAssembler::cpi (22 bytes)
+  51487  275       3       sun.reflect.ClassFileAssembler::cpi (22 bytes)   made not entrant
+  51487   27       3       java.lang.CharacterDataLatin1::toLowerCase (39 bytes)   made zombie
+  51487   25       3       java.util.Arrays::copyOfRange (63 bytes)   made zombie
+  51487   51       3       java.lang.Character::toUpperCase (6 bytes)   made zombie
+<writer thread='140736686745344'/>
+  51496  563       3       sun.reflect.ClassFileAssembler::emitConstantPoolClass (23 bytes)
+  51507   91       3       jdk.internal.org.objectweb.asm.ByteVector::putUTF8 (142 bytes)   made zombie
+  51507  557       3       sun.reflect.ClassFileAssembler::incStack (11 bytes)
+<writer thread='140736687798016'/>
+  51509  569       4       java.io.ObjectOutputStream$BlockDataOutputStream::drain (45 bytes)
+<writer thread='140736686745344'/>
+  51514  566       3       java.util.TreeMap$EntryIterator::next (5 bytes)
+  51516  567       1       java.util.TreeMap$Entry::getKey (5 bytes)
+  51517  568       1       java.util.TreeMap$Entry::getValue (5 bytes)
+  51530  564       3       java.io.ObjectOutputStream::writeByte (9 bytes)
+<writer thread='140736687798016'/>
+  51542  360       3       java.io.ObjectOutputStream$BlockDataOutputStream::drain (45 bytes)   made not entrant
+  51543  576       4       java.io.ObjectOutputStream$HandleTable::insert (39 bytes)
+<writer thread='140736686745344'/>
+  51546  572       3       javax.management.ImmutableDescriptor::getFieldValue (90 bytes)
+<writer thread='140736688850688'/>
+  51550  310       3       sun.reflect.ClassFileAssembler::emitConstantPoolUTF8 (50 bytes)   made not entrant
+<writer thread='140736687798016'/>
+  51557  359       3       java.io.ObjectOutputStream$HandleTable::insert (39 bytes)   made not entrant
+<writer thread='140736686745344'/>
+  51570  573       3       javax.management.ImmutableDescriptor::checkIllegalFieldName (19 bytes)
+  51575  574       3       javax.management.ImmutableDescriptor::fieldIndex (12 bytes)
+  51578  575       3       java.util.Arrays::binarySearch (10 bytes)
+  51581  577       3       java.io.ObjectStreamField::isPrimitive (27 bytes)
+  51587  565       3       java.util.TreeMap$EntryIterator::next (5 bytes)
+  51590  570       3       java.lang.reflect.Method::invoke (62 bytes)
+  51600  559       3       java.lang.StringBuffer::&lt;init&gt; (7 bytes)
+  52077  580       3       java.lang.Long::longValue (5 bytes)
+  52078  579       3       java.io.Bits::getLong (105 bytes)
+  52086  583       3       sun.nio.cs.UTF_8$Encoder::encode (359 bytes)
+  52128  584       3       java.lang.String::compareTo (9 bytes)
+  52130  585       3       java.util.Collections$UnmodifiableCollection$1::hasNext (10 bytes)
+  52132  586       3       java.util.ArrayList::&lt;init&gt; (12 bytes)
+  52135  581       1       java.io.ObjectStreamClass::getName (5 bytes)
+  52280  587       3       java.io.ObjectOutputStream::writeLong (9 bytes)
+  52282  589   !   3       java.io.ObjectOutputStream::writeArray (611 bytes)
+<writer thread='140736688850688'/>
+  52282  592   !   4       java.io.ObjectOutputStream::writeObject0 (619 bytes)
+<writer thread='140736686745344'/>
+  52349  588       3       java.io.ObjectOutputStream::writeShort (9 bytes)
+  52367  598   !   3       java.io.ObjectOutputStream::writeSerialData (221 bytes)
+<writer thread='140736687798016'/>
+  52374  600       4       java.io.ObjectOutputStream$BlockDataOutputStream::writeInt (46 bytes)
+  52382  370       3       java.io.ObjectOutputStream$BlockDataOutputStream::writeInt (46 bytes)   made not entrant
+<writer thread='140735868274432'/>
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+<writer thread='140736686745344'/>
+  52444  596       3       sun.reflect.DelegatingMethodAccessorImpl::invoke (10 bytes)
+  52450  594       3       java.util.Arrays::copyOf (46 bytes)
+  52470  605       3       java.util.ArrayList$Itr::next (66 bytes)
+<writer thread='140736687798016'/>
+  52482  607       4       java.io.BufferedInputStream::getBufIfOpen (21 bytes)
+  52484  230       3       java.io.BufferedInputStream::getBufIfOpen (21 bytes)   made not entrant
+<writer thread='140735868274432'/>
+  52496  608     n 0       sun.misc.Unsafe::compareAndSwapInt (native)   
+<writer thread='140736686745344'/>
+  52497  601       1       java.io.ObjectStreamClass::getPrimDataSize (5 bytes)
+  52498  602       1       java.io.ObjectStreamClass::getNumObjFields (5 bytes)
+  52499  604       3       java.io.ObjectInputStream$BlockDataInputStream::readShort (73 bytes)
+  52516  609       3       java.io.ObjectInputStream::readNull (27 bytes)
+  52524  595       3       java.io.ObjectOutputStream$BlockDataOutputStream::writeLong (48 bytes)
+<writer thread='140736688850688'/>
+  52534  366   !   3       java.io.ObjectOutputStream::writeObject0 (619 bytes)   made not entrant
+<writer thread='140736686745344'/>
+  52538  610       3       java.lang.StringBuilder::&lt;init&gt; (6 bytes)
+  52546  603       1       java.io.ObjectInputStream::access$1000 (5 bytes)
+  52547  611       3       sun.rmi.server.MarshalOutputStream::annotateClass (9 bytes)
+  52553  606       1       java.net.AbstractPlainSocketImpl::getTimeout (5 bytes)
+  52582  612       3       java.io.ObjectInputStream::readShort (8 bytes)
+  52585  613       3       java.io.ObjectInputStream::checkResolve (86 bytes)
+  53584  614       3       java.lang.ThreadLocal::getMap (5 bytes)
+  54585  615       3       java.io.ObjectInputStream$BlockDataInputStream::readInt (73 bytes)
+  54602  616       3       javax.management.ObjectName::construct (1228 bytes)
+  55584  618       3       java.io.ObjectInputStream$BlockDataInputStream::skipBlockData (32 bytes)
+  55596  619       3       java.io.ObjectOutputStream::writeNonProxyDesc (109 bytes)
+  55687  617       3       java.io.ObjectInputStream::skipCustomData (105 bytes)
+  56583  620       3       java.io.ObjectInputStream$HandleTable::assign (48 bytes)
+  56597  621       3       java.io.ObjectInputStream$HandleTable::finish (111 bytes)
+  58582  622   !   3       java.io.ObjectInputStream$BlockDataInputStream::readBlockHeader (249 bytes)
+  58696  623   !   3       java.io.ObjectInputStream$ValidationList::doCallbacks (58 bytes)
+  59584  625       3       java.util.Arrays::fill (21 bytes)
+  59591  624       3       java.io.OutputStream::&lt;init&gt; (5 bytes)
+  60581  626       3       sun.rmi.server.UnicastRef::unmarshalValue (203 bytes)
+  60691  627       3       java.util.Arrays::rangeCheck (74 bytes)
+  61583  628       3       java.io.ObjectInputStream$BlockDataInputStream::currentBlockRemaining (41 bytes)
+  61595  629       1       java.util.concurrent.locks.AbstractQueuedSynchronizer::getState (5 bytes)
+  62583  630  s    3       java.io.BufferedOutputStream::flush (12 bytes)
+  63585  631       3       java.util.HashMap::values (25 bytes)
+  63589  632       3       java.util.HashMap$Values::iterator (12 bytes)
+  64583  633       3       java.lang.ThreadLocal::get (38 bytes)
+  64599  634       3       java.util.Arrays::fill (28 bytes)
+<writer thread='140737289213696'/>
+Revoking bias with global safepoint:
+Revoking bias of object 0x0000000085cf4f18 , mark 0x00007fff98002005 , type java.io.BufferedInputStream , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x0000000000000000
+  Revoked bias of currently-locked object
+<writer thread='140735872485120'/>
+  65495  383  s    4       java.io.BufferedInputStream::read (49 bytes)   made not entrant
+<writer thread='140736686745344'/>
+  66582  635       3       java.io.ObjectInputStream::readClassDesc (132 bytes)
+  66664  636       3       java.io.FilterOutputStream::&lt;init&gt; (10 bytes)
+  67583  637       3       com.sun.jmx.remote.util.ClassLogger::traceOn (5 bytes)
+  67601  638       3       com.sun.jmx.remote.util.ClassLogger::finerOn (25 bytes)
+  69582  639       3       java.io.ObjectInputStream::readLong (8 bytes)
+  69588  640       3       java.io.ObjectInputStream$BlockDataInputStream::readLong (76 bytes)
+  70582  641       3       java.lang.Thread::setContextClassLoader (27 bytes)
+  70610  642       3       java.io.ObjectStreamClass::hasWriteObjectData (9 bytes)
+  72583  643       1       com.sun.jmx.mbeanserver.NamedObject::getObject (5 bytes)
+  73581  644  s    3       java.io.BufferedInputStream::read (49 bytes)
+  73592  645       3       java.util.concurrent.locks.AbstractQueuedSynchronizer::compareAndSetState (13 bytes)
+  75582  646   !   3       java.io.ObjectInputStream::filterCheck (272 bytes)
+  75688  648   !   3       java.net.AbstractPlainSocketImpl::acquireFD (29 bytes)
+  75691  647       3       java.io.ObjectInputStream::readString (117 bytes)
+  76581  649   !   3       java.net.AbstractPlainSocketImpl::releaseFD (74 bytes)
+<writer thread='140735868274432'/>
+  77582  650     n 0       java.security.AccessController::doPrivileged (native)   (static)
+<writer thread='140736686745344'/>
+  77584  651       3       java.lang.ThreadLocal$ThreadLocalMap::access$100 (7 bytes)
+  77591  652       3       java.lang.ThreadLocal$ThreadLocalMap::set (136 bytes)
+  78582  653       3       java.util.HashMap::tableSizeFor (59 bytes)
+  79581  654       3       java.io.DataOutputStream::writeByte (14 bytes)
+  79592  655       3       java.io.ObjectStreamClass::&lt;init&gt; (10 bytes)
+  80583  656       3       java.lang.Math::min (12 bytes)
+  80588  657       3       java.lang.ThreadLocal::set (30 bytes)
+  80604  658       3       java.io.DataOutputStream::&lt;init&gt; (19 bytes)
+<writer thread='140735868274432'/>
+  81583  659     n 0       java.lang.Class::getModifiers (native)   
+<writer thread='140736686745344'/>
+  83583  660       3       java.util.HashMap::&lt;init&gt; (98 bytes)
+  83704  661       1       com.sun.jmx.mbeanserver.MXBeanMapping::getOpenClass (5 bytes)
+  84583  662       3       java.lang.invoke.LambdaForm$MH/1880587981::linkToTargetMethod (9 bytes)
+  84593  663       3       java.lang.invoke.LambdaForm$DMH/1670782018::invokeStatic_L_L (14 bytes)
+  86582  664       3       sun.rmi.transport.StreamRemoteCall::getInputStream (60 bytes)
+  86629  665   !   3       java.io.ObjectInputStream::readObject (156 bytes)
+  86659  666       3       javax.management.ObjectName::isPattern (27 bytes)
+  87583  667       3       java.rmi.server.ObjID::equals (46 bytes)
+  87598  670       3       java.io.Bits::putLong (86 bytes)
+  87611  669       3       java.io.ObjectStreamClass$Caches::access$2800 (4 bytes)
+  87613  671       3       java.io.OutputStream::flush (1 bytes)
+  87614  668   !   3       java.io.ObjectStreamClass::getReflector (336 bytes)
+  88583  672       3       java.io.ObjectInputStream::readInt (8 bytes)
+  88589  673       3       java.io.ObjectOutputStream$HandleTable::&lt;init&gt; (45 bytes)
+  88624  674       1       java.io.ObjectOutputStream$HandleTable::size (5 bytes)
+  89583  675       1       sun.rmi.transport.Target::getDispatcher (5 bytes)
+  89585  678       3       java.util.ArrayList::toArray (60 bytes)
+  89605  676       1       sun.rmi.transport.Target::getAccessControlContext (5 bytes)
+  89607  677       1       sun.rmi.transport.Target::getContextClassLoader (5 bytes)
+  90582  679       3       sun.rmi.transport.Transport::setContextClassLoader (14 bytes)
+  90612  681   !   3       sun.rmi.transport.StreamRemoteCall::releaseInputStream (62 bytes)
+  90626  680       3       sun.rmi.transport.Transport$$Lambda$18/1233379192::get$Lambda (9 bytes)
+  98582  682       3       java.lang.reflect.Method::getParameterTypes (11 bytes)
+  99581  683       3       java.io.BufferedInputStream::fill (233 bytes)
+<writer thread='140735868274432'/>
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+<writer thread='140736686745344'/>
+ 101582  684       3       java.lang.Thread::getContextClassLoader (32 bytes)
+ 102666  685       3       javax.management.ObjectName::getDomain (13 bytes)
+ 103582  686       3       java.io.ObjectStreamClass::computeFieldOffsets (307 bytes)
+ 105581  687       3       sun.rmi.transport.tcp.TCPConnection::getOutputStream (30 bytes)
+ 105610  688  s    3       java.io.BufferedOutputStream::write (35 bytes)
+ 106581  689       3       java.net.SocketInputStream::read (15 bytes)
+ 106584  690   !   3       java.net.SocketInputStream::read (328 bytes)
+<writer thread='140737289213696'/>
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085ff5120 , mark 0x00007fff98002005 , type java.util.HashMap , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98004000
+  Revoked bias of currently-unlocked object
+<writer thread='140736686745344'/>
+ 108581  691       3       java.net.SocketOutputStream::write (8 bytes)
+ 108583  692   !   3       java.net.SocketOutputStream::socketWrite (159 bytes)
+ 109583  693       3       java.util.concurrent.locks.ReentrantReadWriteLock$Sync::exclusiveCount (5 bytes)
+ 110581  694       3       java.io.FilterInputStream::read (8 bytes)
+ 112581  695       3       sun.rmi.transport.tcp.TCPConnection::releaseOutputStream (15 bytes)
+<writer thread='140735868274432'/>
+ 115583  696     n 0       sun.reflect.Reflection::getClassAccessFlags (native)   (static)
+<writer thread='140736686745344'/>
+ 116582  697       3       java.io.Bits::getInt (43 bytes)
+ 117584  698       3       java.io.ObjectStreamClass$FieldReflectorKey::equals (78 bytes)
+ 118583  699       3       java.lang.Long::hashCode (8 bytes)
+ 118589  702       3       java.io.ObjectInputStream$BlockDataInputStream::readUTFBody (192 bytes)
+ 118643  700       3       java.lang.Long::hashCode (8 bytes)
+ 119583  703       3       java.util.ArrayList::grow (45 bytes)
+ 124583  704       3       java.io.ObjectInputStream::readObject (7 bytes)
+ 126582  705       3       java.lang.reflect.Constructor::newInstance (87 bytes)
+ 127582  706       3       sun.rmi.runtime.Log$LoggerLog::log (55 bytes)
+ 132581  707       3       java.util.concurrent.locks.AbstractQueuedSynchronizer::hasQueuedPredecessors (40 bytes)
+ 134582  708   !   3       java.io.ObjectInputStream::readOrdinaryObject (322 bytes)
+ 134736  709       3       java.io.ObjectOutputStream::writeInt (9 bytes)
+ 137582  710       3       java.io.ObjectStreamClass::getFields (22 bytes)
+ 141583  711       1       com.sun.jmx.mbeanserver.MXBeanSupport::getCookie (5 bytes)
+ 141585  712       3       com.sun.jmx.mbeanserver.MXBeanLookup::setLookup (8 bytes)
+ 142582  713       1       java.util.Collections$EmptyList::size (2 bytes)
+ 143582  714       3       sun.rmi.server.MarshalInputStream::readClassDescriptor (12 bytes)
+ 143615  715       3       java.io.ObjectInputStream::readClassDescriptor (15 bytes)
+ 143620  716       1       java.io.ObjectStreamClass$FieldReflector::getFields (5 bytes)
+ 144583  717       3       java.io.ObjectStreamClass::getVariantFor (51 bytes)
+ 144604  718       3       java.io.ObjectStreamClass$ClassDataSlot::&lt;init&gt; (15 bytes)
+ 144611  719       3       javax.management.ObjectName::getCanonicalKeyPropertyListString (44 bytes)
+ 144621  720       1       java.util.Collections$EmptyIterator::hasNext (2 bytes)
+ 146582  721       3       javax.management.ObjectName$Property::setKeyIndex (6 bytes)
+ 148582  722       3       java.util.Arrays::hashCode (56 bytes)
+ 152582  723       3       sun.rmi.transport.Transport$$Lambda$18/1233379192::run (8 bytes)
+ 152620  724       3       sun.rmi.transport.Transport::lambda$setContextClassLoader$0 (9 bytes)
+ 155582  725       3       java.util.concurrent.locks.ReentrantReadWriteLock$ReadLock::lock (9 bytes)
+ 155595  726       3       java.util.concurrent.locks.AbstractQueuedSynchronizer::acquireShared (14 bytes)
+ 158582  727       3       java.util.HashSet::&lt;init&gt; (17 bytes)
+ 161582  728       3       java.io.ObjectInputStream$BlockDataInputStream::readUTF (10 bytes)
+ 161591  729       3       java.io.ObjectInputStream$BlockDataInputStream::readUnsignedShort (76 bytes)
+ 162583  730       3       com.sun.jmx.mbeanserver.Repository::retrieveNamedObject (63 bytes)
+ 163584  731       3       java.util.Collections::reverse (125 bytes)
+ 165581  732       3       sun.rmi.server.MarshalInputStream::readLocation (5 bytes)
+ 166942  733       3       java.io.ObjectInputStream$BlockDataInputStream::read (138 bytes)
+<writer thread='140735868274432'/>
+ 168582  734     n 0       java.net.SocketInputStream::socketRead0 (native)   
+ 170583  735     n 0       java.net.SocketOutputStream::socketWrite0 (native)   
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+<writer thread='140736686745344'/>
+ 171585  736       3       com.sun.jmx.mbeanserver.JmxMBeanServer::cloneObjectName (11 bytes)
+<writer thread='140735868274432'/>
+ 173582  737     n 0       java.security.AccessController::doPrivileged (native)   (static)
+<writer thread='140736686745344'/>
+ 173583  738       3       java.io.ObjectInputStream::readUTF (8 bytes)
+ 173593  739       3       java.io.ObjectInputStream::readByte (8 bytes)
+ 175583  740   !   3       sun.rmi.server.LoaderHandler::getClassAnnotation (234 bytes)
+ 176582  741       3       java.io.ObjectInputStream$BlockDataInputStream::readFully (42 bytes)
+<writer thread='140736688850688'/>
+ 177582  742       4       java.lang.Class::getName (21 bytes)
+ 177590   63       3       java.lang.Class::getName (21 bytes)   made not entrant
+<writer thread='140736686745344'/>
+ 179583  743       3       java.io.ObjectStreamClass::writeNonProxy (161 bytes)
+ 180581  744       3       java.io.FilterInputStream::&lt;init&gt; (10 bytes)
+ 180634  745   !   3       sun.reflect.GeneratedMethodAccessor1::invoke (66 bytes)
+<writer thread='140736687798016'/>
+ 180634  748  s    4       java.io.BufferedOutputStream::write (67 bytes)
+ 180654  352  s    3       java.io.BufferedOutputStream::write (67 bytes)   made not entrant
+<writer thread='140736686745344'/>
+ 180657  749       3       java.lang.String::trim (77 bytes)
+ 180665  746   !   3       java.io.ObjectStreamClass::invokeWriteObject (79 bytes)
+ 180677  747       3       java.io.ObjectOutputStream::defaultWriteObject (54 bytes)
+ 180693  753  s    3       java.io.ByteArrayInputStream::read (36 bytes)
+<writer thread='140736688850688'/>
+ 180696  754       4       java.lang.ref.SoftReference::get (29 bytes)
+<writer thread='140736686745344'/>
+ 180697  755       3       java.util.regex.Pattern::has (15 bytes)
+ 180699  756       3       javax.management.ImmutableDescriptor::getFieldNames (11 bytes)
+<writer thread='140736688850688'/>
+ 180699  278       3       java.lang.ref.SoftReference::get (29 bytes)   made not entrant
+<writer thread='140736686745344'/>
+ 180701  750   !   3       sun.rmi.server.LoaderHandler::loadClass (470 bytes)
+<writer thread='140736687798016'/>
+ 180718  757       4       java.util.concurrent.ConcurrentHashMap::get (162 bytes)
+ 180766  165       3       java.util.concurrent.ConcurrentHashMap::get (162 bytes)   made not entrant
+<writer thread='140736686745344'/>
+ 181587  760       3       javax.management.ImmutableDescriptor::getFieldValues (66 bytes)
+ 181597  758       3       java.io.ObjectOutputStream::write (9 bytes)
+ 181602  759       3       java.io.ObjectOutputStream$BlockDataOutputStream::write (33 bytes)
+ 181606  752       3       javax.management.ObjectName::addProperty (98 bytes)
+ 181627  751       3       sun.rmi.server.LoaderHandler::getRMIContextClassLoader (7 bytes)
+<writer thread='140735868274432'/>
+ 182536  761     n 0       java.lang.invoke.MethodHandle::linkToStatic(L)V (native)   (static)
+<writer thread='140736686745344'/>
+ 182537  762       3       java.lang.invoke.LambdaForm$BasicType::basicType (172 bytes)
+ 182565  771       3       jdk.internal.org.objectweb.asm.Type::getArgumentsAndReturnSizes (151 bytes)
+<writer thread='140736687798016'/>
+ 182567  784       4       java.util.HashMap::getNode (148 bytes)
+<writer thread='140735877740288'/>
+Aligned thread 0x00007fff98001b50 to 0x00007fff98002000
+<writer thread='140736688850688'/>
+ 182584  791  s    4       java.io.ByteArrayOutputStream::write (32 bytes)
+<writer thread='140737289213696'/>
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085c69748 , mark 0x00007ffff04f6005 , type java.lang.Thread , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98002000
+  Revoked bias of currently-unlocked object
+<writer thread='140736688850688'/>
+ 182598   41  s    3       java.io.ByteArrayOutputStream::write (32 bytes)   made not entrant
+<writer thread='140736687798016'/>
+ 182601   31       3       java.util.HashMap::getNode (148 bytes)   made not entrant
+<writer thread='140736688850688'/>
+ 182608  792       4       java.io.DataOutputStream::incCount (20 bytes)
+ 182611   39       3       java.io.DataOutputStream::incCount (20 bytes)   made not entrant
+<writer thread='140736687798016'/>
+ 182613  793       4       java.lang.AbstractStringBuilder::ensureCapacityInternal (27 bytes)
+<writer thread='140736688850688'/>
+ 182625  795       4       java.util.HashMap::get (23 bytes)
+<writer thread='140736686745344'/>
+ 182627  770       3       java.lang.invoke.MethodType::checkPtypes (61 bytes)
+<writer thread='140736687798016'/>
+ 182644   12       3       java.lang.AbstractStringBuilder::ensureCapacityInternal (27 bytes)   made not entrant
+<writer thread='140736688850688'/>
+ 182644   37       3       java.util.HashMap::get (23 bytes)   made not entrant
+<writer thread='140736686745344'/>
+ 182662  777       3       sun.reflect.generics.parser.SignatureParser::current (59 bytes)
+ 182669  776       3       sun.reflect.generics.parser.SignatureParser::advance (53 bytes)
+ 182672  773       3       java.lang.Character::isWhitespace (5 bytes)
+ 182676  774       3       java.lang.Character::isWhitespace (9 bytes)
+ 182679  775       3       java.lang.CharacterDataLatin1::isWhitespace (23 bytes)
+ 182682  789       3       java.util.HashMap$EntryIterator::next (5 bytes)
+ 182684  790       3       java.util.HashMap$EntryIterator::next (5 bytes)
+ 182689  767       3       java.lang.invoke.MethodType$ConcurrentWeakInternSet::expungeStaleElements (27 bytes)
+<writer thread='140735868274432'/>
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000086409a88 , mark 0x00007fff98006005 , type java.io.IOException , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+<writer thread='140736686745344'/>
+ 182700  805       1       java.nio.Buffer::position (5 bytes)
+ 182701  804       1       java.nio.Buffer::limit (5 bytes)
+ 182704  801       3       java.lang.ref.WeakReference::&lt;init&gt; (6 bytes)
+ 182711  803       3       java.lang.reflect.Modifier::isStatic (13 bytes)
+ 182713  772       3       java.lang.Class::getReflectionFactory (26 bytes)
+ 182722  806       1       sun.nio.cs.StreamEncoder::isOpen (5 bytes)
+ 182724  769       3       java.lang.invoke.MethodType::checkPtype (19 bytes)
+<writer thread='140735868274432'/>
+Revoking bias by walking my own stack:
+Revoking bias of object 0x00000000864242c8 , mark 0x00007fff98006005 , type javax.management.RuntimeErrorException , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+<writer thread='140736686745344'/>
+ 182730  763       3       jdk.internal.org.objectweb.asm.Frame::push (110 bytes)
+<writer thread='140735868274432'/>
+Revoking bias by walking my own stack:
+Revoking bias of object 0x0000000086423508 , mark 0x00007fff98006005 , type java.lang.Error , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of currently-unlocked object
+<writer thread='140736686745344'/>
+ 182744  809       3       java.lang.Class::privateGetDeclaredMethods (67 bytes)
+ 182766  807       3       java.io.ObjectOutputStream::writeTypeString (40 bytes)
+ 182776  768       3       jdk.internal.org.objectweb.asm.ClassWriter::newClass (9 bytes)
+ 182779  808       3       java.lang.Class::privateGetDeclaredConstructors (85 bytes)
+ 183581  810       3       java.lang.Long::equals (30 bytes)
+ 183585  811       3       java.lang.ThreadLocal$ThreadLocalMap::getEntry (42 bytes)
+ 185581  812       3       java.io.DataInputStream::&lt;init&gt; (30 bytes)
+ 185586   14       3       java.lang.String::&lt;init&gt; (82 bytes)   made zombie
+ 185586   13       3       java.lang.System::getSecurityManager (4 bytes)   made zombie
+ 185586   17       3       java.util.HashMap::hash (20 bytes)   made zombie
+ 185586   19       3       java.lang.CharacterDataLatin1::getProperties (11 bytes)   made zombie
+ 185586   30       3       java.lang.String::getChars (62 bytes)   made zombie
+ 185586  813       3       java.util.HashMap::isEmpty (13 bytes)
+ 185588   33       3       java.lang.AbstractStringBuilder::append (50 bytes)   made zombie
+ 185589   32       3       java.lang.StringBuilder::append (8 bytes)   made zombie
+ 185589   72       3       java.lang.String::replace (127 bytes)   made zombie
+ 186581  814       3       java.io.ObjectInputStream::defaultReadFields (201 bytes)
+ 186619  815       3       java.io.ObjectStreamClass::setPrimFieldValues (10 bytes)
+ 186621  139       3       java.lang.AbstractStringBuilder::append (29 bytes)   made zombie
+ 187581  816       3       java.io.DataInputStream::readLong (128 bytes)
+ 187587  179       3       java.lang.String::lastIndexOf (52 bytes)   made zombie
+ 187588  177       3       java.lang.String::indexOf (166 bytes)   made zombie
+ 187588  194       2       java.lang.String$CaseInsensitiveComparator::compare (111 bytes)   made zombie
+ 187588  231  s    3       java.io.BufferedInputStream::read (49 bytes)   made zombie
+ 189581  817       3       java.util.HashMap::clear (50 bytes)
+ 189590  274       3       sun.reflect.ClassFileAssembler::emitShort (24 bytes)   made zombie
+ 189591  279       3       java.lang.Integer::reverseBytes (26 bytes)   made zombie
+ 189591  296       3       java.util.HashMap::afterNodeInsertion (1 bytes)   made zombie
+ 192581  818       3       com.sun.jmx.interceptor.DefaultMBeanServerInterceptor::getMBean (97 bytes)
+ 192618  308       3       sun.reflect.UTF8::utf8Length (81 bytes)   made zombie
+ 192618  314       3       sun.reflect.ByteVectorImpl::getLength (7 bytes)   made zombie
+ 192619  344       3       java.io.ObjectOutputStream$BlockDataOutputStream::setBlockDataMode (35 bytes)   made zombie
+ 192619  342       3       java.io.ObjectOutputStream$BlockDataOutputStream::getUTFLength (124 bytes)   made zombie
+ 192619  819   !   3       com.sun.jmx.mbeanserver.Repository::retrieve (113 bytes)
+ 192682  337       4       java.lang.AbstractStringBuilder::append (50 bytes)   made zombie
+ 192683  343       3       java.io.ObjectOutputStream$BlockDataOutputStream::writeBytes (144 bytes)   made zombie
+ 192683  349       3       java.io.ObjectOutputStream$HandleTable::lookup (56 bytes)   made zombie
+ 192683  353       3       java.io.ObjectOutputStream$BlockDataOutputStream::writeByte (33 bytes)   made zombie
+ 192683  355       3       java.io.ObjectStreamClass::requireInitialized (18 bytes)   made zombie
+ 192683  354       3       java.lang.String$CaseInsensitiveComparator::compare (13 bytes)   made zombie
+ 192683  369       3       java.io.Bits::putInt (36 bytes)   made zombie
+ 192683  356       3       java.io.ObjectStreamClass$Caches::access$200 (4 bytes)   made zombie
+<writer thread='140735868274432'/>
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+<writer thread='140736686745344'/>
+ 193583  820       3       sun.rmi.transport.ObjectEndpoint::hashCode (27 bytes)
+ 193595  425       4       java.lang.StringBuilder::append (8 bytes)   made zombie
+ 193597  822       3       java.io.ObjectStreamClass$FieldReflectorKey::&lt;init&gt; (102 bytes)
+ 193632  821       3       java.rmi.server.ObjID::hashCode (6 bytes)
+ 197582  823       3       java.io.ObjectInputStream::&lt;init&gt; (81 bytes)
+ 197620  824       3       java.io.ObjectInputStream::verifySubclass (99 bytes)
+ 198584  825       3       sun.rmi.transport.ObjectEndpoint::&lt;init&gt; (60 bytes)
+ 198597  826       3       sun.rmi.transport.Target::getImpl (11 bytes)
+ 199583  827       3       java.util.Arrays$LegacyMergeSort::access$000 (4 bytes)
+ 200582  828   !   3       java.io.ObjectStreamClass::invokeReadObject (93 bytes)
+ 200618  829       3       com.sun.jmx.remote.util.ClassLogger::debugOn (5 bytes)
+<writer thread='140736688850688'/>
+ 201582  830   !   4       java.io.ObjectInputStream$BlockDataInputStream::readUTFSpan (502 bytes)
+ 201639  543   !   3       java.io.ObjectInputStream$BlockDataInputStream::readUTFSpan (502 bytes)   made not entrant
+<writer thread='140736686745344'/>
+ 202582  831       3       sun.rmi.server.MarshalInputStream::&lt;init&gt; (35 bytes)
+ 203582  832       3       sun.rmi.transport.ObjectEndpoint::equals (45 bytes)
+ 204582  833       3       java.io.ObjectInputStream$BlockDataInputStream::read (9 bytes)
+ 204589  834   !   3       java.rmi.server.UID::&lt;init&gt; (164 bytes)
+ 204629  835       3       java.io.ObjectOutputStream$BlockDataOutputStream::flush (12 bytes)
+ 205582  836       3       java.rmi.server.UID::equals (54 bytes)
+ 205596  837       3       com.sun.jmx.interceptor.DefaultMBeanServerInterceptor::nonDefaultDomain (43 bytes)
+ 205633  838       3       java.rmi.server.UID::write (31 bytes)
+ 206584  839       3       java.rmi.server.UID::read (34 bytes)
+ 206597  841       3       sun.rmi.server.MarshalInputStream::done (53 bytes)
+ 206606  840       3       java.rmi.server.UID::&lt;init&gt; (21 bytes)
+ 207583  842       3       sun.rmi.transport.StreamRemoteCall::&lt;init&gt; (35 bytes)
+ 207591  843   !   3       sun.rmi.transport.Transport::serviceCall (380 bytes)
+ 208111  844       3       java.rmi.server.ObjID::&lt;init&gt; (15 bytes)
+ 208587  845       3       sun.rmi.transport.ConnectionInputStream::registerRefs (71 bytes)
+ 208612  846   !   3       sun.rmi.transport.ConnectionInputStream::done (145 bytes)
+ 208690  847       3       sun.rmi.transport.StreamRemoteCall::getOutputStream (39 bytes)
+ 210582  848       3       sun.rmi.server.MarshalInputStream::skipDefaultResolveClass (6 bytes)
+ 210586  849       3       sun.rmi.server.UnicastServerRef::unmarshalParameters (27 bytes)
+ 212583  850   !   3       com.sun.jmx.remote.internal.ServerCommunicatorAdmin::reqIncoming (65 bytes)
+ 212608  851       3       sun.rmi.server.UnicastRef::marshalValue (226 bytes)
+ 213583  852       3       com.sun.jmx.interceptor.DefaultMBeanServerInterceptor::checkMBeanPermission (21 bytes)
+ 213638  853   !   3       com.sun.jmx.remote.internal.ServerCommunicatorAdmin::rspOutgoing (76 bytes)
+ 216582  854   !   3       javax.management.remote.rmi.RMIConnectionImpl::doPrivilegedOperation (171 bytes)
+ 216635  855       3       javax.management.remote.rmi.RMIConnectionImpl$PrivilegedOperation::&lt;init&gt; (20 bytes)
+ 224582  856   !   3       sun.reflect.GeneratedSerializationConstructorAccessor12::newInstance (49 bytes)
+ 224602  857   !   3       javax.management.ObjectName::readObject (158 bytes)
+ 225582  858       1       java.lang.ThreadLocal::getMap (5 bytes)
+ 225583  614       3       java.lang.ThreadLocal::getMap (5 bytes)   made not entrant
+ 235582  859       3       java.io.ObjectStreamClass::getClassDataLayout0 (296 bytes)
+ 240582  860   !   3       sun.reflect.GeneratedMethodAccessor2::invoke (66 bytes)
+<writer thread='140736687798016'/>
+ 248582  861       4       java.util.HashMap::putVal (300 bytes)
+ 248650   47       3       java.util.HashMap::putVal (300 bytes)   made not entrant
+<writer thread='140736686745344'/>
+ 254581  862   !   3       java.io.ObjectStreamClass::newInstance (156 bytes)
+<writer thread='140736688850688'/>
+ 254585  864       4       java.io.ObjectInputStream$BlockDataInputStream::setBlockDataMode (74 bytes)
+ 254589  423       3       java.io.ObjectInputStream$BlockDataInputStream::setBlockDataMode (74 bytes)   made not entrant
+<writer thread='140736686745344'/>
+ 254642  863   !   3       java.io.ObjectInputStream::readSerialData (367 bytes)
+ 255584  866       3       com.sun.jmx.mbeanserver.DefaultMXBeanMappingFactory$NonNullMXBeanMapping::toOpenValue (12 bytes)
+ 257581  867   !   3       java.io.ObjectStreamClass::readNonProxy (407 bytes)
+ 257820  868       3       java.io.ObjectInputStream::isCustomSubclass (21 bytes)
+ 258581  873       3       java.io.ObjectStreamClass::initNonProxy (551 bytes)
+ 259582  874       3       java.util.Arrays::sort (24 bytes)
+ 259593  875       3       java.util.ComparableTimSort::sort (219 bytes)
+<writer thread='140736687798016'/>
+ 260581  876       4       java.util.HashMap::put (13 bytes)
+ 260587  240       3       java.util.HashMap::put (13 bytes)   made not entrant
+<writer thread='140736686745344'/>
+ 266581  877   !   3       com.sun.jmx.mbeanserver.MBeanIntrospector::invokeM (44 bytes)
+ 266588  878       3       com.sun.jmx.mbeanserver.MXBeanIntrospector::invokeM2 (13 bytes)
+ 269587  879   !   3       javax.management.remote.rmi.RMIConnectionImpl::getAttribute (186 bytes)
+ 269748  880       3       com.sun.jmx.mbeanserver.JmxMBeanServer::getAttribute (16 bytes)
+ 270582  881   !   3       sun.reflect.GeneratedMethodAccessor8::invoke (65 bytes)
+ 272583  882       3       java.util.Collections$EmptyList::iterator (4 bytes)
+ 272588  883       3       java.util.Collections::emptyIterator (4 bytes)
+ 275583  884       3       java.util.concurrent.locks.ReentrantReadWriteLock$Sync::tryAcquireShared (177 bytes)
+ 275635  885       3       java.util.concurrent.locks.ReentrantReadWriteLock$Sync::sharedCount (5 bytes)
+ 276593  887       3       jdk.management.jfr.FlightRecorderMXBeanImpl::getRecordings (29 bytes)
+ 276668  888       3       com.sun.jmx.mbeanserver.DefaultMXBeanMappingFactory$CollectionMapping::toNonNullOpenValue (136 bytes)
+ 285581  889   !   3       sun.reflect.GeneratedMethodAccessor9::invoke (83 bytes)
+ 286947  890       1       java.util.HashMap::size (5 bytes)
+ 292581  891   !   3       sun.reflect.GeneratedMethodAccessor10::invoke (63 bytes)
+<writer thread='140736687798016'/>
+ 299582  892       4       java.io.BufferedInputStream::read1 (108 bytes)
+ 299652  271       3       java.io.BufferedInputStream::read1 (108 bytes)   made not entrant
+<writer thread='140736688850688'/>
+ 300582  893  s    4       java.io.BufferedInputStream::read (113 bytes)
+ 300735  234  s    3       java.io.BufferedInputStream::read (113 bytes)   made not entrant
+<writer thread='140736686745344'/>
+ 304581  894       3       javax.management.ObjectName::setCanonicalName (251 bytes)
+ 308582  895   !   3       java.io.ObjectInputStream::readNonProxyDesc (239 bytes)
+ 314582  897       3       java.io.ObjectStreamClass$FieldReflector::setObjFieldValues (248 bytes)
+ 314743  896       3       java.io.ObjectStreamClass$FieldReflector::setPrimFieldValues (329 bytes)
+ 320582  898       3       java.util.concurrent.locks.ReentrantReadWriteLock$Sync::tryReleaseShared (147 bytes)
+ 320669  899       3       java.util.concurrent.locks.AbstractQueuedSynchronizer::doReleaseShared (79 bytes)
+ 321587  900       3       java.io.ObjectInputStream$BlockDataInputStream::&lt;init&gt; (79 bytes)
+ 321629  901       3       java.io.ObjectInputStream$PeekInputStream::&lt;init&gt; (20 bytes)
+ 321638  902       3       java.io.ObjectInputStream$HandleTable::&lt;init&gt; (38 bytes)
+ 330587  904       3       java.io.ObjectOutputStream::&lt;init&gt; (99 bytes)
+ 330657  905       3       java.io.ObjectOutputStream::verifySubclass (99 bytes)
+ 331582  910       3       sun.rmi.transport.Transport$1::run (5 bytes)
+ 331600  911       3       sun.rmi.transport.Transport$1::run (30 bytes)
+ 331619  912       3       sun.rmi.transport.tcp.TCPTransport::checkAcceptPermission (40 bytes)
+ 331642  913   !   3       sun.rmi.server.UnicastServerRef::dispatch (457 bytes)
+ 332586  916       3       sun.rmi.transport.ConnectionOutputStream::&lt;init&gt; (45 bytes)
+ 332671  917       3       sun.rmi.server.MarshalOutputStream::&lt;init&gt; (7 bytes)
+ 334582  922       3       sun.rmi.server.UnicastServerRef::unmarshalParametersUnchecked (44 bytes)
+<writer thread='140737289213696'/>
+Revoking bias with potentially per-thread safepoint:
+Revoking bias of object 0x0000000085d2f288 , mark 0x00007fff98002005 , type sun.rmi.transport.DGCImpl$LeaseInfo , prototype header 0x0000000000000005 , allow rebias 0 , requesting thread 0x00007fff98006000
+  Revoked bias of object biased toward dead thread
+<writer thread='140736687798016'/>
+ 339582  923       4       java.io.Bits::getLong (105 bytes)
+ 339607  579       3       java.io.Bits::getLong (105 bytes)   made not entrant
+<writer thread='140736686745344'/>
+ 341582  924       3       javax.management.remote.rmi.RMIConnectionImpl::doOperation (706 bytes)
+ 346582  925       1       java.io.OutputStream::flush (1 bytes)
+ 346590  671       3       java.io.OutputStream::flush (1 bytes)   made not entrant
+ 352583  926       3       java.io.ObjectInputStream::defaultReadObject (87 bytes)
+ 354583  927       3       java.util.HashMap::containsKey (18 bytes)
+<writer thread='140736688850688'/>
+ 354584  928       4       java.io.ObjectOutputStream$HandleTable::assign (52 bytes)
+ 354651  373       3       java.io.ObjectOutputStream$HandleTable::assign (52 bytes)   made not entrant
+<writer thread='140736687798016'/>
+ 357581  929       4       java.io.ObjectInputStream$PeekInputStream::read (115 bytes)
+ 357628  504       3       java.io.ObjectInputStream$PeekInputStream::read (115 bytes)   made not entrant
+<writer thread='140736688850688'/>
+ 366582  930       4       java.io.ObjectOutputStream$BlockDataOutputStream::writeShort (47 bytes)
+ 366603  371       3       java.io.ObjectOutputStream$BlockDataOutputStream::writeShort (47 bytes)   made not entrant
+<writer thread='140736687798016'/>
+ 369581  931       4       java.io.ObjectInputStream$PeekInputStream::peek (49 bytes)
+ 369723  461       3       java.io.ObjectInputStream$PeekInputStream::peek (49 bytes)   made not entrant
+<writer thread='140736686745344'/>
+ 380582  932   !   3       sun.rmi.server.MarshalInputStream::resolveClass (105 bytes)
+ 380714  933       3       java.rmi.server.RMIClassLoader::loadClass (10 bytes)
+ 382582  937   !   3       sun.reflect.misc.MethodUtil::invoke (111 bytes)
+ 394582  938   !   3       com.sun.jmx.mbeanserver.ConvertingMethod::invokeWithOpenReturn (35 bytes)
+ 394695  939       3       com.sun.jmx.mbeanserver.MXBeanLookup::getLookup (10 bytes)
+<writer thread='140736687798016'/>
+ 396581  942       4       java.io.ObjectInputStream$PeekInputStream::readFully (48 bytes)
+ 396650  462       3       java.io.ObjectInputStream$PeekInputStream::readFully (48 bytes)   made not entrant
+<writer thread='140736686745344'/>
+ 397583  943   !   3       com.sun.jmx.interceptor.DefaultMBeanServerInterceptor::getAttribute (150 bytes)
+ 397718  944       3       javax.management.StandardMBean::getAttribute (9 bytes)
+ 398584  947       3       sun.reflect.misc.Trampoline::ensureInvocableMethod (53 bytes)
+<writer thread='140736687798016'/>
+ 401582  948       4       java.io.Bits::putLong (86 bytes)
+ 401614  670       3       java.io.Bits::putLong (86 bytes)   made not entrant
+<writer thread='140736686745344'/>
+ 403582  949       3       java.util.concurrent.locks.ReentrantReadWriteLock$FairSync::readerShouldBlock (5 bytes)
+<writer thread='140736688850688'/>
+ 405581  950       4       java.io.ObjectStreamClass::forClass (52 bytes)
+ 405585  379       3       java.io.ObjectStreamClass::forClass (52 bytes)   made not entrant
+<writer thread='140735868274432'/>
+Wei Say: 正在执行 thread-&gt;tlab().clear_before_allocation()  ,会进行哑元对象的填充...
+<writer thread='140736688850688'/>
+ 438583  951       4       java.io.ObjectInputStream$BlockDataInputStream::read (62 bytes)
+<writer thread='140736687798016'/>
+ 438585  952       4       java.io.ObjectInputStream$PeekInputStream::read (47 bytes)
+ 438706  505       3       java.io.ObjectInputStream$PeekInputStream::read (47 bytes)   made not entrant
+<writer thread='140736688850688'/>
+ 438715  465       3       java.io.ObjectInputStream$BlockDataInputStream::read (62 bytes)   made not entrant
+<writer thread='140736686745344'/>
+ 444581  953       3       java.io.ObjectInputStream::readStreamHeader (60 bytes)
+ 453582  954       3       java.io.ObjectOutputStream$BlockDataOutputStream::&lt;init&gt; (57 bytes)
+ 453608  955       3       java.io.ObjectOutputStream::flush (8 bytes)
+ 454581  956   !   3       sun.rmi.server.UnicastServerRef::logCall (96 bytes)
+ 454697  957       3       sun.rmi.transport.StreamRemoteCall::getResultStream (86 bytes)
+ 455583  962       3       sun.rmi.server.MarshalOutputStream$1::run (11 bytes)
+ 455591  963       3       sun.rmi.server.MarshalOutputStream::access$000 (6 bytes)
+ 455598  964       3       java.io.ObjectOutputStream::enableReplaceObject (47 bytes)
+ 455620  960       3       java.io.ObjectOutputStream::useProtocolVersion (84 bytes)
+ 455664  961       3       sun.rmi.server.MarshalOutputStream$1::run (5 bytes)
+<writer thread='140735870379776'/>
+ 467006  966     n 0       java.lang.System::currentTimeMillis (native)   (static)
