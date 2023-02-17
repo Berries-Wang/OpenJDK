@@ -5,3 +5,8 @@
 
 ## Java 中的锁机制
 &nbsp;&nbsp;在Java中，每个Object，也就是每个对象都拥有一把锁。
+
+---
+
+## CAS 
+&nbsp;&nbsp;CAS是在多线程下保证线程安全的**无锁**编程技术
