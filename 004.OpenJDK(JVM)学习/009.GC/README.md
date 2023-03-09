@@ -88,7 +88,7 @@
 ---
 ## 遇到的一些VM参数
 ### 1. AdaptiveSizePolicy(自适应大小策略)
-&nbsp;&nbsp;JDK 1.8 默认使用 UseParallelGC 垃圾回收器，该垃圾回收器默认启动了 AdaptiveSizePolicy，会根据GC的情况自动计算计算 Eden、From 和 To 区的大小
+&nbsp;&nbsp;JDK 1.8 默认使用 UseParallelGC （-XX:+UseParallelGC） 垃圾回收器，该垃圾回收器默认启动了 AdaptiveSizePolicy，会根据GC的情况自动计算计算 Eden、From 和 To 区的大小
 #### 注意事项：
  - 在 JDK 1.8 中，如果使用 CMS，无论 UseAdaptiveSizePolicy 如何设置，都会将 UseAdaptiveSizePolicy 设置为 false；不过不同版本的JDK存在差异；
  - UseAdaptiveSizePolicy不要和SurvivorRatio参数显示设置搭配使用，一起使用会导致参数失效；
