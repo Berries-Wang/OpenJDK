@@ -1,8 +1,44 @@
+- [JVM GC(Garbage Collection)](#jvm-gcgarbage-collection)
+  - [GC](#gc)
+  - [各垃圾收集器性能对比](#各垃圾收集器性能对比)
+    - [JDK8 中](#jdk8-中)
+  - [分代收集理论](#分代收集理论)
+    - [GC 分类](#gc-分类)
+  - [JVM GC](#jvm-gc)
+    - [评判GC的两个核心标准](#评判gc的两个核心标准)
+  - [JVM内存空间初始化](#jvm内存空间初始化)
+  - [JVM堆的划分(仅Heap)](#jvm堆的划分仅heap)
+  - [CollectedHeap](#collectedheap)
+    - [重要方法](#重要方法)
+  - [CollectorPolicy](#collectorpolicy)
+  - [CollectedHeap之间的继承关系](#collectedheap之间的继承关系)
+  - [备注](#备注)
+  - [遇到的一些VM参数](#遇到的一些vm参数)
+    - [1. AdaptiveSizePolicy(自适应大小策略)](#1-adaptivesizepolicy自适应大小策略)
+      - [注意事项：](#注意事项)
+  - [收集策略的继承关系(在上的是超类，往下是子类)](#收集策略的继承关系在上的是超类往下是子类)
+  - [函数分析](#函数分析)
+    - [jdk-jdk8-b120/hotspot/src/share/vm/memory/universe.cpp#universe\_init](#jdk-jdk8-b120hotspotsrcsharevmmemoryuniversecppuniverse_init)
+  - [JVM参数](#jvm参数)
+    - [1. CompressedClassSpaceSize （与UseCompressedOops区分）](#1-compressedclassspacesize-与usecompressedoops区分)
+    - [2. MetaspaceSize](#2-metaspacesize)
+  - [注意事项](#注意事项-1)
+    - [FULL GC 是串行的](#full-gc-是串行的)
+  - [附录](#附录)
+    - [GC分类](#gc分类)
+  - [参考资料](#参考资料)
+
 # JVM GC(Garbage Collection)
 ## GC 
 &nbsp;&nbsp;GC是指垃圾回收，但是在JVM的实现中，GC更为准确的意思是指内存管理器，他有两个职责： 
 1. 内存的分配管理
 2. 垃圾回收
+
+## 各垃圾收集器性能对比
+### JDK8 中
+- [JDK8 GC Collector性能比对](./008.G1/008.Blogs/P99-CONF/000.G1%3A-To-Infinity-and-Beyond/000.G1%3ATo-Infinity-and-Beyond.md)
+
+---
 
 ## 分代收集理论
 &nbsp;&nbsp;分代收集理论实质上是一套符合大多数程序运行实际情况的经验法则，他建立在两个分代假说上：
