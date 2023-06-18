@@ -35,8 +35,9 @@
 
 #ifndef IDE_STANDALONE
 #include "java.h"
-#include "jni.h"
 #include "jli_util.h"
+#include "jni.h"
+#include <string.h>
 #else /* IDE_STANDALONE */
 // The defines we need for stand alone testing
 #include <stdio.h>
@@ -212,7 +213,7 @@ JLI_CmdToArgs(char* cmdline) {
     if (JLI_AddArgsFromEnvVar(envArgs, JDK_JAVA_OPTIONS)) {
         // JLI_SetTraceLauncher is not called yet
         // Show _JAVA_OPTIONS content along with JDK_JAVA_OPTIONS to aid diagnosis
-        if (getenv(JLDEBUG_ENV_ENTRY)) {
+        if (NULL != getenv(JLDEBUG_ENV_ENTRY) && strcmp(getenv(JLDEBUG_ENV_ENTRY), "ON") == 0) {
             char *tmp = getenv("_JAVA_OPTIONS");
             if (NULL != tmp) {
                 JLI_ReportMessage(ARG_INFO_ENVVAR, "_JAVA_OPTIONS", tmp);

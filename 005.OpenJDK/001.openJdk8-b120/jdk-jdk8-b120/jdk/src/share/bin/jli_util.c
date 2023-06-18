@@ -89,7 +89,7 @@ void JLI_TraceLauncher(const char *fmt, ...) {
 }
 
 void JLI_SetTraceLauncher() {
-  if (getenv(JLDEBUG_ENV_ENTRY) != 0) {
+  if (NULL != getenv(JLDEBUG_ENV_ENTRY) && strcmp(getenv(JLDEBUG_ENV_ENTRY), "ON") == 0) {
     _launcher_debug = JNI_TRUE;
     JLI_TraceLauncher("----%s----\n", JLDEBUG_ENV_ENTRY);
   }

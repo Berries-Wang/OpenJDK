@@ -30,20 +30,41 @@ launch.json配置
 &nbsp;&nbsp;launch.json配置如下:
 ```json
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "java H",
+            "name": "java JitStu.002.OpenJDK8u312-GA",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/005.OpenJDK/000.openJDK_8u40/build/linux-x86_64-normal-server-slowdebug/jdk/bin/java",
-            "args": ["D"],
+            "program": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/bin/java",
+            "args": [ // 为什么这么指定VM options，请参看 man java的输出
+                //"-XX:+UseG1GC", // 启用G1
+                // "-XX:GCLogLevel=finest", // 实验选项,需要打开-XX:+UnlockExperimentalVMOptions,从而获取更为详细的日志信息
+                // "-XX:+UnlockExperimentalVMOptions",
+                "-XX:+UseParNewGC",
+                "-XX:+UseConcMarkSweepGC",
+                //"-XX:+TraceBiasedLocking", // 追踪偏向锁信息,默认为false
+                "-XX:+PrintWeiLog", // 是否打印自定义日志
+                "-XX:-PrintCompilation", // 输出被编译方法的统计信息，因此使用PrintCompilation可以很方便的看出哪些是热点代码
+                "-XX:+UnlockCommercialFeatures",
+                "-XX:+FlightRecorder", // JDK8 配置
+                //开启JMC服务端口
+                "-Dcom.sun.management.jmxremote.rmi.port=1099",
+                "-Dcom.sun.management.jmxremote=true",
+                "-Dcom.sun.management.jmxremote.port=1099",
+                "-Dcom.sun.management.jmxremote.ssl=false",
+                "-Dcom.sun.management.jmxremote.authenticate=false",
+                "-Dcom.sun.management.jmxremote.local.only=false",
+                "-Xms100M",
+                "-Xms100M",
+                "JitStu"
+            ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/005.OpenJDK/000.openJDK_8u40/build",
-            "environment": [],
+            "cwd": "${workspaceFolder}/005.OpenJDK/003.prictice-code",
+            // 设置环境变量
+            "environment": [
+                {
+                    "name": "_JAVA_LAUNCHER_DEBUG",
+                    "value": "OFF"  // 是否开启调试模式： ON:开启；OFF:关闭
+                }
+            ],
             "externalConsole": false,
             "MIMode": "gdb",
             "setupCommands": [
@@ -52,10 +73,21 @@ launch.json配置
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
                 }
-            ]
+            ],
+            "osx": {
+                "MIMode": "lldb",
+                "internalConsoleOptions": "openOnSessionStart",
+            },
+            "linux": {
+                "MIMode": "gdb",
+                "setupCommands": [
+                    {
+                        "text": "handle SIGSEGV noprint nostop",
+                        "description": "Disable stopping on signals handled by the JVM"
+                    }
+                ]
+            }
         }
-    ]
-}
 ```
 
 -----------------

@@ -40,6 +40,7 @@
 #include "runtime/thread.inline.hpp"
 #include "runtime/vmThread.hpp"
 #include "utilities/macros.hpp"
+#include "wei_log/WeiLog.hpp"
 #if INCLUDE_ALL_GCS
 #include "gc_implementation/concurrentMarkSweep/cmsAdaptiveSizePolicy.hpp"
 #include "gc_implementation/concurrentMarkSweep/cmsGCAdaptivePolicyCounters.hpp"
@@ -150,9 +151,15 @@ void CollectorPolicy::initialize_size_info() {
       SIZE_FORMAT "  Maximum heap(byte) " SIZE_FORMAT,
       _min_heap_byte_size, _initial_heap_byte_size, _max_heap_byte_size);
   }
-  gclog_or_tty->print_cr("Wei Say: Minimum heap(MB) " SIZE_FORMAT "  Initial heap(MB) "
-      SIZE_FORMAT "  Maximum heap(MB) " SIZE_FORMAT,
-      _min_heap_byte_size/WEI_BYTE_TO_MB, _initial_heap_byte_size/WEI_BYTE_TO_MB, _max_heap_byte_size/WEI_BYTE_TO_MB);
+  // 选择性打印debug日志
+  if (PrintWeiLog) {
+    gclog_or_tty->print_cr("Wei Say: Minimum heap(MB) " SIZE_FORMAT
+                           "  Initial heap(MB) " SIZE_FORMAT
+                           "  Maximum heap(MB) " SIZE_FORMAT,
+                           _min_heap_byte_size / WEI_BYTE_TO_MB,
+                           _initial_heap_byte_size / WEI_BYTE_TO_MB,
+                           _max_heap_byte_size / WEI_BYTE_TO_MB);
+  }
 
   DEBUG_ONLY(CollectorPolicy::assert_size_info();)
 }

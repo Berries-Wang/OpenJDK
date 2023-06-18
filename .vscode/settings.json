@@ -76,7 +76,8 @@
         "jli_util.h": "c",
         "manifest_info.h": "c",
         "java_md.h": "c",
-        "types.h": "c"
+        "types.h": "c",
+        "jni.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

@@ -4,6 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
             "name": "java D-000.openJDK_8u40",
             "type": "cppdbg",
@@ -437,7 +438,7 @@
                 // "-XX:+UnlockExperimentalVMOptions",
                 "-XX:+UseParNewGC",
                 "-XX:+UseConcMarkSweepGC",
-                "-XX:+TraceBiasedLocking", // 追踪偏向所信息,默认为false
+                "-XX:+TraceBiasedLocking", // 追踪偏向锁信息,默认为false
                 "-Xms100M",
                 "-Xms100M",
                 "SynchronizedStu"
@@ -479,8 +480,9 @@
                 // "-XX:+UnlockExperimentalVMOptions",
                 "-XX:+UseParNewGC",
                 "-XX:+UseConcMarkSweepGC",
-                "-XX:+TraceBiasedLocking", // 追踪偏向所信息,默认为false
-                "-XX:+PrintCompilation",
+                //"-XX:+TraceBiasedLocking", // 追踪偏向锁信息,默认为false
+                "-XX:+PrintWeiLog", // 是否打印自定义日志
+                "-XX:-PrintCompilation", // 输出被编译方法的统计信息，因此使用PrintCompilation可以很方便的看出哪些是热点代码
                 "-XX:+UnlockCommercialFeatures",
                 "-XX:+FlightRecorder", // JDK8 配置
                 //开启JMC服务端口
@@ -496,7 +498,13 @@
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/005.OpenJDK/003.prictice-code",
-            "environment": [],
+            // 设置环境变量
+            "environment": [
+                {
+                    "name": "_JAVA_LAUNCHER_DEBUG",
+                    "value": "OFF"  // 是否开启调试模式： ON:开启；OFF:关闭
+                }
+            ],
             "externalConsole": false,
             "MIMode": "gdb",
             "setupCommands": [

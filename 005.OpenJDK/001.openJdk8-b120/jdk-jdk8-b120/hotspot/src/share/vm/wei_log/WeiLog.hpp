@@ -1,5 +1,6 @@
 #include <stdarg.h>
 #include <stdio.h>
+#include <string.h>
 
 #ifndef _WEI_LOG_WANG
 #define _WEI_LOG_WANG

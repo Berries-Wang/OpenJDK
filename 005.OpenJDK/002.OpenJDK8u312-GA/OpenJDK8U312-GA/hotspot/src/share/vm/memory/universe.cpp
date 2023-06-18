@@ -74,6 +74,7 @@
 #include "utilities/hashtable.inline.hpp"
 #include "utilities/preserveException.hpp"
 #include "utilities/macros.hpp"
+#include "wei_log/WeiLog.hpp"
 #if INCLUDE_ALL_GCS
 #include "gc_implementation/concurrentMarkSweep/cmsAdaptiveSizePolicy.hpp"
 #include "gc_implementation/concurrentMarkSweep/cmsCollectorPolicy.hpp"
@@ -806,7 +807,7 @@ char* Universe::preferred_heap_base(size_t heap_size, size_t alignment, NARROW_O
  * 
  */ 
 jint Universe::initialize_heap() {
-  tty->print_cr("Wei Say: 开始初始化JVM堆空间.....");
+  wei_log_info(1,"Wei Say: 开始初始化JVM堆空间.....");
 
   if (UseParallelGC) {
 #if INCLUDE_ALL_GCS

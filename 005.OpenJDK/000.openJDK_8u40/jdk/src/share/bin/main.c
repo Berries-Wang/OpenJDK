@@ -31,6 +31,7 @@
  */
 
 #include "defines.h"
+#include <string.h>
 
 #ifdef _MSC_VER
 #if _MSC_VER > 1400 && _MSC_VER < 1600
@@ -101,7 +102,7 @@ int main(int argc, char **argv)
 #ifdef _WIN32
     {
         int i = 0;
-        if (getenv(JLDEBUG_ENV_ENTRY) != NULL) {
+        if (NULL != getenv(JLDEBUG_ENV_ENTRY) && strcmp(getenv(JLDEBUG_ENV_ENTRY), "ON") == 0) {
             printf("Windows original main args:\n");
             for (i = 0 ; i < __argc ; i++) {
                 printf("wwwd_args[%d] = %s\n", i, __argv[i]);

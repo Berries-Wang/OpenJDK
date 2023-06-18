@@ -38,6 +38,7 @@
 #include "runtime/init.hpp"
 #include "runtime/thread.inline.hpp"
 #include "services/heapDumper.hpp"
+#include "wei_log/WeiLog.hpp"
 
 
 #ifdef ASSERT
@@ -297,7 +298,7 @@ HeapWord* CollectedHeap::allocate_from_tlab_slow(KlassHandle klass, Thread* thre
    * 对于空白的地方只能一个字一个字的扫描，这会非常慢。所以将这部分空白的地方也分配一个dummy对象(哑元对象)，
    * 这样GC在线性遍历的时候就能做到快速遍历了,这样也能统一处理。
    */ 
-  gclog_or_tty->print_cr("Wei Say: 正在执行 thread->tlab().clear_before_allocation()  ,会进行哑元对象的填充...");
+  wei_log_info(1,"Wei Say: 正在执行 thread->tlab().clear_before_allocation()  ,会进行哑元对象的填充...");
   thread->tlab().clear_before_allocation();
 
   // 即TLAB拓展失败

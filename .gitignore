@@ -9,3 +9,5 @@
 014.Unix网络/000.IO复用/app
 014.Unix网络/000.IO复用/client
 005.OpenJDK/003.prictice-code/*.class
+005.OpenJDK/003.prictice-code/hotspot_pid*.log
+005.OpenJDK/003.prictice-code/hs_err_pid*.log

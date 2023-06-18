@@ -2368,6 +2368,9 @@ class CommandLineFlags {
                                                                             \
   manageable(bool, PrintGCDetails, false,                                   \
           "Print more details at garbage collection")                       \
+  /*By Wei.Wang*/                                                           \
+  manageable(bool, PrintWeiLog, false,                                      \
+          "Print Wei Debug Log ")                                           \
                                                                             \
   manageable(bool, PrintGCDateStamps, false,                                \
           "Print date stamps at garbage collection")                        \
