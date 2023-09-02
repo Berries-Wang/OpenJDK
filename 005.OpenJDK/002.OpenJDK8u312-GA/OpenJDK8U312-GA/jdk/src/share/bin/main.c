@@ -99,7 +99,7 @@ main(int argc, char **argv)
 #ifdef _WIN32
     {
         int i = 0;
-        if (getenv(JLDEBUG_ENV_ENTRY) != NULL) {
+        if (NULL != getenv(JLDEBUG_ENV_ENTRY) && strcmp(getenv(JLDEBUG_ENV_ENTRY), "ON") == 0) {
             printf("Windows original main args:\n");
             for (i = 0 ; i < __argc ; i++) {
                 printf("wwwd_args[%d] = %s\n", i, __argv[i]);

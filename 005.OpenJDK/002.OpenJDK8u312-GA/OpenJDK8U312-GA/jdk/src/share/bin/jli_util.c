@@ -86,27 +86,24 @@ JLI_MemFree(void *ptr)
 
 /**
  * debug helpers we use
- * JNI_FALSE -> JNI_TRUE  Debug模式开启
+ * JNI_FALSE -> JNI_TRUE  Debug模式开启, 或者设置环境变量: 见void JLI_SetTraceLauncher();
  */
-static jboolean _launcher_debug = JNI_TRUE;
+static jboolean _launcher_debug = JNI_FALSE;
 
-void
-JLI_TraceLauncher(const char* fmt, ...)
-{
+void JLI_TraceLauncher(const char *fmt, ...) {
     va_list vl;
-    if (_launcher_debug != JNI_TRUE) return;
+    if (_launcher_debug != JNI_TRUE)
+        return;
     va_start(vl, fmt);
-    vprintf(fmt,vl);
+    vprintf(fmt, vl);
     va_end(vl);
 }
 
-void
-JLI_SetTraceLauncher()
-{
-   if (getenv(JLDEBUG_ENV_ENTRY) != 0) {
+void JLI_SetTraceLauncher() {
+    if (NULL != getenv(JLDEBUG_ENV_ENTRY) && strcmp(getenv(JLDEBUG_ENV_ENTRY), "ON") == 0) {
         _launcher_debug = JNI_TRUE;
         JLI_TraceLauncher("----%s----\n", JLDEBUG_ENV_ENTRY);
-   }
+    }
 }
 
 jboolean

@@ -4,6 +4,18 @@
 ## 探索新世界
 &nbsp;&nbsp;新世界的大门: 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/main.c
 
+## 开启Debug模式
+```log
+   # 1. 是否打印debug日志
+   > 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/jli_util.c
+    _launcher_debug
+   通过void JLI_SetTraceLauncher();函数可知，通过设置环境变量即可开启debug模式:
+   launch.json
+   // 设置环境变量
+   "environment": [{"name": "_JAVA_LAUNCHER_DEBUG","value": "1"}],
+   
+```
+
 ## 版本说明
 1. GA版本: General Availability，正式发布的版本，官方开始推荐广泛使用，国外有的用GA来表示release版本。
 ## OpenJDK编译平台支持

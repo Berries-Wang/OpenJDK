@@ -2368,6 +2368,9 @@ class CommandLineFlags {
                                                                             \
   manageable(bool, PrintGCDetails, false,                                   \
           "Print more details at garbage collection")                       \
+  /*By Wei.Wang*/                                                           \
+  manageable(bool, PrintWeiLog, false,                                      \
+          "Print Wei Debug Log ")                                           \
                                                                             \
   manageable(bool, PrintGCDateStamps, false,                                \
           "Print date stamps at garbage collection")                        \
@@ -4089,11 +4092,19 @@ class CommandLineFlags {
 #define MATERIALIZE_LP64_PRODUCT_FLAG(type, name, value, doc) /* flag is constant */
 #endif // _LP64
 
-RUNTIME_FLAGS(DECLARE_DEVELOPER_FLAG, DECLARE_PD_DEVELOPER_FLAG, DECLARE_PRODUCT_FLAG, DECLARE_PD_PRODUCT_FLAG, DECLARE_DIAGNOSTIC_FLAG, DECLARE_EXPERIMENTAL_FLAG, DECLARE_NOTPRODUCT_FLAG, DECLARE_MANAGEABLE_FLAG, DECLARE_PRODUCT_RW_FLAG, DECLARE_LP64_PRODUCT_FLAG)
+RUNTIME_FLAGS(DECLARE_DEVELOPER_FLAG, DECLARE_PD_DEVELOPER_FLAG,
+              DECLARE_PRODUCT_FLAG, DECLARE_PD_PRODUCT_FLAG,
+              DECLARE_DIAGNOSTIC_FLAG, DECLARE_EXPERIMENTAL_FLAG,
+              DECLARE_NOTPRODUCT_FLAG, DECLARE_MANAGEABLE_FLAG,
+              DECLARE_PRODUCT_RW_FLAG, DECLARE_LP64_PRODUCT_FLAG)
 
-RUNTIME_OS_FLAGS(DECLARE_DEVELOPER_FLAG, DECLARE_PD_DEVELOPER_FLAG, DECLARE_PRODUCT_FLAG, DECLARE_PD_PRODUCT_FLAG, DECLARE_DIAGNOSTIC_FLAG, DECLARE_NOTPRODUCT_FLAG)
+RUNTIME_OS_FLAGS(DECLARE_DEVELOPER_FLAG, DECLARE_PD_DEVELOPER_FLAG,
+                 DECLARE_PRODUCT_FLAG, DECLARE_PD_PRODUCT_FLAG,
+                 DECLARE_DIAGNOSTIC_FLAG, DECLARE_NOTPRODUCT_FLAG)
 
-ARCH_FLAGS(DECLARE_DEVELOPER_FLAG, DECLARE_PRODUCT_FLAG, DECLARE_DIAGNOSTIC_FLAG, DECLARE_EXPERIMENTAL_FLAG, DECLARE_NOTPRODUCT_FLAG)
+ARCH_FLAGS(DECLARE_DEVELOPER_FLAG, DECLARE_PRODUCT_FLAG,
+           DECLARE_DIAGNOSTIC_FLAG, DECLARE_EXPERIMENTAL_FLAG,
+           DECLARE_NOTPRODUCT_FLAG)
 
 // Extensions
 

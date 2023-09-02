@@ -7,12 +7,12 @@ public class JitStu {
         int sum = 0;
         for (;;) {
             sum += 1;
-            try{
-Thread.sleep(100);
-            }catch(Exception e){
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
 
             }
-            
+
         }
     }
 }
@@ -33,6 +33,6 @@ Thread.sleep(100);
 //      61   13 %     3       JitStu::loop @ 4 (51 bytes)
 //      62   14       3       JitStu::loop (51 bytes)
 //      62   15 %     4       JitStu::loop @ 4 (51 bytes)
-//      64   13 %     3       JitStu::loop @ -2 (51 bytes)   made not entrant
+//      64   13 %     3       JitStu::loop @ -2 (51 bytes)   made not entrant @see 004.OpenJDK(JVM)学习/011.执行与优化/001.JVM后端编译和优化_Java及时编译器原理解析及实战.md
 //      64   15 %     4       JitStu::loop @ -2 (51 bytes)   made not entrant
 // ------------->1784293664

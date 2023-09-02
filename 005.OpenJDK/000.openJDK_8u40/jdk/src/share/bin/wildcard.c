@@ -418,7 +418,7 @@ JLI_WildcardExpandClasspath(const char *classpath)
     FileList_expandWildcards(fl);
     expanded = FileList_join(fl, PATH_SEPARATOR);
     FileList_free(fl);
-    if (getenv(JLDEBUG_ENV_ENTRY) != 0)
+    if (NULL != getenv(JLDEBUG_ENV_ENTRY) && strcmp(getenv(JLDEBUG_ENV_ENTRY), "ON") == 0)
         printf("Expanded wildcards:\n"
                "    before: \"%s\"\n"
                "    after : \"%s\"\n",
