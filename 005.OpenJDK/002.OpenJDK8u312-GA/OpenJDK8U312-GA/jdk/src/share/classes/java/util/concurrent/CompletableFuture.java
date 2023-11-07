@@ -175,43 +175,48 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
      *   argument, if present. The method returns true if known to be
      *   complete.
      *
-     * * Completion method tryFire(int mode) invokes the associated x
+     * * Completion method tryFire(int mode) invokes the associated(adj.有关联的，相关的；联合的，联营的) x
      *   method with its held arguments, and on success cleans up.
      *   The mode argument allows tryFire to be called twice (SYNC,
      *   then ASYNC); the first to screen and trap exceptions while
-     *   arranging to execute, and the second when called from a
+     *   arranging(v.安排（arrange 的 ing 形式）) to execute, and the second when called from a
      *   task. (A few classes are not used async so take slightly
      *   different forms.)  The claim() callback suppresses function
      *   invocation if already claimed by another thread.
+     *   (完成方法 tryFire(int mode) 使用其保存的参数调用关联的 x 方法，并在成功时进行清理。
+     *    mode 参数允许 tryFire 被调用两次（SYNC，然后 ASYNC）； 第一个在安排执行时筛选并捕获异常，第二个在从任务调用时进行。
+     *  （一些类不是异步使用的，因此采用略有不同的形式。）如果已被另一个线程声明，则claim()回调会抑制函数调用。)
      *
      * * CompletableFuture method xStage(...) is called from a public
-     *   stage method of CompletableFuture x. It screens user
+     *   stage method of CompletableFuture x. It screens(screen复数,n.屏幕;v.屏蔽;) user
      *   arguments and invokes and/or creates the stage object.  If
      *   not async and x is already complete, the action is run
-     *   immediately.  Otherwise a Completion c is created, pushed to
+     *   immediately(adv.立即;马上).  Otherwise a Completion c is created, pushed to
      *   x's stack (unless done), and started or triggered via
      *   c.tryFire.  This also covers races possible if x completes
      *   while pushing.  Classes with two inputs (for example BiApply)
      *   deal with races across both while pushing actions.  The
      *   second completion is a CoCompletion pointing to the first,
      *   shared so that at most one performs the action.  The
-     *   multiple-arity methods allOf and anyOf do this pairwise to
+     *   multiple-arity methods allOf and anyOf do this pairwise(adv.成对地;成双地;adj.成对发生的) to
      *   form trees of completions.
      *
-     * Note that the generic type parameters of methods vary according
+     * Note that the generic type parameters of methods vary(变化;改变;) according
      * to whether "this" is a source, dependent, or completion.
      *
-     * Method postComplete is called upon completion unless the target
+     * Method postComplete is called upon(将要发生，马上来临) completion unless the target
      * is guaranteed not to be observable (i.e., not yet returned or
      * linked). Multiple threads can call postComplete, which
      * atomically pops each dependent action, and tries to trigger it
      * via method tryFire, in NESTED mode.  Triggering can propagate
      * recursively, so NESTED mode returns its completed dependent (if
      * one exists) for further processing by its caller (see method
-     * postFire).
+     * postFire). (方法 postComplete 在完成时被调用，除非目标保证不可观察（即，尚未返回或链接）。 
+     * 多个线程可以调用 postComplete，它会自动弹出每个相关操作，并尝试通过方法 tryFire 在嵌套模式下触发它。
+     * 触发可以递归传播，因此 NESTED 模式返回其完整的依赖项（如果存在）以供其调用者进一步处理（请参阅方法 postFire）。)
      *
-     * Blocking methods get() and join() rely on Signaller Completions
-     * that wake up waiting threads.  The mechanics are similar to
+     * Blocking methods get() and join() rely(依赖) on Signaller Completions
+     * that wake up waiting threads.  The mechanics(n.机械学，力学；机制，运作方式；机械部件，运转部件；结构，构成) are similar to
      * Treiber stack wait-nodes used in FutureTask, Phaser, and
      * SynchronousQueue. See their internal documentation for
      * algorithmic details.
@@ -227,6 +232,9 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
      * Completion fields need not be declared as final or volatile
      * because they are only visible to other threads upon safe
      * publication.
+     * (如果不采取预防措施，随着完成链的建立，CompletableFutures 很容易出现垃圾堆积，每个完成链都指向其来源。
+     *  因此，我们尽快清空字段（特别参见方法 Completion.detach）。 无论如何，所需的筛选检查都会无害地忽略在线程清空字段的竞争期间可能获得的空参数。
+     *  我们还尝试从可能永远不会弹出的堆栈中取消触发的完成（请参阅方法 postFire）。 完成字段不需要声明为 Final 或 易失性的，因为它们仅在安全发布时对其他线程可见。)
      */
 
     volatile Object result;       // Either the result or boxed AltResult
