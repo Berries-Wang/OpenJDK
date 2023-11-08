@@ -230,7 +230,7 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
      * out fields.  We also try to unlink fired Completions from
      * stacks that might never be popped (see method postFire).
      * Completion fields need not be declared as final or volatile
-     * because they are only visible to other threads upon safe
+     * because they are only visible to other threads upon safe 
      * publication.
      * (如果不采取预防措施，随着完成链的建立，CompletableFutures 很容易出现垃圾堆积，每个完成链都指向其来源。
      *  因此，我们尽快清空字段（特别参见方法 Completion.detach）。 无论如何，所需的筛选检查都会无害地忽略在线程清空字段的竞争期间可能获得的空参数。
