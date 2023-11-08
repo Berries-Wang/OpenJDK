@@ -238,7 +238,12 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
      */
 
     volatile Object result;       // Either the result or boxed AltResult
-    volatile Completion stack;    // Top of Treiber stack of dependent actions
+    /**
+     * Top of Treiber stack of dependent actions
+     * 
+     * ? dependent actions: 指的是依赖于${this}执行完成的的actions,即${this}执行完成了，就会触发执行${this.stack}里的dependent actions
+     */
+    volatile Completion stack; 
 
     final boolean internalComplete(Object r) { // CAS from null to r
         return UNSAFE.compareAndSwapObject(this, RESULT, null, r);
