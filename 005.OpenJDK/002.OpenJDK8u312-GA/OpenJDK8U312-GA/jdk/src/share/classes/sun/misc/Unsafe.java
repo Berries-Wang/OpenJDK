@@ -1128,6 +1128,8 @@ public final class Unsafe {
      * other threads. This method is generally only useful if the
      * underlying field is a Java volatile (or if an array cell, one
      * that is otherwise only accessed using volatile accesses).
+     * 
+     * {@link #putObjectVolatile(Object, long, Object)} 保证写入的有序性，但不能保证可见性;
      */
     public native void putOrderedObject(Object o, long offset, Object x);
 

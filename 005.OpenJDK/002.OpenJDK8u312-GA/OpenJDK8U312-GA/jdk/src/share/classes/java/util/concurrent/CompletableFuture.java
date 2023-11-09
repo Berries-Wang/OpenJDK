@@ -253,10 +253,15 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
         return UNSAFE.compareAndSwapObject(this, STACK, cmp, val);
     }
 
-    /** Returns true if successfully pushed c onto stack. */
+    /** Returns true if successfully pushed c onto stack.
+     * 当成功将c入栈，返回true;否则返回false;
+     */
     final boolean tryPushStack(Completion c) {
+        // 获取栈顶元素
         Completion h = stack;
+        // 赋值: c.next = h , 即将c入栈
         lazySetNext(c, h);
+        // 入栈最后一步: 将c设置为栈顶
         return UNSAFE.compareAndSwapObject(this, STACK, h, c);
     }
 
@@ -485,7 +490,12 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
         public final Void getRawResult()       { return null; }
         public final void setRawResult(Void v) {}
     }
-
+    
+    /**
+     * 赋值操作,即: c.next = next 
+     * @param c 
+     * @param next
+     */
     static void lazySetNext(Completion c, Completion next) {
         UNSAFE.putOrderedObject(c, NEXT, next);
     }
