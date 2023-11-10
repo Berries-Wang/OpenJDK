@@ -265,7 +265,7 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
         return UNSAFE.compareAndSwapObject(this, STACK, h, c);
     }
 
-    /** Unconditionally pushes c onto stack, retrying if necessary. */
+    /** Unconditionally(无条件地) pushes c onto stack, retrying if necessary. */
     final void pushStack(Completion c) {
         do {} while (!tryPushStack(c));
     }
@@ -280,7 +280,8 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
     /** The encoding of the null value. */
     static final AltResult NIL = new AltResult(null);
 
-    /** Completes with the null value, unless already completed. */
+    /** Completes with the null value, unless already completed(除非，除非在……情况下). 
+    */
     final boolean completeNull() {
         return UNSAFE.compareAndSwapObject(this, RESULT, null,
                                            NIL);
@@ -410,7 +411,7 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
         return t;
     }
 
-    /* ------------- Async task preliminaries -------------- */
+    /* ------------- Async task preliminaries(n.预赛；初期微震；正文前书页（preliminary 的复数）) -------------- */
 
     /**
      * A marker interface identifying asynchronous tasks produced by
