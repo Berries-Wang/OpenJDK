@@ -2425,6 +2425,39 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
     }
 
 
+    /**
+     * combine : 结合;组合;
+     * 在两个任务执行完成之后，把两个任务的结果合并。两个任务时并行执行的，他们之间没有先后顺序.
+     * 
+     * <pre>
+     *   CompletableFuture executeRes = CompletableFuture.supplyAsync(() -> {
+     *      try {
+     *          TimeUnit.SECONDS.sleep(8);
+     *      } catch (InterruptedException e) {
+     *      }
+     *      System.out.println("大哥处理完成");
+     *      return "大哥处理完成";
+     *  }, THREAD_POOL).thenCombineAsync(CompletableFuture.supplyAsync(() -> {
+     *      System.out.println("二弟处理完成");
+     *      return "二弟处理完成";
+     *  }), (res1, res2) -> {
+     *      return res1 + res2;
+     *  }, THREAD_POOL).thenComposeAsync((res) -> {
+     *      System.out.println("处理结果: " + res);
+     *      return CompletableFuture.completedFuture("处理完成: " + res);
+     *  }, THREAD_POOL);
+     *  System.out.println(executeRes.get());
+     *  System.out.println("END...");
+     * 
+     * ---> 输出
+     *    二弟处理完成
+     *    大哥处理完成
+     *    处理结果: 大哥处理完成二弟处理完成
+     *    处理完成: 大哥处理完成二弟处理完成
+     *    END...
+     * </pre>
+     * 
+     */
     public <U, V> CompletableFuture<V> thenCombine(
             CompletionStage<? extends U> other,
             BiFunction<? super T, ? super U, ? extends V> fn) {
@@ -2524,7 +2557,34 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
             Executor executor) {
         return orRunStage(screenExecutor(executor), other, action);
     }
-
+    
+    /**
+     * compose: v.组成，构成；作曲；撰写（信、诗或演讲稿）；使镇静，使平静；为（照片、图像）构图；排版，排稿
+     * 
+     * 可以使用thenCompose()按顺序链接两个CompletableFuture对象，实现异步的任务链。
+     * 他的作用是将前一个任务的返回结果作为下一个任务的输入参数，从而形成一个依赖关系。(存在先后顺序)
+     * 
+     * <pre>
+     *   CompletableFuture executeRes = CompletableFuture.supplyAsync(() -> {
+     *       System.out.println("正在获取原材料");
+     *       return "原材料";
+     *   }, THREAD_POOL).thenCompose((res) -> {
+     *       System.out.println("处理完成: " + res);
+     *       return CompletableFuture.completedFuture("处理完成");
+     *   });
+     *   System.out.println(executeRes.get());
+     *   System.out.println("END...");
+     * 
+     *  ---> 输出
+     *  正在获取原材料
+     *  处理完成: 原材料
+     *  处理完成
+     *  END...
+     * 
+     * </pre>
+     * 
+     * 
+     */
     public <U> CompletableFuture<U> thenCompose(
             Function<? super T, ? extends CompletionStage<U>> fn) {
         return uniComposeStage(null, fn);
@@ -2585,6 +2645,27 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
         return uniWhenCompleteStage(screenExecutor(executor), action);
     }
 
+    /**
+     * <pre>
+     *   CompletableFuture.supplyAsync(() -> {
+     *      System.out.println("Hello");
+     *      throw new RuntimeException();
+     *  }, THREAD_POOL).handle((res, ex) -> {
+     *      System.out.println("res -> " + res + " , ex: " + (null == ex ? "NULL" : ex.getClass().getName()));
+     *      return 0;
+     *  }).whenComplete((res, ex) -> {
+     *      System.out.println("异常处理完成 -> " + res + " , ex: " + (null == ex ? "NULL" : ex.getClass().getName()));
+     *  }).join();
+     *  System.out.println("END...");
+     * ----> 输出
+     *    Hello
+     *    res -> null , ex: java.util.concurrent.CompletionException
+     *    异常处理完成 -> 0 , ex: NULL
+     *    END...
+     * </pre>
+     * 
+     * 
+     */
     public <U> CompletableFuture<U> handle(
             BiFunction<? super T, Throwable, ? extends U> fn) {
         return uniHandleStage(null, fn);
@@ -2618,8 +2699,28 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
      * completion when it completes exceptionally; otherwise, if this
      * CompletableFuture completes normally, then the returned
      * CompletableFuture also completes normally with the same value.
-     * Note: More flexible versions of this functionality are
+     * Note: More flexible versions of this functionality(功能) are
      * available using methods {@code whenComplete} and {@code handle}.
+     * flexible: adj.灵活的;
+     * 
+     * <pre>
+     *    除了handleX()方法处理异常，该方法也可以处理异常，如注释，但是不如handle 、whenComplete灵活
+     *   CompletableFuture.supplyAsync(() -> {
+     *       System.out.println("Hello");
+     *       throw new RuntimeException();
+     *   }, THREAD_POOL).exceptionally((ex) -> {
+     *       System.out.println("异常了 --> " + ex.getClass().getName());
+     *       return "Hello";
+     *   }).whenComplete((res, ex) -> {
+     *       System.out.println("流程执行完成: " + res + "  EX: " + (null == ex ? "NULL" : ex.getClass().getName()));
+     *   }).join();
+     *   System.out.println("END...");
+     * ---> 输出:
+     * Hello
+     * 异常了 --> java.util.concurrent.CompletionException
+     * 流程执行完成: Hello  EX: NULL
+     * END...
+     * </pre>
      *
      * @param fn the function to use to compute the value of the
      *           returned CompletableFuture if this CompletableFuture completed
