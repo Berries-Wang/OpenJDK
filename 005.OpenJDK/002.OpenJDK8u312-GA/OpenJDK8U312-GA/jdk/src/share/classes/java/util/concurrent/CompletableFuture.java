@@ -294,7 +294,7 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
      */
 
     /**
-     * 如上注释: result 非空表示完成
+     * 如上注释: result 非空表示完成: 异常 or 正常
      */
     volatile Object result; // Either the result or boxed AltResult
     /**
@@ -723,6 +723,7 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
 
     @SuppressWarnings("serial")
     static final class UniApply<T, V> extends UniCompletion<T, V> {
+        // 业务处理函数，即会调用f来执行上一个CF的执行结果。
         Function<? super T, ? extends V> fn;
 
         UniApply(Executor executor, CompletableFuture<V> dep,
@@ -731,7 +732,11 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
             super(executor, dep, src);
             this.fn = fn;
         }
-
+        
+        /**
+         * 尝试触发执行
+         * @param mode SYNC：同步;  ASYNC:异步
+         */
         final CompletableFuture<V> tryFire(int mode) {
             CompletableFuture<V> d;
             CompletableFuture<T> a;
@@ -745,28 +750,39 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
         }
     }
 
+    /**
+     * 
+     * @param a 上一个CF,即当前是等待a执行的结果
+     * @param f 处理函数，负责处理a的处理结果
+     * @param c
+     * @return 业务是否执行，即f是否被调用
+     */
     final <S> boolean uniApply(CompletableFuture<S> a,
-            Function<? super S, ? extends T> f,
-            UniApply<S, T> c) {
+            Function<? super S, ? extends T> f,UniApply<S, T> c) {
         Object r;
         Throwable x;
+        // a不存在(那就不会有执行结果了，也就thenApply就可以立即执行了)或当a未执行完成，或者f不存在
         if (a == null || (r = a.result) == null || f == null)
             return false;
-        tryComplete: if (result == null) {
-            if (r instanceof AltResult) {
-                if ((x = ((AltResult) r).ex) != null) {
+        tryComplete: if (result == null) { // 当前的CF未执行完成
+            if (r instanceof AltResult) { // 当a已经执行完成
+                if ((x = ((AltResult) r).ex) != null) { // 当a执行发生了异常
                     completeThrowable(x, r);
                     break tryComplete;
                 }
                 r = null;
             }
+            // a 已经执行完成，并且正常结束，未发生异常
             try {
+                // 看 thenApply参数，c==this，若不为null则是异步执行。
                 if (c != null && !c.claim())
                     return false;
                 @SuppressWarnings("unchecked")
                 S s = (S) r;
+                // 执行业务逻辑，并设置执行结果
                 completeValue(f.apply(s));
             } catch (Throwable ex) {
+                // 异常了，则将异常包装起来，作为执行结果
                 completeThrowable(ex);
             }
         }
@@ -777,10 +793,17 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
             Executor e, Function<? super T, ? extends V> f) {
         if (f == null)
             throw new NullPointerException();
+        // 创建一个新的CompletableFuture
         CompletableFuture<V> d = new CompletableFuture<V>();
+        
+    
+        // 当this还没有执行结束时
         if (e != null || !d.uniApply(this, f, null)) {
+            // 创建一个新的UniApply
             UniApply<T, V> c = new UniApply<T, V>(e, d, this, f);
+            // 将c入栈
             push(c);
+            // 尝试触发一下执行(同步方式)
             c.tryFire(SYNC);
         }
         return d;
@@ -1970,9 +1993,12 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
     }
 
     static CompletableFuture<Void> asyncRunStage(Executor e, Runnable f) {
-        if (f == null)
+        if (f == null) {
             throw new NullPointerException();
+        }
+        // 创建一个新CompletableFuture , 注意泛型是Void,说明没有返回值
         CompletableFuture<Void> d = new CompletableFuture<Void>();
+        // 提交到线程池执行
         e.execute(new AsyncRun(d, f));
         return d;
     }
@@ -2526,6 +2552,39 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
         return orApplyStage(screenExecutor(executor), other, fn);
     }
 
+    /**
+     * 当其中任意一个任务执行完成就触发。
+     * 
+     * <pre>
+     * CompletableFuture<String> task1 = CompletableFuture.supplyAsync(() -> {
+     *     System.out.println("I am Task1");
+     *     return "task1";
+     * }, THREAD_POOL);
+     *
+     * CompletableFuture<String> task2 = CompletableFuture.supplyAsync(() -> {
+     *     try {
+     *         TimeUnit.SECONDS.sleep(2);
+     *     } catch (InterruptedException e) {
+     *
+     *     }
+     *     System.out.println("I am Task2");
+     *     return "task2";
+     * }, THREAD_POOL);
+     *
+     * // task1 , task2 任意一个完成，触发执行任务3
+     * task1.acceptEither(task2, (res) -> {
+     *     System.out.println("I am Task3");
+     * });
+     *
+     * TimeUnit.SECONDS.sleep(5);
+     * 
+     * ---> 输出
+     * I am Task1
+     * I am Task3
+     * I am Task2
+     * </pre>
+     * 
+     */
     public CompletableFuture<Void> acceptEither(
             CompletionStage<? extends T> other, Consumer<? super T> action) {
         return orAcceptStage(null, other, action);
@@ -2747,14 +2806,15 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
      * {@code null}.
      *
      * <p>
-     * Among the applications of this method is to await completion
+     * Among(在..中) the applications of this method is to await completion
      * of a set of independent CompletableFutures before continuing a
-     * program, as in: {@code CompletableFuture.allOf(c1, c2,
-     * c3).join();}.
+     * program, as in: {@code CompletableFuture.allOf(c1, c2, c3).join();}.
+     * 这种方法的应用之一是在继续一个程序之前等待一组独立的CompletableFutures的完成.例如: CompletableFuture.allOf(c1, c2, c3).join();
      *
      * @param cfs the CompletableFutures
      * @return a new CompletableFuture that is completed when all of the
-     *         given CompletableFutures complete
+     *         given CompletableFutures complete.(当所有指定的CompletableFuture都完成了，会返回一个新的CompletableFuture.)
+     *         
      * @throws NullPointerException if the array or any of its elements are
      *                              {@code null}
      */
