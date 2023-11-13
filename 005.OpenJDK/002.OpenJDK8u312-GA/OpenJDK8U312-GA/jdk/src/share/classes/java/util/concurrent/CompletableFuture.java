@@ -796,7 +796,6 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
         // 创建一个新的CompletableFuture
         CompletableFuture<V> d = new CompletableFuture<V>();
         
-    
         // 当this还没有执行结束时
         if (e != null || !d.uniApply(this, f, null)) {
             // 创建一个新的UniApply
