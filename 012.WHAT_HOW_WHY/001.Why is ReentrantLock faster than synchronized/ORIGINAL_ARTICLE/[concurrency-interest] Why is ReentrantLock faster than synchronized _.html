@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<!-- saved from url=(0118)https://concurrency-interest.altair.cs.oswego.narkive.com/Bx94AChl/why-is-reentrantlock-faster-than-synchronized#post2 -->
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>[concurrency-interest] Why is ReentrantLock faster than synchronized ?</title>
+    <link rel="stylesheet" type="text/css"
+        href="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/style.us.4.min.css">
+    <script src="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/f.txt"
+        id="google_shimpl"></script>
+    <script type="text/javascript">var nk = {
+            conf: { logged_in: false, csrf: '', thread_hash: 'Bx94AChl' },
+            waiting_on_gdpr_result: 0
+        };</script>
+    <script src="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/jquery-1.12.4.min.js"
+        type="text/javascript"></script>
+
+    <script src="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/script.en.min.js"
+        type="text/javascript"></script>
+    <link rel="icon" href="https://narkive.net/favicon.ico" type="image/x-icon">
+    <script async="" src="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/f(1).txt"
+        crossorigin="anonymous" data-checked-head="true"></script>
+    <script type="text/javascript">
+        nk.adsense_status = { filled: 0, unfilled: 0 };
+        nk.pscore = 0;
+        nk.threadfunctionloop = function () {
+            setTimeout(function () {
+                if (typeof nk.threadfunction !== 'undefined') {
+                    nk.threadfunction();
+                } else {
+                    nk.threadfunctionloop();
+                }
+            }, 100);
+        }
+        window.googletag = window.googletag || { cmd: [] };
+        nk.tc_string = 'CPYInoAPYInoAAKAoAENCMCsAP_AAH_AABAgIsNd_X__bX9j-_5_fft0eY1P9_r3_-QzjhfNs-8F3L_W_L0X42E7NF36pq4KuR4Eu3LBIQNlHMHUTUmwaokVrzHsak2cpyNKJ7LEknMZO2dYGH9Pn9lDuYKY7_5___bx3j-v_t_-39T378Xf3_d5_2---vCfV599jbn9fV__39nP___9v-_8_______8EUwCTDUvIAuzLHBk2jSKFECMKwkKoFABRQDC0RWADg4KdlYBPqCFgAgFSEYEQIMQUYMAgAEEgCQiICQAsEAiAIgEAAIAEQCEABEwCCwAsDAIABQDQsQAoABAkIMigiOUwICpEooJbKxBKCvY0wgDrPAigURkVAAiSSEEgICQsHMcASAl4skDTFC-QAjAAAAA.YAAAAAAAAAAA';
+        nk.cmp_object = JSON.parse('{"cmpId":10,"cmpVersion":40,"gdprApplies":"","tcfPolicyVersion":2,"eventStatus":"","cmpStatus":"loaded","listenerId":null,"tcString":"","isServiceSpecific":true,"useNonStandardStacks":false,"purposeOneTreatment":false,"publisherCC":"IE","outOfBand":{"allowedVendors":{},"disclosedVendors":{}},"purpose":{"consents":{"1":true,"2":true,"3":true,"4":true,"5":true,"6":true,"7":true,"8":true,"9":true,"10":true},"legitimateInterests":{"1":false,"2":true,"3":true,"4":true,"5":true,"6":true,"7":true,"8":true,"9":true,"10":true}},"vendor":{"consents":{},"legitimateInterests":{}},"specialFeatureOptins":{"1":true,"2":true},"publisher":{"consents":{},"legitimateInterests":{},"customPurpose":{"consents":{},"legitimateInterests":{}},"restrictions":{}},"addtlConsent":""}');
+        nk.addtl_consent = '1~39.43.46.55.61.70.83.89.93.108.117.122.124.131.135.136.143.144.147.149.159.162.167.171.192.196.202.211.218.228.230.239.241.259.266.272.286.291.311.317.322.323.326.327.338.367.371.385.389.394.397.407.413.415.424.430.436.440.445.449.453.482.486.491.494.495.501.503.505.522.523.540.550.559.560.568.574.576.584.587.591.733.737.745.780.787.802.803.817.820.821.829.839.864.867.874.899.904.922.931.938.979.981.985.1003.1024.1027.1031.1033.1034.1040.1046.1051.1053.1067.1085.1092.1095.1097.1099.1107.1127.1135.1143.1149.1152.1162.1166.1186.1188.1201.1205.1211.1215.1226.1227.1230.1252.1268.1270.1276.1284.1286.1290.1301.1307.1312.1345.1356.1364.1365.1375.1403.1415.1416.1419.1440.1442.1449.1455.1456.1465.1495.1512.1516.1525.1540.1548.1555.1558.1564.1570.1577.1579.1583.1584.1591.1603.1616.1638.1651.1653.1665.1667.1677.1678.1682.1697.1699.1703.1712.1716.1721.1725.1732.1745.1750.1765.1769.1782.1786.1800.1808.1810.1825.1827.1832.1837.1838.1840.1842.1843.1845.1859.1866.1870.1878.1880.1889.1899.1917.1929.1942.1944.1962.1963.1964.1967.1968.1969.1978.2003.2007.2008.2027.2035.2039.2044.2046.2047.2052.2056.2064.2068.2070.2072.2074.2088.2090.2103.2107.2109.2115.2124.2130.2133.2137.2140.2145.2147.2150.2156.2166.2177.2183.2186.2202.2205.2216.2219.2220.2222.2225.2234.2253.2264.2279.2282.2292.2299.2305.2309.2312.2316.2322.2325.2328.2331.2334.2335.2336.2337.2343.2354.2357.2358.2359.2366.2370.2376.2377.2387.2392.2394.2400.2403.2405.2407.2411.2414.2416.2418.2425.2427.2440.2447.2459.2461.2462.2465.2468.2472.2477.2481.2484.2486.2488.2492.2493.2496.2497.2498.2499.2501.2510.2511.2517.2526.2527.2532.2534.2535.2542.2544.2552.2563.2564.2567.2568.2569.2571.2572.2575.2577.2583.2584.2596.2601.2604.2605.2608.2609.2610.2612.2614.2621.2628.2629.2633.2634.2636.2642.2643.2645.2646.2647.2650.2651.2652.2656.2657.2658.2660.2661.2669.2670.2677.2681.2684.2686.2687.2690.2695.2698.2707.2713.2714.2729.2739.2767.2768.2770.2772.2784.2787.2791.2792.2798.2801.2805.2812.2813.2816.2817.2818.2821.2822.2827.2830.2831.2834.2836.2838.2839.2840.2844.2846.2847.2849.2850.2851.2852.2854.2856.2860.2862.2863.2865.2867.2869.2873.2874.2875.2876.2878.2880.2881.2882.2883.2884.2886.2887.2888.2889.2891.2893.2894.2895.2897.2898.2900.2901.2908.2909.2911.2912.2913.2914.2916.2917.2918.2919.2920.2922.2923.2924.2927.2929.2930.2931.2939.2940.2941.2942.2947.2949.2950.2956.2961.2962.2963.2964.2965.2966.2968.2970.2973.2974.2975.2979.2980.2981.2983.2985.2986.2987.2991.2993.2994.2995.2997.2999.3000.3002.3003.3005.3008.3009.3010.3012.3016.3017.3018.3019.3024.3025.3028.3034.3037.3038.3043.3045.3048.3052.3053.3055.3058.3059.3063.3065.3066.3068.3070.3072.3073.3074.3075.3076.3077.3078.3089.3090.3093.3094.3095.3097.3099.3100.3104.3106.3109.3112.3116.3117.3118.3119.3120.3124.3126.3127.3128.3130.3135.3136.3145.3149.3150.3151.3154.3155.3162.3163.3167.3172.3173.3180.3182.3183.3184.3185.3187.3188.3189.3190.3194.3196.3197.3209.3210.3211.3214.3215.3217.3219.3222.3223.3225.3226.3227.3228.3230.3231.3232.3234.3235.3236.3237.3238.3240.3241.3244.3245.3250.3251.3253.3257.3260.3268.3270.3272.3281.3288.3290.3292.3293.3295.3296.3300';
+        nk.consent_packed = '1v31/7f1N/7+8/f9dvGMlX//ev8/YY5Dn22+B93pX/vpRT825GbR/Sqrg+rEA+l2GiQENsUZXJGVbLCKRK1nvLGSzSknliJvGklyxuQ218Dwl8/fFO4Myrj/8/9/e9zjr//b/9tfeb8f3d9/9/y37/t6yFfP943t/PXV/9/fnP///+2///n//////wE=';
+        nk.legitimate_interests_packed = 'AMmw0hNAN9M4mGyxRKEIxFBDQhUoAIoCDC2iBsDBQbmpAfIVhAZAgEqIgQgEIygGAwQAggSQEBGQADQIEAFEgAAAASAChAAgMkDQADQwQACgAAuNABQACCQEEwURpwwEVCJFQdrUCFJQbyxDANc8EAWKmKgAEEkSggQEJDQ44wASkB5NAsso9AlADA==';
+        nk.legitimate_interests_cnt = '1107';
+        nk.consent_cnt = '1112';
+        nk.consent_list = [];
+        nk.legitimate_interests_list = [];
+        nk.cmp_event_status = 'cmpuishown';
+        nk.cmp_agreed = false;
+        nk.gdpr_applies = false;
+        nk.cmp_consent_date = '2023-11-21';
+        nk.playbuzz_id = '6a4d995f-e67a-42de-93b3-52797c5babce';
+    </script>
+
+    <script type="text/javascript">
+        var adsense_dispatcher_id = '44';
+    </script>
+    <script>
+        nk.threadfunctionloop();
+    </script>
+
+
+    <script async=""
+        src="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/f(2).txt"></script>
+    <script src="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/ad-blocker.js"
+        type="text/javascript"></script>
+
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta http-equiv="origin-trial"
+        content="As0hBNJ8h++fNYlkq8cTye2qDLyom8NddByiVytXGGD0YVE+2CEuTCpqXMDxdhOMILKoaiaYifwEvCRlJ/9GcQ8AAAB8eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3MTk1MzI3OTksImlzU3ViZG9tYWluIjp0cnVlfQ==">
+    <meta http-equiv="origin-trial"
+        content="AgRYsXo24ypxC89CJanC+JgEmraCCBebKl8ZmG7Tj5oJNx0cmH0NtNRZs3NB5ubhpbX/bIt7l2zJOSyO64NGmwMAAACCeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3MTk1MzI3OTksImlzU3ViZG9tYWluIjp0cnVlfQ==">
+    <meta http-equiv="origin-trial"
+        content="A/ERL66fN363FkXxgDc6F1+ucRUkAhjEca9W3la6xaLnD2Y1lABsqmdaJmPNaUKPKVBRpyMKEhXYl7rSvrQw+AkAAACNeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiRmxlZGdlQmlkZGluZ0FuZEF1Y3Rpb25TZXJ2ZXIiLCJleHBpcnkiOjE3MTkzNTk5OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9">
+    <meta http-equiv="origin-trial"
+        content="A6OdGH3fVf4eKRDbXb4thXA4InNqDJDRhZ8U533U/roYjp4Yau0T3YSuc63vmAs/8ga1cD0E3A7LEq6AXk1uXgsAAACTeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiRmxlZGdlQmlkZGluZ0FuZEF1Y3Rpb25TZXJ2ZXIiLCJleHBpcnkiOjE3MTkzNTk5OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9">
+    <script src="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/f(3).txt"
+        async=""></script>
+    <meta http-equiv="origin-trial"
+        content="As0hBNJ8h++fNYlkq8cTye2qDLyom8NddByiVytXGGD0YVE+2CEuTCpqXMDxdhOMILKoaiaYifwEvCRlJ/9GcQ8AAAB8eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3MTk1MzI3OTksImlzU3ViZG9tYWluIjp0cnVlfQ==">
+    <meta http-equiv="origin-trial"
+        content="AgRYsXo24ypxC89CJanC+JgEmraCCBebKl8ZmG7Tj5oJNx0cmH0NtNRZs3NB5ubhpbX/bIt7l2zJOSyO64NGmwMAAACCeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3MTk1MzI3OTksImlzU3ViZG9tYWluIjp0cnVlfQ==">
+    <meta http-equiv="origin-trial"
+        content="A/ERL66fN363FkXxgDc6F1+ucRUkAhjEca9W3la6xaLnD2Y1lABsqmdaJmPNaUKPKVBRpyMKEhXYl7rSvrQw+AkAAACNeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiRmxlZGdlQmlkZGluZ0FuZEF1Y3Rpb25TZXJ2ZXIiLCJleHBpcnkiOjE3MTkzNTk5OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9">
+    <meta http-equiv="origin-trial"
+        content="A6OdGH3fVf4eKRDbXb4thXA4InNqDJDRhZ8U533U/roYjp4Yau0T3YSuc63vmAs/8ga1cD0E3A7LEq6AXk1uXgsAAACTeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiRmxlZGdlQmlkZGluZ0FuZEF1Y3Rpb25TZXJ2ZXIiLCJleHBpcnkiOjE3MTkzNTk5OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9">
+    <script async=""
+        src="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/ca-pub-2882693173603386"></script>
+    <script async=""
+        src="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/AGSKWxUJUVvgQTU5rHALKBdxKEwLJT_XIz3ZWqFnqD6TRCAR4OZ43JqDQOlYBbccfDSXlDz4OLFenFaqnH0-By-xrDTIs9a_7x4Qy97-3ShAr-X_IFSRfMUREHg1GL28PoeMzte0isKN-Q=="></script>
+    <script async=""
+        src="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/AGSKWxUK_mZK6wmsOm-b2Mzh_HiZORGfmlXFxoAftqjxabOmMd0-n4lBJ6ExlAeFQFtBax50DS_9i6q2SBL-wsYwOHLhIgoClTc3BgL3KPCxhihndo24I2ZOROKq5pDxSSWpL0d6s1GFyA=="></script>
+    <script async=""
+        src="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/AGSKWxWfCtePA79XuznnLVi6BNpR26omgw1TOQn53fZmRi7uuu5dODYt4jYgWMFzkQ6wHYoH4QbYBRF7tgMP8D4UcBCO40GNq12XaWQ2DSPA7DK46WpXwp7Soa_k3V9RlzLq5o35XG9Tkg=="></script>
+</head>
+
+<body>
+
+    <div id="page_wrapper">
+        <div id="header">
+            <a href="https://narkive.com/" id="logo">
+                <div style="display: none;" id="logo_desc_ng"></div>
+                <div id="logo_desc_ml"></div>
+            </a>
+
+
+            <a id="nav" href="https://concurrency-interest.altair.cs.oswego.narkive.com/">
+                concurrency-interest@altair.cs.oswego.edu </a>
+            <!--<a href="https://narkive.com/user/profile_edit" id="header_user"></a>
+    <a href="https://narkive.com/user/profile_settings" id="header_gear"></a>-->
+        </div>
+        <div id="page_container" class="thread " "="">
+
+
+    <script type=" text/javascript">
+            var adsense_channel_id = '2052697821';
+            </script>
+
+
+            <div id="thread_container">
+                <div id="thread_lister_ctrl">
+                    <div style="display: table-cell;">
+                        <div id="thread_lister_subtitle">Discussion:</div>
+                        <div id="thread_lister_ctrl_nav">
+                            [concurrency-interest] Why is ReentrantLock faster than synchronized ?
+                        </div>
+                    </div>
+                    <div id="thread_lister_opt">
+                    </div>
+                </div>
+
+
+                <div class="post" id="post1">
+                    <div class="post_header">
+                        <div hash="223791b0fc2073c2" class="post_header_poster">
+                            Ernst, Matthias
+                        </div>
+                        <div class="post_header_date">
+                            <span class="timeago" title="2005-02-24 15:53:45 UTC">19 years ago</span>
+                        </div>
+
+                    </div>
+                    <div class="post_body parsed">
+                        <div class="post_actions"><a href="https://narkive.com/Bx94AChl.1" style="border: 0;"
+                                class="post_actions_bit disable_url_rewrite"
+                                rel="nofollow">Permalink</a><!--<div
+class="post_actions_bit post_actions_bit_action_raw">Raw Message</div><div style="border: 0;" class="post_actions_bit post_actions_bit_action_report">Report</div>-->
+                        </div>
+
+
+                        Hi,<br><br>a recent article by Brian Goetz made me wonder about this again.
+                        Brian<br>demonstrates, how ReentrantLock has a performance and scalability<br>advantage over
+                        synchronized.(Brian
+                        Goetz最近的一篇文章让我再次思考这个问题。Brian演示了ReentrantLock比synchronized在性能和可伸缩性方面的优势。)<br><br>Did anyone
+                        investigate why that would be the case? Is it due to the
+                        fact<br>that the VM has lock-enable *any* java.lang.Object through things like<br>header
+                        displacement, lock inflation/deflation? Or has GC an advantage<br>over manual management of lock
+                        records?(有人调查过为什么会这样吗?这是由于虚拟机有锁定启用*任何*
+                        java.lang.Object通过诸如头位移，锁定膨胀/紧缩?或者GC是否比手动管理锁记录更有优势?)<br><br>Other than that I cannot think of
+                        any edge ReentrantLock could have
+                        over<br>synchronized: both codes are generated inline by the Hotspot compiler,<br>both can and
+                        probably do use the same suspension/resumption methods, the<br>same atomic instruction
+                        sequences,
+                        ...(除此之外，我想不出ReentrantLock有什么可能会过度同步:这两个代码都是由Hotspot编译器内联生成的，两者都可以并且可能使用相同的挂起/恢复方法，相同的原子指令序列，……)<br><br>Just
+                        wondering<br>Matthias<br>
+                        <div class="post_signature">--<br>Meet us at CeBIT: Launching CoreMedia CMS 2005, Hall 3,
+                            D09.<br></div>
+                    </div>
+                </div>
+
+
+                <!-- /22218282545/desktop//first-post -->
+
+
+                <div class="post_wrapper">
+                    <div class="post" id="post2">
+                        <div class="post_header">
+                            <div hash="ef135787a59a9645" class="post_header_poster">
+                                Doug Lea
+                            </div>
+                            <div class="post_header_date">
+                                <span class="timeago" title="2005-02-24 16:45:31 UTC">19 years ago</span>
+                            </div>
+
+                        </div>
+                        <div class="post_body parsed">
+                            <div class="post_actions"><a href="https://narkive.com/Bx94AChl.2" style="border: 0;"
+                                    class="post_actions_bit disable_url_rewrite"
+                                    rel="nofollow">Permalink</a><!--<div
+class="post_actions_bit post_actions_bit_action_raw">Raw Message</div><div style="border: 0;" class="post_actions_bit post_actions_bit_action_report">Report</div>-->
+                            </div>
+
+
+                            <div class="quoted_post quoted_post_level_1"><a
+                                    href="https://concurrency-interest.altair.cs.oswego.narkive.com/Bx94AChl/why-is-reentrantlock-faster-than-synchronized#post1"
+                                    class="disable_url_rewrite"><i>Post by Ernst, Matthias</i></a><br>a recent article
+                                by Brian Goetz made me wonder about this again. Brian<br>demonstrates, how ReentrantLock
+                                has a performance and scalability<br>advantage over synchronized.<br>Did anyone
+                                investigate why that would be the case? Is it due to the fact<br>that the VM has
+                                lock-enable *any* java.lang.Object through things like<br>header displacement, lock
+                                inflation/deflation? Or has GC an advantage<br>over manual management of lock
+                                records?<br></div>
+                            There's some friendly competition among those doing Java-level
+                            sync<br>vs VM-level sync. The underlying algorithms are increasingly<br>pretty similar. So
+                            you should expect relative performance differences<br>in typical server applications to
+                            fluctuate across releases. The main<br>goal of ReentrantLock is NOT to uniformly replace
+                            builtin sync, but to<br>offer greater flexibility and capabilities when you need them, and
+                            to<br>maintain good performance in those kinds of
+                            applications.（在java级同步和vm级同步之间存在一些友好的竞争。底层算法越来越相似。因此，您应该预料到典型服务器应用程序的相对性能差异会在不同版本之间波动。ReentrantLock的主要目标不是统一地取代内置同步，而是在需要时提供更大的灵活性和功能，并在这类应用程序中保持良好的性能。）<br><br>The
+                            people doing
+                            VM-level sync also have to concentrate on issues that<br>we don't with ReentrantLock, like
+                            the need to use only a few bits of<br>object header space to avoid bloat in objects that are
+                            never<br>locked. This impacts impmentation details allowing ReentrantLock to<br>sometimes
+                            require a few cycles less
+                            overhead.(做vm级同步的人还必须关注我们在ReentrantLock中没有关注的问题，比如只需要使用几位对象标头空间来避免从未锁定的对象膨胀。这会影响实现细节，从而允许ReentrantLock有时减少几个周期的开销。)<br><br>Also
+                            VM-levl support must deal with the fact that
+                            many<br>programs/classes do a lot of sync that is entirely useless because it<br>can never
+                            be contended. (We assume people hardly ever do this with<br>ReentrantLock so don't do
+                            anything special about it.) Techniques to<br>greatly cheapen this case are probably coming
+                            soon in hotspot and<br>other VMs. (This case is already pretty cheap on uniprocessors,
+                            but<br>not
+                            multiprocessors.)(此外，vm级别的支持必须处理这样一个事实，即许多程序/类做了大量完全无用的同步，因为它永远无法争用。(我们假设人们很少使用ReentrantLock这样做，所以不做任何特别的事情。)在hotspot和其他vm中，可能很快就会出现大大降低这种情况的技术。(这种情况在单处理器上已经很便宜了，但在多处理器上就不便宜了。)
+                            )<br><br>There are currently still a few things that can be done
+                            at JVM level<br>that we can't do at Java level. For example, adapting spinning to
+                            vary<br>with load averages. We're working on leveling the playing field
+                            here(目前仍有一些事情可以在JVM级别完成，而不能在Java级别完成。例如，使旋转随平均负载变化。我们在努力创造公平的竞争环境)<br>though
+                            :-)<br><br>-Doug<br>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="post_wrapper">
+                    <div class="post" id="post3">
+                        <div class="post_header">
+                            <div hash="fe9eceb7b007cdd5" class="post_header_poster">
+                                Brian Goetz
+                            </div>
+                            <div class="post_header_date">
+                                <span class="timeago" title="2005-02-24 22:08:43 UTC">19 years ago</span>
+                            </div>
+
+                        </div>
+                        <div class="post_body parsed">
+                            <div class="post_actions"><a href="https://narkive.com/Bx94AChl.3" style="border: 0;"
+                                    class="post_actions_bit disable_url_rewrite"
+                                    rel="nofollow">Permalink</a><!--<div
+class="post_actions_bit post_actions_bit_action_raw">Raw Message</div><div style="border: 0;" class="post_actions_bit post_actions_bit_action_report">Report</div>-->
+                            </div>
+
+
+                            <div class="quoted_post quoted_post_level_1" style="display: none;"><a
+                                    href="https://concurrency-interest.altair.cs.oswego.narkive.com/Bx94AChl/why-is-reentrantlock-faster-than-synchronized#post1"
+                                    class="disable_url_rewrite"><i>Post by Ernst, Matthias</i></a><br>Did anyone
+                                investigate why that would be the case? Is it due to the fact<br>that the VM has
+                                lock-enable *any* java.lang.Object through things like<br>header displacement, lock
+                                inflation/deflation? Or has GC an advantage<br>over manual management of lock
+                                records?<br>Other than that I cannot think of any edge ReentrantLock could have
+                                over<br>synchronized: both codes are generated inline by the Hotspot compiler,<br>both
+                                can and probably do use the same suspension/resumption methods, the<br>same atomic
+                                instruction sequences, ...<br></div>
+                            <div class="quoted_extra_clickable">...</div>
+                            Performance is a moving target. In the first
+                            JVM, performance for everything sucked (locking, garbage collection, allocation, you name
+                            it) because the first JVM was a proof-of-concept and performance wasn't the goal. Once
+                            the VM concept was proven, engineering resources were then allocated to improve
+                            performance, and there is no shortage of good ideas for making things faster, so
+                            performance in these areas improved and is improving with each JVM
+                            version.(性能是一个不断变化的目标。在JVM中，所有的性能都很糟糕(锁、垃圾收集、分配等等)，因为JVM只是一个概念验证，性能不是目标。一旦VM概念得到验证，就会分配工程资源来改进性能，而且不缺乏使事情更快的好主意，因此这些领域的性能得到了改进，并且每个JVM版本都在改进)<br><br>
+                            So,one factor in why ReentrantLock is faster than built-in synchronization is that the JSR
+                            166 team spent some effort building a better lock -- not because the JVM folks didn't
+                            have access to the same papers on lock performance, but because they had other priorities
+                            of where to spend their efforts. But they will get around to it and the scalability
+                            gap will surely close in future JVM versions.(因此，ReentrantLock比内置同步更快的一个因素是JSR
+                            166团队花了一些精力来构建一个更好的锁——不是因为JVM人员没有访问关于锁性能的相同论文，而是因为他们有其他优先考虑将他们的努力花在哪里。但是他们会解决这个问题，并且在未来的JVM版本中，可伸缩性差距肯定会缩小。)<br><br>
+                            Interestingly, the algorithm used under the hood of ReentrantLock is easier to implement in
+                            Java than in C, because of garbage collection -- a C version of the same algorithm would be
+                            a lot more work and would require more bookkeeping in the algorithm. As a result, the
+                            approach taken by ReentrantLock makes more garbage and uses less locking than the obvious C
+                            analogue, and it turns out that, given the current relative cost between memory management
+                            and memory synchronization, an algorithm that makes more garbage and uses less coordination
+                            is more scalable. This week. Might be different next week. Performance is a moving
+                            target.(有趣的是，ReentrantLock背后使用的算法在Java中比在C中更容易实现，因为存在垃圾收集——相同算法的C版本将需要更多的工作，并且需要在算法中进行更多的记录。因此，ReentrantLock采用的方法比明显的C模拟方法产生了更多的垃圾，使用了更少的锁，并且事实证明，考虑到当前内存管理和内存同步之间的相对成本，产生更多垃圾并使用更少协调的算法更具可伸缩性。在这周是这样。下周可能会不一样。性能是一个不断变化的目标。)
+                        </div>
+                    </div>
+                </div>
+
+
+                <!--<script src="https://it.hobby.fai-da-te.narkive.com/ad-blocker.js?adclient=10120iask" type="text/javascript"></script>-->
+                <script type="text/javascript">
+
+
+                    //$(document).ready(function() {
+
+                    (nk = window.nk || []).session_id = 'e593136c5290';
+
+                    if (nk.adb === undefined)
+                        nk.adb = 'enabled';
+
+                    if (0)
+                        nk.adb = 'untested';
+
+                    nk.threadfunction = function () {
+                        $.ajax({
+                            url: "https://" + document.domain + "/ajax/ThreadViewCounter?hash=Bx94AChl&nk_session=" + nk.session_id,
+                            data: {
+
+                                page_version: 1,
+                                is_desktop: 1,
+                                lang: 'en',
+                                replycount: 2,
+                                views: 1108,
+
+                                type: 'ml',
+
+                                simqa: 0,
+                                simsearchqa: 0,
+                                simsearch: 0,
+
+                                url: window.location.href,
+                                hash: 'Bx94AChl',
+                                cat: document.domain.replace('.narkive.', '.'),
+                                path: window.location.pathname,
+                                ref: 'https://concurrency-interest.altair.cs.oswego.narkive.com/',
+
+                                title: '[concurrency-interest] Why is ReentrantLock faster than synchronized ?',
+
+
+                                recency: 6843,
+
+                                ads_filter: 'pass',
+
+                                //	adb: nk.adb,
+
+
+                            },
+                            cache: true,
+                            type: "GET"
+                        })
+                            .done(function (html) {
+                                eval(html);
+                            });
+                    }
+
+                    //});
+
+                    $(document).ready(function () {
+                        if (typeof adsense_dispatcher_id === 'undefined' || adsense_dispatcher_id < 2) {
+                            // disable stats collection if you're unlikely to be a new user
+                            //nk.threadfunction();
+                        }
+                    });
+
+
+                    // prebid callback here as there is no command queue, in theory ThreadViewCounter works, but hey
+
+
+                    var nk_ts_PreBidConnectionTime = Date.now();
+
+
+                    function connect_prebid_callback() {
+                        if (typeof vmpbjs !== undefined && vmpbjs.onEvent !== undefined) {
+                            vmpbjs.onEvent('bidWon', function (prebidwin) {
+                                console.log(prebidwin.bidderCode + ' won the ad server auction for ad unit ' + prebidwin.adUnitCode + ' at ' + prebidwin.cpm + ' CPM');
+                                console.log(prebidwin);
+
+                                var u = "https://" + document.domain + "/ajax/telemprebid?abs_sec=" + parseInt((Date.now() - nk_ts_PreBidConnectionTime) / 1000) + "&nk_session=" + nk.session_id;
+
+                                $.ajax({
+                                    url: u, cache: false, type: "HEAD", global: false, beforeSend: function () {
+                                    }, complete: function () {
+                                    }, data: {
+
+                                        bidder: prebidwin.bidder,
+                                        cpm: prebidwin.originalCpm,
+                                        currency: prebidwin.originalCurrency,
+                                        height: prebidwin.height,
+                                        width: prebidwin.width,
+                                        slotElementId: prebidwin.adserverTargeting.hb_div_id
+
+                                    }
+                                });
+
+                                console.log('callback sent');
+
+                            });
+                        } else {
+                            setTimeout(function () {
+                                connect_prebid_callback();
+                            }, 100);
+                        }
+                    }
+
+                    //connect_prebid_callback();
+
+
+                </script>
+
+
+                <div id="last_post_visibility_indicator"></div>
+                <style>
+                    .post_body.parsed {
+                        /*padding: 11px 12px;*/
+                        color: #192527;
+                        font-family: "Segoe UI", "Segoe WP", "Arial", "Sans-Serif";
+                        font-size: 17px;
+                        line-height: 24px;
+                    }
+                </style>
+
+                <style>
+                    @media screen and (min-width: 770px) {
+
+                        .post_body.parsed {
+                            padding: 11px 12px;
+                            color: #192527;
+                            font-family: "Segoe UI", "Segoe WP", "Arial", "Sans-Serif";
+                            font-size: 18px;
+                            line-height: 26px;
+                        }
+
+
+                        .post_header {
+                            border-width: 1px;
+                            border-radius: 3px;
+                        }
+
+                        .post_wrapper {
+                            border-left: 0;
+                            padding-left: 22px;
+                        }
+
+                        .post_body {
+                            border: 0;
+                        }
+
+
+                        .quoted_post {
+                            font-size: 14px;
+                            line-height: 18px;
+                        }
+
+
+                        .post_header {
+                            height: 30px;
+                            line-height: 30px;
+                            font-size: 17px;
+                        }
+
+
+                        #thread_lister_ctrl_nav {
+                            font-size: 24px;
+                            line-height: 32px;
+                        }
+
+                        #thread_lister_subtitle {
+                            display: none;
+                        }
+
+
+                        /* smaller */
+                        #thread_lister_ctrl_nav {
+                            font-size: 20px;
+                            line-height: 31px;
+                        }
+
+                        .post_header {
+                            height: 28px;
+                            line-height: 27px;
+                            font-size: 16px;
+                        }
+
+                        .post_body.parsed {
+                            font-family: "Segoe UI", "Segoe WP", "Arial", "Sans-Serif";
+                            font-size: 17px;
+                            line-height: 25px;
+                            padding-bottom: 16px;
+                        }
+
+                        .thread #thread_lister_ctrl {
+                            margin: 8px 4px;
+                            margin-top: 7px;
+                            margin-bottom: 4px;
+                        }
+
+                        #thread_lister_subtitle {
+                            display: block;
+                        }
+
+                        #thread_lister_subtitle {
+                            margin-bottom: -5px;
+                        }
+
+                        #thread_container .post_header_date .timeago {
+                            font-size: 15px;
+                        }
+
+                        #simthread_first_header {
+                            font-family: serif;
+                            font-size: 25px;
+                            margin-top: 30px;
+                            margin-left: 15px;
+                            background-color: #f3feff;
+                            padding: 7px 13px;
+                            color: #234244;
+                            width: fit-content;
+                            border-radius: 5px;
+                        }
+
+                    }
+                </style>
+
+
+                <style>
+                    #sidebar_banner_right {
+                        /*float: right;
+margin-right: 20px;*/
+                        float: left;
+                        margin-left: 40px;
+                        margin-top: 20px;
+                        width: 22px;
+                        height: 30px;
+                        /*display: none;*/
+                        /*border: 1px solid red;*/
+                        /*background-color: red;*/
+                    }
+
+                    @media screen and (min-width: 1500px) {
+
+
+                        #sidebar_banner_right {
+                            margin-left: 80px;
+                        }
+
+
+                    }
+                </style>
+            </div>
+            <div id="sidebar_container" style="position: relative; top: 0px; left: 0px;">
+                <div id="thread_navigation">
+                    Thread Navigation
+                    <div style="margin-top: 8px;"></div>
+                    <a href="#post1" style="width: 220px; opacity: 1;" class="nav_post disable_url_rewrite"
+                        id="nav_post1">
+                        <div class="post_header">
+                            <span title="m***@coremedia.com" class="post_header_poster">
+                                Ernst, Matthias </span>
+                            <span class="post_header_date">
+                                <span class="timeago" title="2005-02-24 15:53:45 UTC">19 years ago</span>
+                            </span>
+
+                        </div>
+                    </a>
+                    <div class="post_wrapper"><a href="#post2" style="width: 218px;"
+                            class="nav_post disable_url_rewrite" id="nav_post2">
+                            <div class="post_header">
+                                <span title="d***@cs.oswego.edu" class="post_header_poster">
+                                    Doug Lea </span>
+                                <span class="post_header_date">
+                                    <span class="timeago" title="2005-02-24 16:45:31 UTC">19 years ago</span>
+                                </span>
+
+                            </div>
+                        </a>
+                    </div>
+                    <div class="post_wrapper"><a href="#post3" style="width: 218px;"
+                            class="nav_post disable_url_rewrite" id="nav_post3">
+                            <div class="post_header">
+                                <span title="b***@quiotix.com" class="post_header_poster">
+                                    Brian Goetz </span>
+                                <span class="post_header_date">
+                                    <span class="timeago" title="2005-02-24 22:08:43 UTC">19 years ago</span>
+                                </span>
+
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+
+                <div id="sidebar_banner_placeholder_1_outer">
+                    <div class="sidebar_banner_placeholder_1"
+                        style="margin-top: 25px; min-width: 120px; min-height: 200px;"></div>
+                </div>
+
+                <style>
+                    .ads_post_bit {
+                        min-height: 260px;
+                        display: flex;
+                        align-items: center;
+                    }
+
+                    .ads_post_bit>div:first-child {
+                        padding-bottom: 10px;
+                        margin-left: auto;
+                        margin-right: auto;
+                    }
+
+                    .ads_show_me_the_borders {
+                        /*border: 1px solid red;*/
+                        margin: 5px 0px 20px 0px;
+                    }
+                </style>
+
+
+            </div>
+
+
+            <div style="clear: both"></div>
+
+
+        </div>
+
+
+        <script type="text/javascript">
+
+            var nav_highlighted = false,
+                sidebar_fixed = false,
+                sidebar_initial_top_distance = 0,
+                sidebar_initial_left_distance = 0,
+                sidebar_right_banner_initial_left_distance = 0,
+                last_post_divs_distance_build = 0,
+                post_divs_distances = Array(),
+                sidebar_height = 0,
+                thread_navigation_height = 0,
+                sidebar_position_offset = 0,
+                thread_onscroll_timeout = 0,
+                sidebar_related_height = 0;
+
+            function build_post_divs_distance() {
+                if (new Date().getTime() - last_post_divs_distance_build < 1000) {
+                    return;
+                }
+
+                var post_divs = $('.post');
+
+                for (k in post_divs) {
+                    if (parseInt(k) != k)
+                        continue;
+                    post_divs_distances[$(post_divs[k]).position().top] = $(post_divs[k]).attr('id').replace('post', '');
+                }
+                sidebar_height = $('#sidebar_container').height();
+                thread_navigation_height = $('#thread_navigation').height();
+            }
+
+
+            function thread_onscroll() {
+                if ($(window).width() < 995) {
+                    return;
+                }
+
+                build_post_divs_distance();
+
+                var scroll_top = $(window).scrollTop(),
+                    sidebar_offset_top = $('#sidebar_container').offset().top,
+                    windows_height = $(window).height(),
+                    sidebar_css_top = parseInt($('#sidebar_container').css('top') == 'auto' ? 0 : $('#sidebar_container').css('top')),
+                    sidebar_standard_top_distance = 20,
+                    first_visible_post = 1,
+                    scroller_margins = windows_height < 250 ? 20 : 100;
+                highlighted_top_distance = nav_highlighted > 0 ? $('#nav_post' + nav_highlighted).position().top : windows_height / 2;
+                left_margin = parseInt($('#sidebar_container').css('margin-left'));
+                left_margin_banner = parseInt($('#sidebar_banner_right').css('margin-left'));
+
+                if (sidebar_initial_left_distance == 0) {
+                    sidebar_initial_left_distance = $('#sidebar_container').offset().left/* == 0 ? 760 : $('#sidebar_container').offset().left*/;
+                }
+
+                if (sidebar_right_banner_initial_left_distance == 0) {
+                    sidebar_right_banner_initial_left_distance = $('#sidebar_banner_right').offset().left/* == 0 ? 760 : $('#sidebar_container').offset().left*/;
+                }
+
+                if (highlighted_top_distance + scroller_margins + sidebar_position_offset + sidebar_related_height > windows_height) {
+                    sidebar_position_offset -= windows_height / 2;
+                    $('#sidebar_container').css('position', 'fixed').css('top', sidebar_position_offset + 'px').css('left', (sidebar_initial_left_distance - left_margin) + 'px');
+                    $('#sidebar_banner_right').css('position', 'fixed').css('top', sidebar_position_offset + 'px').css('left', (sidebar_right_banner_initial_left_distance - left_margin_banner) + 'px');
+
+                } else if (highlighted_top_distance + sidebar_position_offset < scroller_margins) {
+                    sidebar_position_offset += windows_height / 2;
+                    $('#sidebar_container').css('position', 'fixed').css('top', sidebar_position_offset + 'px').css('left', (sidebar_initial_left_distance - left_margin) + 'px');
+                    $('#sidebar_banner_right').css('position', 'fixed').css('top', sidebar_position_offset + 'px').css('left', (sidebar_right_banner_initial_left_distance - left_margin_banner) + 'px');
+                } else if (!sidebar_fixed && scroll_top + sidebar_standard_top_distance > sidebar_offset_top) {
+                    $('#sidebar_container').css('position', 'fixed').css('top', '0px').css('left', (sidebar_initial_left_distance - left_margin) + 'px');
+                    $('#sidebar_banner_right').css('position', 'fixed').css('top', '0px').css('left', (sidebar_right_banner_initial_left_distance - left_margin_banner) + 'px');
+
+                    sidebar_fixed = true;
+                    sidebar_initial_top_distance = sidebar_offset_top;
+                } else if (sidebar_fixed && scroll_top + sidebar_standard_top_distance < sidebar_initial_top_distance) {
+                    $('#sidebar_container').css('position', 'relative').css('top', '0').css('left', '0');
+                    $('#sidebar_banner_right').css('position', 'relative').css('top', '0').css('left', '0');
+                    sidebar_fixed = false;
+                }
+
+                for (k in post_divs_distances)
+                    if (k < scroll_top + 100 && post_divs_distances[k] != 'selector')
+                        first_visible_post = parseInt(post_divs_distances[k]);
+
+                if (first_visible_post > 0 && first_visible_post <= post_divs_distances.length + 1) {
+                    $('#nav_post' + nav_highlighted).css('opacity', '');
+                    $('#nav_post' + first_visible_post).css('opacity', '1');
+                    nav_highlighted = first_visible_post;
+                }
+
+                clearTimeout(thread_onscroll_timeout);
+                thread_onscroll_timeout = setTimeout(function () {
+                    thread_onscroll();
+                }, 200);
+            }
+
+            function init_quoted_extra() {
+                $(".quoted_post_level_1").each(function () {
+                    if ($(this).text().length < 500)
+                        return;
+
+                    if ($(this).next('.quoted_extra_clickable').length != 0)
+                        return;
+
+                    $(this).css('display', 'none');
+                    $(this).after('<div class="quoted_extra_clickable">...</div>');
+                });
+            }
+
+            function quoted_extra_click(e) {
+                $(e).css('display', 'none');
+                $(e).prev().css('display', 'block');
+
+                build_post_divs_distance()
+            }
+
+
+            $(document).ready(function () {
+
+
+                $(".post_censored").on('click', function (event) {
+                    event.stopPropagation();
+                    event.stopImmediatePropagation();
+
+                    var post_id = $(this).closest(".post").attr('id').replace('post', '');
+                    console.log(post_id);
+                    censored_post = $(this).closest(".post_body");
+
+                    $(this).closest(".post_body").css('opacity', '0.3');
+
+
+                    /*
+                    $.ajax({
+                       url: "?load_censored_post=" + post_id,
+                       type: 'GET',
+                       dataType: 'html',
+                       success: function(data){
+                         console.log(nk.censored_post);
+                         nk.censored_post.html(data);
+                       }
+                   });
+                   */
+
+                    $.post(window.location, { 'load_censored_post': post_id }, function (data) {
+                        // alert('POST was successful. Server says: ' + data);
+                        console.log(censored_post);
+                        $(censored_post).html(data);
+                        $(censored_post).css('opacity', '1');
+                    });
+
+
+                });
+
+
+            });
+
+
+            function thread_selector_mouseup() {
+
+            }
+
+            function thread_init_selection() {
+                if (!window.location.hash || !window.location.hash.match(/^#selection:([0-9]+)\.([0-9]+)\.([0-9]+)$/))
+                    return;
+
+                nk.is_select_ref = 1;
+
+                var temp = window.location.hash.match(/^#selection:([0-9]+)\.([0-9]+)\.([0-9]+)$/);
+                var post = temp[1], start = temp[2], end = parseInt(start) + parseInt(temp[3]), ts, tr;
+
+                tr = $('#post' + post).children('.post_body').html().trim();
+
+                ts = '<div>' + $('#post' + post).children('.post_body').html().trim() + '</div>';
+                ts = $(ts);
+                ts.find('.quoted_post').remove();
+                ts.find('.post_signature').remove();
+                //ts.find('#selection_url_f').remove();
+                ts.find('br').replaceWith(' ');
+                ts = ts.html().trim();
+
+                var post_verified = '', c;
+
+                for (var i = 0; i < ts.length; i++) {
+                    if (i < start || i >= end)
+                        continue;
+
+                    c = ts.charAt(i);
+                    post_verified += c;
+
+                    if (c != ' ')
+                        continue;
+
+                    if (tr.indexOf(post_verified) != -1)
+                        continue;
+
+                    post_verified = post_verified.slice(0, -1);
+
+                    if (tr.indexOf(post_verified + '<br>') != -1) {
+                        post_verified += '<br>';
+                        continue;
+                    }
+
+                    break;
+
+                }
+
+                $('#post' + post).children('.post_body').html($('#post' + post).children('.post_body').html().replace(post_verified, '<span id="init_selection">' + post_verified + '</span>'));
+                var offset = (window.innerHeight < $("#init_selection").height()) ? 30 : ((window.innerHeight - $("#init_selection").height()) / 2);
+                $('html,body').animate({ scrollTop: $("#init_selection").offset().top - offset }, 'fast');
+
+                ga('send', 'event', 'selection', 'load', { 'nonInteraction': 1 });
+
+            }
+
+            function thread_init_copy() {
+                $('#thread_container').on("mouseup", function () {
+                    var t, te, tr, ts;
+
+                    if ($('#selection_url_c:hover').length > 0) {
+                        $('#selection_url_c input').select();
+                        ga('send', 'event', 'selection', 'click', { 'nonInteraction': 1 });
+
+                        if (typeof nk.push_ts_event !== 'undefined')
+                            nk.push_ts_event('selected_link_hover', 1);
+
+
+                        return;
+                    }
+
+                    $('#selection_url_c').remove();
+                    $('#selection_url_f').remove();
+
+
+                    if (window.getSelection)
+                        t = window.getSelection();
+                    else if (document.getSelection)
+                        t = document.getSelection();
+                    else if (document.selection)
+                        t = document.selection.createRange().text;
+
+                    if (typeof t === 'undefined' || t.toString().length <= 1)
+                        return;
+
+                    if (typeof t.anchorNode === 'undefined' || typeof t.anchorNode.parentElement === 'undefined' || typeof t.anchorNode.parentElement.parentElement === 'undefined')
+                        return;
+
+                    te = t.anchorNode.parentElement.parentElement;
+
+                    if (!te.id.match(/^post[0-9]+$/))
+                        return;
+
+                    tr = t.toString().replace(/\n/g, ' ').trim();
+                    ts = '<div>' + $(te).children('.post_body').html().trim() + '</div>';
+                    ts = $(ts);
+                    ts.find('.quoted_post').remove();
+                    ts.find('.post_signature').remove();
+                    //ts.find('#selection_url_f').remove();
+                    ts.find('br').replaceWith(' ');
+                    ts = ts.html().trim();
+
+                    if (ts.indexOf(tr) == -1)
+                        return;
+
+                    var hash = document.location.href.match(/\.narkive\.com\/([a-zA-Z0-9]{8})/);
+                    if (typeof hash[1] === 'undefined')
+                        return;
+
+                    hash = hash[1];
+
+                    var fix_index = 0;
+
+                    if (ts.indexOf('init_selection') < ts.indexOf(tr) && ts.indexOf('init_selection') != -1)
+                        fix_index = 33;
+
+                    //console.log(ts);
+                    //console.log(fix_index);
+
+                    if (typeof nk.push_ts_event !== 'undefined')
+                        nk.push_ts_event('selected_char_count', tr.length);
+
+                    var url = 'https://narkive.com/' + hash + ':' + te.id.replace('post', '') + '.' + (ts.indexOf(tr) - fix_index) + '.' + tr.length;
+
+                    setTimeout(function () {
+                        try {
+                            var range = document.createRange();
+                            range.setStart(t.focusNode, t.focusOffset);
+                            range.insertNode($('<span id="selection_url_f"></span>').get(0));
+                            var selection_button = $('<div style="top: ' + $('#selection_url_f').offset().top + 'px" id="selection_url_c">Selection Permalink:<input type="text" value="' + url + '"></div>').get(0);
+                            $('#thread_container').append(selection_button);
+                            //console.log(selection_button);
+                        } catch (e) {
+                        }
+                    }, 10);
+
+
+                });
+            }
+
+            /*
+            function thread_similarbar(hash)
+            {
+                if(/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent))
+                    return;
+        
+                $.get( "https://" + document.domain + "/ajax/similarbar?hash=" + hash, function( data ) {
+                    $('#thread_navigation').after(data);
+                });
+            }
+            */
+
+            function thread_suggested_reading(hash) {
+                if (/Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent))
+                    return;
+
+                $.get("https://" + document.domain + "/ajax/suggestedreading?hash=" + hash, function (data) {
+                    $('#thread_container').append(data);
+                });
+            }
+
+
+            $(window).scroll(function () {
+                thread_onscroll();
+            });
+            $(document).ready(function () {
+                init_quoted_extra();
+                thread_onscroll(); /*thread_check_adv();*/
+                thread_init_copy();
+                thread_init_selection();
+            });
+        </script>
+
+        <script type="text/javascript">
+            /*   thread_similarbar('Bx94AChl');*/
+            /* thread_suggested_reading('Bx94AChl'); */
+
+        </script>
+
+        <style type="text/css">
+
+
+        </style>
+
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+
+
+                var targetNodes = $(".adsbygoogle");
+                var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+                var myObserver = new MutationObserver(mutationHandler);
+                var obsConfig = { attributes: true };
+
+                targetNodes.each(function () {
+                    myObserver.observe(this, obsConfig);
+                });
+
+                function mutationHandler(mutationRecords) {
+                    mutationRecords.forEach(function (mutation) {
+                        if (mutation.type == 'attributes' && mutation.attributeName == 'data-ad-status') {
+
+                            var jq = $(mutation.target).attr('data-ad-status');
+
+                            if (jq == 'filled') {
+                                nk.adsense_status.filled++;
+                            }
+                            if (jq == 'unfilled') {
+                                nk.adsense_status.unfilled++;
+                            }
+
+                            nk.ts_suggestPushEvent = 1;
+
+                        }
+                    });
+                }
+
+
+                var testURL = "https://" + document.domain + "/s/_adverts.js"
+
+                var myInit = {
+                    method: 'HEAD',
+                    mode: 'no-cors'
+                };
+
+                var myRequest = new Request(testURL, myInit);
+
+                fetch(myRequest).then(function (response) {
+                    return response;
+                }).then(function (response) {
+                    nk.adb = 'disabled';
+                    nk.ts_suggestPushEvent = 1;
+                }).catch(function (e) {
+                    nk.adb = 'enabled';
+                    nk.ts_suggestPushEvent = 1;
+                });
+
+
+            });
+
+        </script>
+        <iframe src="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/container.html"
+            style="visibility: hidden; display: none;"></iframe>
+
+
+        <div style="height: 50px"></div>
+    </div>
+    <ins class="adsbygoogle adsbygoogle-noablate" data-adsbygoogle-status="done" style="display: none !important;"
+        data-ad-status="unfilled">
+        <div id="aswift_0_host" tabindex="0" title="Advertisement" aria-label="Advertisement"
+            style="border: none; height: 0px; width: 0px; margin: 0px; padding: 0px; position: relative; visibility: visible; background-color: transparent; display: inline-block;">
+            <iframe id="aswift_0" name="aswift_0" browsingtopics="true"
+                style="left:0;position:absolute;top:0;border:0;width:undefinedpx;height:undefinedpx;"
+                sandbox="allow-forms allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts allow-top-navigation-by-user-activation"
+                frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true"
+                scrolling="no" allow="attribution-reporting"
+                src="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/ads.html"
+                data-google-container-id="a!1" data-load-complete="true"></iframe>
+        </div>
+    </ins>
+    <iframe name="googlefcPresent"
+        style="display: none; width: 0px; height: 0px; border: none; z-index: -1000; left: -1000px; top: -1000px;"
+        src="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/saved_resource.html"></iframe>
+    <iframe name="__tcfapiLocator"
+        src="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/saved_resource(1).html"
+        style="display: none; width: 0px; height: 0px; border: none; z-index: -1000; left: -1000px; top: -1000px;"></iframe>
+    <iframe name="googlefcInactive"
+        src="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/saved_resource(2).html"
+        style="display: none; width: 0px; height: 0px; border: none; z-index: -1000; left: -1000px; top: -1000px;"></iframe>
+    <iframe name="googlefcLoaded"
+        src="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/saved_resource(3).html"
+        style="display: none; width: 0px; height: 0px; border: none; z-index: -1000; left: -1000px; top: -1000px;"></iframe>
+
+    <div id="footer_wrapper">
+    </div>
+
+
+    <div id="ajax_loading" style="display: none;">Loading...</div>
+
+    <div id="overflow"></div>
+
+    <div id="overflow_message">
+        <div id="overflow_message_header">
+        </div>
+        <div id="overflow_message_content">
+        </div>
+        <div id="overflow_message_actions">
+        </div>
+    </div>
+
+
+    <iframe src="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/aframe.html" width="0"
+        height="0" style="display: none;"></iframe>
+</body>
+<iframe id="google_esf" name="google_esf"
+    src="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/zrt_lookup_fy2021.html"
+    style="display: none;"></iframe>
+<iframe name="goog_topics_frame"
+    src="./[concurrency-interest] Why is ReentrantLock faster than synchronized __files/topics_frame.html"
+    style="display: none;"></iframe>
+
+</html>
