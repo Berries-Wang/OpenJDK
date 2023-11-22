@@ -5,10 +5,26 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "java",
-            "name": "JitStu",
+            "type": "cppdbg",
+            "name": "VirtualThreadsStu-OpenJDK21-GA",
             "request": "launch",
-            "mainClass": "JitStu"
+            "program": "${workspaceFolder}/005.OpenJDK/007.OpenJDK21-GA/OpenJDK21-GA/build/linux-x86_64-server-slowdebug/jdk/bin/java",
+            "args": [
+                "VirtualThreadsStu"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/005.OpenJDK/003.prictice-code",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "VirtualThreadsStu-.java->.class" // 启动前先编译一下，将.java文件编译为.class文件, value是tasks.json中的任务对象的label值
         },
         {
             "name": "java D-000.openJDK_8u40",
