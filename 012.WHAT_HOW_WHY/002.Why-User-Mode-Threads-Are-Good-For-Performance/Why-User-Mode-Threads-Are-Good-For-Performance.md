@@ -1,4 +1,4 @@
-# 002.Why User-Mode Threads Are Good For Performance
+# 002.Why User-Mode Threads Are Good For Performance (为什么用户态线程有利于提升性能)
 &nbsp;&nbsp;Hear from Oracle’s Ron Pressler how Java added virtual threads, an implementation of user-mode threads, to help write high-throughput servers.(听Oracle的Ron Pressler讲述Java如何添加虚拟线程(一种用户模式线程的实现)来帮助编写高吞吐量的服务。)
 + 虚拟线程能提高系统的吞吐量，而不是提高性能。
 
@@ -76,7 +76,7 @@
        - we can juggle more balls not by adding hands but by enlarging the arch.(我们可以玩更多的球，不是通过增加手，而是通过扩大拱门。)
        - Context-switching cost could be important , but are not the main reason for the throughput increase.（上下文切换的开销可能很重要，但不是吞吐量增加的主要原因。）
 
-       therad-per-request: 如上: A request consumes a thread(either new or borrowed from a pool) for it's duration.(请求在其持续时间内消耗一个线程（无论是新的还是从池中借用的）)
+       Therad-Per-Request: 如上: A request consumes a thread(either new or borrowed from a pool) for it's duration.(请求在其持续时间内消耗一个线程（无论是新的还是从池中借用的）)
    ```
 
 + <img src="./PPTS/why-usermode-threads-are-good-for-performance-31-2048.webp">
