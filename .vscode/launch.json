@@ -3,10 +3,26 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "java",
+            "type": "cppdbg",
             "name": "StreamPeekTest",
             "request": "launch",
-            "mainClass": "StreamPeekTest"
+            "program": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/bin/java",
+            "args": [
+                "StreamPeekTest"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/005.OpenJDK/003.prictice-code/",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "StreamPeekTest-.java->.class"
         },
         {
             "type": "cppdbg",

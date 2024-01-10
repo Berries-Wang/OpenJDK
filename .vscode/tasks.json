@@ -16,6 +16,22 @@
                 "isDefault": true
             },
             "detail": "调试器生成的任务。"
+        },
+        { //使用javac , 将.java文件转换为.class文件
+            "type": "shell",
+            "label": "StreamPeekTest-.java->.class", // 在launch.json中通过该字段来引用当前task
+            "command": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/bin/javac",
+            "args": [
+                "${workspaceFolder}/005.OpenJDK/003.prictice-code/StreamPeekTest.java",
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/005.OpenJDK/003.prictice-code/"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "调试器生成的任务。"
         }
     ],
     "version": "2.0.0"
