@@ -394,18 +394,19 @@ public interface Stream<T> extends BaseStream<T, Stream<T>> {
     /**
      * Returns a stream consisting of the elements of this stream, additionally
      * performing the provided action on each element as elements are consumed
-     * from the resulting stream.
+     * from the resulting stream.(返回由该流中的元素组成的流，并在从结果流中消费元素时对每个元素执行提供的操作。)
      *
-     * <p>This is an <a href="package-summary.html#StreamOps">intermediate
+     * <p>This is an <a href="package-summary.html#StreamOps">intermediate (中间的)
      * operation</a>.
      *
      * <p>For parallel stream pipelines, the action may be called at
      * whatever time and in whatever thread the element is made available by the
      * upstream operation.  If the action modifies shared state,
-     * it is responsible for providing the required synchronization.
+     * it is responsible for providing the required synchronization.(对于并行流管道，该操作可以在上游操作提供的任何时间和任何线程中被调用。如果操作修改了共享状态，则负责提供所需的同步。)
      *
      * @apiNote This method exists mainly to support debugging, where you want
      * to see the elements as they flow past a certain point in a pipeline:
+     * (这个方法的存在主要是为了支持调试，你希望看到元素经过管道中的某个点时的情况:)
      * <pre>{@code
      *     Stream.of("one", "two", "three", "four")
      *         .filter(e -> e.length() > 3)

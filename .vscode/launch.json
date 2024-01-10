@@ -3,6 +3,12 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "StreamPeekTest",
+            "request": "launch",
+            "mainClass": "StreamPeekTest"
+        },
+        {
             "type": "cppdbg",
             "name": "VirtualThreadsStu-OpenJDK21-GA",
             "request": "launch",
@@ -22,7 +28,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "VirtualThreadsStu-.java->.class" // 启动前先编译一下，将.java文件编译为.class文件, value是tasks.json中的任务对象的label值
+            "preLaunchTask": "VirtualThreadsStu-.java->.class"
         },
         {
             "name": "java D-000.openJDK_8u40",
