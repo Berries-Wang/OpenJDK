@@ -2767,6 +2767,7 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
      *       System.out.println("Hello");
      *       throw new RuntimeException();
      *   }, THREAD_POOL).exceptionally((ex) -> {
+     *       // 注意，不论是否异常，这里都会执行
      *       System.out.println("异常了 --> " + ex.getClass().getName());
      *       return "Hello";
      *   }).whenComplete((res, ex) -> {
