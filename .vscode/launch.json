@@ -3,6 +3,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java", // Java 调试
+            "name": "OpenJDK-Debug-CompletableFutureSTU",
+            "request": "launch",
+            "mainClass": "CompletableFutureSTU",
+            "classPaths": [ // classpath 得配置，否则找不着class,是作为 java命令 -cp选项的参数的值
+                "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/classes",
+                "${workspaceFolder}/005.OpenJDK/003.prictice-code"
+            ],
+            "preLaunchTask": "CompletableFutureSTU-.java->.class"
+        },
+        {
             "type": "cppdbg",
             "name": "StreamPeekTest",
             "request": "launch",
