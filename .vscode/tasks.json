@@ -37,6 +37,9 @@
         "type": "shell",
         "label": "CompletableFutureSTU-.java->.class", // 在launch.json中通过该字段来引用当前task
         "command": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/bin/javac",
+        "runOptions": {
+            "-classpath":"${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/classes"
+        },
         "args": [
             "${workspaceFolder}/005.OpenJDK/003.prictice-code/CompletableFutureSTU.java",
             "${workspaceFolder}/005.OpenJDK/003.prictice-code/PAThreadPoolExecutor.java",
