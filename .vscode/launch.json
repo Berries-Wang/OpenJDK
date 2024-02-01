@@ -18,10 +18,8 @@
                 "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/classes",
                 "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/linux/classes",
                 "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin",
-            ],
-            "env": {
-                "JRE_HOME": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/lib"
-            }
+                "${workspaceFolder}/005.OpenJDK/003.prictice-code",
+            ]
         },
         {
             "type": "cppdbg",
