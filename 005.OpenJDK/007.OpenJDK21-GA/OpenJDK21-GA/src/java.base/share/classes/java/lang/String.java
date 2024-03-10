@@ -140,19 +140,23 @@ import sun.nio.cs.UTF_8;
  */
 
 public final class String
-    implements java.io.Serializable, Comparable<String>, CharSequence,
-               Constable, ConstantDesc {
+        implements java.io.Serializable, Comparable<String>, CharSequence,
+        Constable, ConstantDesc {
 
     /**
-     * The value is used for character storage.
+     * The value is used for character storage.(用于字符存储。)
      *
      * @implNote This field is trusted by the VM, and is a subject to
-     * constant folding if String instance is constant. Overwriting this
-     * field after construction will cause problems.
+     *           constant folding if String instance is constant. Overwriting this
+     *           field after construction will cause
+     *           problems.(该字段受VM信任，如果String实例是常量，则该字段将被常量折叠。在构建后覆盖此字段将导致问题。)
      *
-     * Additionally, it is marked with {@link Stable} to trust the contents
-     * of the array. No other facility in JDK provides this functionality (yet).
-     * {@link Stable} is safe here, because value is never null.
+     *           Additionally, it is marked with {@link Stable} to trust the
+     *           contents
+     *           of the array. No other facility in JDK provides this functionality
+     *           (yet).
+     *           {@link Stable} is safe here, because value is never
+     *           null.（此外，它被标记为{@link Stable}以信任数组的内容。JDK中没有其他工具(目前)提供此功能。{@link Stable}在这里是安全的，因为value永远不会为空。）
      */
     @Stable
     private final byte[] value;

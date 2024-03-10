@@ -9,6 +9,9 @@ public class CompletableFutureSTU {
             Executors.defaultThreadFactory(), new ThreadPoolExecutor.AbortPolicy());
 
     public static void main(String[] args) {
+        char a = 'a';
+        System.out.println("a".getBytes().length);
+
         for (int j = 0; j <= 2; j++) {
             List<CompletableFuture<String>> lists = new ArrayList<>();
             for (int i = 0; i < 7; i++) {
