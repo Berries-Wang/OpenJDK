@@ -146,17 +146,21 @@ public final class String
     /**
      * The value is used for character storage.(用于字符存储。)
      *
-     * @implNote This field is trusted by the VM, and is a subject to
-     *           constant folding if String instance is constant. Overwriting this
-     *           field after construction will cause
-     *           problems.(该字段受VM信任，如果String实例是常量，则该字段将被常量折叠。在构建后覆盖此字段将导致问题。)
+     *  @implNote This field is trusted by the VM, and is a subject to
+     *            constant folding if String instance is constant. Overwriting this
+     *  field after construction will cause
+     *            problems.(该字段受VM信任，如果String实例是常量，则该字段将被常量折叠
+     *  (constant folding: 即 int aNum = 10 * 10 * 10;,在编译时，会直接将 ‘10 * 10 *
+     *  10’计算出来，放到常量表中，就不用在每次运行时计算了)。在构建后覆盖此字段将导致问题。)
+     * > 这里的常量折叠应当是 字符串常量将自动转为byte[].
+     * > 覆盖导致问题应该是 不同的字符串，编码可能不一样，如果直接覆盖，可能会因为编码不一致而导致问题。
      *
-     *           Additionally, it is marked with {@link Stable} to trust the
-     *           contents
-     *           of the array. No other facility in JDK provides this functionality
-     *           (yet).
-     *           {@link Stable} is safe here, because value is never
-     *           null.（此外，它被标记为{@link Stable}以信任数组的内容。JDK中没有其他工具(目前)提供此功能。{@link Stable}在这里是安全的，因为value永远不会为空。）
+     *  Additionally, it is marked with {@link Stable} to trust the
+     *  contents
+     *  of the array. No other facility in JDK provides this functionality
+     *  (yet).
+     *  {@link Stable} is safe here, because value is never
+     *  null.（此外，它被标记为{@link Stable}以信任数组的内容。JDK中没有其他工具(目前)提供此功能。{@link Stable}在这里是安全的，因为value永远不会为空。）
      */
     @Stable
     private final byte[] value;
