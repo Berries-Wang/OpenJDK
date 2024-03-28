@@ -29,6 +29,10 @@
 #### 注意事项
 &nbsp;&nbsp;直接看代码会导致你陷入细节和局部关注而看不到更高层次的设计，拼命盯着许多不同的类函数宏样式和注释时，很容易不知所措，试图推断出一些结构来帮助解释所有细节是如何联系起来的也有一定的难度。
 
+--- 
+## 关于GC
+> ps: 是否想了解 ”为什么单体吞吐量不会太高?“ 或其他迷惑的 ，那么请参考: [004.OpenJDK(JVM)学习/009.GC/README.md](./004.OpenJDK(JVM)学习/009.GC/README.md)
+
 ### 参考资料查询
 1. Oracle:[https://docs.oracle.com/](https://docs.oracle.com/)
 2. OpenJDK Wiki: [http://openjdk.java.net/](http://openjdk.java.net/)

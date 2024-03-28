@@ -24,6 +24,8 @@
     - [2. MetaspaceSize](#2-metaspacesize)
   - [注意事项](#注意事项-1)
     - [FULL GC 是串行的](#full-gc-是串行的)
+    - [JVM内存并不是越大越好（考虑吞吐量）](#jvm内存并不是越大越好考虑吞吐量)
+    - [截止目前，单体应用(单个Tomcat)吞吐量不会太高](#截止目前单体应用单个tomcat吞吐量不会太高)
   - [附录](#附录)
     - [GC分类](#gc分类)
   - [参考资料](#参考资料)
@@ -232,6 +234,15 @@ libc.so.6!clone() (/build/glibc-eX1tMB/glibc-2.31/sysdeps/unix/sysv/linux/x86_64
 ## 注意事项
 ### FULL GC 是串行的
 > [004.OpenJDK(JVM)学习/009.GC/008.G1/008.Full-GC-G1.md](../../004.OpenJDK(JVM)学习/009.GC/008.G1/008.Full-GC-G1.md)
+
+
+> ZGC 后就不是了，见:[023.OpenJDK8-18垃圾收集器的变化.md](./023.OpenJDK8-18垃圾收集器的变化.md)
+
+### JVM内存并不是越大越好（考虑吞吐量）
+> 见:[023.OpenJDK8-18垃圾收集器的变化.md](./023.OpenJDK8-18垃圾收集器的变化.md)
+
+### 截止目前，单体应用(单个Tomcat)吞吐量不会太高
+> 见:[023.OpenJDK8-18垃圾收集器的变化.md](./023.OpenJDK8-18垃圾收集器的变化.md)
 
 ---
 
