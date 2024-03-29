@@ -1,0 +1,301 @@
+= State of String Density performance (May 5, 2015)
+
+This note describes the current status in String Density performance work. 
+ https://bugs.openjdk.java.net/browse/JDK-8054307
+
+String Density targets to improve the String footprint without compromising the performance in most scenarios. The current
+prototype does so by storing the byte[] data in String, and having an additional field (coder) describing how to interpret
+that byte[] data: either as 1-byte (Latin1) string, or 2-byte (UTF-16) string. We can also call 1-byte strings "compressed"
+strings, and 2-byte strings "non-compressed".
+
+The current prototype appears to be fully functional, as it passes most tests we throw at it. However, much more work
+is required to prove it does not have serious bugs. This note will only concern itself with the performance side of things.
+We deliberately omit the gory details of the performance work done, and provide a high-level overview of the work done.
+
+== Source code
+
+We maintain the source code in JDK Sandbox repository, under 
+
+   $ hg clone http://hg.openjdk.java.net/jdk9/sandbox sandbox
+   $ sh ./configureget_source.sh 
+   $ sh ./common/bin/hgforest.sh update -r JDK-8054307-branch
+   $ sh ./configure
+   $ make images
+   (build/$flavor/jdk/ will contain the binaries)
+
+Caveat emptor: this is a work in progress, and in can contain severe bugs and/or performance issues. Use only for
+research and evaluation.
+
+== Results
+
+=== Initial population data
+
+The initial report estimated 5-15% footprint improvement with compressed Strings enabled. This is possible because Strings
+are very abundant (~25% of all heap are String objects), and their lengths are moderately high. With String Density, we are
+able to achieve almost 2x per-String footprint improvement on large Strings. 
+
+The heap dump study also paints a very favorable picture for compressed Strings: almost all Strings in heap are compressible,
+and only a few percent are non-compressible. This means the investment in more performance for compressible Strings will
+pay off greatly, and probably cover for small regressions in non-compressible Strings.
+
+That said, even with 5% of non-compressible Strings, the average operation mix for unary operations (like .hashCode, 
+.length, etc) is expected to be:
+ a) compressible String: 95%
+ b) non-compressible String: 5%
+
+Binary operations (those taking two Strings, like .equals, .contains, etc.), are expected to have this String coder mix:
+ a) a pair of non-compressible Strings: 0.25%
+ b) a pair of compressible Strings: 90.25%
+ c) one compressible and one non-compressible String: 9.5% (!!!)
+
+That is, if a unary operation on non-compressible String costs 20x more than the similar operation on a compressible
+String, then there is a net loss. Binary ops have lesser tolerance: it is enough to be 10x slower on a cross-coded
+pair to obliterate the performance.
+
+Of course, these estimates are about the averages, so real applications may have even less tolerance for the performance
+loss. This serves as an important observation: we need to take care about every combination of coders, when suggesting
+a JDK change.
+ 
+
+=== Footprints
+
+Running 64-bit HotSpot VM.
+Using compressed oop with 3-bit shift.
+Using compressed klass with 3-bit shift.
+Objects are 8 bytes aligned.
+Field sizes by type: 4, 1, 1, 2, 2, 4, 4, 8, 8 [bytes]
+Array element sizes: 4, 1, 1, 2, 2, 4, 4, 8, 8 [bytes]
+
+String footprint:
+  Vertical axis is String size, horizontal axis is compressibility (% of 1-byte characters in String)
+  Values are sizes in bytes. Average footprint per character is in parentheses.
+
+      |                           0.00                          0.50                          1.00
+-----------------------------------------------------------------------------------------------------
+    1 |                     48 ( 48.0)                    48 ( 48.0)                    48 ( 48.0)
+    8 |                     56 (  7.0)                    56 (  7.0)                    48 (  6.0)
+   64 |                    168 (  2.6)                   168 (  2.6)                   104 (  1.6)
+  512 |                   1064 (  2.1)                  1064 (  2.1)                   552 (  1.1)
+ 4096 |                   8232 (  2.0)                  8232 (  2.0)                  4136 (  1.0)
+
+
+See more at:
+  http://cr.openjdk.java.net/~shade/density/string-density-report.pdf
+
+=== Microbenchmark workloads
+
+Most microbenchmarks we have done today show good performance win with compressed Strings. For example, constructing
+a simple log message experiences a good performance boosts, because allocation pressure is much lower.
+
+@State(Scope.Benchmark)
+@BenchmarkMode(Mode.AverageTime)
+@OutputTimeUnit(TimeUnit.NANOSECONDS)
+@Warmup(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
+@Measurement(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
+@Fork(5)
+public class StringCompressLogging {
+
+    int x = 42;
+    String msg = "Msg";
+
+    @Benchmark
+    public String latin() {
+        return "[" + x + "] Everything's FUBARed: " + msg;
+    }
+
+    @Benchmark
+    public String cyrillic() {
+        return "[" + x + "] ÐžÐ¹, Ð²ÑÑ‘ Ð¿Ñ€Ð¾Ð¿Ð°Ð»Ð¾, ÑˆÐµÑ„: " + msg;
+    }
+
+}
+
+Benchmark                                                        Mode  Cnt     Score     Error   Units
+StringCompressLogging.cyrillic                                   avgt   25    81.210 Â±   0.334   ns/op
+StringCompressLogging.latin                                      avgt   25    56.337 Â±   0.357   ns/op
+StringCompressLogging.cyrillic:Â·gc.alloc.rate.norm               avgt   25   104.023 Â±   0.076    B/op
+StringCompressLogging.latin:Â·gc.alloc.rate.norm                  avgt   25    72.003 Â±   0.009    B/op
+
+In other words, latin version is ~20% faster while allocating ~30% less garbage.
+
+Microbenchmarks also routinely show regressions with non-compressed Strings, the work is underway to understand and
+improve the code to cover them up.
+
+=== Large workloads
+
+Two separate researches were done with small business-like workloads to understand the real-world impact
+better. "Unfortunately", most workloads are already heavily tuned for memory, allocation pressure, and basic avoidance of 
+heavy-weight String operations, therefore the impacts there are minimal.
+
+The best way to show the performance *improvement* is to run workloads in a memory constrained environment.
+That is, tune down the Java heap. The baseline JDK 9 is regressing slower than JDK 9 with String Density. Below is 
+a typical result in a memory constrained environment:
+
+(The numbers are operations per second for consecutive runs, the larger the better) 
+
+-Xmx512m -Xms512m:
+ JDK 9 Baseline:         (99894), 258901, 277431, 279399, 281195, 269575
+ JDK 9 String Density:  (105052), 315313, 310872, 320223, 322711, 319896
+
+-Xmx1g -Xms1g:
+ JDK 9 Baseline:        (102781), 309864, 327000, 316508, 318210, 314509
+ JDK 9 String Density:  (104306), 334674, 329145, 342055, 338395, 343526
+
+-Xmx4g -Xms4g:
+ JDK 9 Baseline:         (97328), 320564, 341585, 338590, 332090, 340108
+ JDK 9 String Density:   (99830), 324836, 351066, 351389, 360647, 344019
+
+We expect more workloads to be tried with String Density, as the code stabilizes.
+
+It also seems that running the allocation-hungry workloads on large machines also yields the boost, because we are 
+allocating less String storage.
+
+== Known issues
+
+=== Coder selection
+
+One of the early problems discovered with the prototype was the way to encode the coder type into the String itself.
+Different strategies were tried out, and we finally settled at putting a simple `byte` field into String, and dispatch
+statically over it:
+
+public class String {
+    private byte[] value;
+    private byte coder;
+
+    // sample implementation
+    public int compareTo(String anotherString) {
+        byte[] v1 = value;
+        byte[] v2 = anotherString.value;
+        if (coder == anotherString.coder) {
+            return (coder == LATIN1) ? 
+                StringLatin1.compareTo(v1, v2) :
+                StringUTF16.compareTo(v1, v2);
+        }
+        return (coder == LATIN1) ? 
+                StringLatin1.compareToUTF16(v1, v2) :
+                StringUTF16.compareToLatin1(v1, v2);
+     }
+}
+
+This saves the overhead of (un-)optimized virtual calls, and generally plays well with generated code. This apparently
+complicates the introduction of other coders, but similar troubles will manifest with polymorphic dynamic dispatches.
+
+No matter how good the coder selection is optimized, it still incurs the overhead. This overhead is clearly visible
+on small strings and/or the constant operations for Strings. We seem to be able to absorb some of the costs by improving
+the code generation elsewhere. This may make the JDK 9 code appear to perform the same as the baseline JDK 8 code.
+
+See more at:
+  http://cr.openjdk.java.net/~shade/density/double-selection.txt
+  http://shipilev.net/blog/2015/black-magic-method-dispatch/
+  http://cr.openjdk.java.net/~shade/density/charat.txt
+
+
+== Intrinsics and cross-coder intrinsics
+
+JDK code for Strings is heavily optimized with the help of VM intrinsics. VM intrinsics assume a particular shape for
+Strings. Maintaining the same level of performance with String Density code forces us to consider porting VM intrinsics
+to work with new forms. 
+
+Naively, one could expect that given N forms of String, there is a need for N VM intrinsics. However, this is only true
+for unary operations on Strings. When binary operations are done, there are now N^2 pairs of String forms that need to
+be handled. Some methods, like equals() can enjoy the short-cut when coders do not match. Other methods, like compareTo(),
+have to have new cross-coder intrinsic implementations.
+
+Luckily, these seem simple given the current vectorized instruction sets. compareTo() cross-coder intrinsics are already
+done and show good performance.
+
+See more:
+  http://cr.openjdk.java.net/~shade/density/equals.txt
+  http://cr.openjdk.java.net/~shade/density/compareTo.txt
+
+
+=== Coder-specific optimizations
+
+When we only consider a binary coder scheme with Latin1/UTF-16 split, then we can maintain the invariant that a given
+String can only be encoded by one coder exclusively. In other words, maintaining the invariant that Latin1-coded Strings
+contain no non-Latin1 characters, and UTF-16 contain at least one non-Latin1 character. This invariant is helpful in
+some cases where we need to do a binary operation across two coders.
+
+E.g. equals() can be implemented as:
+
+    public boolean equals(Object anObject) {
+        if (this == anObject) return true;
+        if (anObject instanceof String) {
+            String aString = (String)anObject;
+            if (coder == aString.coder) {
+                return (coder == LATIN1) ?
+                      StringLatin1.equals(value, aString.value) :
+                       StringUTF16.equals(value, aString.value);
+            }
+        }
+        return false;
+    }
+
+Notice we never compare the Strings with different coders. While this seems like a minor win, it helps to to cut corners
+in other places, like cross-coder intrinsics and encoding/decoding.
+
+In the code above, it is enough to only intrinsify equals(Latin1, Latin1) and equals(UTF-16, UTF-16) comparisons, and
+cross-coder equality comparisons may be short-cutted.
+
+Benchmark                       (size)  Mode  Cnt    Score   Error  Units
+
+StringCompressEquals.cmp1_cmp1       1  avgt   25    5.305 Â± 0.022  ns/op
+StringCompressEquals.cmp1_cmp2       1  avgt   25    3.321 Â± 0.008  ns/op
+StringCompressEquals.cmp2_cmp1       1  avgt   25    3.318 Â± 0.004  ns/op
+StringCompressEquals.cmp2_cmp2       1  avgt   25    5.294 Â± 0.175  ns/op
+
+StringCompressEquals.cmp1_cmp1    4096  avgt   25   94.918 Â± 8.512  ns/op
+StringCompressEquals.cmp1_cmp2    4096  avgt   25    3.355 Â± 0.117  ns/op
+StringCompressEquals.cmp2_cmp1    4096  avgt   25    3.319 Â± 0.005  ns/op
+StringCompressEquals.cmp2_cmp2    4096  avgt   25  175.228 Â± 0.746  ns/op
+
+Notice how cross-coder versions are shortcut-ed, and enjoy a significant performance advantage.
+
+
+=== String concatenation
+
+Another place where VM intervenes aggressively is String concatenations. There is a significant support on the compiler
+side (-XX:+OptimizeStringConcat) to aggressively optimize AbstractStringBuilder (ASB) chains. ASB Java code needs to be
+adjusted for String Density changes if we want high performance, and compiler should be adjusted to fit those changes.
+
+The bulk of the development and performance work is done there, and it (mostly) performs up to our expectations. There
+are still quite a few leftover things that need to be considered before the release. 
+
+See more:
+  http://cr.openjdk.java.net/~shade/density/concat.txt
+
+=== Encoder/decoder fast paths
+
+Another hot thing is a String I/O. Developers expect String encoding/decoding to be fast. For this project, this means
+we should not regress any of the conversions (at least significantly). Now that String can interpret its byte[] contents
+as something else than UTF-16, we can provide the fast paths for ASCII, ISO-8859-1 (Latin1). Plus, with some luck,
+the faster UTF-8, especially those fitting in ASCII character plane.
+
+ASCII and ISO-8859-1 encoders/decoders already perform well. Performance and development work is underway there. 
+
+See more:
+  http://cr.openjdk.java.net/~shade/density/encoding.txt
+
+== Unknown issues
+
+=== Other architectures 
+
+So far the research was primarily concentrated on a single platform: x86_64. This was done to understand at least one
+of the platforms deeply, before starting diving into other platforms' performance. At this point, we are reasonably sure
+the work should continue with other platforms, most notably SPARC, then ARM and POWER.
+
+The performance assessment and optimizations for SPARC are underway.
+
+=== Unknown workloads
+
+So far we have been concentrating on microbenchmarks to understand the low-level details of the prototype we are dealing
+with. Although some research was done on larger workloads, it was not as intensive as one likes to see for a production
+code. More work is required there, and we expect to leverage external community testing to understand the gaps in 
+benchmark testing.
+
+== Conclusion
+
+Given the current status, we are reasonably sure this work should go forward with targeting this improvement for JDK 9.
+The performance outlook looks positive, and most of the scary things are addressed and/or evaluated. It is plausible
+the code would be ready for the integration before feature freeze, and minor performance improvements can go after the
+code freeze for JDK 9. 
