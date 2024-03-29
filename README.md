@@ -21,10 +21,6 @@
 ## 关于GC
 > ps: 是否想了解 ”为什么单体吞吐量不会太高?“ 或其他迷惑的 ，那么请参考: [004.OpenJDK(JVM)学习/009.GC/README.md](./004.OpenJDK(JVM)学习/009.GC/README.md)
 
---- 
-## 关于GC
-> ps: 是否想了解 ”为什么单体吞吐量不会太高?“ 或其他迷惑的 ，那么请参考: [004.OpenJDK(JVM)学习/009.GC/README.md](./004.OpenJDK(JVM)学习/009.GC/README.md)
-
 ## 参考资料查询
 1. Oracle:[https://docs.oracle.com/](https://docs.oracle.com/)
 2. OpenJDK Wiki: [http://openjdk.java.net/](http://openjdk.java.net/)
