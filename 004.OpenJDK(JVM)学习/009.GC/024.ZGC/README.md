@@ -42,6 +42,8 @@ At its core, ZGC is a concurrent garbage collector, meaning all heavy lifting wo
 ### ZGC 参数
 请参考:[Open ZGC Wiki 20240330](./Docs/Main%20-%20Main%20-%20OpenJDK%20Wiki-20240330.pdf)
 
+## 注意事项
+1. 未分代ZGC 堆外额外内存占用太高，CPU消耗太大导致卡顿，分代ZGC有所改进。
 
 ## 参考资料
 1. [https://wiki.openjdk.org/display/zgc/Main#Main-Overview](https://wiki.openjdk.org/display/zgc/Main#Main-Overview)
