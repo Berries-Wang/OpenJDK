@@ -4,6 +4,25 @@
     "configurations": [
         {
             "type": "java",
+            "name": "OpenJDK-Debug-CompletableFutureSTUTWO",
+            "request": "launch",
+            "mainClass": "CompletableFutureSTUTWO",
+            "classPaths": [
+                "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/classes",
+                "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/lib",
+                "${workspaceFolder}/005.OpenJDK/003.prictice-code",
+                "."
+            ],
+            "preLaunchTask": "CompletableFutureSTUTWO-.java->.class",
+            "sourcePaths": [
+                "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/classes",
+                "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/linux/classes",
+                "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin",
+                "${workspaceFolder}/005.OpenJDK/003.prictice-code"
+            ]
+        },
+        {
+            "type": "java",
             "name": "OpenJDK-Debug-CompletableFutureSTU",
             "request": "launch",
             "mainClass": "CompletableFutureSTU",

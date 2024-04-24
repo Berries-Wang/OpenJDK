@@ -14,18 +14,18 @@ public class PAThreadPoolExecutor extends ThreadPoolExecutor {
 
         // 因为线程池提交的方式不同，"task" 的类型也不一样,因此需要兼容
         if (task instanceof Future) {
-            try {
-                Object result = ((Future<?>) task).get();
+            // try {
+            //     Object result = ((Future<?>) task).get();
 
-                if (result instanceof Exception) {
-                    Exception ex = (Exception) result;
-                    System.out.println("PAThreadPoolExecutor.afterExecute 出现异常，异常信息:[{}] [{}]" + ex.getMessage());
-                }
+            //     if (result instanceof Exception) {
+            //         Exception ex = (Exception) result;
+            //         System.out.println("PAThreadPoolExecutor.afterExecute 出现异常，异常信息:[{}] [{}]" + ex.getMessage());
+            //     }
 
-            } catch (InterruptedException | ExecutionException e) {
-                System.out.println("PAThreadPoolExecutor.afterExecute 出现异常，异常信息:[{}] [{}]" + e.getMessage());
+            // } catch (InterruptedException | ExecutionException e) {
+            //     System.out.println("PAThreadPoolExecutor.afterExecute 出现异常，异常信息:[{}] [{}]" + e.getMessage());
 
-            }
+            // }
         }
 
         // 如果task 是 Future类型的，则 "exception"为null

@@ -87,7 +87,7 @@
             "default": true
         }
     ],
-    "java.jdt.ls.java.home": "/home/wei/WorkSpace/TempLibs/jdk21/jdk-21.0.1",
+   // "java.jdt.ls.java.home": "/home/wei/WorkSpace/TempLibs/jdk21/jdk-21.0.1", // 避免使用JDK21启动调试
     "java.server.launchMode": "Standard",
     "java.debug.settings.onBuildFailureProceed": true
 }
