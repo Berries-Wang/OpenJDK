@@ -82,8 +82,8 @@
     "java.configuration.runtimes": [
         {
             "name": "JavaSE-1.8",
-            "path": "/home/wei/WorkSpace/open_source/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk",
-            "sources": "/home/wei/WorkSpace/open_source/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/classes",
+            "path": "/home/wei/WorkSpace/Open_Source/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk",
+            "sources": "/home/wei/WorkSpace/Open_Source/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/classes",
             "default": true
         }
     ],

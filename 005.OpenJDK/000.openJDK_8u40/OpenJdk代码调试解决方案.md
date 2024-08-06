@@ -90,6 +90,15 @@ launch.json配置
         }
 ```
 
+### 调试JVM
+> 具体配置详见 launch.json
+![2024-08-06_23-00-debug-jvm.png](./IMGS/2024-08-06_23-00-debug-jvm.png)
+>> main.c 中的main方法就是jvm启动入口
+
+### 调试JDK
+> 具体配置详见 launch.json
+![2024-08-06_23-15-debug-jdk.png](./IMGS/2024-08-06_23-15-debug-jdk.png)
+
 -----------------
 
 ## 调试注意事项

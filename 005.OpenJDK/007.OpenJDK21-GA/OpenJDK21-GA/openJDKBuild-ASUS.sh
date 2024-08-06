@@ -13,7 +13,7 @@ make clean
 FREETYPEINCLUDE='/usr/include/freetype2'
 FREETYPELIB='/usr/lib/x86_64-linux-gnu/'
 # BootJDK配置
-BOOTJDK='/home/wei/WorkSpace/TempLibs/jdk21/jdk-21.0.1'
+BOOTJDK='/home/wei/app_space/jdk-21.0.1'
 # 构建文件输出目录
 BUILDOUTPUTDIR=`pwd`/build
 echo ${BUILDOUTPUTDIR}

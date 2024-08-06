@@ -13,7 +13,7 @@ make clean CONF=linux-x86_64-normal-server-slowdebug
 FREETYPEINCLUDE='/usr/include/freetype2'
 FREETYPELIB='/usr/lib/x86_64-linux-gnu/'
 # BootJDK配置
-BOOTJDK='/home/wei/WorkSpace/TempLibs/java-se-7u75-ri'
+BOOTJDK='/home/wei/WorkSpace/TempLibs/jdk1.7.0_80'
 # 构建文件输出目录
 BUILDOUTPUTDIR=`pwd`/build
 echo ${BUILDOUTPUTDIR}
