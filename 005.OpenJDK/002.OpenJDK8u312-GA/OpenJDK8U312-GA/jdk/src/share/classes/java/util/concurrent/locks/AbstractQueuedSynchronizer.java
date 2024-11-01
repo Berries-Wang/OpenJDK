@@ -795,7 +795,7 @@ public abstract class AbstractQueuedSynchronizer
      * propagation. (Note: For exclusive mode, release just amounts
      * to calling unparkSuccessor of head if it needs signal.)
      */
-    private void doReleaseShared() {
+private void doReleaseShared() {
         /*
          * Ensure that a release propagates, even if there are other
          * in-progress acquires/releases.  This proceeds in the usual
@@ -932,7 +932,7 @@ public abstract class AbstractQueuedSynchronizer
     }
 
     /**
-     * 通过前置节点来判断当前线程是否应该被阻塞
+     * 通过前置节点来判断当前线程是否应该被阻塞: 即 如果前面的节点都被取消了,那么当前线程就不应该被阻塞
      * <p>
      * Checks and updates status for a node that failed to acquire.(当获取锁失败时为Node校验和更新waitStatus)
      * Returns true if thread should block. This is the main signal
@@ -953,7 +953,7 @@ public abstract class AbstractQueuedSynchronizer
              */
             return true;
         // waitStatus > 0 为取消状态，这里是将当前线程节点之前的处于取消状态的节点从队列中删除
-        if (ws > 0) {
+        if (ws > 0) { // ws > 0 表示线程已经被取消了，此类线程可以从CLH中移除
             /*
              * Predecessor was cancelled. Skip over predecessors and
              * indicate retry.
@@ -1052,8 +1052,7 @@ public abstract class AbstractQueuedSynchronizer
                  * parkAndCheckInterrupt 会调用LockSupport.park方法将当前线程挂起，当调用LockSupprt.unPark方法时，
                  * 该线程会从这里开始执行
                  */
-                if (shouldParkAfterFailedAcquire(p, node) &&
-                        parkAndCheckInterrupt()) {
+                if (shouldParkAfterFailedAcquire(p, node) && parkAndCheckInterrupt()) {
                     // 结合方法parkAndCheckInterrupt看，将这个中断状态返回到外层方法，即让线程处于等待队列中时无法响应外部的中断请求。因为当中断时，
                     // 调用LockSupport.park(x)方法时不会产生中断异常。
                     interrupted = true;
@@ -1063,6 +1062,7 @@ public abstract class AbstractQueuedSynchronizer
         } finally {
             /**
              * failed表示什么？即：线程尝试获取锁一直失败，直到node前驱节点为null。即之前的节点均获得CPU的执行机会了
+             * > 其实就是 shouldParkAfterFailedAcquire 返回了false,即当前node变为了head,即获取到临界资源,允许执行
              */
             if (failed)
                 // 将Node的状态设置为CANCELLED。

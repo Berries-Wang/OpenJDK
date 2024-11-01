@@ -38,36 +38,44 @@ package java.util.concurrent.locks;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RejectedExecutionException;
-import jdk.internal.misc.Unsafe;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Provides a framework for implementing blocking locks and related
  * synchronizers (semaphores, events, etc) that rely on
- * first-in-first-out (FIFO) wait queues.  This class is designed to
+ * first-in-first-out (FIFO) wait queues. This class is designed to
  * be a useful basis for most kinds of synchronizers that rely on a
  * single atomic {@code int} value to represent state. Subclasses
  * must define the protected methods that change this state, and which
  * define what that state means in terms of this object being acquired
- * or released.  Given these, the other methods in this class carry
+ * or released. Given these, the other methods in this class carry
  * out all queuing and blocking mechanics. Subclasses can maintain
  * other state fields, but only the atomically updated {@code int}
  * value manipulated using methods {@link #getState}, {@link
  * #setState} and {@link #compareAndSetState} is tracked with respect
  * to synchronization.
- *
- * <p>Subclasses should be defined as non-public internal helper
+ * (提供了一个框架来实现阻塞锁和相关的同步器（信号量、事件等），这些同步器依赖于先进先出（FIFO）等待队列。
+ * 这个类被设计为大多数依赖单个原子值{@code int}表示状态的同步器的有用基础。
+ * 子类必须定义改变这个状态的受保护的方法，这些方法定义了获取或释放这个对象时这个状态的含义。
+ * 考虑到这些，这个类中的其他方法将执行所有的排队和阻塞机制。子类可以维护其他状态字段，
+ * 但只有原子更新的{@code int}值可以使用{@link #getState}、{@link #setState}和{@link #compareAndSetState}方法进行操作，才会跟踪同步。)
+ * > "即 AQS 定义了一个框架(模板)来实现锁和同步器"
+ * 
+ * <p>
+ * Subclasses should be defined as non-public internal helper
  * classes that are used to implement the synchronization properties
- * of their enclosing class.  Class
+ * of their enclosing(封闭；围合（enclose 的现在分词）) class. Class
  * {@code AbstractQueuedSynchronizer} does not implement any
- * synchronization interface.  Instead it defines methods such as
+ * synchronization interface. Instead(转折:相反) it defines methods such as
  * {@link #acquireInterruptibly} that can be invoked as
  * appropriate by concrete locks and related synchronizers to
- * implement their public methods.
+ * implement their public
+ * methods.(相反，它定义了诸如{@link #acquireInterruptibly}之类的方法，这些方法可以被具体的锁和相关的同步器调用，以实现它们的公共方法)
  *
- * <p>This class supports either or both a default <em>exclusive</em>
+ * <p>
+ * This class supports either or both a default <em>exclusive</em>
  * mode and a <em>shared</em> mode. When acquired in exclusive mode,
  * attempted acquires by other threads cannot succeed. Shared mode
  * acquires by multiple threads may (but need not) succeed. This class
@@ -79,38 +87,53 @@ import jdk.internal.misc.Unsafe;
  * one of these modes, but both can come into play for example in a
  * {@link ReadWriteLock}. Subclasses that support only exclusive or
  * only shared modes need not define the methods supporting the unused mode.
+ * (该类支持默认独占模式和共享模式中的一种或两种。当以独占模式获取时，其他线程的尝试获取无法成功。多个线程获取共享模式可能（但不一定）成功
+ * 。这个类并不“理解”这些区别，只是从机制上说，当获取共享模式成功时，下一个等待线程（如果存在的话）也必须确定它是否也可以获取。
+ * 在不同模式下等待的线程共享同一个FIFO队列。通常，实现的子类只支持其中一种模式，但两种模式都可以发挥作用，例如，在只支持独占或共享模式的ReadWriteLock子类中，无需定义支持未使用模式的方法。)
  *
- * <p>This class defines a nested {@link ConditionObject} class that
+ * <p>
+ * This class defines a nested {@link ConditionObject} class that
  * can be used as a {@link Condition} implementation by subclasses
  * supporting exclusive mode for which method {@link
  * #isHeldExclusively} reports whether synchronization is exclusively
  * held with respect to the current thread, method {@link #release}
  * invoked with the current {@link #getState} value fully releases
  * this object, and {@link #acquire}, given this saved state value,
- * eventually restores this object to its previous acquired state.  No
+ * eventually restores this object to its previous acquired state. No
  * {@code AbstractQueuedSynchronizer} method otherwise creates such a
- * condition, so if this constraint cannot be met, do not use it.  The
+ * condition, so if this constraint cannot be met, do not use it. The
  * behavior of {@link ConditionObject} depends of course on the
  * semantics of its synchronizer implementation.
+ * (这个类定义了一个嵌套的{@link ConditionObject}类，它可以被支持独占模式的子类用作{@link Condition}的实现，其中的方法{@link #
+ * isheldexexclusive}报告同步是否被当前线程独占，
+ * 用当前的{@link #getState}值调用的方法{@link #release}完全释放这个对象，并且根据保存的状态值{@link #acquire}，最终将该对象恢复到其先前获得的状态。没有{@code AbstractQueuedSynchronizer}方法否则会创建这样的条件，
+ * 所以如果此约束不能满足，请不要使用它。{@link ConditionObject}的行为当然取决于它的同步器实现的语义。)
  *
- * <p>This class provides inspection, instrumentation, and monitoring
+ * <p>
+ * This class provides inspection(检查), instrumentation(仪表化), and monitoring
  * methods for the internal queue, as well as similar methods for
  * condition objects. These can be exported as desired into classes
  * using an {@code AbstractQueuedSynchronizer} for their
- * synchronization mechanics.
+ * synchronization
+ * mechanics.(这个类提供了内部队列的检查、检测和监视方法，以及条件对象的类似方法。它们可以使用{@code AbstractQueuedSynchronizer}根据需要导出到类中，用于它们的同步机制。)
  *
- * <p>Serialization of this class stores only the underlying atomic
+ * <p>
+ * Serialization of this class stores only the underlying atomic
  * integer maintaining state, so deserialized objects have empty
  * thread queues. Typical subclasses requiring serializability will
  * define a {@code readObject} method that restores this to a known
- * initial state upon deserialization.
+ * initial state upon
+ * deserialization.(该类的序列化仅存储底层的原子整数维护状态，因此反序列化对象具有空线程队列。需要可序列化的典型子类会定义一个{@code readObject}方法，在反序列化时将其恢复到已知的初始状态。)
  *
- * <h2>Usage</h2>
+ * <h2>Usage</h2> // 用法
  *
- * <p>To use this class as the basis of a synchronizer, redefine the
+ * <p>
+ * To use this class as the basis of a synchronizer, redefine the
  * following methods, as applicable, by inspecting and/or modifying
  * the synchronization state using {@link #getState}, {@link
  * #setState} and/or {@link #compareAndSetState}:
+ * (要使用这个类作为同步器的基础，可以使用{@link #getState}、
+ * {@link #setState}和/或{@link #compareAndSetState}检查和/或修改同步状态，酌情重新定义以下方法：)
  *
  * <ul>
  * <li>{@link #tryAcquire}
@@ -121,21 +144,28 @@ import jdk.internal.misc.Unsafe;
  * </ul>
  *
  * Each of these methods by default throws {@link
- * UnsupportedOperationException}.  Implementations of these methods
- * must be internally thread-safe, and should in general be short and
+ * UnsupportedOperationException}. Implementations of these methods
+ * must be internally(在内部) thread-safe, and should in general be short and
  * not block. Defining these methods is the <em>only</em> supported
  * means of using this class. All other methods are declared
  * {@code final} because they cannot be independently varied.
+ * (这些方法在默认情况下都会抛出{@link UnsupportedOperationException}。
+ * 这些方法的实现必须在内部是线程安全的，而且通常应该很短，而不是阻塞的。定义这些方法是使用这个类的唯一方式。所有其他方法都被声明为{@code final}，因为它们不能独立改变。)
+ * > 即，使用方式是唯一的，即只能重写这些方法
  *
- * <p>You may also find the inherited methods from {@link
+ * <p>
+ * You may also find the inherited methods from {@link
  * AbstractOwnableSynchronizer} useful to keep track of the thread
- * owning an exclusive synchronizer.  You are encouraged to use them
+ * owning an exclusive synchronizer. You are encouraged to use them
  * -- this enables monitoring and diagnostic tools to assist users in
- * determining which threads hold locks.
+ * determining which threads hold
+ * locks.(你也可以从{@link AbstractOwnableSynchronizer}中继承方法，用于跟踪拥有独占同步器的线程。我们鼓励您使用它们——这样可以使用监视和诊断工具来帮助用户确定哪些线程持有锁。)
  *
- * <p>Even though this class is based on an internal FIFO queue, it
- * does not automatically enforce FIFO acquisition policies.  The core
- * of exclusive synchronization takes the form:
+ * <p>
+ * Even though this class is based on an internal FIFO queue, it
+ * does not automatically enforce FIFO acquisition policies. The core
+ * of exclusive synchronization takes the
+ * form:(即使这个类基于内部FIFO队列，它也不会自动执行FIFO获取策略。互斥同步的核心形式如下：)
  *
  * <pre>
  * <em>Acquire:</em>
@@ -149,154 +179,204 @@ import jdk.internal.misc.Unsafe;
  *        <em>unblock the first queued thread</em>;
  * </pre>
  *
- * (Shared mode is similar but may involve cascading signals.)
+ * (Shared mode is similar but may involve cascading
+ * signals.)(共享模式类似，但可能涉及级联信号。)
  *
- * <p id="barging">Because checks in acquire are invoked before
+ * <p id="barging">
+ * 冲撞；驳船运输（barge 的现在分词）
+ * Because checks in acquire are invoked before
  * enqueuing, a newly acquiring thread may <em>barge</em> ahead of
- * others that are blocked and queued.  However, you can, if desired,
+ * others that are blocked and queued. However, you can, if desired,
  * define {@code tryAcquire} and/or {@code tryAcquireShared} to
  * disable barging by internally invoking one or more of the inspection
  * methods, thereby providing a <em>fair</em> FIFO acquisition order.
  * In particular, most fair synchronizers can define {@code tryAcquire}
  * to return {@code false} if {@link #hasQueuedPredecessors} (a method
  * specifically designed to be used by fair synchronizers) returns
- * {@code true}.  Other variations are possible.
+ * {@code true}. Other variations are possible.(因为check in acquire是在排队之前调用的，
+ * 所以新获取的线程可能会排在其他被阻塞和排队的线程之前。但是，如果需要的话，你可以定义{@code tryAcquire}和/或{@code tryAcquireShared}
+ * ，通过在内部调用一个或多个检查方法来禁用barging，从而提供一个公平的FIFO获取顺序。特别地，大多数公平同步器可以定义{@code tryAcquire}来返回{@code false}，
+ * 如果{@link # hasqueued}（一个专门为公平同步器设计的方法）返回{@code true}。其他变化也是可能的。)
  *
- * <p>Throughput and scalability are generally highest for the
+ * <p>
+ * Throughput and scalability are generally highest for the
  * default barging (also known as <em>greedy</em>,
  * <em>renouncement</em>, and <em>convoy-avoidance</em>) strategy.
  * While this is not guaranteed to be fair or starvation-free, earlier
  * queued threads are allowed to recontend before later queued
  * threads, and each recontention has an unbiased chance to succeed
- * against incoming threads.  Also, while acquires do not
+ * against incoming threads. Also, while acquires do not
  * &quot;spin&quot; in the usual sense, they may perform multiple
  * invocations of {@code tryAcquire} interspersed with other
- * computations before blocking.  This gives most of the benefits of
+ * computations before blocking. This gives most of the benefits of
  * spins when exclusive synchronization is only briefly held, without
  * most of the liabilities when it isn't. If so desired, you can
  * augment this by preceding calls to acquire methods with
  * "fast-path" checks, possibly prechecking {@link #hasContended}
  * and/or {@link #hasQueuedThreads} to only do so if the synchronizer
- * is likely not to be contended.
+ * is likely not to be
+ * contended.(默认驳船策略（也称为贪心策略、放弃策略和回避策略）的吞吐量和可伸缩性通常最高。虽然不能保证这是公平的或无饥饿的，但允许较早排队的线程在较晚排队的线程之前重新竞争，
+ * 并且每次重新竞争都有公平的机会成功地对抗进入的线程。此外，虽然acquire通常不会旋转，但它们可能在阻塞前多次调用{@code tryAcquire}并穿插其他计算。
+ * 当只短暂地进行独占同步时，这就提供了spins的大部分优点，而在不进行同步时，又没有大多数缺点。如果需要的话，你可以在调用之前使用“快速路径”检查来获取方法，可能会预先检查{@link #
+ * #hasContended} and/or {@link #hasQueuedThreads}，只在同步器不存在竞争的情况下才这样做。)
  *
- * <p>This class provides an efficient and scalable basis for
+ * <p>
+ * This class provides an efficient and scalable basis for
  * synchronization in part by specializing its range of use to
  * synchronizers that can rely on {@code int} state, acquire, and
  * release parameters, and an internal FIFO wait queue. When this does
  * not suffice, you can build synchronizers from a lower level using
  * {@link java.util.concurrent.atomic atomic} classes, your own custom
  * {@link java.util.Queue} classes, and {@link LockSupport} blocking
- * support.
+ * support.(这个类为同步提供了一个高效和可扩展的基础，部分原因是它专门用于依赖{@code int}状态、acquire和release参数的同步器，以及一个内部的FIFO等待队列。当这还不够时，
+ * 你可以使用{@link java.util.concurrent.atomic}类从底层构建同步器，也可以使用自定义的{@link java.util.concurrent.atomic}类。Queue}类和{@link LockSupport}阻塞支持。)
  *
  * <h2>Usage Examples</h2>
  *
- * <p>Here is a non-reentrant mutual exclusion lock class that uses
+ * <p>
+ * Here is a non-reentrant mutual exclusion lock class that uses
  * the value zero to represent the unlocked state, and one to
  * represent the locked state. While a non-reentrant lock
  * does not strictly require recording of the current owner
  * thread, this class does so anyway to make usage easier to monitor.
  * It also supports conditions and exposes some instrumentation methods:
+ * (下面是一个不可重入的互斥锁类，它使用值0表示未锁状态，使用值1表示锁定状态。虽然不可重入锁并不严格要求记录当前所有者线程，但这个类无论如何都要记录，以便监视使用情况。它还支持条件，并公开了一些检测方法：)
  *
  * <pre> {@code
  * class Mutex implements Lock, java.io.Serializable {
  *
- *   // Our internal helper class
- *   private static class Sync extends AbstractQueuedSynchronizer {
- *     // Acquires the lock if state is zero
- *     public boolean tryAcquire(int acquires) {
- *       assert acquires == 1; // Otherwise unused
- *       if (compareAndSetState(0, 1)) {
- *         setExclusiveOwnerThread(Thread.currentThread());
- *         return true;
- *       }
- *       return false;
+ *     // Our internal helper class
+ *     private static class Sync extends AbstractQueuedSynchronizer {
+ *         // Acquires the lock if state is zero
+ *         public boolean tryAcquire(int acquires) {
+ *             assert acquires == 1; // Otherwise unused
+ *             if (compareAndSetState(0, 1)) {
+ *                 setExclusiveOwnerThread(Thread.currentThread());
+ *                 return true;
+ *             }
+ *             return false;
+ *         }
+ *
+ *         // Releases the lock by setting state to zero
+ *         protected boolean tryRelease(int releases) {
+ *             assert releases == 1; // Otherwise unused
+ *             if (!isHeldExclusively())
+ *                 throw new IllegalMonitorStateException();
+ *             setExclusiveOwnerThread(null);
+ *             setState(0);
+ *             return true;
+ *         }
+ *
+ *         // Reports whether in locked state
+ *         public boolean isLocked() {
+ *             return getState() != 0;
+ *         }
+ *
+ *         public boolean isHeldExclusively() {
+ *             // a data race, but safe due to out-of-thin-air guarantees
+ *             return getExclusiveOwnerThread() == Thread.currentThread();
+ *         }
+ *
+ *         // Provides a Condition
+ *         public Condition newCondition() {
+ *             return new ConditionObject();
+ *         }
+ *
+ *         // Deserializes properly
+ *         private void readObject(ObjectInputStream s)
+ *                 throws IOException, ClassNotFoundException {
+ *             s.defaultReadObject();
+ *             setState(0); // reset to unlocked state
+ *         }
  *     }
  *
- *     // Releases the lock by setting state to zero
- *     protected boolean tryRelease(int releases) {
- *       assert releases == 1; // Otherwise unused
- *       if (!isHeldExclusively())
- *         throw new IllegalMonitorStateException();
- *       setExclusiveOwnerThread(null);
- *       setState(0);
- *       return true;
- *     }
+ *     // The sync object does all the hard work. We just forward to it.
+ *     private final Sync sync = new Sync();
  *
- *     // Reports whether in locked state
- *     public boolean isLocked() {
- *       return getState() != 0;
+ *     public void lock() {
+ *         sync.acquire(1);
  *     }
- *
- *     public boolean isHeldExclusively() {
- *       // a data race, but safe due to out-of-thin-air guarantees
- *       return getExclusiveOwnerThread() == Thread.currentThread();
+ * 
+ *     public boolean tryLock() {
+ *         return sync.tryAcquire(1);
  *     }
- *
- *     // Provides a Condition
+ * 
+ *     public void unlock() {
+ *         sync.release(1);
+ *     }
+ * 
  *     public Condition newCondition() {
- *       return new ConditionObject();
+ *         return sync.newCondition();
  *     }
- *
- *     // Deserializes properly
- *     private void readObject(ObjectInputStream s)
- *         throws IOException, ClassNotFoundException {
- *       s.defaultReadObject();
- *       setState(0); // reset to unlocked state
+ * 
+ *     public boolean isLocked() {
+ *         return sync.isLocked();
  *     }
- *   }
+ * 
+ *     public boolean isHeldByCurrentThread() {
+ *         return sync.isHeldExclusively();
+ *     }
+ * 
+ *     public boolean hasQueuedThreads() {
+ *         return sync.hasQueuedThreads();
+ *     }
+ * 
+ *     public void lockInterruptibly() throws InterruptedException {
+ *         sync.acquireInterruptibly(1);
+ *     }
+ * 
+ *     public boolean tryLock(long timeout, TimeUnit unit)
+ *             throws InterruptedException {
+ *         return sync.tryAcquireNanos(1, unit.toNanos(timeout));
+ *     }
+ * }
+ * }</pre>
  *
- *   // The sync object does all the hard work. We just forward to it.
- *   private final Sync sync = new Sync();
- *
- *   public void lock()              { sync.acquire(1); }
- *   public boolean tryLock()        { return sync.tryAcquire(1); }
- *   public void unlock()            { sync.release(1); }
- *   public Condition newCondition() { return sync.newCondition(); }
- *   public boolean isLocked()       { return sync.isLocked(); }
- *   public boolean isHeldByCurrentThread() {
- *     return sync.isHeldExclusively();
- *   }
- *   public boolean hasQueuedThreads() {
- *     return sync.hasQueuedThreads();
- *   }
- *   public void lockInterruptibly() throws InterruptedException {
- *     sync.acquireInterruptibly(1);
- *   }
- *   public boolean tryLock(long timeout, TimeUnit unit)
- *       throws InterruptedException {
- *     return sync.tryAcquireNanos(1, unit.toNanos(timeout));
- *   }
- * }}</pre>
- *
- * <p>Here is a latch class that is like a
+ * <p>
+ * Here is a latch class that is like a
  * {@link java.util.concurrent.CountDownLatch CountDownLatch}
  * except that it only requires a single {@code signal} to
  * fire. Because a latch is non-exclusive, it uses the {@code shared}
- * acquire and release methods.
+ * acquire and release methods.(下面是一个latch类，类似于{@link java.util.concurrent.CountDownLatch CountDownLatch}，只是它只需要一个{@code signal}来触发。因为latch是非排他的，所以它使用{@code shared}获取和释放方法。)
  *
  * <pre> {@code
  * class BooleanLatch {
  *
- *   private static class Sync extends AbstractQueuedSynchronizer {
- *     boolean isSignalled() { return getState() != 0; }
+ *     private static class Sync extends AbstractQueuedSynchronizer {
+ *         boolean isSignalled() {
+ *             return getState() != 0;
+ *         }
  *
- *     protected int tryAcquireShared(int ignore) {
- *       return isSignalled() ? 1 : -1;
+ *         protected int tryAcquireShared(int ignore) {
+ *             return isSignalled() ? 1 : -1;
+ *         }
+ *
+ *         protected boolean tryReleaseShared(int ignore) {
+ *             setState(1);
+ *             return true;
+ *         }
  *     }
  *
- *     protected boolean tryReleaseShared(int ignore) {
- *       setState(1);
- *       return true;
+ *     private final Sync sync = new Sync();
+ * 
+ *     public boolean isSignalled() {
+ *         return sync.isSignalled();
  *     }
- *   }
- *
- *   private final Sync sync = new Sync();
- *   public boolean isSignalled() { return sync.isSignalled(); }
- *   public void signal()         { sync.releaseShared(1); }
- *   public void await() throws InterruptedException {
- *     sync.acquireSharedInterruptibly(1);
- *   }
- * }}</pre>
+ * 
+ *     public void signal() {
+ *         sync.releaseShared(1);
+ *     }
+ * 
+ *     public void await() throws InterruptedException {
+ *         sync.acquireSharedInterruptibly(1);
+ *     }
+ * }
+ * }</pre>
+ * 
+ * <pre>
+ *    1. 抢占资源: 加锁: java.util.concurrent.locks.AbstractQueuedSynchronizer#acquire
+ *    2. 释放资源: 解锁: java.util.concurrent.locks.AbstractQueuedSynchronizer#release
+ * </pre>
  *
  * @since 1.5
  * @author Doug Lea
@@ -325,10 +405,13 @@ public abstract class AbstractQueuedSynchronizer
      * The status field includes bits that track whether a thread
      * needs a signal (using LockSupport.unpark). Despite these
      * additions, we maintain most CLH locality properties.
+     * (等待队列是CLH （Craig、Landin和Hagersten）锁队列的变体。CLH锁通常用于自旋锁。相反，我们通过包含显式（“prev”和“next”）链接以及一个“status”字段来阻塞同步器，
+     * 该字段允许节点在释放锁时向后继发出信号，并处理中断和超时引起的取消。status字段包含跟踪线程是否需要信号的比特位（使用LockSupport.unpark）。尽管增加了这些，我们仍然维护了大多数CLH局部性属性。)
      *
      * To enqueue into a CLH lock, you atomically splice it in as new
-     * tail. To dequeue, you set the head field, so the next eligible
-     * waiter becomes first.
+     * tail. To dequeue(出列), you set the head field, so the next eligible
+     * waiter becomes first.( To enqueue into a CLH lock, you atomically splice it in as new  tail. To dequeue, you set the head field, so the next eligible waiter becomes first.)
+     * > 先入先入(FIFO)队列，入队是在队尾添加元素，出队是从头部移除元素.
      *
      *  +------+  prev +-------+       +------+
      *  | head | <---- | first | <---- | tail |
@@ -345,7 +428,8 @@ public abstract class AbstractQueuedSynchronizer
      * Dekker-like scheme in which the to-be waiting thread indicates
      * WAITING status, then retries acquiring, and then rechecks
      * status before blocking. The signaller atomically clears WAITING
-     * status when unparking.
+     * status when unparking.(插入 CLH 队列仅需要对“尾部”执行单个原子操作，因此从出队到入队有一个简单的分界点。在成功执行 CAS 后，入队线程会设置前任线程的“下一个”链接。尽管不是原子操作，但这足以确保任何阻塞线程在符合条件时都会由前任线程发出信号（尽管在取消的情况下，可能需要借助 cleanQueue 方法中的信号）。
+     * 信号发送部分基于 Dekker 类方案，其中等待线程指示 WAITING 状态，然后重试获取，然后在阻塞之前重新检查状态。信号发送器在取消驻留时自动清除 WAITING 状态。)
      *
      * Dequeuing on acquire involves detaching (nulling) a node's
      * "prev" node and then updating the "head". Other threads check
@@ -358,7 +442,9 @@ public abstract class AbstractQueuedSynchronizer
      * Shared mode may (uncommonly) require a spin-wait before
      * setting head field to ensure proper propagation. (Historical
      * note: This allows some simplifications and efficiencies
-     * compared to previous versions of this class.)
+     * compared to previous versions of this class.) (在获取时退出队列涉及分离（置零）节点的“prev”节点，然后更新“head”。其他线程通过检查“prev”而不是head来检查节点是否退出队列。
+     * 如果需要，我们通过spin-waiting来强制置空然后设置顺序。正因为如此，锁算法本身并不是严格意义上的“无锁”，因为获取线程可能需要等待之前的获取取得进展。当与互斥锁一起使用时，
+     * 无论如何都需要这样的进度。然而，共享模式可能（不常见）需要spin-wait在设置头部字段以确保正确的传播。（历史注释：与该类的以前版本相比，这允许一些简化和效率。）)
      *
      * A node's predecessor can change due to cancellation while it is
      * waiting, until the node is first in queue, at which point it
@@ -372,7 +458,9 @@ public abstract class AbstractQueuedSynchronizer
      * cleanQueue traverses the queue until a clean sweep. Nodes that
      * become relinked as first are unconditionally unparked
      * (sometimes unnecessarily, but those cases are not worth
-     * avoiding).
+     * avoiding).(一个节点的前驱节点可能会因为在等待过程中被取消而改变，直到该节点排在队列的第一个，此时它就不能改变了。acquire方法通过在等待之前重新检查“prev”来解决这个问题。
+     * prev和next字段仅通过CAS修改，并在方法cleanQueue中取消节点。unsplice策略让人想起了Michael-Scott队列，在一个成功的CAS到prev字段之后，其他线程帮助修复next字段。因为取消操作经常是一堆一堆地进行的，
+     * 这使得有关必要信号的决策变得复杂，所以每次对cleanQueue的调用都会遍历队列，直到完全清除为止。第一个重新链接的节点会无条件地退出（有时是不必要的，但这种情况不值得避免）。)
      *
      * A thread may try to acquire if it is first (frontmost) in the
      * queue, and sometimes before.  Being first does not guarantee
@@ -385,7 +473,9 @@ public abstract class AbstractQueuedSynchronizer
      * a thread is unparked. Except in this case, AQS locks do not
      * spin; they instead interleave attempts to acquire with
      * bookkeeping steps. (Users who want spinlocks can use
-     * tryAcquire.)
+     * tryAcquire.)(如果线程在队列中排在最前面，有时排在最前面，则可能会尝试获取。排在最前面并不保证成功；它只赋予了竞争的权利。我们通过允许传入线程在入队过程中“闯入”并获取同步器来平衡吞吐量、开销和公平性，
+     * 在这种情况下，被唤醒的第一个线程可能需要重新等待。为了抵消可能重复的不幸重新等待，我们每次取消线程驻留时都会成倍增加获取的重试次数（最多 256 次）。
+     * 除了这种情况，AQS 锁不会旋转；它们会将获取尝试与记账步骤交错进行。（想要自旋锁的用户可以使用 tryAcquire。）)
      *
      * To improve garbage collectibility, fields of nodes not yet on
      * list are null. (It is not rare to create and then throw away a
@@ -395,20 +485,22 @@ public abstract class AbstractQueuedSynchronizer
      * method getFirstQueuedThread). This sometimes requires the
      * fallback of traversing backwards from the atomically updated
      * "tail" when fields appear null. (This is never needed in the
-     * process of signalling though.)
+     * process of signalling though.)(为了提高垃圾回收率，尚未列入列表的节点的字段为空。（创建节点后不使用它就丢弃的情况并不少见。）从列表中删除的节点的字段会尽快清空。
+     * 这加剧了从外部确定第一个等待线程的挑战（如方法 getFirstQueuedThread 中所示）。当字段显示为空时，有时需要从原子更新的“尾部”向后遍历。（但在信号发送过程中，这从来都不需要。）)
      *
      * CLH queues need a dummy header node to get started. But
      * we don't create them on construction, because it would be wasted
      * effort if there is never contention. Instead, the node
      * is constructed and head and tail pointers are set upon first
-     * contention.
+     * contention.(CLH 队列需要一个虚拟头节点才能启动。但我们不会在构造时创建它们，因为如果从未发生争用，那么这将是浪费精力。相反，在第一次争用时构造节点并设置头指针和尾指针。)
      *
      * Shared mode operations differ from Exclusive in that an acquire
      * signals the next waiter to try to acquire if it is also
      * Shared. The tryAcquireShared API allows users to indicate the
      * degree of propagation, but in most applications, it is more
      * efficient to ignore this, allowing the successor to try
-     * acquiring in any case.
+     * acquiring in any case.(共享模式操作与独占模式的不同之处在于，如果下一个等待者也是共享模式，则获取会发出信号，让其尝试获取。
+     * tryAcquireShared API 允许用户指示传播程度，但在大多数应用程序中，忽略这一点更为有效，允许后继者在任何情况下尝试获取。)
      *
      * Threads waiting on Conditions use nodes with an additional
      * link to maintain the (FIFO) list of conditions. Conditions only
@@ -416,7 +508,8 @@ public abstract class AbstractQueuedSynchronizer
      * because they are only accessed when exclusively held.  Upon
      * await, a node is inserted into a condition queue.  Upon signal,
      * the node is enqueued on the main queue.  A special status field
-     * value is used to track and atomically trigger this.
+     * value is used to track and atomically trigger this.(等待条件的线程使用带有附加链接的节点来维护条件的 (FIFO) 列表。
+     * 条件只需要链接简单（非并发）链接队列中的节点，因为它们仅在独占时才会被访问。等待时，节点将插入条件队列。收到信号后，节点将加入主队列。使用特殊状态字段值来跟踪并自动触发此操作。)
      *
      * Accesses to fields head, tail, and state use full Volatile
      * mode, along with CAS. Node fields status, prev and next also do
@@ -425,12 +518,13 @@ public abstract class AbstractQueuedSynchronizer
      * signalled) are always sandwiched between other atomic accesses
      * so are used in Plain mode. We use jdk.internal Unsafe versions
      * of atomic access methods rather than VarHandles to avoid
-     * potential VM bootstrap issues.
+     * potential VM bootstrap issues.(对字段 head、tail 和 state 的访问使用完全 Volatile 模式以及 CAS。节点字段 status、prev 和 next 也这样做，而线程可能是可发信号的，但有时使用较弱的模式。
+     * 对字段“waiter”（要发信号的线程）的访问始终夹在其他原子访问之间，因此在 Plain 模式下使用。我们使用 jdk.internal 原子访问方法的不安全版本而不是 VarHandles 来避免潜在的 VM 引导问题。)
      *
      * Most of the above is performed by primary internal method
      * acquire, that is invoked in some way by all exported acquire
      * methods.  (It is usually easy for compilers to optimize
-     * call-site specializations when heavily used.)
+     * call-site specializations when heavily used.)(上述大部分操作由主要内部方法 acquire 执行，该方法由所有导出的 acquire 方法以某种方式调用。（当大量使用时，编译器通常很容易优化调用点特化。）)
      *
      * Most AQS methods may be called by JDK components that cannot be
      * allowed to fail when encountering OutOfMemoryErrors. The main
@@ -443,14 +537,18 @@ public abstract class AbstractQueuedSynchronizer
      * by first-time usages, that may encounter unrecoverable
      * OOMEs. Also, it is possible for OutOfMemoryErrors to be thrown
      * when attempting to create and throw
-     * IllegalMonitorStateExceptions and InterruptedExceptions.
+     * IllegalMonitorStateExceptions and InterruptedExceptions.（大多数 AQS 方法可能由 JDK 组件调用，这些组件在遇到 OutOfMemoryErrors 时不能失败。
+     * 如果无法分配节点，主获取方法将采用带退避的自旋等待。条件等待释放并在 OOME 时以缓慢的固定速率 (OOME_COND_WAIT_DELAY) 重新获取锁，其设计目的是希望最终能够恢复足够的内存；
+     * 否则，性能可能会非常慢。有效性还受到首次使用触发类加载的可能性的限制，这可能会遇到无法恢复的 OOME。
+     * 此外，在尝试创建和抛出 IllegalMonitorStateExceptions 和 InterruptedExceptions 时，可能会抛出 OutOfMemoryErrors。）
      *
      * There are several arbitrary decisions about when and how to
      * check interrupts in both acquire and await before and/or after
      * blocking. The decisions are less arbitrary in implementation
      * updates because some users appear to rely on original behaviors
      * in ways that are racy and so (rarely) wrong in general but hard
-     * to justify changing.
+     * to justify changing.（关于何时以及如何在阻塞之前和/或之后检查 acquire 和 await 中的中断，存在一些任意决定。
+     * 在实现更新中，这些决定不那么任意，因为一些用户似乎以不正当的方式依赖原始行为，因此（很少）总体上是错误的，但很难证明改变的合理性。）
      *
      * Thanks go to Dave Dice, Mark Moir, Victor Luchangco, Bill
      * Scherer and Michael Scott, along with members of JSR-166
@@ -460,7 +558,7 @@ public abstract class AbstractQueuedSynchronizer
 
     // Node status bits, also used as argument and return values
     static final int WAITING   = 1;          // must be 1
-    static final int CANCELLED = 0x80000000; // must be negative
+    static final int CANCELLED = 0x80000000; // must be negative(负)
     static final int COND      = 2;          // in a condition wait
 
     /** CLH Nodes */
@@ -468,7 +566,7 @@ public abstract class AbstractQueuedSynchronizer
         volatile Node prev;       // initially attached via casTail
         volatile Node next;       // visibly nonnull when signallable
         Thread waiter;            // visibly nonnull when enqueued
-        volatile int status;      // written by owner, atomic bit ops by others
+        volatile int status;      // written by owner, atomic bit ops by others , 单个Node的状态
 
         // methods for atomic operations
         final boolean casPrev(Node c, Node v) {  // for cleanQueue
