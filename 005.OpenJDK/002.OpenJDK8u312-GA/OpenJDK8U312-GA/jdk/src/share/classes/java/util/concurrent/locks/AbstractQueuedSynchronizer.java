@@ -1884,15 +1884,17 @@ private void doReleaseShared() {
 
     /**
      * Returns true if a node, always one that was initially placed on
-     * a condition queue, is now waiting to reacquire on sync queue.
+     * a condition queue, is now waiting to reacquire(重新获得) on sync queue.
+     * (如果一个节点（始终是最初放置在条件队列上的节点）现在正在等待在同步队列上重新获取，则返回true。)
+     * > 即： 判断node是否在等待队列上
      *
      * @param node the node
-     * @return true if is reacquiring
+     * @return true if is reacquiring // true 表示node在AQS的同步队列中，正在获取AQS的临界资源(正在尝试重新获取锁)
      */
     final boolean isOnSyncQueue(Node node) {
         if (node.waitStatus == Node.CONDITION || node.prev == null)
             return false;
-        if (node.next != null) // If has successor, it must be on queue
+        if (node.next != null) // If has successor, it must be on queue // 有后继节点，说明就是在队列中
             return true;
         /*
          * node.prev can be non-null, but not yet on queue because
@@ -1900,7 +1902,10 @@ private void doReleaseShared() {
          * traverse from tail to make sure it actually made it.  It
          * will always be near the tail in calls to this method, and
          * unless the CAS failed (which is unlikely), it will be
-         * there, so we hardly ever traverse much.
+         * there, so we hardly ever traverse much.(node.prev可以是非空的，但还不能在队列上，因为将它放在队列上的CAS可能会失败。
+         * 所以我们必须从尾巴开始遍历，以确保它确实做到了。在调用此方法时，它将始终位于尾部附近，除非CAS失败（这是不太可能的），
+         * 否则它将在那里，因此我们几乎不会遍历太多。)
+         * > 应该内涵的就是 添加node到AQS等待队列是先 node.pre = xx , 再xx.next = node ， 这两个操作并不是原子性的，存在一定的CAS失败率
          */
         return findNodeFromTail(node);
     }
@@ -1975,8 +1980,8 @@ private void doReleaseShared() {
 
     /**
      * Invokes release with current state value; returns saved state.
-     * Cancels node and throws exception on failure.
-     *
+     * Cancels node and throws exception on failure. (使用当前AQS中的state的值调用release方法，返回state的值，当失败的时候取消线程并且抛出异常)
+     * > 即： 释放资源（释放锁）,结合AQS加锁流程，当异常了，则将node置为取消状态: 此时线程并没有被锁住，也没有处于等待状态，因此可以从AQS的等待队列中移出
      * @param node the condition node for this wait
      * @return previous sync state
      */
@@ -1991,8 +1996,9 @@ private void doReleaseShared() {
                 throw new IllegalMonitorStateException();
             }
         } finally {
-            if (failed)
+            if (failed) { // 当失败了,则将node置为已取消状态
                 node.waitStatus = Node.CANCELLED;
+            }
         }
     }
 
@@ -2111,7 +2117,7 @@ private void doReleaseShared() {
         // Internal methods
 
         /**
-         * Adds a new waiter to wait queue.
+         * Adds a new waiter to wait queue. (添加一个新的waiter到队列中)
          *
          * @return its new wait node
          */
@@ -2124,7 +2130,7 @@ private void doReleaseShared() {
             }
             Node node = new Node(Thread.currentThread(), Node.CONDITION);
             if (t == null)
-                firstWaiter = node;
+                firstWaiter = node; // 没有并发问题，能执行到此处，说明都是获取到了state临界资源的操作权限的(获取到锁了)
             else
                 t.nextWaiter = node;
             lastWaiter = node;
@@ -2292,7 +2298,7 @@ private void doReleaseShared() {
         }
 
         /**
-         * Implements interruptible condition wait.
+         * Implements interruptible condition wait.(实现可中断条件等待)
          * <ol>
          * <li> If current thread is interrupted, throw InterruptedException.
          * <li> Save lock state returned by {@link #getState}.
@@ -2307,7 +2313,7 @@ private void doReleaseShared() {
         public final void await() throws InterruptedException {
             if (Thread.interrupted())
                 throw new InterruptedException();
-            Node node = addConditionWaiter();
+            Node node = addConditionWaiter();  // 添加一个新的waiter到等待队列中
             int savedState = fullyRelease(node);
             int interruptMode = 0;
             while (!isOnSyncQueue(node)) {
