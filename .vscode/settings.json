@@ -80,12 +80,12 @@
     },
     "java.import.maven.enabled": true,
     "java.configuration.runtimes": [
-        {
-            "name": "JavaSE-1.8",
-            "path": "/home/wei/WorkSpace/Open_Source/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk",
-            "sources": "/home/wei/WorkSpace/Open_Source/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/classes",
-            "default": true
-        }
+        // {
+        //     "name": "JavaSE-1.8",
+        //     "path": "/home/wei/WorkSpace/Open_Source/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk",
+        //     "sources": "/home/wei/WorkSpace/Open_Source/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/classes",
+        //     "default": true
+        // }
     ],
    // "java.jdt.ls.java.home": "/home/wei/WorkSpace/TempLibs/jdk21/jdk-21.0.1", // 避免使用JDK21启动调试
     "java.server.launchMode": "Standard",

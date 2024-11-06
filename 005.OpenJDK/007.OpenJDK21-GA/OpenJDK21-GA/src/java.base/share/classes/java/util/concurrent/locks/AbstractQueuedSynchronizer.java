@@ -216,7 +216,7 @@ import java.util.concurrent.TimeUnit;
  * and/or {@link #hasQueuedThreads} to only do so if the synchronizer
  * is likely not to be
  * contended.(默认驳船策略（也称为贪心策略、放弃策略和回避策略）的吞吐量和可伸缩性通常最高。虽然不能保证这是公平的或无饥饿的，但允许较早排队的线程在较晚排队的线程之前重新竞争，
- * 并且每次重新竞争都有公平的机会成功地对抗进入的线程。此外，虽然acquire通常不会旋转，但它们可能在阻塞前多次调用{@code tryAcquire}并穿插其他计算。
+ * 并且每次重新竞争都有公平的机会成功地对抗进入的线程。此外，虽然acquire通常不会自旋，但它们可能在阻塞前多次调用{@code tryAcquire}并穿插其他计算。
  * 当只短暂地进行独占同步时，这就提供了spins的大部分优点，而在不进行同步时，又没有大多数缺点。如果需要的话，你可以在调用之前使用“快速路径”检查来获取方法，可能会预先检查{@link #
  * #hasContended} and/or {@link #hasQueuedThreads}，只在同步器不存在竞争的情况下才这样做。)
  *
@@ -410,7 +410,7 @@ public abstract class AbstractQueuedSynchronizer
      *
      * To enqueue into a CLH lock, you atomically splice it in as new
      * tail. To dequeue(出列), you set the head field, so the next eligible
-     * waiter becomes first.( To enqueue into a CLH lock, you atomically splice it in as new  tail. To dequeue, you set the head field, so the next eligible waiter becomes first.)
+     * waiter becomes first.
      * > 先入先入(FIFO)队列，入队是在队尾添加元素，出队是从头部移除元素.
      *
      *  +------+  prev +-------+       +------+
@@ -428,7 +428,7 @@ public abstract class AbstractQueuedSynchronizer
      * Dekker-like scheme in which the to-be waiting thread indicates
      * WAITING status, then retries acquiring, and then rechecks
      * status before blocking. The signaller atomically clears WAITING
-     * status when unparking.(插入 CLH 队列仅需要对“尾部”执行单个原子操作，因此从出队到入队有一个简单的分界点。在成功执行 CAS 后，入队线程会设置前任线程的“下一个”链接。尽管不是原子操作，但这足以确保任何阻塞线程在符合条件时都会由前任线程发出信号（尽管在取消的情况下，可能需要借助 cleanQueue 方法中的信号）。
+     * status when unparking.(插入 CLH 队列仅需要对“尾部”执行单个原子操作(即只需保证设置'tail'是原子操作)，因此从出队到入队有一个简单的分界点。在成功执行 CAS 后，入队线程会设置前任线程的“下一个”链接。尽管不是原子操作，但这足以确保任何阻塞线程在符合条件时都会由前任线程发出信号（尽管在取消的情况下，可能需要借助 cleanQueue 方法中的信号）。
      * 信号发送部分基于 Dekker 类方案，其中等待线程指示 WAITING 状态，然后重试获取，然后在阻塞之前重新检查状态。信号发送器在取消驻留时自动清除 WAITING 状态。)
      *
      * Dequeuing on acquire involves detaching (nulling) a node's
