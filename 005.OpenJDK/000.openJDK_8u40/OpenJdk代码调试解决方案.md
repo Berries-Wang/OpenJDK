@@ -99,7 +99,7 @@ launch.json配置
 > 具体配置详见 launch.json
 ![2024-08-06_23-15-debug-jdk.png](./IMGS/2024-08-06_23-15-debug-jdk.png)
 
-### 使用idea调试OpenJDK
+### 使用idea调试OpenJDK: 宛如调试一般JDK一样:断点、局部变量、...
 ##### 1. 源码编译
 ![7bbed36a4400d6635024e6476daff301.png](./IMGS/7bbed36a4400d6635024e6476daff301.png)
 
