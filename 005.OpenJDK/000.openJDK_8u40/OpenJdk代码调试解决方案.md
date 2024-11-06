@@ -99,6 +99,21 @@ launch.json配置
 > 具体配置详见 launch.json
 ![2024-08-06_23-15-debug-jdk.png](./IMGS/2024-08-06_23-15-debug-jdk.png)
 
+### 使用idea调试OpenJDK
+##### 1. 源码编译
+![7bbed36a4400d6635024e6476daff301.png](./IMGS/7bbed36a4400d6635024e6476daff301.png)
+
+##### 配置idea
+1. 添加自编译OpenJDK: 注意jdk路径和源文件路径
+- ![add_sdk_build_by_self.png](./IMGS/add_sdk_build_by_self.png)
+- ![04a2ccfdf6d1ae2892629d83a80ebfa0.png](./IMGS/04a2ccfdf6d1ae2892629d83a80ebfa0.png)
+
+2. 项目和模块都配置新添加的OpenJDK
+- ![30ecc28f2827c3c3ca756554bc90c3a4.png](./IMGS/30ecc28f2827c3c3ca756554bc90c3a4.png)
+- ![1f24681808f0cd7bb3d53f060001c324.png](./IMGS/1f24681808f0cd7bb3d53f060001c324.png)
+
+##### 开始调试
+- ![e8a45dace1708ff41484db8467986120.png](./IMGS/e8a45dace1708ff41484db8467986120.png)
 -----------------
 
 ## 调试注意事项

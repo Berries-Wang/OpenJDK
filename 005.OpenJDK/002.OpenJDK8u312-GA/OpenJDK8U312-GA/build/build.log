@@ -27,7 +27,7 @@ Note: Recompile with -Xlint:deprecation for details.
 Creating langtools/dist/lib/classes.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished langtools (build time 00:00:43)
+## Finished langtools (build time 00:00:32)
 
 ## Starting hotspot
 make[2]: warning: -j1 forced in submake: resetting jobserver mode.
@@ -125,15 +125,15 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/jvmtiEnv.hpp
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/jvmtiEnter.cpp
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/jvmtiEnterTrace.cpp
-Generating /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/jvmtiEnvRecommended.cpp
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/bytecodeInterpreterWithChecks.cpp
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/jvmti.h
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Generating /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/jvmtiEnvRecommended.cpp
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating jfrEventClasses.hpp
@@ -217,8 +217,8 @@ Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/utilities/bitMap.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/jfr/leakprofiler/chains/bitset.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/opto/block.cpp
-Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/memory/blockOffsetTable.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/bufferingOopClosure.cpp
+Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/memory/blockOffsetTable.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/opto/buildOopMap.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/interpreter/bytecode.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/classfile/bytecodeAssembler.cpp
@@ -326,8 +326,8 @@ Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/collectionSetChooser.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/shared/collectorCounters.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/memory/collectorPolicy.cpp
-Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/concurrentMarkSweep/compactibleFreeListSpace.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/runtime/compilationPolicy.cpp
+Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/concurrentMarkSweep/compactibleFreeListSpace.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/opto/compile.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/compiler/compileBroker.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/compiler/compileLog.cpp
@@ -429,15 +429,15 @@ Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/g1PageBasedVirtualSpace.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/g1ParScanThreadState.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/g1RegionToSpaceMapper.cpp
-Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/g1RemSetSummary.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/g1RemSet.cpp
+Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/g1RemSetSummary.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/g1RootProcessor.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/g1SATBCardTableModRefBS.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/g1StringDedup.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/g1StringDedupQueue.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/g1StringDedupStat.cpp
-Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/g1StringDedupTable.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/g1StringDedupThread.cpp
+Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/g1StringDedupTable.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/g1_globals.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/shared/gSpaceCounters.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/shared/gcAdaptivePolicyCounters.cpp
@@ -568,8 +568,8 @@ Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/jfr/utilities/jfrTime.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/jfr/utilities/jfrTimeConverter.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/jfr/recorder/checkpoint/types/traceid/jfrTraceId.cpp
-Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/jfr/recorder/checkpoint/types/traceid/jfrTraceIdEpoch.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/jfr/recorder/checkpoint/types/jfrType.cpp
+Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/jfr/recorder/checkpoint/types/traceid/jfrTraceIdEpoch.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/jfr/recorder/checkpoint/types/jfrTypeManager.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/jfr/recorder/checkpoint/types/jfrTypeSet.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/jfr/recorder/checkpoint/types/jfrTypeSetUtils.cpp
@@ -699,8 +699,8 @@ Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/opto/output.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/parNew/parCardTableModRefBS.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/shared/parGCAllocBuffer.cpp
-Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/parNew/parNewGeneration.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/parallelScavenge/parMarkBitMap.cpp
+Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/parNew/parNewGeneration.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/parallelScavenge/parallelScavengeHeap.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/runtime/park.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/opto/parse1.cpp
@@ -738,8 +738,8 @@ Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/parallelScavenge/psTasks.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/parallelScavenge/psVirtualspace.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/parallelScavenge/psYoungGen.cpp
-Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/ptrQueue.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/utilities/quickSort.cpp
+Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/ptrQueue.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/cpu/x86/vm/rdtsc_x86.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/memory/referencePolicy.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/memory/referenceProcessor.cpp
@@ -774,8 +774,8 @@ Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/jfr/leakprofiler/utilities/saveRestore.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/code/scopeDesc.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/os/posix/vm/semaphore_posix.cpp
-Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/runtime/serviceThread.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/libadt/set.cpp
+Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/runtime/serviceThread.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/memory/sharedHeap.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/classfile/sharedPathsMiscInfo.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/runtime/sharedRuntime.cpp
@@ -871,8 +871,8 @@ Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/utilities/xmlstream.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/utilities/yieldingWorkgroup.cpp
 Making signal interposition lib...
-Making SA debugger back-end...
 cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C [enabled by default]
+Making SA debugger back-end...
 cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C [enabled by default]
 **NOTICE** Dtrace support disabled: /usr/include/sys/sdt.h not found
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/runtime/vm_version.cpp
@@ -897,7 +897,7 @@ INFO: ALT_OBJCOPY=/usr/bin/objcopy
 INFO: /usr/bin/objcopy cmd found so will create .debuginfo files.
 INFO: STRIP_POLICY=min_strip
 INFO: ZIP_DEBUGINFO_FILES=0
-## Finished hotspot (build time 00:04:29)
+## Finished hotspot (build time 00:02:59)
 
 ## Starting corba
 Compiling 6 files for BUILD_LOGUTIL
@@ -956,12 +956,12 @@ Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
 Creating corba/btjars/btcorba.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
 Creating corba/dist/lib/classes.jar
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating bin.zip
@@ -978,7 +978,7 @@ Note: Recompile with -Xlint:unchecked for details.
 Creating jaxp/dist/lib/classes.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished jaxp (build time 00:00:17)
+## Finished jaxp (build time 00:00:24)
 
 ## Starting jaxws
 Compiling 24 files for BUILD_JAF
@@ -996,7 +996,7 @@ Creating jaxws/dist/lib/classes.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished jaxws (build time 00:00:24)
+## Finished jaxws (build time 00:00:29)
 
 ## Starting jdk
 Importing CORBA classes.jar
@@ -1010,19 +1010,19 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Importing JAXP src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Importing JAXWS classes.jar
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Importing JAXWS src.zip
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Importing LANGTOOLS src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Importing LANGTOOLS classes.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Compiling 165 files for BUILD_TOOLS
+Importing LANGTOOLS src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating charsetmapping classes
 Generating buffer classes
 Generating exceptions classes
 Generating icon classes
+Compiling 165 files for BUILD_TOOLS
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
 Compiling 521 properties into resource bundles
@@ -1036,10 +1036,10 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating sun/misc/Version.java
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating sun/misc/Version.java compact1
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating sun/misc/Version.java compact2
 Generating sun/misc/Version.java compact3
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -1048,12 +1048,12 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Aliases: Table size 1024 (10 bits), shift 0, max chain depth 3
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Classes: Table size 32 (5 bits), shift 1, max chain depth 3
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Cache: Table size 32 (5 bits), shift 1, max chain depth 3
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -1209,7 +1209,7 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-[Parsed DTD html32 in 215ms]
+[Parsed DTD html32 in 165ms]
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -1236,10 +1236,10 @@ Note: Recompile with -Xlint:deprecation for details.
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/java/lang/fdlibm/src/s_log1p.c:132:34: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/java/util/TimeZone_md.c: In function 'findZoneinfoFile':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/java/util/TimeZone_md.c:161:5: warning: 'readdir64_r' is deprecated (declared at /usr/include/dirent.h:201) [-Wdeprecated-declarations]
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/java/io/UnixFileSystem_md.c: In function 'Java_java_io_UnixFileSystem_list':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/java/io/UnixFileSystem_md.c:316:5: warning: 'readdir64_r' is deprecated (declared at /usr/include/dirent.h:201) [-Wdeprecated-declarations]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/java/lang/UNIXProcess_md.c: In function 'throwIOException':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/java/lang/UNIXProcess_md.c:309:5: warning: format not a string literal, argument types not checked [-Wformat-nonliteral]
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/java/io/UnixFileSystem_md.c: In function 'Java_java_io_UnixFileSystem_list':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/java/io/UnixFileSystem_md.c:316:5: warning: 'readdir64_r' is deprecated (declared at /usr/include/dirent.h:201) [-Wdeprecated-declarations]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/common/jdk_util.c: In function 'JDK_GetVersionInfo0':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/common/jdk_util.c:80:5: warning: comparison of unsigned expression >= 0 is always true [-Wtype-limits]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/common/jdk_util.c:80:5: warning: comparison of unsigned expression >= 0 is always true [-Wtype-limits]
@@ -1252,25 +1252,25 @@ Note: Recompile with -Xlint:deprecation for details.
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:736:24: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In member function 'void cpool::init(unpacker*, int*)':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:988:24: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/utils.cpp: In function 'int assert_failed(const char*)':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/utils.cpp:84:28: warning: format not a string literal and no format arguments [-Wformat-security]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In member function 'char* entry::string()':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:3719:44: warning: format not a string literal and no format arguments [-Wformat-security]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In function 'void print_cp_entry(int)':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:3736:76: warning: format not a string literal, argument types not checked [-Wformat-nonliteral]
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/utils.cpp: In function 'int assert_failed(const char*)':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/utils.cpp:84:28: warning: format not a string literal and no format arguments [-Wformat-security]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/java.c: In function 'parse_size':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/java.c:733:3: warning: format not a string literal, argument types not checked [-Wformat-nonliteral]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/bin/java_md_solinux.c: In function 'GetJREPath':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/bin/java_md_solinux.c:822:41: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/bin/java_md_solinux.c: In function 'ContinueInNewThread0':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/bin/java_md_solinux.c:1046:14: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/parse_manifest.c: In function 'compute_cen':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/parse_manifest.c:236:7: warning: pointer targets in assignment differ in signedness [-Wpointer-sign]
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/parse_manifest.c:279:11: warning: pointer targets in assignment differ in signedness [-Wpointer-sign]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/splashscreen_stubs.c: In function 'DoSplashLoadMemory':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/splashscreen_stubs.c:64:5: warning: return makes integer from pointer without a cast [enabled by default]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/splashscreen_stubs.c: In function 'DoSplashLoadFile':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/splashscreen_stubs.c:68:5: warning: return makes integer from pointer without a cast [enabled by default]
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/parse_manifest.c: In function 'compute_cen':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/parse_manifest.c:236:7: warning: pointer targets in assignment differ in signedness [-Wpointer-sign]
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/parse_manifest.c:279:11: warning: pointer targets in assignment differ in signedness [-Wpointer-sign]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/net/spi/DefaultProxySelector.c:127:0: warning: "CHECK_NULL" redefined [enabled by default]
 In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/net/spi/DefaultProxySelector.c:27:0:
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/common/jni_util.h:293:0: note: this is the location of the previous definition
@@ -1356,19 +1356,19 @@ In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/medialib/awt_ImagingLib.c: In function 'Java_sun_awt_image_ImagingLib_convolveBI':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/medialib/awt_ImagingLib.c:336:9: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/medialib/awt_ImagingLib.c:419:9: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/medialib/awt_ImagingLib.c: In function 'Java_sun_awt_image_ImagingLib_convolveRaster':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/medialib/awt_ImagingLib.c:577:9: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/medialib/awt_ImagingLib.c:665:9: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/medialib/awt_ImagingLib.c: In function 'Java_sun_awt_image_ImagingLib_lookupByteBI':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/medialib/awt_ImagingLib.c:1377:9: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/medialib/awt_ImagingLib.c:1383:9: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/image/awt_parseImage.c: In function 'awt_parseRaster':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/image/awt_parseImage.c:322:13: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/image/awt_parseImage.c:357:13: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/medialib/awt_ImagingLib.c: In function 'Java_sun_awt_image_ImagingLib_convolveRaster':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/medialib/awt_ImagingLib.c:577:9: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/image/awt_parseImage.c: In function 'awt_parseColorModel':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/image/awt_parseImage.c:489:9: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/medialib/awt_ImagingLib.c:665:9: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/image/awt_parseImage.c: In function 'setHints':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/image/awt_parseImage.c:704:9: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/medialib/awt_ImagingLib.c: In function 'Java_sun_awt_image_ImagingLib_lookupByteBI':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/medialib/awt_ImagingLib.c:1377:9: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/medialib/awt_ImagingLib.c:1383:9: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/debug/debug_mem.c:77:33: warning: 'DMemStatePtr' initialized and declared 'extern' [enabled by default]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/debug/debug_mem.c: In function 'DMem_DumpHeader':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/awt/debug/debug_mem.c:286:5: warning: format not a string literal, argument types not checked [-Wformat-nonliteral]
@@ -1383,8 +1383,6 @@ In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/java2d/opengl/OGLPaints.c:583:9: warning: format not a string literal, argument types not checked [-Wformat-nonliteral]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/java2d/opengl/OGLPaints.c:585:9: warning: format not a string literal, argument types not checked [-Wformat-nonliteral]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/java2d/opengl/OGLPaints.c:592:13: warning: format not a string literal, argument types not checked [-Wformat-nonliteral]
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/awt/awt_Font.c: In function 'awtJNI_GetFontData':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/awt/awt_Font.c:638:23: warning: comparison between pointer and integer [enabled by default]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/xawt/XWindow.c: In function 'isKPevent':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/xawt/XWindow.c:836:5: warning: 'XKeycodeToKeysym' is deprecated (declared at /usr/include/X11/Xlib.h:1687) [-Wdeprecated-declarations]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/xawt/XWindow.c:836:5: warning: 'XKeycodeToKeysym' is deprecated (declared at /usr/include/X11/Xlib.h:1687) [-Wdeprecated-declarations]
@@ -1410,6 +1408,8 @@ In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/xawt/XlibWrapper.c:2214:12: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/xawt/XlibWrapper.c: In function 'Java_sun_awt_X11_XlibWrapper_SetBitmapShape':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/xawt/XlibWrapper.c:2329:5: warning: comparison of unsigned expression >= 0 is always true [-Wtype-limits]
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/awt/awt_Font.c: In function 'awtJNI_GetFontData':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/awt/awt_Font.c:638:23: warning: comparison between pointer and integer [enabled by default]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/awt/awt_Robot.c: In function 'isXCompositeDisplay':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/awt/awt_Robot.c:153:5: warning: embedded '\0' in format [-Wformat-contains-nul]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/awt/awt_Robot.c:153:5: warning: embedded '\0' in format [-Wformat-contains-nul]
@@ -1489,11 +1489,11 @@ In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LEGlyphStorage.cpp:184:16: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LEGlyphStorage.cpp: In member function 'void LEGlyphStorage::adoptGlyphArray(LEGlyphStorage&)':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LEGlyphStorage.cpp:491:16: warning: deleting object of polymorphic class type 'LEInsertionList' which has non-virtual destructor might cause undefined behaviour [-Wdelete-non-virtual-dtor]
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LigatureSubstProc.cpp: In member function 'virtual ByteOffset LigatureSubstitutionProcessor::processStateEntry(LEGlyphStorage&, le_int32&, EntryTableIndex, LEErrorCode&)':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LigatureSubstProc.cpp:132:63: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LayoutEngine.cpp: In member function 'virtual le_int32 LayoutEngine::characterProcessing(const LEUnicode*, le_int32, le_int32, le_int32, le_bool, LEUnicode*&, LEGlyphStorage&, LEErrorCode&)':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LayoutEngine.cpp:294:23: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LayoutEngine.cpp:345:20: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LigatureSubstProc.cpp: In member function 'virtual ByteOffset LigatureSubstitutionProcessor::processStateEntry(LEGlyphStorage&, le_int32&, EntryTableIndex, LEErrorCode&)':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LigatureSubstProc.cpp:132:63: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LigatureSubstProc2.cpp:38:0:
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LigatureSubstProc2.h: In constructor 'LigatureSubstitutionProcessor2::LigatureSubstitutionProcessor2(const LEReferenceTo<MorphSubtableHeader2>&, LEErrorCode&)':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LigatureSubstProc2.h:92:54: warning: 'LigatureSubstitutionProcessor2::ligatureSubstitutionHeader' will be initialized after [-Wreorder]
@@ -1551,12 +1551,12 @@ In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/awt/splashscreen/splashscreen_sys.c:80:5: warning: comparison of unsigned expression >= 0 is always true [-Wtype-limits]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/main.cpp: In function 'void usage(unpacker*, const char*, bool)':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/main.cpp:164:49: warning: format not a string literal, argument types not checked [-Wformat-nonliteral]
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/utils.cpp: In function 'int assert_failed(const char*)':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/utils.cpp:84:28: warning: format not a string literal and no format arguments [-Wformat-security]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In member function 'void unpacker::read_file_header()':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:736:24: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In member function 'void cpool::init(unpacker*, int*)':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:988:24: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/utils.cpp: In function 'int assert_failed(const char*)':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/utils.cpp:84:28: warning: format not a string literal and no format arguments [-Wformat-security]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In member function 'char* entry::string()':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:3719:44: warning: format not a string literal and no format arguments [-Wformat-security]
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In function 'void print_cp_entry(int)':
@@ -1586,35 +1586,35 @@ been superseded by dynamically generated stubs. Users are
 encouraged to migrate away from using rmic to generate skeletons and static
 stubs. See the documentation for java.rmi.server.UnicastRemoteObject.
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Creating jdk/jce/unsigned/policy/unlimited/US_export_policy.jar
-Creating jdk/jce/unsigned/policy/limited/local_policy.jar
-Creating jdk/jce/unsigned/sunec.jar
 Creating jdk/jce/unsigned/sunpkcs11.jar
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Creating jdk/jce/unsigned/sunec.jar
+Creating jdk/jce/unsigned/jce.jar
 Creating jdk/jce/unsigned/sunjce_provider.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Creating jdk/jce/unsigned/jce.jar
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Creating jdk/jce/unsigned/policy/unlimited/US_export_policy.jar
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Creating jdk/jce/unsigned/policy/limited/local_policy.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/jce/unsigned/policy/unlimited/local_policy.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished jdk (build time 00:03:06)
+## Finished jdk (build time 00:03:10)
 
 ## Starting demos
 Compiling 1 files for BUILD_DEMO_APPLET_ArcTest
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Compiling 1 files for BUILD_DEMO_APPLET_BarChart
 Compiling 1 files for BUILD_DEMO_APPLET_Blink
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Compiling 1 files for BUILD_DEMO_APPLET_BarChart
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Compiling 1 files for BUILD_DEMO_APPLET_CardTest
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -1623,8 +1623,8 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Compiling 1 files for BUILD_DEMO_APPLET_DitherTest
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Compiling 1 files for BUILD_DEMO_APPLET_DrawTest
-Compiling 1 files for BUILD_DEMO_APPLET_Fractal
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Compiling 1 files for BUILD_DEMO_APPLET_Fractal
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Compiling 2 files for BUILD_DEMO_APPLET_GraphicsTest
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -1645,15 +1645,15 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Compiling 2 files for BUILD_DEMO_WireFrame
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating jdk/demo/applets/WireFrame/src.zip
+Updating jdk/demo/jfc/SwingApplet/src.zip
 Compiling 1 files for BUILD_DEMO_SwingApplet
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Updating jdk/demo/jfc/SwingApplet/src.zip
 Compiling 3 files for BUILD_DEMO_FileChooserDemo
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating jdk/demo/jfc/FileChooserDemo/src.zip
-Updating jdk/demo/jfc/Font2DTest/src.zip
 Compiling 4 files for BUILD_DEMO_Font2DTest
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Updating jdk/demo/jfc/Font2DTest/src.zip
 Updating jdk/demo/jfc/Metalworks/src.zip
 Compiling 15 files for BUILD_DEMO_Metalworks
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -1669,31 +1669,31 @@ Note: Recompile with -Xlint:unchecked for details.
 Updating jdk/demo/jfc/SampleTree/src.zip
 Compiling 8 files for BUILD_DEMO_TableExample
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Updating jdk/demo/jfc/TableExample/src.zip
 Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
-Updating jdk/demo/jfc/TableExample/src.zip
-Updating jdk/demo/jfc/TransparentRuler/src.zip
 Compiling 1 files for BUILD_DEMO_TransparentRuler
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Updating jdk/demo/jfc/TransparentRuler/src.zip
+Updating jdk/demo/scripting/jconsole-plugin/src.zip
 Compiling 3 files for BUILD_DEMO_jconsole-plugin
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Updating jdk/demo/scripting/jconsole-plugin/src.zip
 Compiling 3 files for BUILD_DEMO_FullThreadDump
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating jdk/demo/management/FullThreadDump/src.zip
+Compiling 2 files for BUILD_DEMO_JTop
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Note: /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/demo/jfc/TableExample/TableExample4.java uses unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
 Updating jdk/demo/management/JTop/src.zip
-Compiling 2 files for BUILD_DEMO_JTop
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Updating jdk/demo/management/MemoryMonitor/src.zip
 Compiling 1 files for BUILD_DEMO_MemoryMonitor
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Updating jdk/demo/management/MemoryMonitor/src.zip
 Compiling 2 files for BUILD_DEMO_VerboseGC
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating jdk/demo/management/VerboseGC/src.zip
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Compiling 12 files for BUILD_DEMO_zipfs
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating jdk/demo/nio/zipfs/src.zip
@@ -1712,12 +1712,12 @@ Updating jdk/demo/jvmti/hprof/src.zip
 Compiling 1 files for BUILD_DEMO_JVMTI_minst_JAVA
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating jdk/demo/jvmti/minst/src.zip
-Compiling 1 files for BUILD_DEMO_JVMTI_mtrace_JAVA
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Note: /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/demo/nio/zipfs/src/com/sun/nio/zipfs/ZipUtils.java uses or overrides a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
+Compiling 1 files for BUILD_DEMO_JVMTI_mtrace_JAVA
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating jdk/demo/jvmti/mtrace/src.zip
 Updating jdk/demo/jvmti/waiters/src.zip
 Updating jdk/demo/jvmti/versionCheck/src.zip
@@ -1729,55 +1729,54 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/applets/WireFrame/src.zip
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jfc/SwingApplet/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jfc/FileChooserDemo/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jfc/Font2DTest/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jfc/Metalworks/src.zip
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jfc/Notepad/src.zip
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jfc/SampleTree/src.zip
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jfc/TableExample/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jfc/TransparentRuler/src.zip
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/scripting/jconsole-plugin/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/management/FullThreadDump/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Creating jdk/demo/management/JTop/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Creating jdk/demo/management/JTop/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/management/MemoryMonitor/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/management/VerboseGC/src.zip
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/nio/zipfs/src.zip
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jvmti/heapTracker/heapTracker.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jvmti/minst/minst.jar
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jvmti/mtrace/mtrace.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -1785,7 +1784,8 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished demos (build time 00:00:15)
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+## Finished demos (build time 00:00:16)
 
 ## Starting nashorn
 Compiling 491 files for BUILD_NASHORN
@@ -1798,7 +1798,7 @@ Creating version.properties
 Creating nashorn/dist/nashorn.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished nashorn (build time 00:00:29)
+## Finished nashorn (build time 00:00:14)
 
 ## Starting images
 Creating images/lib/charsets.jar
@@ -1830,21 +1830,21 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating images/lib/dt.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating images/lib/tools.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Updating images/sec-bin.zip
 Creating images/lib/ext/jaccess.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Updating images/sec-bin.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Updating images/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 WARNING: Path does not exist as file or directory: sun/misc/PostVMInitHook.class
 WARNING: Path does not exist as file or directory: sun/usagetracker/UsageTrackerClient.class
 WARNING: Path does not exist as file or directory: sun/usagetracker/UsageTrackerClient$1.class
 WARNING: Path does not exist as file or directory: sun/usagetracker/UsageTrackerClient$4.class
 WARNING: Path does not exist as file or directory: sun/usagetracker/UsageTrackerClient$3.class
-Updating images/src.zip
 WARNING: Path does not exist as file or directory: sun/dc/DuctusRenderingEngine.class
 WARNING: Path does not exist as file or directory: sun/font/T2KFontScaler.class
 WARNING: Path does not exist as file or directory: sun/font/T2KFontScaler$1.class
@@ -1999,21 +1999,21 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished images (build time 00:01:05)
+## Finished images (build time 00:00:47)
 
 ----- Build times -------
-Start 2024-11-04 23:54:00
-End   2024-11-05 00:05:16
+Start 2024-11-05 23:32:53
+End   2024-11-05 23:42:13
 00:00:27 corba
-00:00:15 demos
-00:04:29 hotspot
-00:01:05 images
-00:00:17 jaxp
-00:00:24 jaxws
-00:03:06 jdk
-00:00:43 langtools
-00:00:29 nashorn
-00:11:16 TOTAL
+00:00:16 demos
+00:02:59 hotspot
+00:00:47 images
+00:00:24 jaxp
+00:00:29 jaxws
+00:03:10 jdk
+00:00:32 langtools
+00:00:14 nashorn
+00:09:20 TOTAL
 -------------------------
 Finished building OpenJDK for target 'images'
 

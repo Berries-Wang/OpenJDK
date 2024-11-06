@@ -687,8 +687,9 @@ public abstract class AbstractQueuedSynchronizer
              */
             node.prev = pred;
             /**
-             * compareAndSetTail使用了CAS技术即乐观锁技术。错误了!!! “CAS是无锁编程”
+             * compareAndSetTail使用了CAS技术“CAS是无锁编程”
              * 在这里，当队列尾节点的元素被其他线程更新了的话(即乐观锁失败)，会执行到enq方法（乐观锁失败的处理机制）
+             * 重要!!!-> 先node.prev = xx , 再CAS设置tail,最后设置再设置上一个元素的(pred).next
              */
             if (compareAndSetTail(pred, node)) {
                 // 将新线程推送到队尾
@@ -1886,7 +1887,7 @@ private void doReleaseShared() {
      * Returns true if a node, always one that was initially placed on
      * a condition queue, is now waiting to reacquire(重新获得) on sync queue.
      * (如果一个节点（始终是最初放置在条件队列上的节点）现在正在等待在同步队列上重新获取，则返回true。)
-     * > 即： 判断node是否在等待队列上
+     * > 即： 判断node是否在AQS的同步队列中
      *
      * @param node the node
      * @return true if is reacquiring // true 表示node在AQS的同步队列中，正在获取AQS的临界资源(正在尝试重新获取锁)
@@ -2212,8 +2213,9 @@ private void doReleaseShared() {
          *                                      returns {@code false}
          */
         public final void signal() {
-            if (!isHeldExclusively())
+            if (!isHeldExclusively()) { // 只有获取了当前临界资源操作权限的线程(获取到锁的线程)才能调用此方法
                 throw new IllegalMonitorStateException();
+            }
             Node first = firstWaiter;
             if (first != null)
                 doSignal(first);
@@ -2316,11 +2318,13 @@ private void doReleaseShared() {
             Node node = addConditionWaiter();  // 添加一个新的waiter到等待队列中
             int savedState = fullyRelease(node);
             int interruptMode = 0;
-            while (!isOnSyncQueue(node)) {
-                LockSupport.park(this);
-                if ((interruptMode = checkInterruptWhileWaiting(node)) != 0)
+            while (!isOnSyncQueue(node)) {  //  不在AQS的同步队列中
+                LockSupport.park(this); // 将当前线程挂起,等待signal方法中会唤醒并且入队(AQS同步队列)，入队了，那么就可以跳出while循环了
+                if ((interruptMode = checkInterruptWhileWaiting(node)) != 0) {
                     break;
+                }
             }
+            // 尝试重新获取锁，即尝试获取临界资源的操作权限
             if (acquireQueued(node, savedState) && interruptMode != THROW_IE)
                 interruptMode = REINTERRUPT;
             if (node.nextWaiter != null) // clean up if cancelled
