@@ -13,7 +13,7 @@ make clean
 FREETYPEINCLUDE='/usr/include/freetype2'
 FREETYPELIB='/usr/lib/x86_64-linux-gnu/'
 # BootJDK配置
-BOOTJDK='/home/wei/app_space/jdk-21.0.1'
+BOOTJDK='/home/wei/app_space/OpenJDK/OpenJDK-21.0.5+11'
 # 构建文件输出目录
 BUILDOUTPUTDIR=`pwd`/build
 echo ${BUILDOUTPUTDIR}
@@ -25,7 +25,7 @@ bash configure  --with-debug-level=slowdebug    `# 指定可以生成最多的�
     --with-boot-jdk=${BOOTJDK}  \
     --with-freetype-include=${FREETYPEINCLUDE} \
     --with-freetype-lib=${FREETYPELIB} \
-    --with-target-bits=64   `#指定编译64位系统的JDK；` \
+    --with-target-bits=64   `#指定编译64位系统的JDK;` \
     ZIP_DEBUGINFO_FILES=0 `#ZIP_DEBUGINFO_FILES：生成调试的符号信息，并且不压缩,这样才可以进行源码调试；`
 
 # 判断一下configure的执行结果
