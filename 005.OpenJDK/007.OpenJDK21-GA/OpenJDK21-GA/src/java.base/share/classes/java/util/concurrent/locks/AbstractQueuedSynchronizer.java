@@ -57,11 +57,11 @@ import jdk.internal.misc.Unsafe;
  * value manipulated using methods {@link #getState}, {@link
  * #setState} and {@link #compareAndSetState} is tracked with respect
  * to synchronization.
- * (提供了一个框架来实现阻塞锁和相关的同步器（信号量、事件等），这些同步器依赖于先进先出（FIFO）等待队列。
+ * 提供了一个框架来实现阻塞锁和相关的同步器（信号量、事件等），这些同步器依赖于先进先出（FIFO）等待队列。
  * 这个类被设计为大多数依赖单个原子值{@code int}表示状态的同步器的有用基础。
  * 子类必须定义改变这个状态的受保护的方法，这些方法定义了获取或释放这个对象时这个状态的含义。
  * 考虑到这些，这个类中的其他方法将执行所有的排队和阻塞机制。子类可以维护其他状态字段，
- * 但只有原子更新的{@code int}值可以使用{@link #getState}、{@link #setState}和{@link #compareAndSetState}方法进行操作，才会跟踪同步。)
+ * 但只有原子更新的{@code int}值可以使用{@link #getState}、{@link #setState}和{@link #compareAndSetState}方法进行操作，才会跟踪同步。
  * > "即 AQS 定义了一个框架(模板)来实现锁和同步器"
  * 
  * <p>
@@ -73,7 +73,8 @@ import jdk.internal.misc.Unsafe;
  * {@link #acquireInterruptibly} that can be invoked as
  * appropriate by concrete locks and related synchronizers to
  * implement their public
- * methods.(相反，它定义了诸如{@link #acquireInterruptibly}之类的方法，这些方法可以被具体的锁和相关的同步器调用，以实现它们的公共方法)
+ * methods.
+ * 相反，它定义了诸如{@link #acquireInterruptibly}之类的方法，这些方法可以被具体的锁和相关的同步器调用，以实现它们的公共方法
  *
  * <p>
  * This class supports either or both a default <em>exclusive</em>
@@ -105,7 +106,7 @@ import jdk.internal.misc.Unsafe;
  * condition, so if this constraint cannot be met, do not use it. The
  * behavior of {@link ConditionObject} depends of course on the
  * semantics of its synchronizer implementation.
- * (这个类定义了一个嵌套的{@link ConditionObject}类，它可以被支持独占模式的子类用作{@link Condition}的实现，其中的方法{@link #isheldexexclusive}报告同步是否被当前线程独占，
+ * (这个类定义了一个嵌套的{@link ConditionObject}类，它可以被支持独占模式的子类用作{@link Condition}的实现，其中的方法{@link #isHeldExclusively}报告同步是否被当前线程独占，
  * 用当前的{@link #getState}值调用的方法{@link #release}完全释放这个对象，并且根据保存的状态值{@link #acquire}，最终将该对象恢复到其先前获得的状态。没有{@code AbstractQueuedSynchronizer}方法否则会创建这样的条件，
  * 所以如果此约束不能满足，请不要使用它。{@link ConditionObject}的行为当然取决于它的同步器实现的语义。)
  *
@@ -196,7 +197,7 @@ import jdk.internal.misc.Unsafe;
  * {@code true}. Other variations are possible.(因为check in acquire是在排队之前调用的，
  * 所以新获取的线程可能会排在其他被阻塞和排队的线程之前。但是，如果需要的话，你可以定义{@code tryAcquire}和/或{@code tryAcquireShared}
  * ，通过在内部调用一个或多个检查方法来禁用barging，从而提供一个公平的FIFO获取顺序。特别地，大多数公平同步器可以定义{@code tryAcquire}来返回{@code false}，
- * 如果{@link #hasqueued}（一个专门为公平同步器设计的方法）返回{@code true}。其他变化也是可能的。)
+ * 如果{@link #hasQueuedPredecessors}（一个专门为公平同步器设计的方法）返回{@code true}。其他变化也是可能的。)
  *
  * <p>
  * Throughput and scalability are generally highest for the
@@ -215,10 +216,11 @@ import jdk.internal.misc.Unsafe;
  * "fast-path" checks, possibly prechecking {@link #hasContended}
  * and/or {@link #hasQueuedThreads} to only do so if the synchronizer
  * is likely not to be
- * contended.(默认驳船策略（也称为贪心策略、放弃策略和回避策略）的吞吐量和可伸缩性通常最高。虽然不能保证这是公平的或无饥饿的，但允许较早排队的线程在较晚排队的线程之前重新竞争，
+ * contended.
+ * 默认驳船策略（也称为贪心策略、放弃策略和回避策略）的吞吐量和可伸缩性通常最高。虽然不能保证这是公平的或无饥饿的，但允许较早排队的线程在较晚排队的线程之前重新竞争，
  * 并且每次重新竞争都有公平的机会成功地对抗进入的线程。此外，虽然acquire通常不会自旋，但它们可能在阻塞前多次调用{@code tryAcquire}并穿插其他计算。
- * 当只短暂地进行独占同步时，这就提供了spins的大部分优点，而在不进行同步时，又没有大多数缺点。如果需要的话，你可以在调用之前使用“快速路径”检查来获取方法，可能会预先检查{@link #
- * #hasContended} and/or {@link #hasQueuedThreads}，只在同步器不存在竞争的情况下才这样做。)
+ * 当只短暂地进行独占同步时，这就提供了spins的大部分优点，而在不进行同步时，又没有大多数缺点。如果需要的话，你可以在调用之前使用“快速路径”检查来获取方法，可能会预先检查{@link #hasContended} 
+ * and/or {@link #hasQueuedThreads}，只在同步器不存在竞争的情况下才这样做。
  *
  * <p>
  * This class provides an efficient and scalable basis for
@@ -337,7 +339,9 @@ import jdk.internal.misc.Unsafe;
  * {@link java.util.concurrent.CountDownLatch CountDownLatch}
  * except that it only requires a single {@code signal} to
  * fire. Because a latch is non-exclusive, it uses the {@code shared}
- * acquire and release methods.(下面是一个latch类，类似于{@link java.util.concurrent.CountDownLatch CountDownLatch}，只是它只需要一个{@code signal}来触发。因为latch是非排他的，所以它使用{@code shared}获取和释放方法。)
+ * acquire and release
+ * methods.(下面是一个latch类，类似于{@link java.util.concurrent.CountDownLatch
+ * CountDownLatch}，只是它只需要一个{@code signal}来触发。因为latch是非排他的，所以它使用{@code shared}获取和释放方法。)
  *
  * <pre> {@code
  * class BooleanLatch {
