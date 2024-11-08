@@ -67,7 +67,7 @@ unset JAVA_HOME
 unset CLASSPATH
 # 将make all修改为make images,不构建docs，减少构建时间
 # ZIP_DEBUGINFO_FILES=0 参数很重要，即不对debuginfo进行压缩，只有不进行压缩，才可以进行源码调试
-make images  ZIP_DEBUGINFO_FILES=0  2>&1|tee $ALT_OUTPUTDIR/build.log
+make images  ZIP_DEBUGINFO_FILES=0   2>&1|tee $ALT_OUTPUTDIR/build.log
 
 # 判断一下构建结果
 if [[ $? -ne 0 ]]; then
