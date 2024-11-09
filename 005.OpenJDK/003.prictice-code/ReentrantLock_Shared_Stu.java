@@ -1,3 +1,4 @@
+package com.wei.wang;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -65,6 +66,7 @@ public class ReentrantLock_Shared_Stu {
             TimeUnit.MILLISECONDS.sleep(100);
 
             try {
+                writeLock.lock();
                 System.out.println(Thread.currentThread().getName() + ":获取到写锁");
                 for (int add_times = 0; add_times < 10; add_times++) {
                     the_inc_val = the_inc_val + 1;
@@ -74,6 +76,7 @@ public class ReentrantLock_Shared_Stu {
                 // 执行完成了,需要释放
                 if (writeLock.isHeldByCurrentThread()) {
                     System.out.println(Thread.currentThread().getName() + "释放锁");
+                    // 解锁后就直接唤起下一个线程: 如果是写锁，那就唤醒一个；若是读锁，那根据读锁加锁方法，那就是唤醒所有的读锁
                     writeLock.unlock();
                 }
             }

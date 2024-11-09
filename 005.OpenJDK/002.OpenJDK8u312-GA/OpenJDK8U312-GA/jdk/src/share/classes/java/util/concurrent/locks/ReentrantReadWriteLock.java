@@ -253,10 +253,13 @@ public class ReentrantReadWriteLock
         private static final long serialVersionUID = 6317671515068378041L;
 
         /*
-         * Read vs write count extraction constants and functions.
+         * Read vs write count extraction(提取) constants and functions.(读取与写入计数的提取常量和函数。)
          * Lock state is logically divided into two unsigned shorts:
          * The lower one representing the exclusive (writer) lock hold count,
          * and the upper the shared (reader) hold count.
+         * 锁状态 state 被划分为两个无符号short类型：
+         *   ＞　低位表示独占锁获取次数.
+         *   >  高位表示共享锁获取次数 (因为是可重入锁)
          */
 
         static final int SHARED_SHIFT   = 16;
@@ -448,7 +451,7 @@ public class ReentrantReadWriteLock
         protected final int tryAcquireShared(int unused) {
             /*
              * Walkthrough:
-             * 1. If write lock held by another thread, fail.
+             * 1. If write lock held by another thread, fail.(如果写锁被其他线程持有，则失败)
              * 2. Otherwise, this thread is eligible for
              *    lock wrt state, so ask if it should block
              *    because of queue policy. If not, try
@@ -456,13 +459,17 @@ public class ReentrantReadWriteLock
              *    Note that step does not check for reentrant
              *    acquires, which is postponed to full version
              *    to avoid having to check hold count in
-             *    the more typical non-reentrant case.
+             *    the more typical non-reentrant case.（否则，此线程有资格获得与状态相关的锁定，因此询问它是否应该因为队列策略而阻塞。
+             *    如果不是，则尝试通过 CASing 状态和更新计数来授予。请注意，该步骤不检查可重入获取，这被推迟到完整版本，
+             *    以避免在更典型的非可重入情况下检查保持计数。）
              * 3. If step 2 fails either because thread
-             *    apparently not eligible or CAS fails or count
-             *    saturated, chain to version with full retry loop.
+             *    apparently(显然) not eligible or CAS fails or count
+             *    saturated, chain to version with full retry loop.(如果步骤2失败，因为线程显然不符合条件，或者CAS失败或计数饱和，
+             *    则链接到具有完整重试循环的版本。)
              */
             Thread current = Thread.currentThread();
             int c = getState();
+            // 如果其他线程获取到写锁
             if (exclusiveCount(c) != 0 &&
                 getExclusiveOwnerThread() != current)
                 return -1;
@@ -494,9 +501,9 @@ public class ReentrantReadWriteLock
          */
         final int fullTryAcquireShared(Thread current) {
             /*
-             * This code is in part redundant with that in
+             * This code is in part redundant(多余的) with that in
              * tryAcquireShared but is simpler overall by not
-             * complicating tryAcquireShared with interactions between
+             * complicating(并发) tryAcquireShared with interactions(相互作用) between
              * retries and lazily reading hold counts.
              */
             HoldCounter rh = null;

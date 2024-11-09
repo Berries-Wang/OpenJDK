@@ -1207,10 +1207,11 @@ private void doReleaseShared() {
 
     /**
      * Acquires in shared uninterruptible mode.
-     *
+     * 以共享不间断模式获取
      * @param arg the acquire argument
      */
     private void doAcquireShared(int arg) {
+        // 添加到AQS等待队列里
         final Node node = addWaiter(Node.SHARED);
         boolean failed = true;
         try {
@@ -1218,8 +1219,10 @@ private void doReleaseShared() {
             for (; ; ) {
                 final Node p = node.predecessor();
                 if (p == head) {
+                    // 如果大于0,表示加读锁成功,当前队列中无写锁被持有
                     int r = tryAcquireShared(arg);
                     if (r >= 0) {
+                        // 读锁被获取到了,那么就要将这个行为传播到其他节点: 即激活其他所有共享模式的节点，让他们去执行
                         setHeadAndPropagate(node, r);
                         p.next = null; // help GC
                         if (interrupted)
@@ -1228,11 +1231,13 @@ private void doReleaseShared() {
                         return;
                     }
                 }
+                // 当执行到此处，说明没有获取到读锁，那么就是当前临界资源被独占锁持有，那么就要将当前线程挂起
                 if (shouldParkAfterFailedAcquire(p, node) &&
                         parkAndCheckInterrupt())
                     interrupted = true;
             }
         } finally {
+            // 异常了,可能是中断了,那么就证明获取到锁执行了，就没有必要再去获取锁了，直接取消申请锁了
             if (failed)
                 cancelAcquire(node);
         }
