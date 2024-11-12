@@ -6,6 +6,7 @@
             "label": "VirtualThreadsStu-.java->.class", // 在launch.json中通过该字段来引用当前task
             "command": "${workspaceFolder}/005.OpenJDK/007.OpenJDK21-GA/OpenJDK21-GA/build/linux-x86_64-server-slowdebug/jdk/bin/javac",
             "args": [
+                "-g",
                 "${workspaceFolder}/005.OpenJDK/003.prictice-code/VirtualThreadsStu.java",
             ],
             "options": {
@@ -22,6 +23,7 @@
             "label": "StreamPeekTest-.java->.class", // 在launch.json中通过该字段来引用当前task
             "command": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/bin/javac",
             "args": [
+                "-g",
                 "${workspaceFolder}/005.OpenJDK/003.prictice-code/StreamPeekTest.java",
             ],
             "options": {
@@ -41,6 +43,7 @@
                 "-classpath": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/classes"
             },
             "args": [
+                "-g",
                 "${workspaceFolder}/005.OpenJDK/003.prictice-code/CompletableFutureSTU.java",
                 "${workspaceFolder}/005.OpenJDK/003.prictice-code/PAThreadPoolExecutor.java",
             ],
@@ -61,6 +64,7 @@
                 "-classpath": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/classes"
             },
             "args": [
+                "-g",
                 "${workspaceFolder}/005.OpenJDK/003.prictice-code/CompletableFutureSTUTWO.java",
                 "${workspaceFolder}/005.OpenJDK/003.prictice-code/PAThreadPoolExecutor.java",
             ],
@@ -81,6 +85,7 @@
                 "-classpath": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/classes"
             },
             "args": [
+                "-g",
                 "${workspaceFolder}/005.OpenJDK/003.prictice-code/CompletableFutureSTUThree.java",
                 "${workspaceFolder}/005.OpenJDK/003.prictice-code/PAThreadPoolExecutor.java",
             ],
@@ -101,6 +106,8 @@
                 "-classpath": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/classes"
             },
             "args": [
+                "-g",
+                "-verbose",
                 "${workspaceFolder}/005.OpenJDK/003.prictice-code/ReentrantLock_Stu.java",
             ],
             "options": {
