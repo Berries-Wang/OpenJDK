@@ -3,6 +3,45 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Test Byte Command.002.OpenJDK8u312-GA",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/bin/java",
+            "args": [
+                "-XX:+UseG1GC",
+              //  "-XX:+PrintTLAB",
+                "-XX:+Verbose",
+                "-XX:+PrintGCDetails",
+                "TestNewCommand"
+            ],
+            "preLaunchTask": "TestNewCommand-.java->.class",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/005.OpenJDK/003.prictice-code",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "osx": {
+                "MIMode": "lldb",
+                "internalConsoleOptions": "openOnSessionStart"
+            },
+            "linux": {
+                "MIMode": "gdb",
+                "setupCommands": [
+                    {
+                        "text": "handle SIGSEGV noprint nostop",
+                        "description": "Disable stopping on signals handled by the JVM"
+                    }
+                ]
+            }
+        },
+        {
             "type": "java",
             "name": "OpenJDK-Debug-ReentrantLock_Stu",
             "request": "launch",
