@@ -718,16 +718,20 @@ HeapWord* GenCollectorPolicy::mem_allocate_work(size_t size,
           return NULL; // we didn't get to do a GC and we didn't get any memory
         }
 
-        // If this thread is not in a jni critical section, we stall
-        // the requestor until the critical section has cleared and
-        // GC allowed. When the critical section clears, a GC is
-        // initiated by the last thread exiting the critical section; so
-        // we retry the allocation sequence from the beginning of the loop,
-        // rather than causing more, now probably unnecessary, GC attempts.
-        JavaThread* jthr = JavaThread::current();
+        /** If this thread is not in a jni critical section, we stall  the
+         * requestor until the critical section has cleared and GC allowed. When
+         * the critical section clears, a GC is initiated by the last thread
+         * exiting the critical section; so  we retry the allocation sequence
+         * from the beginning of the loop,  rather than causing more, now
+         * probably unnecessary, GC attempts. 如果此线程不在 jni
+         * 关键部分中，我们会暂停请求者，直到关键部分清除并允许
+         * GC。当关键部分清除时，退出关键部分的最后一个线程将启动
+         * GC；因此，我们会从循环的开头重试分配序列，而不是导致更多（现在可能不必要的）GC
+         * 尝试。 */
+        JavaThread *jthr = JavaThread::current();
         if (!jthr->in_critical()) {
           MutexUnlocker mul(Heap_lock);
-          // Wait for JNI critical section to be exited
+          // Wait for JNI critical section to be exited , 里面含有安全点代码
           GC_locker::stall_until_clear();
           gclocker_stalled_count += 1;
           continue;

@@ -247,11 +247,12 @@ class Generation: public CHeapObj<mtGC> {
   // in compaction, or else "NULL".
   virtual CompactibleSpace* first_compaction_space() const = 0;
 
-  // Returns "true" iff this generation should be used to allocate an
-  // object of the given size.  Young generations might
-  // wish to exclude very large objects, for example, since, if allocated
-  // often, they would greatly increase the frequency of young-gen
-  // collection.
+  /* Returns "true" iff this generation should be used to allocate an
+   * object of the given size.  Young generations might
+   * wish to exclude very large objects, for example, since, if allocated
+   * often, they would greatly increase the frequency of young-gen
+   * collection.
+   */
   virtual bool should_allocate(size_t word_size, bool is_tlab) {
     bool result = false;
     size_t overflow_limit = (size_t)1 << (BitsPerSize_t - LogHeapWordSize);

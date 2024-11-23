@@ -284,7 +284,7 @@ HeapWord* ParallelScavengeHeap::mem_allocate(
         return result;
       }
 
-      // If certain conditions hold, try allocating from the old gen.
+      // If certain conditions hold, try allocating from the old gen. 如果满足某些条件，请尝试从旧一代进行分配。
       result = mem_allocate_old_gen(size);
       if (result != NULL) {
         return result;
