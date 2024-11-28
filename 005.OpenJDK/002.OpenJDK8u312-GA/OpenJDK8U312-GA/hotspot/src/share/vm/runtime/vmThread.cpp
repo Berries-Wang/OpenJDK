@@ -638,13 +638,14 @@ void VMThread::execute(VM_Operation* op) {
     {
       VMOperationQueue_lock->lock_without_safepoint_check();
       bool ok = _vm_queue->add(op);
-    op->set_timestamp(os::javaTimeMillis());
+      op->set_timestamp(os::javaTimeMillis());
       VMOperationQueue_lock->notify();
       VMOperationQueue_lock->unlock();
       // VM_Operation got skipped
       if (!ok) {
         assert(concurrent, "can only skip concurrent tasks");
-        if (op->is_cheap_allocated()) delete op;
+        if (op->is_cheap_allocated())
+          delete op;
         return;
       }
     }

@@ -244,6 +244,14 @@ libc.so.6!clone() (/build/glibc-eX1tMB/glibc-2.31/sysdeps/unix/sysv/linux/x86_64
 ### 截止目前，单体应用(单个Tomcat)吞吐量不会太高
 > 见:[023.OpenJDK8-18垃圾收集器的变化.md](./023.OpenJDK8-18垃圾收集器的变化.md)
 
+### 并发收集 & 并行收集
+[006.BOOKs/深入理解Java虚拟机.pdf] 3.5 经典垃圾收集器
+
+对比垃圾收集器运行示意图:
+- 并行： 停止用户线程,即 STW , 多个GC线程同时执行GC操作 ， 如 Parallel (Parallel Scavenge , Parallel Old)
+- 并发： GC线程和用户线程同时执行，会占用CPU资源,导致程序性能下降， 如 CMS
+
+
 ---
 
 ## 附录

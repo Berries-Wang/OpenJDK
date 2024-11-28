@@ -3,6 +3,45 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Test Byte Command.002.OpenJDK8u312-GA",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/bin/java",
+            "args": [
+                "-XX:+UseG1GC",
+              //  "-XX:+PrintTLAB",
+                "-XX:+Verbose",
+                "-XX:+PrintGCDetails",
+                "TestNewCommand"
+            ],
+            "preLaunchTask": "TestNewCommand-.java->.class",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/005.OpenJDK/003.prictice-code",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "osx": {
+                "MIMode": "lldb",
+                "internalConsoleOptions": "openOnSessionStart"
+            },
+            "linux": {
+                "MIMode": "gdb",
+                "setupCommands": [
+                    {
+                        "text": "handle SIGSEGV noprint nostop",
+                        "description": "Disable stopping on signals handled by the JVM"
+                    }
+                ]
+            }
+        },
+        {
             "type": "java",
             "name": "OpenJDK-Debug-ReentrantLock_Stu",
             "request": "launch",
@@ -578,6 +617,61 @@
                 "-Xms100M",
                 "JitStu"
             ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/005.OpenJDK/003.prictice-code",
+            "environment": [
+                {
+                    "name": "_JAVA_LAUNCHER_DEBUG",
+                    "value": "ON"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "osx": {
+                "MIMode": "lldb",
+                "internalConsoleOptions": "openOnSessionStart"
+            },
+            "linux": {
+                "MIMode": "gdb",
+                "setupCommands": [
+                    {
+                        "text": "handle SIGSEGV noprint nostop",
+                        "description": "Disable stopping on signals handled by the JVM"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "java NewStu.002.OpenJDK8u312-GA",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/bin/java",
+            "args": [
+                // "-XX:+UseParNewGC",
+                // "-XX:+UseConcMarkSweepGC",
+                "-XX:+PrintWeiLog",
+                "-XX:-PrintCompilation",
+                "-XX:+UnlockCommercialFeatures",
+                "-XX:+FlightRecorder",
+                "-XX:-UseTLAB",
+                "-Dcom.sun.management.jmxremote.rmi.port=1099",
+                "-Dcom.sun.management.jmxremote=true",
+                "-Dcom.sun.management.jmxremote.port=1099",
+                "-Dcom.sun.management.jmxremote.ssl=false",
+                "-Dcom.sun.management.jmxremote.authenticate=false",
+                "-Dcom.sun.management.jmxremote.local.only=false",
+                "-Xms100M",
+                "-Xms100M",
+                "NewStu"
+            ],
+            "preLaunchTask": "NewStu-.java->.class",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/005.OpenJDK/003.prictice-code",
             "environment": [
