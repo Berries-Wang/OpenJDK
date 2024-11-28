@@ -840,8 +840,9 @@ public abstract class AbstractQueuedSynchronizer
              * 为什么从尾节点开始寻找？
              *
              * 和addWaiter方法中，前后两个节点建立连接的顺序有关：
-             * >>> 1. 后节点的pre指向前节点
-             * >>> 2. 前节点的next才会指向后节点
+             * >>> 1. node的pre指向前节点
+             * >>> 2. 设置tail为node
+             * >>> 2. 前节点的next才会指向node
              * 这两步操作在多线程环境下并不是原子的，也就是说如果唤醒是从前往后搜索，那么可能前节点的next还没有建立好，那么搜索可能会被中断。
              */
             for (Node t = tail; t != null && t != node; t = t.prev) {
