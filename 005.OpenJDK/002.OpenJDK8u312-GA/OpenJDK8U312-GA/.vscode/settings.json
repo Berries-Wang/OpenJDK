@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.ic": "cpp",
+        "iterator": "cpp",
+        "memory": "cpp"
+    }
+}

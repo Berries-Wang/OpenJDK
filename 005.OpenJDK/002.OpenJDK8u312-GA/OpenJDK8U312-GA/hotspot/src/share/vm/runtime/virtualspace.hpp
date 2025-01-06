@@ -27,7 +27,10 @@
 
 #include "memory/allocation.hpp"
 
-// ReservedSpace is a data structure for reserving a contiguous address range.
+/* 
+ReservedSpace is a data structure for reserving a contiguous address range.
+ReservedSpace是一个用于保留连续地址范围的数据结构。
+*/
 
 class ReservedSpace VALUE_OBJ_CLASS_SPEC {
   friend class VMStructs;

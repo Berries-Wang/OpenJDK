@@ -332,6 +332,7 @@ public:
   template <class T> inline void inline_write_ref_field_pre(T* field, oop newVal) {}
 
   template <class T> inline void inline_write_ref_field(T* field, oop newVal, bool release) {
+    // Card Table: Point Out(我引用了谁) · Card Table  , 参考: 004.OpenJDK(JVM)学习/009.GC/020.GC辅助数据结构:记忆集-概念(Card-Table).md
     jbyte* byte = byte_for((void*)field);
     if (release) {
       // Perform a releasing store if requested.
