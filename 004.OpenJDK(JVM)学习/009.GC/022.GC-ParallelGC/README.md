@@ -9,3 +9,5 @@
 
 ## 参考
 1. [006.BOOKs/深入理解Java虚拟机.pdf] 3.5.5 Parallel Old收集器
+2. [HotSpot Virtual Machine Garbage Collection Tuning Guide](../HotSpot%20Virtual%20Machine%20Garbage%20Collection%20Tuning%20Guide.pdf)
+3. [HotSpot Virtual Machine Garbage Collection Tuning Guide](../hotspot-virtual-machine-garbage-collection-tuning-guide.pdf)
