@@ -1,40 +1,10 @@
-- [JVM GC(Garbage Collection)](#jvm-gcgarbage-collection)
-  - [GC](#gc)
-  - [各垃圾收集器性能对比](#各垃圾收集器性能对比)
-    - [JDK8 中](#jdk8-中)
-  - [分代收集理论](#分代收集理论)
-    - [GC 分类](#gc-分类)
-  - [JVM GC](#jvm-gc)
-    - [评判GC的两个核心标准](#评判gc的两个核心标准)
-  - [JVM内存空间初始化](#jvm内存空间初始化)
-  - [JVM堆的划分(仅Heap)](#jvm堆的划分仅heap)
-  - [CollectedHeap](#collectedheap)
-    - [重要方法](#重要方法)
-  - [CollectorPolicy](#collectorpolicy)
-  - [CollectedHeap之间的继承关系](#collectedheap之间的继承关系)
-  - [备注](#备注)
-  - [遇到的一些VM参数](#遇到的一些vm参数)
-    - [1. AdaptiveSizePolicy(自适应大小策略)](#1-adaptivesizepolicy自适应大小策略)
-      - [注意事项：](#注意事项)
-  - [收集策略的继承关系(在上的是超类，往下是子类)](#收集策略的继承关系在上的是超类往下是子类)
-  - [函数分析](#函数分析)
-    - [jdk-jdk8-b120/hotspot/src/share/vm/memory/universe.cpp#universe\_init](#jdk-jdk8-b120hotspotsrcsharevmmemoryuniversecppuniverse_init)
-  - [JVM参数](#jvm参数)
-    - [1. CompressedClassSpaceSize （与UseCompressedOops区分）](#1-compressedclassspacesize-与usecompressedoops区分)
-    - [2. MetaspaceSize](#2-metaspacesize)
-  - [注意事项](#注意事项-1)
-    - [FULL GC 是串行的](#full-gc-是串行的)
-    - [JVM内存并不是越大越好（考虑吞吐量）](#jvm内存并不是越大越好考虑吞吐量)
-    - [截止目前，单体应用(单个Tomcat)吞吐量不会太高](#截止目前单体应用单个tomcat吞吐量不会太高)
-  - [附录](#附录)
-    - [GC分类](#gc分类)
-  - [参考资料](#参考资料)
-
 # JVM GC(Garbage Collection)
-## GC 
+
+## Garbage Collection (GC) 
 &nbsp;&nbsp;GC是指垃圾回收，但是在JVM的实现中，GC更为准确的意思是指内存管理器，他有两个职责： 
 1. 内存的分配管理
 2. 垃圾回收
+> 阅读[Java Memory Management _ Microsoft Learn.pdf#Java garbage collection](./Java%20Memory%20Management_Microsoft%20Learn.pdf) 先了解什么是Minor GC 、 Major GC 、Full GC
 
 ## 各垃圾收集器性能对比
 ### JDK8 中
@@ -59,6 +29,7 @@
 3. 跨代引用假说
    > 跨代引用相对于同代引用来说仅占极少数。
       - 根据这条假说，在回收时就不应该为了少量的跨代引用去扫描整个老年代。目前的JVM使用了一个全局的数据结构：**记忆集**(Remembered Set),这个结构将老年代划分为若干小块，标识出老年代的哪一块内存会存在跨代引用。此后当发生Minor GC时，只有包含了跨代引用的小块内存里的若干对象才会被加入到GC Roots中进行扫描。
+        > 记忆集: Card Table(基础,很多GC Collector都依赖) , Remenber Set(G1)
 
    > 基于1、2分代假说，JVM将堆进行了划分，因此才有了跨代引用问题
 
@@ -256,7 +227,7 @@ libc.so.6!clone() (/build/glibc-eX1tMB/glibc-2.31/sysdeps/unix/sysv/linux/x86_64
 
 ## 附录
 ### GC分类
-1. 部分收集(Partial GC): 指目标不是完整收集整个Java堆的垃圾收集，其中又分为:
+1. 部分收集(Partial GC 或称 增量收集): 指目标不是完整收集整个Java堆的垃圾收集，其中又分为:
    - 新生代收集(Minor GC / Young GC):指目标仅完成新生代的垃圾收集
    - 老年代收集(Major GC/Old GC):指目标仅完成老年代的垃圾收集，注意:
       + 目前仅有CMS垃圾收集器会有单独收集老年代的行为
