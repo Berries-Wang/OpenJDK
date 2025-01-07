@@ -58,9 +58,9 @@ template <class T> void BarrierSet::write_ref_field_pre(T *field, oop new_val) {
 void BarrierSet::write_ref_field(void *field, oop new_val, bool release) {
 
   /**
-   * kind():
-   * G1：G1SATBCTLogging
-   *
+   * kind() 的值:
+   * -XX:+UseG1GC：G1SATBCTLogging
+   * -XX:+UseParallelGC: BarrierSet::CardTableModRef
    */
   if (kind() == CardTableModRef) {
     ((CardTableModRefBS *)this)

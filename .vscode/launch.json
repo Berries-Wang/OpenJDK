@@ -50,11 +50,11 @@
                // "-XX:+UseG1GC",
               //  "-XX:+PrintTLAB",
                 "-XX:+UseParallelGC",
+                "-XX:+PrintWeiLog",
                 "-XX:+Verbose",
                 "-XX:+PrintGCDetails",
                 "G"
             ],
-            "preLaunchTask": "TestNewCommand-.java->.class",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/005.OpenJDK/003.prictice-code",
             "environment": [],

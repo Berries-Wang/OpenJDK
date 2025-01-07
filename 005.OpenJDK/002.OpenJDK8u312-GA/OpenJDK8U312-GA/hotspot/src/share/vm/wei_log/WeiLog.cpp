@@ -24,11 +24,15 @@ void wei_log_info(int argc, ...) {
   va_end(var_arg);
 }
 
+/**
+ * [C  : 表示类 Char
+ * [I  : Integer
+ */
 void wei_print_klass_name(Symbol *klassName) {
   if (!PrintWeiLog) {
     return;
   }
-  printf("正在加载的Klass: ");
+  printf("正在加载的Class: ");
   for (int index = 0; index < klassName->utf8_length(); index++) {
     printf("%c", (klassName->bytes())[index]);
   }
