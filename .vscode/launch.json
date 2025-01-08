@@ -53,6 +53,8 @@
                 "-XX:+PrintWeiLog",
                 "-XX:+Verbose",
                 "-XX:+PrintGCDetails",
+                "-Xms1M",
+                "-Xmx1M",
                 "G"
             ],
             "stopAtEntry": false,

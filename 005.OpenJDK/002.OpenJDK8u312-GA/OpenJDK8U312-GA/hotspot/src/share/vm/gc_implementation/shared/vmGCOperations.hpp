@@ -192,8 +192,7 @@ class VM_GenCollectForAllocation : public VM_CollectForAllocation {
   virtual void doit();
 };
 
-// VM operation to invoke a collection of the heap as a
-// GenCollectedHeap heap.
+// VM operation to invoke a collection of the heap as a GenCollectedHeap heap. (VM operation执行分代堆的收集操作)
 class VM_GenCollectFull: public VM_GC_Operation {
  private:
   int _max_level;
