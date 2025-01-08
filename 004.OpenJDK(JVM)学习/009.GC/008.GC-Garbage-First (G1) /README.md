@@ -37,6 +37,8 @@
 
 ## 注意
 1. G1会将内存返还给操作系统，见:[022.OpenJDK8-18垃圾收集器的变化.md](../023.OpenJDK8-18垃圾收集器的变化.md)
+2. G1 Old GC 是单线程的，非常慢,见[G1-GC最初的设计思路#G1 General Advices](./010.Lessons/000.G1-GC最初的设计思路/G1-GC最初的设计思路.md)
+3. G1中SATB如何工作的:[Garbage First Garbage Collector Tuning.pdf#Remark phase](./Garbage%20First%20Garbage%20Collector%20Tuning.pdf)
 
 ---
 ## 参考资料

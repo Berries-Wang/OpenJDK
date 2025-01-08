@@ -16,12 +16,12 @@
 ---
 
 - G1 具有非常详细的日志
-  |参数名|含义|
-  |---|---|
-  |-XX:+PrintGCDateStamps|打印时间|
-  |-XX:+PrintGCDetails||
-  |-XX:+PrintAdaptiveSizePolicy||
-  |-XX:+printTeuringDistribution||
+  | 参数名                         | 含义                                                                                    |
+  |--------------------------------|----------------------------------------------------------------------------------------|
+  | -XX:+PrintGCDateStamps         | 打印GC时间戳                              OR hotspot/src/share/vm/runtime/globals.hpp  |
+  | -XX:+PrintGCDetails            | 见[JVM-Options](../../../JVM-Options.pdf)  OR hotspot/src/share/vm/runtime/globals.hpp |
+  | -XX:+PrintAdaptiveSizePolicy   | 见[JVM-Options](../../../JVM-Options.pdf) OR hotspot/src/share/vm/runtime/globals.hpp  |
+  | -XX:+PrintTenuringDistribution | 见[JVM-Options](../../../JVM-Options.pdf) OR hotspot/src/share/vm/runtime/globals.hpp  |
 
 ---
 
@@ -42,12 +42,12 @@
 
 - refinement threads
   + 处理 Dirty Card Queue ,更新Remeber Set : 立即更新会有强烈竞争
-    |名称|含义|
-    |-|-|
-    |White zone|Nothing happens , buffers are left unprocessed|
-    |Green Zone:-XX:G1ConcRefinementGreenZone=<>|Refinement threads are activated,Buffers are processed and the queue drained|
-    |Yellow Zone:G1ConcRefinementYellowZone=<>|All avaliable refinement threads are active|
-    |Red Zone: -XX:G1ConcRefinementRedZone=<>|Application threads process the buffers|
+    | 名称                                        | 含义                                                                         |
+    |---------------------------------------------|------------------------------------------------------------------------------|
+    | White zone                                  | Nothing happens , buffers are left unprocessed                               |
+    | Green Zone:-XX:G1ConcRefinementGreenZone=<> | Refinement threads are activated,Buffers are processed and the queue drained |
+    | Yellow Zone:G1ConcRefinementYellowZone=<>   | All avaliable refinement threads are active                                  |
+    | Red Zone: -XX:G1ConcRefinementRedZone=<>    | Application threads process the buffers                                      |
 
 ---
 
