@@ -194,7 +194,7 @@ void PSAdaptiveSizePolicy::major_collection_end(size_t amount_live,
 
 // If the remaining free space in the old generation is less that
 // that expected to be needed by the next collection, do a full
-// collection now.
+// collection now. (如果老生代的剩余空间少于下一次收集所需的剩余空间，那么现在就执行一次Full GC。)
 bool PSAdaptiveSizePolicy::should_full_GC(size_t old_free_in_bytes) {
 
   // A similar test is done in the scavenge's should_attempt_scavenge().  If

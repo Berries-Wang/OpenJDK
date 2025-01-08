@@ -212,7 +212,7 @@ void PSRefProcTaskExecutor::execute(EnqueueTask& task)
 
 // This method contains all heap specific policy for invoking scavenge.
 // PSScavenge::invoke_no_policy() will do nothing but attempt to
-// scavenge. It will not clean up after failed promotions, bail out if
+// scavenge(清除). It will not clean up after failed promotions, bail(离开) out if
 // we've exceeded policy time limits, or any other special behavior.
 // All such policy should be placed here.
 //

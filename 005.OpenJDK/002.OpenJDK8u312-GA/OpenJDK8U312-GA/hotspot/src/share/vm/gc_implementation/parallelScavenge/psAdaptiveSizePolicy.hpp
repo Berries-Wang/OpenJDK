@@ -259,6 +259,7 @@ class PSAdaptiveSizePolicy : public AdaptiveSizePolicy {
     return (size_t)avg_promoted()->average();
   }
 
+  
   size_t padded_average_promoted_in_bytes() const {
     return (size_t)avg_promoted()->padded_average();
   }

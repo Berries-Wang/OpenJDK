@@ -117,14 +117,14 @@ class AdaptiveWeightedAverage : public CHeapObj<mtGC> {
   void print() const;
 };
 
-
-// A weighted average that includes a deviation from the average,
-// some multiple of which is added to the average.
+// A weighted average that includes a deviation from the average, some multiple
+// of which is added to the
+// average.(一种加权平均值，包含偏离平均值的部分，其倍数被加到平均值上。)
 //
 // This serves as our best estimate of an upper bound on a future
-// unknown.
+// unknown.(这是我们对未来未知的上限的最好估计。)
 class AdaptivePaddedAverage : public AdaptiveWeightedAverage {
- private:
+private:
   float          _padded_avg;     // The last computed padded average
   float          _deviation;      // Running deviation from the average
   unsigned       _padding;        // A multiple which, added to the average,

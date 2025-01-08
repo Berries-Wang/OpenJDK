@@ -441,7 +441,7 @@ HeapWord* ParallelScavengeHeap::failed_mem_allocate(size_t size) {
   assert(!Universe::heap()->is_gc_active(), "not reentrant");
   assert(!Heap_lock->owned_by_self(), "this thread should not own the Heap_lock");
 
-  // We assume that allocation in eden will fail unless we collect.
+  // We assume that allocation in eden will fail unless we collect.(我们假设Eden中的分配将失败，除非我们收集。)
 
   // First level allocation failure, scavenge and allocate in young gen.
   GCCauseSetter gccs(this, GCCause::_allocation_failure);
