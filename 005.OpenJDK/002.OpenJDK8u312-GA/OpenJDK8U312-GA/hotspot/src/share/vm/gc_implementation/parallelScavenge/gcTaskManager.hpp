@@ -57,6 +57,7 @@ class ThreadClosure;
 
 // The abstract base GCTask.
 class GCTask : public ResourceObj {
+  
 public:
   // Known kinds of GCTasks, for predicates.
   class Kind : AllStatic {
@@ -66,13 +67,16 @@ public:
       ordinary_task,
       barrier_task,
       noop_task,
-      idle_task
+      idle_task,
+      wait_for_barrier_gc_task
     };
-    static const char* to_string(kind value);
+    static const char *to_string(kind value);
   };
+
 private:
   // Instance state.
   const Kind::kind _kind;               // For runtime type checking.
+  const Kind::kind _kind_wei;           // wei.wang for debug
   const uint       _affinity;           // Which worker should run task.
   GCTask*          _newer;              // Tasks are on doubly-linked ...
   GCTask*          _older;              // ... lists.
@@ -99,6 +103,12 @@ public:
   }
   void set_older(GCTask* p) {
     _older = p;
+  }
+  void set_kind_wei(Kind::kind kind) { 
+    _kind_wei = kind; 
+  }
+  Kind::kind get_kind_wei() const{ 
+    return _kind_wei;
   }
   // Predicates.
   bool is_ordinary_task() const {

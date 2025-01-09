@@ -76,7 +76,8 @@
         "manifest_info.h": "c",
         "java_md.h": "c",
         "types.h": "c",
-        "jni.h": "c"
+        "jni.h": "c",
+        "__mutex_base": "cpp"
     },
     "java.import.maven.enabled": true,
     "java.configuration.runtimes": [

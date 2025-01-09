@@ -787,6 +787,7 @@ void GCTaskManager::note_release(uint which) {
 
 void GCTaskManager::execute_and_wait(GCTaskQueue* list) {
   WaitForBarrierGCTask* fin = WaitForBarrierGCTask::create();
+  // 将分界GCTask添加到队列中
   list->enqueue(fin);
   // The barrier task will be read by one of the GC
   // workers once it is added to the list of tasks.
@@ -795,7 +796,7 @@ void GCTaskManager::execute_and_wait(GCTaskQueue* list) {
   // to the list of tasks below).
   OrderAccess::storestore();
   add_list(list);
-  // 在这里等待，直到GCTask执行完成,因为 fin 就是队列里最后的一个任务
+  // 在这里等待，直到分界GCTask执行完成,因为 fin 就是队列里最后的一个任务
   fin->wait_for(true /* reset */);
   // We have to release the barrier tasks!
   WaitForBarrierGCTask::destroy(fin);
@@ -996,6 +997,9 @@ WaitForBarrierGCTask::WaitForBarrierGCTask(bool on_c_heap) :
   _is_c_heap_obj(on_c_heap) {
   _monitor = MonitorSupply::reserve();
   set_should_wait(true);
+  // for debug
+  set_kind_wei(GCTask::Kind::wait_for_barrier_gc_task);
+
   if (TraceGCTaskManager) {
     tty->print_cr("[" INTPTR_FORMAT "]"
                   " WaitForBarrierGCTask::WaitForBarrierGCTask()"

@@ -142,7 +142,7 @@ void GCTaskThread::run() {
       char* name = task->name();
 
       // If this is the barrier task, it can be destroyed
-      // by the GC task manager once the do_it() executes.
+      // by the GC task manager once the do_it() executes.(如果这是barrier任务，那么在do_it()执行之后，GC任务管理器可以销毁它。)
       task->do_it(manager(), which());
 
       // Use the saved value of is_idle_task because references
