@@ -795,6 +795,7 @@ void GCTaskManager::execute_and_wait(GCTaskQueue* list) {
   // to the list of tasks below).
   OrderAccess::storestore();
   add_list(list);
+  // 在这里等待，直到GCTask执行完成,因为 fin 就是队列里最后的一个任务
   fin->wait_for(true /* reset */);
   // We have to release the barrier tasks!
   WaitForBarrierGCTask::destroy(fin);

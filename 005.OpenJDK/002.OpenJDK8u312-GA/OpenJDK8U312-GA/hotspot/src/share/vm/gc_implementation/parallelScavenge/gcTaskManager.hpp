@@ -696,13 +696,14 @@ protected:
 // with a method you can call to wait until
 // the BarrierGCTask is done.
 // This may cover many of the uses of NotifyingBarrierGCTasks.
+// 调用 WaitForBarrierGCTask 来等待，直到WaitForBarrierGCTask完成
 class WaitForBarrierGCTask : public BarrierGCTask {
   friend class GCTaskManager;
   friend class IdleGCTask;
 private:
   // Instance state.
-  Monitor*      _monitor;                  // Guard and notify changes.
-  volatile bool _should_wait;              // true=>wait, false=>proceed.
+  Monitor*      _monitor;                  // Guard and notify changes.(保护和通知更改。)
+  volatile bool _should_wait;              // true=>wait, false=>proceed(继续进行).
   const bool    _is_c_heap_obj;            // Was allocated on the heap.
 public:
   virtual char* name() { return (char *) "waitfor-barrier-task"; }
