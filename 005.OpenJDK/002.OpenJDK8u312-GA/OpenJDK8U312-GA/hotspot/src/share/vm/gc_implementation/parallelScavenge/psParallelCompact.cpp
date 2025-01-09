@@ -1964,7 +1964,7 @@ void PSParallelCompact::summary_phase(ParCompactionManager* cm,
 }
 
 // This method should contain all heap-specific policy for invoking a full
-// collection.  invoke_no_policy() will only attempt to compact the heap; it
+// collection.  invoke_no_policy() will only attempt to compact(紧凑) the heap; it
 // will do nothing further.  If we need to bail out for policy reasons, scavenge
 // before full gc, or any other specialized behavior, it needs to be added here.
 //
