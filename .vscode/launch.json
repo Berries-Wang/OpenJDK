@@ -53,6 +53,7 @@
                 "-XX:+PrintWeiLog",
                 "-XX:+Verbose",
                 "-XX:+PrintGCDetails",
+                "-XX:+TraceGCTaskManager",
                 "-Xms1M",
                 "-Xmx1M",
                 "G"

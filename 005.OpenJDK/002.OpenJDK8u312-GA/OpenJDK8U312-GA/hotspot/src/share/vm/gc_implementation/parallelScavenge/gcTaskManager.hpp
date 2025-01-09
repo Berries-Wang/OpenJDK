@@ -76,7 +76,7 @@ public:
 private:
   // Instance state.
   const Kind::kind _kind;               // For runtime type checking.
-  const Kind::kind _kind_wei;           // wei.wang for debug
+  Kind::kind       _kind_wei;           // wei.wang for debug
   const uint       _affinity;           // Which worker should run task.
   GCTask*          _newer;              // Tasks are on doubly-linked ...
   GCTask*          _older;              // ... lists.
