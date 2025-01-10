@@ -2094,7 +2094,7 @@ bool PSParallelCompact::invoke_no_policy(bool maximum_heap_compaction) {
     compaction_start.update();
     compact();
 
-    // Reset the mark bitmap, summary data, and do other bookkeeping.  Must be
+    // Reset the mark bitmap, summary data, and do other bookkeeping(记账).  Must be
     // done before resizing.
     post_compact();
 
@@ -2115,9 +2115,8 @@ bool PSParallelCompact::invoke_no_policy(bool maximum_heap_compaction) {
 
       // Don't check if the size_policy is ready here.  Let
       // the size_policy check that internally.
-      if (UseAdaptiveGenerationSizePolicyAtMajorCollection &&
-          ((gc_cause != GCCause::_java_lang_system_gc) ||
-            UseAdaptiveSizePolicyWithSystemGC)) {
+      if (UseAdaptiveGenerationSizePolicyAtMajorCollection 
+           && ((gc_cause != GCCause::_java_lang_system_gc) || UseAdaptiveSizePolicyWithSystemGC)) {
         // Calculate optimal free space amounts
         assert(young_gen->max_size() >
           young_gen->from_space()->capacity_in_bytes() +

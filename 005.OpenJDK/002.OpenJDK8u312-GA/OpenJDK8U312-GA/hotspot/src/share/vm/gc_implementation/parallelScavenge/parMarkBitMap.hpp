@@ -32,6 +32,11 @@
 class ParMarkBitMapClosure;
 class PSVirtualSpace;
 
+/**
+ * ParMarkBitMap 是 OpenJDK 中用于并行垃圾收集（GC）的关键数据结构之一，主要用于标记阶段（Mark Phase）中记录堆内存中对象的存活状态。它通过位图（Bitmap）的方式高效地存储和管理对象的标记信息，支持多线程并行标记。
+ * 
+ * ParMarkBitMap 的核心是一个位图（Bitmap），其中每个位（bit）对应堆内存中的一个地址范围（通常是字或对象对齐的最小单位）。位的值表示该地址范围内的对象是否被标记为存活。
+ */
 class ParMarkBitMap: public CHeapObj<mtGC>
 {
 public:
@@ -167,7 +172,7 @@ public:
 #endif  // #ifdef ASSERT
 
 private:
-  // Each bit in the bitmap represents one unit of 'object granularity.' Objects
+  // Each bit in the bitmap represents one unit of 'object granularity.'(对象的粒度) Objects
   // are double-word aligned in 32-bit VMs, but not in 64-bit VMs, so the 32-bit
   // granularity is 2, 64-bit is 1.
   static inline size_t obj_granularity() { return size_t(MinObjAlignment); }
