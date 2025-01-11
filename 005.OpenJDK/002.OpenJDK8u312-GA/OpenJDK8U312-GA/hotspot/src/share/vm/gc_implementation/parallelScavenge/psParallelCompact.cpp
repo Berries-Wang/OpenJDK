@@ -1994,8 +1994,7 @@ void PSParallelCompact::invoke(bool maximum_heap_compaction) {
   const bool clear_all_soft_refs =
     heap->collector_policy()->should_clear_all_soft_refs();
 
-  PSParallelCompact::invoke_no_policy(clear_all_soft_refs ||
-                                      maximum_heap_compaction);
+  PSParallelCompact::invoke_no_policy(clear_all_soft_refs || maximum_heap_compaction);
 }
 
 // This method contains no policy. You should probably

@@ -777,8 +777,7 @@ void PSAdaptiveSizePolicy::adjust_eden_for_pause_time(bool is_full_gc,
   // a change less than the required alignment is probably not worth
   // attempting.
   if (_avg_minor_pause->padded_average() > _avg_major_pause->padded_average()) {
-    adjust_eden_for_minor_pause_time(is_full_gc,
-                                desired_eden_size_ptr);
+    adjust_eden_for_minor_pause_time(is_full_gc, desired_eden_size_ptr);
     // major pause adjustments
   } else if (is_full_gc) {
     // Adjust for the major pause time only at full gc's because the
@@ -788,26 +787,29 @@ void PSAdaptiveSizePolicy::adjust_eden_for_pause_time(bool is_full_gc,
       // size will not actually decrease), consider changing the
       // young gen size.
       if (*desired_promo_size_ptr < _space_alignment) {
-        // If increasing the young generation will decrease the old gen
-        // pause, do it.
-        // During startup there is noise in the statistics for deciding
-        // on whether to increase or decrease the young gen size.  For
-        // some number of iterations, just try to increase the young
-        // gen size if the major pause is too long to try and establish
-        // good statistics for later decisions.
+        /** If increasing the young generation will decrease the old gen pause,
+         * do it.（如果增加年轻一代会减少老一代的停顿，那就去做吧） */
+
+        /* During startup there is noise in the statistics for deciding on
+         * whether to increase or decrease the young gen size.   For some number
+         * of iterations, just try to increase the young gen size if the major
+         * pause is too long to try and establish good statistics for later
+         * decisions.(在启动过程中，决定是否增加或减少年轻代大小的统计数据中存在噪声。
+         * 对于一定数量的迭代，如果主要暂停时间太长，无法为以后的决策建立良好的统计数据，则只需尝试增加年轻代的大小。)
+         */
         if (major_pause_young_estimator()->increment_will_decrease() ||
-          (_young_gen_change_for_major_pause_count
-            <= AdaptiveSizePolicyInitializingSteps)) {
+          (_young_gen_change_for_major_pause_count <= AdaptiveSizePolicyInitializingSteps)) {
           set_change_young_gen_for_maj_pauses(
           increase_young_gen_for_maj_pauses_true);
           eden_heap_delta = eden_increment_aligned_up(*desired_eden_size_ptr);
           *desired_eden_size_ptr = _eden_size + eden_heap_delta;
           _young_gen_change_for_major_pause_count++;
         } else {
-          // Record that decreasing the young gen size would decrease
-          // the major pause
-          set_change_young_gen_for_maj_pauses(
-            decrease_young_gen_for_maj_pauses_true);
+          /**
+           * Record that decreasing the young gen size would decrease  the
+           * major pause
+           */
+          set_change_young_gen_for_maj_pauses(decrease_young_gen_for_maj_pauses_true);
           eden_heap_delta = eden_decrement_aligned_down(*desired_eden_size_ptr);
           *desired_eden_size_ptr = _eden_size - eden_heap_delta;
         }
@@ -817,11 +819,11 @@ void PSAdaptiveSizePolicy::adjust_eden_for_pause_time(bool is_full_gc,
 
   if (PrintAdaptiveSizePolicy && Verbose) {
     gclog_or_tty->print_cr(
-      "PSAdaptiveSizePolicy::adjust_eden_for_pause_time "
-      "adjusting gen sizes for major pause (avg %f goal %f). "
-      "desired_eden_size " SIZE_FORMAT " eden delta " SIZE_FORMAT,
-      _avg_major_pause->average(), gc_pause_goal_sec(),
-      *desired_eden_size_ptr, eden_heap_delta);
+        "PSAdaptiveSizePolicy::adjust_eden_for_pause_time "
+        "adjusting gen sizes for major pause (avg %f goal %f). "
+        "desired_eden_size " SIZE_FORMAT " eden delta " SIZE_FORMAT,
+        _avg_major_pause->average(), gc_pause_goal_sec(),
+        *desired_eden_size_ptr, eden_heap_delta);
   }
 }
 

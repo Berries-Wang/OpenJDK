@@ -148,11 +148,14 @@ class ParallelScavengeHeap : public CollectedHeap {
   bool is_in_young(oop p);  // reserved part
   bool is_in_old(oop p);    // reserved part
 
-  // Memory allocation.   "gc_time_limit_was_exceeded" will
-  // be set to true if the adaptive size policy determine that
-  // an excessive amount of time is being spent doing collections
-  // and caused a NULL to be returned.  If a NULL is not returned,
-  // "gc_time_limit_was_exceeded" has an undefined meaning.
+  /**
+   *   Memory allocation.   "gc_time_limit_was_exceeded" will  be set to true if
+   * the adaptive size policy determine that an excessive amount of time is
+   * being spent doing collections  and caused a NULL to be returned.  If a NULL
+   * is not returned,  "gc_time_limit_was_exceeded" has an undefined
+   * meaning.(内存分配。如果自适应大小策略确定花费在收集上的时间过多并导致返回NULL，
+   * 则将“gc_time_limit_was_exceeded”设置为true。如果未返回NULL，则“gc_time_limit_was_exceeded”具有未定义的含义。)
+   */
   HeapWord* mem_allocate(size_t size, bool* gc_overhead_limit_was_exceeded);
 
   // Allocation attempt(s) during a safepoint. It should never be called

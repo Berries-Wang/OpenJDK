@@ -87,12 +87,13 @@ jint ParallelScavengeHeap::initialize() {
     return JNI_ENOMEM;
   }
 
-  // Make up the generations
-  // Calculate the maximum size that a generation can grow.  This
-  // includes growth into the other generation.  Note that the
-  // parameter _max_gen_size is kept as the maximum
-  // size of the generation as the boundaries currently stand.
-  // _max_gen_size is still used as that value.
+  /**
+   * Make up the generations Calculate the maximum size that a generation can
+   * grow.  This  includes growth into the other generation.  Note that the
+   * parameter _max_gen_size is kept as the maximum  size of the generation as
+   * the boundaries currently stand.  _max_gen_size is still used as that
+   * value.(计算一代可以增长的最大规模。这包括向另一代的增长。请注意，参数_max_gen_size保持为当前边界的最大生成大小_max_gen_size仍然用作该值。)
+   */
   double max_gc_pause_sec = ((double) MaxGCPauseMillis)/1000.0;
   double max_gc_minor_pause_sec = ((double) MaxGCMinorPauseMillis)/1000.0;
 
@@ -104,8 +105,7 @@ jint ParallelScavengeHeap::initialize() {
   const size_t eden_capacity = _young_gen->eden_space()->capacity_in_bytes();
   const size_t old_capacity = _old_gen->capacity_in_bytes();
   const size_t initial_promo_size = MIN2(eden_capacity, old_capacity);
-  _size_policy =
-    new PSAdaptiveSizePolicy(eden_capacity,
+  _size_policy = new PSAdaptiveSizePolicy(eden_capacity,
                              initial_promo_size,
                              young_gen()->to_space()->capacity_in_bytes(),
                              _collector_policy->gen_alignment(),
@@ -226,7 +226,7 @@ bool ParallelScavengeHeap::is_in_partial_collection(const void *p) {
 // failed allocation policy.
 //
 // The basic allocation policy controls how you allocate memory without
-// attempting garbage collection. It is okay to grab locks and
+// attempting garbage collection. It is okay to grab(抓住) locks and
 // expand the heap, if that can be done without coming to a safepoint.
 // It is likely that the basic allocation policy will not be very
 // aggressive.
@@ -420,7 +420,7 @@ HeapWord* ParallelScavengeHeap::mem_allocate_old_gen(size_t size) {
 void ParallelScavengeHeap::do_full_collection(bool clear_all_soft_refs) {
   if (UseParallelOldGC) {
     // The do_full_collection() parameter clear_all_soft_refs
-    // is interpreted here as maximum_compaction which will
+    // is interpreted(解释) here as maximum_compaction which will
     // cause SoftRefs to be cleared.
     bool maximum_compaction = clear_all_soft_refs;
     PSParallelCompact::invoke(maximum_compaction);
@@ -448,8 +448,10 @@ HeapWord* ParallelScavengeHeap::failed_mem_allocate(size_t size) {
   const bool invoked_full_gc = PSScavenge::invoke();
   HeapWord* result = young_gen()->allocate(size);
 
-  // Second level allocation failure.
-  //   Mark sweep and allocate in young generation.
+  /**
+   * Second level allocation failure.Mark sweep and allocate in young
+   * generation.(二级分配失败。在年轻一代中进行标记扫描和分配。)
+   */
   if (result == NULL && !invoked_full_gc) {
     do_full_collection(false);
     result = young_gen()->allocate(size);
@@ -464,7 +466,7 @@ HeapWord* ParallelScavengeHeap::failed_mem_allocate(size_t size) {
     result = old_gen()->allocate(size);
   }
 
-  // Fourth level allocation failure. We're running out of memory.
+  // Fourth level allocation failure. We're running out of memory(内存快用完了).
   //   More complete mark sweep and allocate in young generation.
   if (result == NULL) {
     do_full_collection(true);
