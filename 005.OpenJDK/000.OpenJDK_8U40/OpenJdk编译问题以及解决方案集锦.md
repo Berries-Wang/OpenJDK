@@ -1,4 +1,4 @@
-# OpenJdk8编译问题
+# OpenJDK8编译问题
 ## 准备
 + --with-boot-jdk: /home/wei/workspace/Temp/jdk7/jdk1.7.0_80 , 不能包含中文路径，否则一直报错，即问题2，只要比编译的jdk版本打一个大的版本号就行。即对于jdk8，使用jdk7来作为boot jdk,至于是jdk7的那个小版本，这无所谓
 + gcc: gcc version 4.7.4 (Ubuntu/Linaro 4.7.4-3ubuntu12) , 对于该版本使用4.7版本即可，高版本不兼容
