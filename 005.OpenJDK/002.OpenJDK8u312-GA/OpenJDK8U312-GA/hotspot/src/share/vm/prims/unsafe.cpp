@@ -642,6 +642,7 @@ UNSAFE_ENTRY(jlong, Unsafe_AllocateMemory(JNIEnv *env, jobject unsafe, jlong siz
     return 0;
   }
   sz = round_to(sz, HeapWordSize);
+  // 直接向操作系统申请内存
   void* x = os::malloc(sz, mtInternal);
   if (x == NULL) {
     THROW_0(vmSymbols::java_lang_OutOfMemoryError());

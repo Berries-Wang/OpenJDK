@@ -77,7 +77,11 @@
         "java_md.h": "c",
         "types.h": "c",
         "jni.h": "c",
-        "__mutex_base": "cpp"
+        "__mutex_base": "cpp",
+        "__hash_table": "cpp",
+        "__split_buffer": "cpp",
+        "__tree": "cpp",
+        "stack": "cpp"
     },
     "java.import.maven.enabled": true,
     "java.configuration.runtimes": [

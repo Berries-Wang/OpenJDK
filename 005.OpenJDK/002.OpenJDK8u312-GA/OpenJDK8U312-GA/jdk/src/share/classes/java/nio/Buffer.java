@@ -28,7 +28,7 @@ package java.nio;
 import java.util.Spliterator;
 
 /**
- * A container for data of a specific primitive type.
+ * A container for data of a specific primitive type.（特定基础类型数据的容器）
  *
  * <p> A buffer is a linear, finite sequence of elements of a specific
  * primitive type.  Aside from its content, the essential properties of a
