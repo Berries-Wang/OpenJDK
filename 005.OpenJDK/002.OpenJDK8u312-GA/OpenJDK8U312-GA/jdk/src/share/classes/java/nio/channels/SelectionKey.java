@@ -370,23 +370,32 @@ public abstract class SelectionKey {
             SelectionKey.class, Object.class, "attachment"
         );
 
-    /**
-     * Attaches the given object to this key.
-     *
-     * <p> An attached object may later be retrieved via the {@link #attachment()
-     * attachment} method.  Only one object may be attached at a time; invoking
-     * this method causes any previous attachment to be discarded.  The current
-     * attachment may be discarded by attaching <tt>null</tt>.  </p>
-     *
-     * @param  ob
-     *         The object to be attached; may be <tt>null</tt>
-     *
-     * @return  The previously-attached object, if any,
-     *          otherwise <tt>null</tt>
-     */
-    public final Object attach(Object ob) {
-        return attachmentUpdater.getAndSet(this, ob);
-    }
+        /**
+         * Attaches the given object to this key.
+         *
+         * <p>
+         * An attached object may later be retrieved via the {@link #attachment()
+         * attachment} method. Only one object may be attached at a time; invoking
+         * this method causes any previous attachment to be discarded. The current
+         * attachment may be discarded by attaching
+         * <tt>null</tt>.(将给定对象附加到此键。稍后可以通过附件方法检索附加对象。一次只能附一件物品；
+         * 调用此方法将导致丢弃以前的任何附件。通过附加null可以丢弃当前附件。)
+         * 
+         * </p>
+         * 
+         * <pre>
+         * ob: 附加对象，可以是一个与 Channel 关联的对象（如会话信息、缓冲区等），可以通过 SelectionKey.attachment() 获取。
+         * </pre>
+         *
+         * @param ob
+         *           The object to be attached; may be <tt>null</tt>
+         *
+         * @return The previously-attached object, if any,
+         *         otherwise <tt>null</tt>
+         */
+        public final Object attach(Object ob) {
+            return attachmentUpdater.getAndSet(this, ob);
+        }
 
     /**
      * Retrieves the current attachment.
