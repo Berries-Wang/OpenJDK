@@ -40,6 +40,25 @@ import java.lang.reflect.TypeVariable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.AnnotatedType;
 import java.lang.ref.SoftReference;
+
+import static java.lang.Class.ANNOTATION;
+import static java.lang.Class.ENUM;
+import static java.lang.Class.SYNTHETIC;
+import static java.lang.Class.addAll;
+import static java.lang.Class.allPermDomain;
+import static java.lang.Class.arrayContentsEq;
+import static java.lang.Class.copyConstructors;
+import static java.lang.Class.copyFields;
+import static java.lang.Class.copyMethods;
+import static java.lang.Class.desiredAssertionStatus0;
+import static java.lang.Class.forName0;
+import static java.lang.Class.getReflectionFactory;
+import static java.lang.Class.reflectionFactory;
+import static java.lang.Class.registerNatives;
+import static java.lang.Class.searchFields;
+import static java.lang.Class.searchMethods;
+import static java.lang.Class.toClass;
+
 import java.io.InputStream;
 import java.io.ObjectStreamField;
 import java.security.AccessController;
@@ -484,7 +503,9 @@ public final class Class<T> implements java.io.Serializable,
 
 
     /**
-     * Determines if the class or interface represented by this
+     * <p>
+     * classA.isAssignableFrom(classB); 判断classA是否是classB的超类或者超接口，如果是，返回true;否则，返回false;
+     * <p> Determines if the class or interface represented by this
      * {@code Class} object is either the same as, or is a superclass or
      * superinterface of, the class or interface represented by the specified
      * {@code Class} parameter. It returns {@code true} if so;
@@ -492,13 +513,18 @@ public final class Class<T> implements java.io.Serializable,
      * object represents a primitive type, this method returns
      * {@code true} if the specified {@code Class} parameter is
      * exactly this {@code Class} object; otherwise it returns
-     * {@code false}.
+     * {@code false}.(确定此class对象表示的类或接口是否与指定的class参数表示的类或接口相同，
+     * 或者是否是该类或接口的超类或超接口。如果是，则返回true；否则返回false。
+     * 如果此Class对象表示基本类型，则如果指定的Class参数恰好是此Class对象，
+     * 则此方法返回true；否则返回false。)
      *
      * <p> Specifically, this method tests whether the type represented by the
      * specified {@code Class} parameter can be converted to the type
      * represented by this {@code Class} object via an identity conversion
      * or via a widening reference conversion. See <em>The Java Language
-     * Specification</em>, sections 5.1.1 and 5.1.4 , for details.
+     * Specification</em>, sections 5.1.1 and 5.1.4 , for details.(具体而言，
+     * 此方法测试是否可以通过标识转换或通过扩展引用转换将指定的Class参数表示的类型转换为此Class对象表示的类型。
+     * 详细信息请参见Java语言规范@jls 5.1.1和@jls 5.1.4章节。)
      *
      * @param cls the {@code Class} object to be checked
      * @return the {@code boolean} value indicating whether objects of the
