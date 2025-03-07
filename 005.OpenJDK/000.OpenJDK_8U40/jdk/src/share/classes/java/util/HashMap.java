@@ -257,7 +257,7 @@ public class HashMap<K,V> extends AbstractMap<K,V>
      * 即太大会造成大量的Hash冲突，查询效率低，空间利用率高
      * 太小则会造成hash冲突降低，查询效率高，但是空间利用率太低
      * 
-     * 最终的结果就是： 空间和时间的权衡
+     * 最终的结果就是： 空间和时间(冲突概率-哈希冲突导致)的权衡
      */
     static final float DEFAULT_LOAD_FACTOR = 0.75f;
 
