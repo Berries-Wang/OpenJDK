@@ -351,7 +351,7 @@ inline volatile oop oopDesc::obj_field_volatile(int offset) const {
 inline void oopDesc::obj_field_put(int offset, oop value) {
   const char *debugKlassName = "G_Inner";
   if (value != 0x0) {
-    wei_print_klass_name(value->klass()->name());
+    // wei_print_klass_name(value->klass()->name());
     if (wei_string_equal(value->klass()->name(), debugKlassName)) {
       wei_log_info(1, "Debug For G_Inner");
     }

@@ -81,7 +81,8 @@
         "__hash_table": "cpp",
         "__split_buffer": "cpp",
         "__tree": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "java_lang_thread.h": "c"
     },
     "java.import.maven.enabled": true,
     "java.configuration.runtimes": [

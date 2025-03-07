@@ -3211,7 +3211,7 @@ JVM_ENTRY(void, JVM_StopThread(JNIEnv* env, jobject jthread, jobject throwable))
     if (java_thread == thread->threadObj()) {
       THROW_OOP(java_throwable);
     } else {
-      // Enques a VM_Operation to stop all threads and then deliver the exception...
+      // Enques a VM_Operation to stop all threads and then deliver the exception...(请求VM_Operation来停止所有线程，然后发送异常…)
       Thread::send_async_exception(java_thread, JNIHandles::resolve(throwable));
     }
   }
