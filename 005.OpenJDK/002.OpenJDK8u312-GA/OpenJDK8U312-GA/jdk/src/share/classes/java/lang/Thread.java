@@ -1288,7 +1288,13 @@ class Thread implements Runnable {
     /**
      * Marks this thread as either a {@linkplain #isDaemon daemon} thread
      * or a user thread. The Java Virtual Machine exits when the only
-     * threads running are all daemon threads.
+     * threads running are all daemon threads.(将此线程标记为守护线程或者用户线程，当所有的线程都是守护线程时，JVM会退出。)
+     * 
+     * <p>
+     * 守护线程的编码方式和普通线程没有太大区别，只是调用setDaemon(true)就可以将线程设置为守护线程。
+     * 
+     * <p>
+     * 守护线程提供了一种支持性的服务，在所有的用户线程退出后自动停止。
      *
      * <p> This method must be invoked before the thread is started.
      *
