@@ -1837,7 +1837,7 @@ run:
          * 通过代码发现,“istate”类型是BytecodeInterpreter，即字节码解释器
          *
          * 下面的查找方式，得参考:
-         * 004.OpenJDK(JVM)学习/002.JVM内核/003.操作数栈的栈帧.md,即了解操作数栈的栈帧是什么样的
+         * 004.OpenJDK(JVM)学习/002.JVM内核/003.JVM函数调用的栈帧.md,即了解操作数栈的栈帧是什么样的
          */
         // 遍历栈中的Lock Record , 找到一个空闲的Lock Record(即可以使用的)
         BasicObjectLock *limit = istate->monitor_base(); // 线程栈的栈顶

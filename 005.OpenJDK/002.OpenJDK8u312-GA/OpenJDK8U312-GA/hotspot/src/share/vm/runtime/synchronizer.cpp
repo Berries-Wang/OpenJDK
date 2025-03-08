@@ -1450,6 +1450,7 @@ ObjectMonitor *ATTR ObjectSynchronizer::inflate(Thread *Self, oop object,
           /**
            * 设置锁对象的对象头(锁状态位也是在这里设置的)
            * 
+           * > 那么， ·mark->monitor()· 就会返objectMonitor了
            */ 
           object->release_set_mark(markOopDesc::encode(m));
 
