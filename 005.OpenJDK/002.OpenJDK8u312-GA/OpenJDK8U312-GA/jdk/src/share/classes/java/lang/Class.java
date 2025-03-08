@@ -40,25 +40,6 @@ import java.lang.reflect.TypeVariable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.AnnotatedType;
 import java.lang.ref.SoftReference;
-
-import static java.lang.Class.ANNOTATION;
-import static java.lang.Class.ENUM;
-import static java.lang.Class.SYNTHETIC;
-import static java.lang.Class.addAll;
-import static java.lang.Class.allPermDomain;
-import static java.lang.Class.arrayContentsEq;
-import static java.lang.Class.copyConstructors;
-import static java.lang.Class.copyFields;
-import static java.lang.Class.copyMethods;
-import static java.lang.Class.desiredAssertionStatus0;
-import static java.lang.Class.forName0;
-import static java.lang.Class.getReflectionFactory;
-import static java.lang.Class.reflectionFactory;
-import static java.lang.Class.registerNatives;
-import static java.lang.Class.searchFields;
-import static java.lang.Class.searchMethods;
-import static java.lang.Class.toClass;
-
 import java.io.InputStream;
 import java.io.ObjectStreamField;
 import java.security.AccessController;
