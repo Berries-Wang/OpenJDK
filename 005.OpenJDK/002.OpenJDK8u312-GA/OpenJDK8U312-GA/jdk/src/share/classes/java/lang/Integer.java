@@ -775,6 +775,11 @@ public final class Integer extends Number implements Comparable<Integer> {
      * During VM initialization, java.lang.Integer.IntegerCache.high property
      * may be set and saved in the private system properties in the
      * sun.misc.VM class.
+     * 
+     * <p>
+     * 1. 自动装箱会调用Integer.valueOf(int i) 方法
+     * 2. 缓存逻辑也只在Integer.valueOf(int i) 方法
+     * 3. 减少对象的创建和销毁。
      */
 
     private static class IntegerCache {
