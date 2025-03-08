@@ -567,9 +567,13 @@ public class Object {
      *
      * @deprecated Finalization is deprecated and subject to removal in a future
      * release. The use of finalization can lead to problems with security,
-     * performance, and reliability.
+     * performance, and reliability.(使用终结可能会导致安全性、性能和可靠性方面的问题。)
      * See <a href="https://openjdk.org/jeps/421">JEP 421</a> for
      * discussion and alternatives.
+     * <p>
+     *   <a href="https://openjdk.org/jeps/421">JEP 421</a>
+     *   finalization appropriates the power of garbage collection to manage non-memory resources 
+     *     即 会占用GC资源来处理非内存资源
      * <p>
      * Subclasses that override {@code finalize} to perform cleanup should use
      * alternative cleanup mechanisms and remove the {@code finalize} method.

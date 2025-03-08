@@ -86,7 +86,8 @@ import java.util.*;
  * This interface is a member of the
  * <a href="{@docRoot}/../technotes/guides/collections/index.html">
  * Java Collections Framework</a>.
- *
+ *<p>
+ * 表示具有比较能力，需要实现 compareTo 方法
  * @param <T> the type of objects that this object may be compared to
  *
  * @author  Josh Bloch
