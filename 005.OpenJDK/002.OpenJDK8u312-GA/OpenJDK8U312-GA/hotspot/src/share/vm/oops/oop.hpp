@@ -57,7 +57,7 @@ class PSPromotionManager;
 class ParCompactionManager;
 
 /**
- *对象头，分为两部分:
+ *对象头，分为两部分: 大小 = 8 + 4(开启指针压缩)/8(未开启指针压缩) = 12/16
  * 1. Mark Word
  * 2. 元数据
  */
