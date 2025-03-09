@@ -669,6 +669,7 @@ class Thread implements Runnable {
          * to this method in the future may have to also be added to the VM.
          *
          * A zero status value corresponds to state "NEW".
+         * 线程状态校验: 初始状态为NEW 
          */
         if (threadStatus != 0)
             throw new IllegalThreadStateException();
