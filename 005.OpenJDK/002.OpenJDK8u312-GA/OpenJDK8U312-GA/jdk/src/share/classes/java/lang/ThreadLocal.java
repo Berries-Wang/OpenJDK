@@ -347,8 +347,9 @@ public class ThreadLocal<T> {
          * <p>
          * 以上这段注释存在重要的内容: <br/>
          * >> 1. Entry中的Key是弱引用，他可能会变为null,但是Entry的实例都是强引用。
-         * 因此，如果不保存对Key的强引用，可能会因为弱引用的回收规则导致内存泄露。这也是为什么使用完毕之后需要调用remove方法<br/>
-         * >> 2. 关于Java中的引用，见: 004.OpenJDK(JVM)学习/009.GC/007.JVM引用.md
+         * 因此，如果不保存对Key的强引用(对ThreadLocal的强引用，因为在构建ThreadLocalMap时，是将Key转为弱引用的)，
+         * 可能会因为弱引用的回收规则导致内存泄露。这也是为什么使用完毕之后需要调用remove方法<br/>
+         * >> 2. 关于Java中的引用，见: 004.OpenJDK(JVM)学习/009.GC/007.JVM-Reference.md
          * </p>
          * <p>
          * no longer:  不再
@@ -529,6 +530,7 @@ public class ThreadLocal<T> {
                 }
             }
 
+            // 会被覆盖掉(当ThreadLocal被分到一个桶的时候)
             tab[i] = new Entry(key, value);
             int sz = ++size;
             if (!cleanSomeSlots(i, sz) && sz >= threshold)
