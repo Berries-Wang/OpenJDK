@@ -12,3 +12,12 @@
 1. [006.BOOKs/深入理解Java虚拟机.pdf] 3.5.5 Parallel Old收集器
 2. [HotSpot Virtual Machine Garbage Collection Tuning Guide](../HotSpot%20Virtual%20Machine%20Garbage%20Collection%20Tuning%20Guide.pdf)
 3. [HotSpot Virtual Machine Garbage Collection Tuning Guide](../hotspot-virtual-machine-garbage-collection-tuning-guide.pdf)
+
+## 问题
+### JVM(1.8)在-server下默认老年代回收是 PS-MarkSweep(Serial-Old)，还是Parallel Old？
+答案： 看版本
+
+“在'这个改变'<sup>[000.ParallelGC简介.md# -XX:+UseParallelOldGC ](./000.ParallelGC简介.md)</sup>之前，即便选择了ParallelGC，默认情况下ParallelOldGC并不会随即开启，而是要自己通过 -XX:+UseParallelOldGC 去选定。
+  + ‘这个改变’ 指的是 -XX:+UseParallelOldGC 的应用里面的 [JDK8-ParallelOldGC作为Parallel默认Old-GC.pdf](./DOCS/JDK8-ParallelOldGC作为Parallel默认Old-GC.pdf) 的这一次OpenJDK的修改<sup>通过commit信息发现，是2012年改变的默认值</sup>，将 ’Parallel Old‘ 作为 Parallel Scavenge 搭配的Old GC
+     - 在这个改变之前，即便选择了ParallelGC，默认情况下ParallelOldGC并不会随即开启，而是要自己通过 -XX:+UseParallelOldGC 去选定。
+     - 参考:[JDK-6679764.pdf](./JDK-6679764.pdf)
