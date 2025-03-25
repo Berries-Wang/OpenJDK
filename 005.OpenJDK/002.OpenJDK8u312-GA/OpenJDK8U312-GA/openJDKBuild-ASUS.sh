@@ -19,7 +19,7 @@ BUILDOUTPUTDIR=`pwd`/build
 echo ${BUILDOUTPUTDIR}
 
 # Step2. 运行configure,可能会缺依赖，缺什么就装什么.使用‘\’换行后，注意注释的写法
-./configure  --with-debug-level=slowdebug    `# 指定可以生成最多的调试信息` \
+./configure  --with-debug-level=slowdebug --with-native-debug-symbols=internal    `# 指定可以生成最多的调试信息` \
     --with-boot-jdk=${BOOTJDK}  \
     --with-freetype-include=${FREETYPEINCLUDE} \
     --with-freetype-lib=${FREETYPELIB} \

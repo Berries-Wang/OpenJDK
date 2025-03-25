@@ -393,7 +393,8 @@ void JavaCalls::call_helper(JavaValue* result, methodHandle* m, JavaCallArgument
   // do call
   { JavaCallWrapper link(method, receiver, result, CHECK);
     { HandleMark hm(thread);  // HandleMark used by HandleMarkCleaner
-
+      
+      // 从这里进去，会执行java代码了   #Java代码执行
       StubRoutines::call_stub()(
         (address)&link,
         // (intptr_t*)&(result->_value), // see NOTE above (compiler problem)

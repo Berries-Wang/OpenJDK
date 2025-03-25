@@ -45,9 +45,12 @@ public:
   static int SR_signum;
 
   static int init();
-  // The platform dependent parts of the central hotspot signal handler.
-  // Returns true if the signal had been recognized and handled, false if not. If true, caller should
-  // return from signal handling.
+  /**
+   * The platform dependent parts of the central hotspot signal handler. Returns
+   * true if the signal had been recognized and handled, false if not. If true,
+   * caller should return from signal handling.
+   * (中心热点信号处理程序的平台相关部分。如果信号已被识别并处理，则返回true，否则返回false。如果为true，调用者应该从信号处理中返回。)
+   */
   static bool pd_hotspot_signal_handler(int sig, siginfo_t* info, ucontext_t* uc, JavaThread* thread);
 
   static bool is_sig_ignored(int sig);

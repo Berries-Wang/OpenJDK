@@ -316,7 +316,7 @@
                 "Sync"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/practice-code",
+            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/003.prictice-code",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -466,7 +466,7 @@
                 "Sync2"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/practice-code",
+            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/003.prictice-code",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -502,7 +502,7 @@
                 "CountDownLatchStu"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/practice-code",
+            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/003.prictice-code",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -538,7 +538,7 @@
                 "ThreadStu"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/practice-code",
+            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/003.prictice-code",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -576,7 +576,7 @@
                 "ReferenceStu"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/practice-code",
+            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/003.prictice-code",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -614,7 +614,7 @@
                 "ThreadSleepTest"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/practice-code",
+            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/003.prictice-code",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
@@ -653,7 +653,49 @@
                 "SynchronizedStu"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/practice-code",
+            "cwd": "${workspaceFolder}/005.OpenJDK/003.prictice-code",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "osx": {
+                "MIMode": "lldb",
+                "internalConsoleOptions": "openOnSessionStart"
+            },
+            "linux": {
+                "MIMode": "gdb",
+                "setupCommands": [
+                    {
+                        "text": "handle SIGSEGV noprint nostop",
+                        "description": "Disable stopping on signals handled by the JVM"
+                    }
+                ]
+            }
+        },{
+            "name": "java SynchronizedStuV2.002.OpenJDK8u312-GA",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/bin/java",
+            "args": [
+                "-showversion",
+                "-Xint",
+                "-XX:+UseParNewGC",
+                "-XX:+UseConcMarkSweepGC",
+                "-XX:+TraceBiasedLocking",
+                "-Xms100M",
+                "-Xms100M",
+                "-XX:+PrintCompilation",
+                "-XX:+UnlockDiagnosticVMOptions","-XX:+PrintInlining",
+                "SynchronizedStuV2"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/005.OpenJDK/003.prictice-code",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
