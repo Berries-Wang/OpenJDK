@@ -65,7 +65,7 @@ inline JavaThreadState JavaThread::thread_state() const    {
 }
 
 inline void JavaThread::set_thread_state(JavaThreadState s) {
-  OrderAccess::release_store((volatile jint*)&_thread_state, (jint)s);
+  OrderAccess::release_store((volatile jint*)&_thre a d_state, (jint)s);
 }
 #endif
 

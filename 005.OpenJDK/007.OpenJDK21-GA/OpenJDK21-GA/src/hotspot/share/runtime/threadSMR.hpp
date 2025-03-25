@@ -390,14 +390,27 @@ public:
   }
 };
 
-// This stack allocated ThreadsListHandle and JavaThreadIterator combo
-// is used to walk the ThreadsList in the included ThreadsListHandle
-// using the following style:
-//
-//   for (JavaThreadIteratorWithHandle jtiwh; JavaThread *jt = jtiwh.next(); ) {
-//     ...
-//   }
-//
+/**
+ * <pre>
+ * JavaThreadIteratorWithHandle 类的主要功能是迭代所有的 JavaThread
+ * 对象。JavaThread 是 JVM 中表示 Java 线程的类，它包含了与 Java
+ * 线程相关的各种信息，比如线程的状态、优先级、堆栈等。
+ *
+ * 具体来说，JavaThreadIteratorWithHandle 类允许遍历 JVM 中的所有 Java
+ * 线程，并为每个线程执行某些操作。它通常用在需要访问、操作或者分析 JVM
+ * 中所有线程的上下文中。常见的用途包括垃圾回收器、诊断工具、调试器等。
+ * </pre>
+ *
+ * This stack allocated ThreadsListHandle and JavaThreadIterator combo  is used
+ * to walk the ThreadsList in the included ThreadsListHandle  using the
+ * following style:
+ * （此堆栈分配的ThreadsListHandle和JavaThreadIterator组合用于使用以下样式在包含的ThreadsListHandle中遍历ThreadsList：）
+ * <pre>
+ *   for (JavaThreadIteratorWithHandle jtiwh; JavaThread *jt = jtiwh.next(); ) {
+ *    ...
+ *   }
+ * </pre>
+ */
 class JavaThreadIteratorWithHandle : public StackObj {
   ThreadsListHandle _tlh;
   uint _index;

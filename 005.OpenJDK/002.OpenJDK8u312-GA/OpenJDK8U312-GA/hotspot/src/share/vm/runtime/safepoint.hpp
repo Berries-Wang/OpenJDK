@@ -202,6 +202,12 @@ class ThreadSafepointState: public CHeapObj<mtThread> {
     _call_back              =  2  // Keep executing and wait for callback (if thread is in interpreted or vm)
   };
  private:
+ /**
+  * "Polling Page Safepoint"（轮询页面安全点）
+  *  Polling Page Safepoint：线程在执行过程中会定期检查轮询页面的状态，以确定是否需要进入安全点。这种机制通常用于长时间运行的循环或代码块中，确保线程不会长时间不响应安全点请求。
+  * 
+  *  Poll Return Safepoint（轮询返回安全点）是在线程从本地方法返回到Java代码时检查是否需要进入安全点。
+  */
   volatile bool _at_poll_safepoint;  // At polling page safepoint (NOT a poll return safepoint)
   // Thread has called back the safepoint code (for debugging)
   bool                           _has_called_back;

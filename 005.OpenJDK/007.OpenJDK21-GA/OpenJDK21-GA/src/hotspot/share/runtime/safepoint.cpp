@@ -293,37 +293,51 @@ int SafepointSynchronize::synchronize_threads(jlong safepoint_limit_time, int no
 }
 
 void SafepointSynchronize::arm_safepoint() {
-  // Begin the process of bringing the system to a safepoint.
-  // Java threads can be in several different states and are
-  // stopped by different mechanisms:
-  //
-  //  1. Running interpreted
-  //     When executing branching/returning byte codes interpreter
-  //     checks if the poll is armed, if so blocks in SS::block().
-  //  2. Running in native code
-  //     When returning from the native code, a Java thread must check
-  //     the safepoint _state to see if we must block.  If the
-  //     VM thread sees a Java thread in native, it does
-  //     not wait for this thread to block.  The order of the memory
-  //     writes and reads of both the safepoint state and the Java
-  //     threads state is critical.  In order to guarantee that the
-  //     memory writes are serialized with respect to each other,
-  //     the VM thread issues a memory barrier instruction.
-  //  3. Running compiled Code
-  //     Compiled code reads the local polling page that
-  //     is set to fault if we are trying to get to a safepoint.
-  //  4. Blocked
-  //     A thread which is blocked will not be allowed to return from the
-  //     block condition until the safepoint operation is complete.
-  //  5. In VM or Transitioning between states
-  //     If a Java thread is currently running in the VM or transitioning
-  //     between states, the safepointing code will poll the thread state
-  //     until the thread blocks itself when it attempts transitions to a
-  //     new state or locking a safepoint checked monitor.
+  /**
+   * Begin the process of bringing the system to a safepoint. Java threads can
+   * be in several different states and are  stopped by different mechanisms:
+   * (开始将系统带到安全点的过程。Java线程可以处于几种不同的状态，并通过不同的机制停止：)
+   *
+   * 1. Running interpreted
+   *    When executing branching/returning byte codes interpreter checks if the
+   * poll is armed, if so blocks in SS::block().（当执行分支/返回字节码时，解释器检查轮询是否被武装，如果是，则阻塞在SS::block（）中。）
+   *
+   * 2. Running in native code
+   *     When returning from the native code, a Java thread must check the
+   * safepoint _state to see if we must block.  If the VM thread sees a Java
+   * thread in native, it does not wait for this thread to block.  The order of
+   * the memory writes and reads of both the safepoint state and the Java
+   * threads state is critical.  In order to guarantee that the memory writes
+   * are serialized with respect to each other, the VM thread issues a memory
+   * barrier instruction.(当从本机代码返回时，Java线程必须检查safepoint
+   * _state，以确定是否必须阻塞。如果VM线程看到本机Java线程，它不会等待该线程阻塞。
+   * 安全点状态和Java线程状态的内存写入和读取顺序是至关重要的。为了保证内存写入是相互序列化的，VM线程发出内存屏障指令。)
+   *
+   * 3. Running compiled Code
+   *    Compiled code reads the local polling page that is set to fault if we
+   * are trying to get to a safepoint.(如果我们试图到达安全点，编译后的代码将读取设置为错误的本地轮询页。)
+   *
+   * 4. Blocked
+   *     A thread which is blocked will not be allowed to return from the  block
+   * condition until the safepoint operation is complete.(被阻塞的线程将不被允许从阻塞状态返回，直到安全点操作完成。)
+   *
+   * 5. In VM or Transitioning between states
+   *     If a Java thread is currently running in the VM or transitioning
+   * between states, the safepointing code will poll the thread state until the
+   * thread blocks itself when it attempts transitions to a new state or locking
+   * a safepoint checked monitor.(如果Java线程当前正在VM中运行或在状态之间转换，则安全点代码将轮询线程状态，
+   *   直到线程在尝试转换到新状态或锁定安全点检查的监视器时阻塞自己。)
+   *
+   *
+   */
 
-  // We must never miss a thread with correct safepoint id, so we must make sure we arm
-  // the wait barrier for the next safepoint id/counter.
-  // Arming must be done after resetting _current_jni_active_count, _waiting_to_block.
+  /**
+   *   We must never miss a thread with correct safepoint id, so we must make
+   * sure we arm  the wait barrier for the next safepoint id/counter.  Arming
+   * must be done after resetting _current_jni_active_count,
+   * _waiting_to_block.(我们不能错过具有正确安全点id的线程，所以我们必须确保为下一个安全点id/计数器设置等待屏障。重置_current_jni_active_count，
+   * _waiting_to_block后必须进行武装。)
+   */
   _wait_barrier->arm(static_cast<int>(_safepoint_counter + 1));
 
   assert((_safepoint_counter & 0x1) == 0, "must be even");
@@ -386,10 +400,13 @@ void SafepointSynchronize::begin() {
   EventSafepointStateSynchronization sync_event;
   int initial_running = 0;
 
-  // Arms the safepoint, _current_jni_active_count and _waiting_to_block must be set before.
+  /**
+   * 武装Java线程
+   * Arms the safepoint, _current_jni_active_count and _waiting_to_block must be set before.
+   */
   arm_safepoint();
 
-  // Will spin until all threads are safe.
+  // Will spin until all threads are safe.-等待所有的Java线程
   int iterations = synchronize_threads(safepoint_limit_time, nof_threads, &initial_running);
   assert(_waiting_to_block == 0, "No thread should be running");
 
@@ -736,14 +753,32 @@ void SafepointSynchronize::block(JavaThread *thread) {
 
   // This part we can skip if we notice we miss or are in a future safepoint.
   OrderAccess::storestore();
-  // Load in wait barrier should not float up
+  /**
+   * Load in wait barrier should not float up （等待屏障中的加载操作不应上浮）
+   * 在多线程编程或底层优化中，指令重排序（instruction reordering）
+   * 可能导致意外的行为。为了防止这种情况，开发者会使用内存屏障（memory
+   * barrier） 或同步原语（如 wait）来限制指令的移动。
+   *
+   * “float up” 指将指令移到屏障之前执行，这可能破坏同步的正确性。
+   * 因此，这句话强调：在等待屏障范围内的加载操作必须严格保持在原位，不能被优化到屏障之前。 -- deepseek，不知道是否准确
+   *
+   * 线程状态变化: Java -> Blocked
+   */
   thread->set_thread_state_fence(_thread_blocked);
 
+  /**
+   * wait on global semaphore
+   * After the VMTread has run the VM_Operation , it signals the global semaphore.
+   * On resume , the JavaThread disarms its own poll page and continues executing where it left off.
+   */
   _wait_barrier->wait(static_cast<int>(safepoint_id));
   assert(_state != _synchronized, "Can't be");
 
   // If barrier is disarmed stop store from floating above loads in barrier.
   OrderAccess::loadstore();
+  /**
+   * 线程状态变化: Blocked -> Java 
+   */
   thread->set_thread_state(state);
 
   // Then we reset the safepoint id to inactive.

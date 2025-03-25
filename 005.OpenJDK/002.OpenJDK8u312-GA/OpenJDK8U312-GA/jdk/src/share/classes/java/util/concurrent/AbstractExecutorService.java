@@ -103,6 +103,7 @@ public abstract class AbstractExecutorService implements ExecutorService {
     }
 
     /**
+     * 通过FuturnTask的返回值，也可以判断子任务是否执行完成
      * @throws RejectedExecutionException {@inheritDoc}
      * @throws NullPointerException       {@inheritDoc}
      */

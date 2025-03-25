@@ -954,6 +954,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
                     mainLock.unlock();
                 }
                 if (workerAdded) {
+                    // 开启工作线程
                     t.start();
                     workerStarted = true;
                 }
@@ -1143,6 +1144,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
                     !wt.isInterrupted())
                     wt.interrupt();
                 try {
+                    // 钩子方法: 单个任务执行前执行
                     beforeExecute(wt, task);
                     Throwable thrown = null;
                     try {
@@ -1154,6 +1156,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
                     } catch (Throwable x) {
                         thrown = x; throw new Error(x);
                     } finally {
+                        // 钩子方法: 单个任务执行完成后执行
                         afterExecute(task, thrown);
                     }
                 } finally {
