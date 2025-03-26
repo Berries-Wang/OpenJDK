@@ -102,6 +102,7 @@ class Method : public Metadata {
   // time (whenever a compile completes).  It can transition from not-null to
   // null only at safepoints (because of a de-opt).
   CompiledMethod* volatile _code;                       // Points to the corresponding piece of native code
+  // 由 set_interpreter_entry 赋值
   volatile address           _from_interpreted_entry; // Cache of _code ? _adapter->i2c_entry() : _i2i_entry
 
   // Constructor
