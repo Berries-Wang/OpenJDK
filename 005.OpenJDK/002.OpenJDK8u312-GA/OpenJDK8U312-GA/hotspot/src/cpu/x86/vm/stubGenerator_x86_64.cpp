@@ -219,7 +219,21 @@ class StubGenerator: public StubCodeGenerator {
            (int)frame::entry_frame_call_wrapper_offset == (int)call_wrapper_off,
            "adjust this code");
     StubCodeMark mark(this, "StubRoutines", "call_stub");
+    /**
+     *  __ pc(); 中的__ 是个宏定义 「 #define __ _masm-> 」
+     * 
+     * pc返回一个code_section()->end()，这个end指向的就是上一个例程的最后字节的位置。
+     */
     address start = __ pc();
+
+    /**
+     * %rbp 是栈帧指针，用于标识当前栈帧的起始位置
+     * 
+     * rbp 通常用于指向当前函数的栈帧的基址，也就是局部变量和函数参数的起始位置。它指向了当前函数的局部数据存储区。
+     * 
+     * rbp 寄存器（基址指针）的主要作用是用于建立函数的栈帧。栈帧是函数在运行时在栈上创建的局部存储区域，用于存储局部变量、函数参数、返回地址和其他与函数执行相关的信息。
+     * 
+     */
 
     // same as in generate_catch_exception()!
     const Address rsp_after_call(rbp, rsp_after_call_off * wordSize);
@@ -325,6 +339,9 @@ class StubGenerator: public StubCodeGenerator {
     __ movptr(c_rarg1, entry_point);    // get entry_point
     __ mov(r13, rsp);                   // set sender sp
     BLOCK_COMMENT("call Java function");
+    /**
+     * 函数调用: c_rarg1 保存了entry_point的值，即保存了一个执行被调用函数首地址
+     */
     __ call(c_rarg1);
 
     BLOCK_COMMENT("call_stub_return_address:");
@@ -407,6 +424,10 @@ class StubGenerator: public StubCodeGenerator {
     __ movdbl(Address(c_rarg0, 0), xmm0);
     __ jmp(exit);
 
+    /**
+     * start保存了当前这个例程运行结束的偏移量?
+     * 先记录，后续验证
+     */
     return start;
   }
 

@@ -390,7 +390,11 @@ void JavaCalls::call_helper(JavaValue* result, methodHandle* m, JavaCallArgument
     os::bang_stack_shadow_pages();
   }
 
-  // do call
+  /**
+   * do call
+   *
+   * 通过分析，入口是entry_point , entry_point 在解释执行下，这个地址是什么?
+   */
   { JavaCallWrapper link(method, receiver, result, CHECK);
     { HandleMark hm(thread);  // HandleMark used by HandleMarkCleaner
       
