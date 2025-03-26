@@ -492,19 +492,29 @@ inline size_t pointer_delta(const MetaWord* left, const MetaWord* right) {
   return pointer_delta(left, right, sizeof(MetaWord));
 }
 
-//
-// ANSI C++ does not allow casting from one pointer type to a function pointer
-// directly without at best a warning. This macro accomplishes it silently
-// In every case that is present at this point the value be cast is a pointer
-// to a C linkage function. In some case the type used for the cast reflects
-// that linkage and a picky compiler would not complain. In other cases because
-// there is no convenient place to place a typedef with extern C linkage (i.e
-// a platform dependent header file) it doesn't. At this point no compiler seems
-// picky enough to catch these instances (which are few). It is possible that
-// using templates could fix these for all cases. This use of templates is likely
-// so far from the middle of the road that it is likely to be problematic in
-// many C++ compilers.
-//
+/**
+ * ANSI C++ does not allow casting from one pointer type to a function pointer
+ * directly without at best a warning. This macro accomplishes it silently
+ * In every case that is present at this point the value be cast is a pointer
+ * to a C linkage function. In some case the type used for the cast reflects
+ * that linkage and a picky compiler would not complain. In other cases because
+ * there is no convenient place to place a typedef with extern C linkage (i.e
+ * a platform dependent header file) it doesn't. At this point no compiler seems
+ * picky enough to catch these instances (which are few). It is possible that
+ * using templates could fix these for all cases. This use of templates is
+ * likely so far from the middle of the road that it is likely to be problematic
+ * in many C++ compilers.(ANSI
+ * c++不允许在没有警告的情况下直接从一种指针类型转换为函数指针。这个宏以静默的方式完成它。
+ * 在此时出现的每种情况下，要强制转换的值都是指向C链接函数的指针。
+ * 在某些情况下，用于强制转换的类型反映了该链接，挑剔的编译器不会抱怨。
+ * 在其他情况下，因为没有方便的地方放置带有外部C链接的typedef（即依赖于平台的头文件），
+ * 它不会这样做。在这一点上，似乎没有任何编译器挑剔到足以捕获这些实例（它们很少）。使用模板有可能解决所有情况下的这些问题。
+ * 模板的这种用法很可能离道路的中间太远了，以至于在许多c++编译器中可能会出现问题。)
+ * 
+ * #define CAST_TO_FN_PTR(func_type, value) (reinterpret_cast<func_type>(value))
+ * #define CAST_TO_FN_PTR(func_type, value) ((func_type)(castable_address(value)))
+ */
+// 不同版本JDK的宏定义不一样(强制类型转换采用的方式不一样)，全局搜一下就知道了
 #define CAST_TO_FN_PTR(func_type, value) (reinterpret_cast<func_type>(value))
 #define CAST_FROM_FN_PTR(new_type, func_ptr) ((new_type)((address_word)(func_ptr)))
 
