@@ -221,8 +221,14 @@ class StubGenerator: public StubCodeGenerator {
     StubCodeMark mark(this, "StubRoutines", "call_stub");
     /**
      *  __ pc(); 中的__ 是个宏定义 「 #define __ _masm-> 」
-     * 
+     *
      * pc返回一个code_section()->end()，这个end指向的就是上一个例程的最后字节的位置。
+     *
+     *这里先得到当前入口的内存地址，因为本函数后续流程会继续往代码空间中写入
+     * call_stub() 的指令，而外面却只需要拿到这部分指令的首地址，而这里的start
+     * 就是首地址，因此这里先拿到，啥也不干，最后直接将其返回出去即可
+     *
+     * <pre>006.BOOKs/Unlocking-The-Java-Virtual-Machine/002.Unlocking-The-Java-Virtual-Machine-2.pdf P73 </pre>
      */
     address start = __ pc();
 
@@ -341,6 +347,8 @@ class StubGenerator: public StubCodeGenerator {
     BLOCK_COMMENT("call Java function");
     /**
      * 函数调用: c_rarg1 保存了entry_point的值，即保存了一个执行被调用函数首地址
+     * 
+     * 内部会调用 emit_int8  ， 这个是用于向代码空间中写入机器码.
      */
     __ call(c_rarg1);
 

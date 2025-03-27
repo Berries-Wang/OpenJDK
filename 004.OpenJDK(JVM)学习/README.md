@@ -1,7 +1,16 @@
 # OpenJDK(JVM)学习
 &nbsp;&nbsp;对着源码 && 数据 && 官方文档 && 博客来学习总结的，特此记录。
 
+---
 
+## C/C++代码如何进入Java代码执行
+> [005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/runtime/javaCalls.cpp](../005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/runtime/javaCalls.cpp)
+```c
+   void JavaCalls::call_helper(JavaValue* result, methodHandle* m, JavaCallArguments* args, TRAPS);
+```
+  + 结合源码 + [揭秘Java虚拟机](../006.BOOKs/Unlocking-The-Java-Virtual-Machine)<sup>从资料中(第二章)可以知道‘边界’在哪里</sup>进行学习调试
+
+---
 
 ## 附录
 ### 1. 如何查看Java Native代码
