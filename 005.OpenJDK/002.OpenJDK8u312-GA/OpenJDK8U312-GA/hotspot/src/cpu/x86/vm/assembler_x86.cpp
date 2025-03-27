@@ -1191,6 +1191,31 @@ void Assembler::call(Label& L, relocInfo::relocType rtype) {
   }
 }
 
+/***
+ * 这三行代码看起来像是在生成x86机器指令，具体是生成一个调用指令（CALL）。让我逐步解释：
+ *
+ * 1. `int encode = prefix_and_encode(dst->encoding());`
+ *    - 这行代码获取目标操作数(dst)的编码，并可能添加必要的指令前缀(prefix)
+ *    - `dst`可能代表一个寄存器或其他操作数
+ *    - `prefix_and_encode`函数会处理特定前缀(如REX前缀)并返回最终的编码值
+ * 
+ * 2. `emit_int8((unsigned char)0xFF);`
+ *    - 发射一个字节0xFF，这是x86指令的操作码(OPCODE)部分
+ *    - 在x86指令集中，0xFF是一个多用途操作码，结合后面的ModR/M字节可以表示多种指令
+ * 
+ * 3. `emit_int8((unsigned char)(0xD0 | encode));`
+ *    - 发射第二个字节，这是ModR/M字节
+ *    - 0xD0是基础值，与之前计算的encode进行或操作
+ *    - 在x86中，0xFF操作码加上ModR/M字节中特定字段值为010(即0xD0的高3位)时，表示CALL指令
+ *    - 低5位(encode部分)指定了调用哪个寄存器
+ * 
+ * 综合来看，这三行代码生成一个x86的"call register/memory"指令，形式为：`call r32`或`call m32`。具体调用哪个寄存器或内存位置由dst决定。
+ * 
+ * 例如，如果dst是EAX寄存器，最终生成的机器码可能是：FF D0
+ * 
+ * > call 指令请参考: 《009.汇编语言/000.汇编指令/003.CALL和RET指令.md》
+ * 
+ */
 void Assembler::call(Register dst) {
   int encode = prefix_and_encode(dst->encoding());
   emit_int8((unsigned char)0xFF);

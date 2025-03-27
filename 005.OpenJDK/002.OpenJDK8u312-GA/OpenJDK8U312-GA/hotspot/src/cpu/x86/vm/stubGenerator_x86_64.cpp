@@ -349,6 +349,8 @@ class StubGenerator: public StubCodeGenerator {
      * 函数调用: c_rarg1 保存了entry_point的值，即保存了一个执行被调用函数首地址
      * 
      * 内部会调用 emit_int8  ， 这个是用于向代码空间中写入机器码.
+     * 
+     * 插入 call 指令，调用java方法去了
      */
     __ call(c_rarg1);
 
@@ -433,8 +435,7 @@ class StubGenerator: public StubCodeGenerator {
     __ jmp(exit);
 
     /**
-     * start保存了当前这个例程运行结束的偏移量?
-     * 先记录，后续验证
+     * 返回start，即返回了这个方法的入口。
      */
     return start;
   }
