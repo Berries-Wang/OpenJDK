@@ -351,6 +351,8 @@ class StubGenerator: public StubCodeGenerator {
      * 内部会调用 emit_int8  ， 这个是用于向代码空间中写入机器码.
      * 
      * 插入 call 指令，调用java方法去了
+     * 
+     * c_rarg1 是什么，是寄存器 ，见 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/cpu/x86/vm/assembler_x86.hpp#’REGISTER_DECLARATION(Register, c_rarg1, rsi);‘
      */
     __ call(c_rarg1);
 
