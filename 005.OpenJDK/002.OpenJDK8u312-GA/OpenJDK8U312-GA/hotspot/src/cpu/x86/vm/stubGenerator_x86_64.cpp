@@ -214,6 +214,9 @@ class StubGenerator: public StubCodeGenerator {
   }
 #endif
 
+/**
+ * 这段代码最主要的作用就是生成机器码，使用 C语言动态生成。
+ */
   address generate_call_stub(address& return_address) {
     assert((int)frame::entry_frame_after_call_words == -(int)rsp_after_call_off + 1 &&
            (int)frame::entry_frame_call_wrapper_offset == (int)call_wrapper_off,
@@ -261,7 +264,21 @@ class StubGenerator: public StubCodeGenerator {
     const Address r12_save(rbp, r12_off * wordSize);
     const Address rbx_save(rbp, rbx_off * wordSize);
 
-    // stub code
+    /**
+     * stub code
+     * 以X86为例，在 assembler_x86.cpp(因CPU不同而不同)中，enter()函数的实现是:
+     * push(rbp);move(rbp,rsp);这两句代码都调用emit(),向代码空间写入机器码
+     * 
+     * 注意，这些看似汇编指令的C函数并不是在运行时被真正调用的函数，他们的作用是往代码空间中写入相同作用的机器码。
+     * 
+     * 
+     * 》 006.BOOKs/Unlocking-The-Java-Virtual-Machine/002.Unlocking-The-Java-Virtual-Machine-2.pdf P87
+     * push %ebp： 保存调用者函数的栈基地址;
+     * mov %sp,%bp： 重新指定栈基地址。
+     * 
+     * 由于即将开始新的函数，因此需要将栈基指向调用者函数的栈顶位置，调用者函数的栈顶位置就是被调用函数的栈基（错误的，借助理解）
+     * (还隔着两个寄存器: ip 和 bp ， 详细请回顾一下: 006.BOOKs/Unlocking-The-Java-Virtual-Machine/002.Unlocking-The-Java-Virtual-Machine-2.pdf 见图2.22)
+     */
     __ enter();
     __ subptr(rsp, -rsp_after_call_off * wordSize);
 
@@ -4188,8 +4205,7 @@ class StubGenerator: public StubCodeGenerator {
 
     StubRoutines::_forward_exception_entry = generate_forward_exception();
 
-    StubRoutines::_call_stub_entry =
-      generate_call_stub(StubRoutines::_call_stub_return_address);
+    StubRoutines::_call_stub_entry = generate_call_stub(StubRoutines::_call_stub_return_address);
 
     // is referenced by megamorphic call
     StubRoutines::_catch_exception_entry = generate_catch_exception();

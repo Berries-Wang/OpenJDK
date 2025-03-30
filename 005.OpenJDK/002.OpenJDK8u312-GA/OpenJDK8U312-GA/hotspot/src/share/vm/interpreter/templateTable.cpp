@@ -59,7 +59,9 @@ void Template::generate(InterpreterMacroAssembler* masm) {
   // parameter passing
   TemplateTable::_desc = this;
   TemplateTable::_masm = masm;
-  // code generation
+  /**
+   * _gen 就是一个函数指针了, 通过debug调试发现，_gen: 0x7ffff74ea7ee  <TemplateTable::monitorenter()>
+   */
   _gen(_arg);
   masm->flush();
 }

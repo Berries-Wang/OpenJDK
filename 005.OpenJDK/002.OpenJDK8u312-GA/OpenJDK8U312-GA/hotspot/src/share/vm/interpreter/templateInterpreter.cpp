@@ -373,6 +373,9 @@ void TemplateInterpreterGenerator::generate_all() {
 
 
 
+/**
+ * 处理entry_point
+ */
 #define method_entry(kind)                                                                    \
   { CodeletMark cm(_masm, "method entry point (kind = " #kind ")");                    \
     Interpreter::_entry_table[Interpreter::kind] = generate_method_entry(Interpreter::kind);  \
@@ -411,8 +414,11 @@ void TemplateInterpreterGenerator::generate_all() {
 
 #undef method_entry
 
-  // Bytecodes
+  /**
+   * Bytecodes
+   */
   set_entry_points_for_all_bytes();
+
   set_safepoints_for_all_bytes();
 }
 

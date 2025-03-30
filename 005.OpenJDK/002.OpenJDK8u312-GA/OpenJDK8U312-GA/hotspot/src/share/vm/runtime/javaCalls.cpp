@@ -397,8 +397,21 @@ void JavaCalls::call_helper(JavaValue* result, methodHandle* m, JavaCallArgument
    */
   { JavaCallWrapper link(method, receiver, result, CHECK);
     { HandleMark hm(thread);  // HandleMark used by HandleMarkCleaner
-      
-      // 从这里进去，会执行java代码了   #Java代码执行
+
+      /**
+       * JVM选择Call_Stub这一函数指针作为JVM内部的 C/C＋＋程序与 Java
+       * 程序的分水岭，或者桥梁，通过这座桥梁，
+       * 当JVM启动后，执行完JVM自身的一系列指令后，能够跳转到执行
+       * Java程序经翻译后所对应的二进制机器指令，
+       * Call_Stub能够实现机器逻辑指令上的联接，同时，JVM会调用 Java
+       * 的入口主函数 main()， 并将 main()主函数的人参传递进去
+       * 在分水岭之后，JVM需要为主函数分配堆栈空间，以在主函数中读取入参数据。
+       * Java 函数所需要的堆栈空间分配在哪里呢?既然
+       * Call_Stub作为分水岭，那么JVM将Java函数堆栈空间·寄生在Call_Stub中。·
+       *
+       *
+       * 从这里进去，会执行java代码了   #Java代码执行
+       */
       StubRoutines::call_stub()(
         (address)&link,
         // (intptr_t*)&(result->_value), // see NOTE above (compiler problem)

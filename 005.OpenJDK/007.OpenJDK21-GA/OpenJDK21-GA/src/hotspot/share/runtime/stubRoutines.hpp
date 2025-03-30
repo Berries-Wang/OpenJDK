@@ -296,7 +296,33 @@ class StubRoutines: AllStatic {
 
   static address catch_exception_entry()                   { return _catch_exception_entry; }
 
-  // Calls to Java
+  /**
+   * Calls to Java
+   * 定义函数指针:
+   * 
+   * <pre>
+   * 方式一: 直接声明
+   *   return_type (*func_pointer)  (data_type  argl , 
+   *                                    data_type  arg2 , 
+   *                                    .....,
+   *                                    data_type  argn);
+   *  直接声明就是直接定义了一个变量，可以直接对盖变量进行赋值。
+   * 
+   * 方式二:  通过类型声明 (通过typedef声明)
+   *   typedef (*func_pointer) ( data_type argl , 
+   *                             data_type arg2 , 
+   *                                ...,
+   *                             data_type argn );
+   * 类型声明的方式和直接声明的方式相比，主要区别在于 通过类型声明的方式定义的仅仅是一个类型，
+   * 由这个类型无法直接初始化类型指针，因为类型不是变量。 想要使用，则必须使用类型名去声明一个函数
+   * 指针变量，然后才能为所声明的函数指针变量赋值。
+   * 
+   * 其实就是 typedef unsigned char BYTE; 
+   * 
+   * </pre>
+   * 定义函数指针另一种方式: 
+   * 
+   */
   typedef void (*CallStub)(
     address   link,
     intptr_t* result,

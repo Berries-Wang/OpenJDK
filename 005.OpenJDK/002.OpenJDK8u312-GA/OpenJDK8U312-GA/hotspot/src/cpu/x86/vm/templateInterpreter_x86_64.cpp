@@ -1967,13 +1967,12 @@ void TemplateInterpreterGenerator::set_vtos_entry_points(Template* t,
 
 
 //-----------------------------------------------------------------------------
-// Generation of individual instructions
+// Generation of individual instructions(单个指令的生成)
 
 // helpers for generate_and_dispatch
 
 
-InterpreterGenerator::InterpreterGenerator(StubQueue* code)
-  : TemplateInterpreterGenerator(code) {
+InterpreterGenerator::InterpreterGenerator(StubQueue* code) : TemplateInterpreterGenerator(code) {
    generate_all(); // down here so it can be "virtual"
 }
 
