@@ -280,6 +280,16 @@ class StubGenerator: public StubCodeGenerator {
      * (还隔着两个寄存器: ip 和 bp ， 详细请回顾一下: 006.BOOKs/Unlocking-The-Java-Virtual-Machine/002.Unlocking-The-Java-Virtual-Machine-2.pdf 见图2.22)
      */
     __ enter();
+    /**
+     * # 为Java函数调用申请堆栈空间
+     * 
+     * '__ subptr(rsp, -rsp_after_call_off * wordSize);' 即指向rsp栈基往高地址偏移${-rsp_after_call_off}个字长，
+     * 还是看 006.BOOKs/Unlocking-The-Java-Virtual-Machine/002.Unlocking-The-Java-Virtual-Machine-2.pdf P94 好理解
+     * 
+     * 
+     * 
+     * 
+     */
     __ subptr(rsp, -rsp_after_call_off * wordSize);
 
     // save register parameters
