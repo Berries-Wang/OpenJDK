@@ -288,7 +288,7 @@ class StubGenerator: public StubCodeGenerator {
      * 
      * 
      * 
-     * 
+     * 即 执行subq汇编指令
      */
     __ subptr(rsp, -rsp_after_call_off * wordSize);
 
@@ -323,12 +323,14 @@ class StubGenerator: public StubCodeGenerator {
     const Address mxcsr_save(rbp, mxcsr_off * wordSize);
     {
       Label skip_ldmx;
+      // 将 MXCSR 寄存器的内容存储到内存中:MXCSR 寄存器是一个 32 位的寄存器，用于控制 SSE 浮点指令的执行和状态。
       __ stmxcsr(mxcsr_save);
       __ movl(rax, mxcsr_save);
       __ andl(rax, MXCSR_MASK);    // Only check control and mask bits
       ExternalAddress mxcsr_std(StubRoutines::addr_mxcsr_std());
       __ cmp32(rax, mxcsr_std);
       __ jcc(Assembler::equal, skip_ldmx);
+      // LDMXCSR 是与 STMXCSR 相反的指令，它用于从内存加载数据到 MXCSR 寄存器。通常用在恢复 MXCSR 寄存器的状态时。
       __ ldmxcsr(mxcsr_std);
       __ bind(skip_ldmx);
     }
@@ -356,14 +358,15 @@ class StubGenerator: public StubCodeGenerator {
     __ testl(c_rarg3, c_rarg3);
     __ jcc(Assembler::zero, parameters_done);
 
+    // entry_point 参数压栈
     Label loop;
     __ movptr(c_rarg2, parameters);       // parameter pointer
     __ movl(c_rarg1, c_rarg3);            // parameter counter is in c_rarg1
     __ BIND(loop);
     __ movptr(rax, Address(c_rarg2, 0));// get parameter
-    __ addptr(c_rarg2, wordSize);       // advance to next parameter
+    __ addptr(c_rarg2, wordSize);       // advance to next parameter（指向下一个参数: 这里是地址相加）
     __ decrementl(c_rarg1);             // decrement counter
-    __ push(rax);                       // pass parameter
+    __ push(rax);                       // pass parameter (将寄存器rax中的值入栈)
     __ jcc(Assembler::notZero, loop);
 
     // call Java function
