@@ -1213,8 +1213,10 @@ void Assembler::call(Label& L, relocInfo::relocType rtype) {
  * 
  * 例如，如果dst是EAX寄存器，最终生成的机器码可能是：FF D0
  * 
- * > call 指令请参考: 《009.汇编语言/000.汇编指令/003.CALL和RET指令.md》
+ * > call 指令请参考: 《009.汇编语言/000.汇编指令/003.call.md》
  * 
+ * 0xFF 是 x86/x86-64 架构中的一个单字节机器码，它是一个 多功能指令，具体功能取决于 ModR/M 字节（后续字节）的 寄存器/操作码扩展字段（/digit）。
+ * > 参考: 《009.汇编语言/000.汇编指令/009.什么是_0xFF.md》
  */
 void Assembler::call(Register dst) {
   int encode = prefix_and_encode(dst->encoding());
