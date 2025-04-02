@@ -279,6 +279,26 @@ int Bytecodes::compute_flags(const char* format, int more_flags) {
   }
 }
 
+/**
+ * <pre>
+ *      format 列记录了操作码和操作数的长度:
+ *             b: 总长为1(字节)
+ *             bc: 表示操作码后面会跟一个宽度为1字节的操作数,如bipush
+ *
+ *      ### Java的每个字节码指令都仅占一个字节 ###
+ *
+ *      ldc 整条指令，操作码和操作数一共只占2字节。
+ *      ldc_w ,操作码和操作数一共只占3字节。
+ *
+ *   字节码指令的宽度对于JVM虚拟机完成取指是至关重要的，JVM只有知道了每一个字节码指令所占的宽度，才能完成
+ * "取指 -> 译码 -> 执行 -> 取指" 这种循环，将程序一直运行下去
+ * </pre>
+ *
+ * <pre>
+ *     ldc: load constant
+ *
+ * </pre>
+ */
 void Bytecodes::initialize() {
   if (_is_initialized) return;
   assert(number_of_codes <= 256, "too many bytecodes");
