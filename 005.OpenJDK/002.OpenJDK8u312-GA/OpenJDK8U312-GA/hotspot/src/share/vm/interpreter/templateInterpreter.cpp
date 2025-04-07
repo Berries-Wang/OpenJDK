@@ -521,9 +521,16 @@ void TemplateInterpreterGenerator::set_short_entry_points(Template* t, address& 
   }
 }
 
-
-//------------------------------------------------------------------------------------------------------------------------
-
+/**
+ * <pre>
+ *   该函数干两件事:
+ * a. 为 Java字节码指令生成对应的汇编指令
+ * b. 实现字节码指令跳转，即 取指
+ * </pre>
+ *
+ * @param t  字节码指令模板
+ * @param tos_out
+ */
 void TemplateInterpreterGenerator::generate_and_dispatch(Template* t, TosState tos_out) {
   if (PrintBytecodeHistogram)                                    histogram_bytecode(t);
 #ifndef PRODUCT
@@ -547,16 +554,24 @@ void TemplateInterpreterGenerator::generate_and_dispatch(Template* t, TosState t
     }
     __ dispatch_prolog(tos_out, step);
   }
-  // generate template
+  /**
+   * 1. generate template ，即生成字节码对应的汇编指令： 通过debug断点调试
+   */
   t->generate(_masm);
-  // advance
+  /**
+   * advance -- 取下一条指令
+   */
   if (t->does_dispatch()) {
 #ifdef ASSERT
     // make sure execution doesn't go beyond this point if code is broken
     __ should_not_reach_here();
 #endif // ASSERT
   } else {
-    // dispatch to next bytecode
+    /**
+     * 2. dispatch to next bytecode 取下一条字节码指令
+     * 
+     * > 在为每个字节码指令生成其机器逻辑指令时，会同时为该字节码指令生成其取指逻辑(取下一条指令)。
+     */
     __ dispatch_epilog(tos_out, step);
   }
 }

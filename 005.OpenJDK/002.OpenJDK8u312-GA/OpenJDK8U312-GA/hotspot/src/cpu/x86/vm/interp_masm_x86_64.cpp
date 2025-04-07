@@ -507,10 +507,34 @@ void InterpreterMacroAssembler::dispatch_only_noverify(TosState state) {
 
 
 void InterpreterMacroAssembler::dispatch_next(TosState state, int step) {
-  // load next bytecode (load before advancing r13 to prevent AGI)
+  
+  /**
+   * load next bytecode (load before advancing r13 to prevent AGI)
+   * 加载下一个字节码指令
+   */
   load_unsigned_byte(rbx, Address(r13, step));
-  // advance r13
+
+  /**
+   * advance r13
+   *
+   * 取字节码指令
+   *
+   * r13 应该指向的是当前字节码指令所在的内存位置。即效果为 r13 = r13 + step
+   *
+   *  当JVM运行Java主函数main的时候，这时候根本不存在 上一条
+   * 字节码指令，那r13指向那里呢? 答案在 generate_fixed_frame函数中：
+   * generate_fixed_frame函数除了创建栈帧之外(
+   * 在创建栈帧的过程中，JVM会将${字节码指令寄存器}寄存器指向main主函数的第一条字节码指令的内存地址)，
+   * 还会调用dispatch_next函数执行Java的main主函数的第一条字节码指令
+   */
   increment(r13, step);
+
+  /**
+   * 获取字节码指令对应的本地机器码指令
+   * 
+   * dispatch_table 是JVM内部所维护的跳转表，跳转表中记录了每个JVM字节码所对应的本地机器码实现。
+   * JVM通过跳转表，完成第二级取指逻辑。
+   */
   dispatch_base(state, Interpreter::dispatch_table(state));
 }
 

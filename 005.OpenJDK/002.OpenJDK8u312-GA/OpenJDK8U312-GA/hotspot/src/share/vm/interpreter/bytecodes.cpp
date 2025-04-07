@@ -298,6 +298,8 @@ int Bytecodes::compute_flags(const char* format, int more_flags) {
  *     ldc: load constant
  *
  * </pre>
+ * 
+ * JVM启动期间被调用，该函数执行完成之后，各个字节码指令所占的内存宽度便会被JVM所记录，JVM在运行期执行Java程序时会不断读取该函数所维护的表，计算每个字节码指令的长度
  */
 void Bytecodes::initialize() {
   if (_is_initialized) return;

@@ -553,9 +553,12 @@ void InterpreterGenerator::lock_method(void) {
   __ lock_object(c_rarg1);
 }
 
-// Generate a fixed interpreter frame. This is identical setup for
-// interpreted methods and for native methods hence the shared code.
-//
+/**
+ *  Generate a fixed interpreter frame. This is identical setup for interpreted
+ * methods and for native methods hence the shared
+ * code.(生成一个固定的解释器栈帧。对于解释方法和本机方法，这是相同的设置，因此是共享代码。)
+ *
+ */
 // Args:
 //      rax: return address
 //      rbx: Method*
@@ -1460,7 +1463,10 @@ address InterpreterGenerator::generate_normal_entry(bool synchronized) {
     __ bind(exit);
   }
 
-  // initialize fixed part of activation frame
+  /**
+   * initialize fixed part of activation frame （初始化激活框架的固定部分）
+   * 创建栈帧: Java方法的栈帧的创建就是通过该函数实现的
+   */
   generate_fixed_frame(false);
 
   // make sure method is not native & not abstract
@@ -1552,6 +1558,11 @@ address InterpreterGenerator::generate_normal_entry(bool synchronized) {
   // jvmti support
   __ notify_method_entry();
 
+  /**
+   * 跳转到目标Java方法的第一条字节码指令，并执行其对应的机器指令
+   * > 则，由此，进入到Java的世界中去了
+   * > 主要工作: 取指
+   */
   __ dispatch_next(vtos);
 
   // invocation counter overflow
