@@ -42,3 +42,5 @@ https://www.zhihu.com/question/37796041
 一定要不怕困难去啃汇编级调试才行
 
 在stub()的调用处，汇编级单步步进，就会进到CallStub中，而紧接着就会去到entry_point所指向的解释器方法入口。
+
+wei@Berries-Wang:~/OPEN_SOURCE/OpenJDK/005.OpenJDK/003.prictice-code$ gdb --args /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/bin/java -Xint SynchronizedStuV2
