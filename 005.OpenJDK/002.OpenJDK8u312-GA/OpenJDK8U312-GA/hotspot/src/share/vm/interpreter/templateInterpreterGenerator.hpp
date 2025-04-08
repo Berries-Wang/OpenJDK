@@ -68,6 +68,9 @@ class TemplateInterpreterGenerator: public AbstractInterpreterGenerator {
   void set_short_entry_points(Template* t, address& bep, address& cep, address& sep, address& aep, address& iep, address& lep, address& fep, address& dep, address& vep);
   void set_wide_entry_point  (Template* t, address& wep);
 
+  /**
+   * 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/interpreter/templateInterpreter.cpp
+   */
   void set_entry_points(Bytecodes::Code code);
   void set_unimplemented(int i);
   void set_entry_points_for_all_bytes();

@@ -105,6 +105,9 @@ class TemplateTable: AllStatic {
 
   static BarrierSet*     _bs;                    // Cache the barrier set.
  public:
+ /**
+  * 由 void Template::generate(InterpreterMacroAssembler* masm) 被调用时赋值
+  */
   //%note templates_1
   static InterpreterMacroAssembler* _masm;       // the assembler used when generating templates
 

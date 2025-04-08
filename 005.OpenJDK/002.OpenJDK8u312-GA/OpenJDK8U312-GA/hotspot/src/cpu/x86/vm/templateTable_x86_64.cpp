@@ -42,6 +42,7 @@
 
 #ifndef CC_INTERP
 
+// _masm定义于 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/interpreter/templateTable.hpp
 #define __ _masm->
 
 // Platform-dependent initialization
@@ -731,6 +732,9 @@ void TemplateTable::saload() {
 
 void TemplateTable::iload(int n) {
   transition(vtos, itos);
+  /**
+   * 将Java方法栈帧的局部变量表中指定索引号的变量传送至操作数栈栈顶
+   */
   __ movl(rax, iaddress(n));
 }
 

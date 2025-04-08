@@ -916,6 +916,7 @@ void Assembler::adcl(Register dst, Register src) {
 void Assembler::addl(Address dst, int32_t imm32) {
   InstructionMark im(this);
   prefix(dst);
+  // 0x81 是Intel平台上的add命令的16进制编码
   emit_arith_operand(0x81, rax, dst, imm32);
 }
 

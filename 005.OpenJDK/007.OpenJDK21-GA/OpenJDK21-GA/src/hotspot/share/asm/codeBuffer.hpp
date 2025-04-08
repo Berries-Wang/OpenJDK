@@ -93,9 +93,9 @@ class CodeSection {
   typedef int csize_t;  // code size type; would be size_t except for history
 
  private:
-  address     _start;           // first byte of contents (instructions)
+  address     _start;           // first byte of contents (instructions)(指令内容的第一个字节)
   address     _mark;            // user mark, usually an instruction beginning
-  address     _end;             // current end address
+  address     _end;             // current end address (写入的当前位置)
   address     _limit;           // last possible (allocated) end address
   relocInfo*  _locs_start;      // first byte of relocation information
   relocInfo*  _locs_end;        // first byte after relocation information

@@ -462,7 +462,9 @@ void TemplateInterpreterGenerator::set_unimplemented(int i) {
 
 
 void TemplateInterpreterGenerator::set_entry_points(Bytecodes::Code code) {
+  // 对 _masm 进行赋值,传递的是指针引用
   CodeletMark cm(_masm, Bytecodes::name(code), code);
+  
   // initialize entry points
   assert(_unimplemented_bytecode    != NULL, "should have been generated before");
   assert(_illegal_bytecode_sequence != NULL, "should have been generated before");
@@ -571,6 +573,8 @@ void TemplateInterpreterGenerator::generate_and_dispatch(Template* t, TosState t
      * 2. dispatch to next bytecode 取下一条字节码指令
      * 
      * > 在为每个字节码指令生成其机器逻辑指令时，会同时为该字节码指令生成其取指逻辑(取下一条指令)。
+     * 
+     * 所以，字节码取指逻辑其实是被写入到每一个字节码指令所对应的本地机器码所在内存的后面区域
      */
     __ dispatch_epilog(tos_out, step);
   }

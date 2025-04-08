@@ -54,7 +54,27 @@ Bytecodes::Code Template::bytecode() const {
   return Bytecodes::cast(i);
 }
 
-
+/**调用堆栈如下: 
+ * 
+ * libjvm.so!Template::generate(Template * const this, InterpreterMacroAssembler * masm) (/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/interpreter/templateTable.cpp:61)
+ * libjvm.so!TemplateInterpreterGenerator::generate_and_dispatch(TemplateInterpreterGenerator * const this, Template * t, TosState tos_out) (/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/interpreter/templateInterpreter.cpp:560)
+ * libjvm.so!TemplateInterpreterGenerator::set_vtos_entry_points(TemplateInterpreterGenerator * const this, Template * t, address & bep, address & cep, address & sep, address & aep, address & iep, address & lep, address & fep, address & dep, address & vep) (/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/cpu/x86/vm/templateInterpreter_x86_64.cpp:1976)
+ * libjvm.so!TemplateInterpreterGenerator::set_short_entry_points(TemplateInterpreterGenerator * const this, Template * t, address & bep, address & cep, address & sep, address & aep, address & iep, address & lep, address & fep, address & dep, address & vep) (/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/interpreter/templateInterpreter.cpp:519)
+ * # 在这里，对 _masm 进行赋值
+ * libjvm.so!TemplateInterpreterGenerator::set_entry_points(TemplateInterpreterGenerator * const this, Bytecodes::Code code) (/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/interpreter/templateInterpreter.cpp:484)
+ * libjvm.so!TemplateInterpreterGenerator::set_entry_points_for_all_bytes(TemplateInterpreterGenerator * const this) (/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/interpreter/templateInterpreter.cpp:440)
+ * libjvm.so!TemplateInterpreterGenerator::generate_all(TemplateInterpreterGenerator * const this) (/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/interpreter/templateInterpreter.cpp:420)
+ * libjvm.so!InterpreterGenerator::InterpreterGenerator(InterpreterGenerator * const this, StubQueue * code) (/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/cpu/x86/vm/templateInterpreter_x86_64.cpp:1987)
+ * libjvm.so!TemplateInterpreter::initialize() (/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/interpreter/templateInterpreter.cpp:52)
+ * libjvm.so!interpreter_init() (/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/interpreter/interpreter.cpp:118)
+ * libjvm.so!init_globals() (/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/runtime/init.cpp:109)
+ * libjvm.so!Threads::create_vm(JavaVMInitArgs * args, bool * canTryAgain) (/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/runtime/thread.cpp:3450)
+ * libjvm.so!JNI_CreateJavaVM(JavaVM ** vm, void ** penv, void * args) (/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/prims/jni.cpp:5250)
+ * libjli.so!InitializeJVM(JavaVM ** pvm, JNIEnv ** penv, InvocationFunctions * ifn) (/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/java.c:1242)
+ * libjli.so!JavaMain(void * _args) (/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/java.c:377)
+ * libpthread.so.0!start_thread(void * arg) (/build/glibc-FcRMwW/glibc-2.31/nptl/pthread_create.c:477)
+ * libc.so.6!clone() (/build/glibc-FcRMwW/glibc-2.31/sysdeps/unix/sysv/linux/x86_64/clone.S:95)
+ */
 void Template::generate(InterpreterMacroAssembler* masm) {
   // parameter passing
   TemplateTable::_desc = this;
@@ -185,6 +205,9 @@ void TemplateTable::def(Bytecodes::Code code, int flags, TosState in, TosState o
 }
 
 
+/**
+ * 为字节码指令模板赋值，此时并没有生成机器码
+ */
 void TemplateTable::def(Bytecodes::Code code, int flags, TosState in, TosState out, void (*gen)(int arg), int arg) {
   // should factor out these constants
   const int ubcp = 1 << Template::uses_bcp_bit;
@@ -258,9 +281,19 @@ void TemplateTable::initialize() {
   const int  disp = 1 << Template::does_dispatch_bit;
   const int  clvm = 1 << Template::calls_vm_bit;
   const int  iswd = 1 << Template::wide_bit;
+
+  /**
+   * generator: 汇编指令生成器,这种生成器在JVM内部被称作为generator
+   * 
+   * 每一个Java字节码指令最终都会生成对应的一串本地机器码。
+   * 
+   * 对于模板解释器，JVM为每个字节码都专门配备了一个生成器(函数)
+   * 
+   */
   //                                    interpr. templates
   // Java spec bytecodes                ubcp|disp|clvm|iswd  in    out   generator             argument
   def(Bytecodes::_nop                 , ____|____|____|____, vtos, vtos, nop                 ,  _           );
+  // def 被调用的时候，并没有执行 generator , generator是在 generate_and_dispatch时初始化的
   def(Bytecodes::_aconst_null         , ____|____|____|____, vtos, atos, aconst_null         ,  _           );
   def(Bytecodes::_iconst_m1           , ____|____|____|____, vtos, itos, iconst              , -1           );
   def(Bytecodes::_iconst_0            , ____|____|____|____, vtos, itos, iconst              ,  0           );

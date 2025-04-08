@@ -87,12 +87,15 @@ class TemplateTable: AllStatic {
   enum RewriteControl { may_rewrite, may_not_rewrite };  // control for fast code under CDS
 
  private:
-  static Template        _template_table     [Bytecodes::number_of_codes];
+  static Template        _template_table     [Bytecodes::number_of_codes]; /* 会初始化Bytecodes::number_of_codes个对象,见 "009.C&C++/008.Arr_new.cpp" */
   static Template        _template_table_wide[Bytecodes::number_of_codes];
 
   static Template*       _desc;                  // the current template to be generated
   static Bytecodes::Code bytecode()              { return _desc->bytecode(); }
  public:
+ /**
+  * 静态 _masm ，在哪里赋值呢?
+  */
   //%note templates_1
   static InterpreterMacroAssembler* _masm;       // the assembler used when generating templates
 

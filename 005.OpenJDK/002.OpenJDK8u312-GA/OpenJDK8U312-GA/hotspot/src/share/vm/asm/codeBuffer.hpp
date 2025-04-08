@@ -73,18 +73,21 @@ public:
   void set_value(Entries e, int val) { _values[e] = val; }
 };
 
-// This class represents a stream of code and associated relocations.
-// There are a few in each CodeBuffer.
-// They are filled concurrently, and concatenated at the end.
+/**
+ * This class represents a stream of code and associated relocations.  There are
+ * a few in each CodeBuffer.  They are filled concurrently, and concatenated at
+ * the end.
+ * 这个类表示一个代码流和相关的重定位。每个CodeBuffer中都有一些。它们被并发地填充，并在最后连接起来。
+ */
 class CodeSection VALUE_OBJ_CLASS_SPEC {
   friend class CodeBuffer;
  public:
   typedef int csize_t;  // code size type; would be size_t except for history
 
  private:
-  address     _start;           // first byte of contents (instructions)
+  address     _start;           // first byte of contents (instructions) (指令缓冲区首地址)
   address     _mark;            // user mark, usually an instruction beginning
-  address     _end;             // current end address
+  address     _end;             // current end address (写入的当前位置)
   address     _limit;           // last possible (allocated) end address
   relocInfo*  _locs_start;      // first byte of relocation information
   relocInfo*  _locs_end;        // first byte after relocation information
@@ -192,7 +195,13 @@ class CodeSection VALUE_OBJ_CLASS_SPEC {
     _locs_point = pc;
   }
 
-  // Code emission
+  /**
+   * Code emission —— "Code emission"（代码发射）是编译器设计中的一个术语，指的是编译器在完成代码分析和优化后，生成目标代码的过程
+   * ----> Code emission是指编译器将中间表示(IR)或抽象语法树(AST)转换为目标机器代码或字节码的过程。这是编译器工作的最后阶段之一
+   * 
+   * emit_xxx 功能是 往内存中写入一段指令。
+   * emit_int8 : 写入一个8位宽度的数据/指令
+   */
   void emit_int8 ( int8_t  x)  { *((int8_t*)  end()) = x; set_end(end() + sizeof(int8_t)); }
   void emit_int16( int16_t x)  { *((int16_t*) end()) = x; set_end(end() + sizeof(int16_t)); }
   void emit_int32( int32_t x)  { *((int32_t*) end()) = x; set_end(end() + sizeof(int32_t)); }
