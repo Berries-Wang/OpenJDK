@@ -20,3 +20,4 @@ public class StackTopCache{
         return sum;
     }
 }
+// 005.OpenJDK/003.prictice-code/jit-log.StackTopCache.txt
