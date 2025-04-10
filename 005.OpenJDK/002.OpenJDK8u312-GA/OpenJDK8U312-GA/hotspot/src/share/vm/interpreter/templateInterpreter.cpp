@@ -342,6 +342,7 @@ void TemplateInterpreterGenerator::generate_all() {
   }
 
   { CodeletMark cm(_masm, "safepoint entry points");
+    // 这些操作的是栈顶缓存(9个栈顶缓存状态): 006.BOOKs/深入剖析Java虚拟机.epub
     Interpreter::_safept_entry =
       EntryPoint(
         generate_safept_entry_for(btos, CAST_FROM_FN_PTR(address, InterpreterRuntime::at_safepoint)),

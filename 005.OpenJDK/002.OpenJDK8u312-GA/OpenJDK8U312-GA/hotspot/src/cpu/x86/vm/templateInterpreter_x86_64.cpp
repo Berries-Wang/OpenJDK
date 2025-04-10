@@ -1606,7 +1606,7 @@ address InterpreterGenerator::generate_normal_entry(bool synchronized) {
 // [ parameter n        ]
 //   ...
 // [ parameter 1        ]
-// [ expression stack   ] (caller's java expression stack)
+// [ expression stack   ] (caller's java expression stack) expression stack  就是操作数栈
 
 // Assuming that we don't go to one of the trivial specialized entries
 // the stack will look like below when we are ready to execute the

@@ -833,6 +833,26 @@ class JavaValue {
 // state when it comes to machine representation but is used separately for (oop)
 // type specific operations (e.g. verification code).
 
+/**
+ * Top-of-Stack Cashing (栈顶缓存)
+ *
+ *  TosState describes the top-of-stack state before and after the execution of
+ * a bytecode or method. The top-of-stack value may be cached in one or more CPU
+ * registers. The TosState corresponds to the 'machine represention' of this
+ * cached value. There's 4 states corresponding to the JAVA types int, long,
+ * float & double as well as a 5th state in case the top-of-stack value is
+ * actually on the top of stack (in memory) and thus not cached. The atos state
+ * corresponds to the itos state when it comes to machine representation but is
+ * used separately for (oop) type specific operations (e.g. verification
+ * code).（TosState
+ * 描述了字节码或方法执行前后栈顶的状态。栈顶值可能被缓存在一个或多个 CPU
+ * 寄存器中。TosState 对应于此缓存值的“机器表示”。Java 中存在四种状态，分别对应
+ * int、long、float 和 double
+ * 类型，以及第五种状态，当栈顶值实际位于栈顶（内存中）且未被缓存时，会触发此状态。atos
+ * 状态在机器表示上与 itos
+ * 状态相对应，但对于特定类型的操作（例如验证码），该状态会单独使用。）
+ *
+ */
 enum TosState {         // describes the tos cache contents
   btos = 0,             // byte, bool tos cached
   ztos = 1,             // byte, bool tos cached
