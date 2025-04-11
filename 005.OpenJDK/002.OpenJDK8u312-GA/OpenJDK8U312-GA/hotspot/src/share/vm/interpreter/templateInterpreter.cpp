@@ -192,6 +192,9 @@ address TemplateInterpreter::_invoke_return_entry[TemplateInterpreter::number_of
 address TemplateInterpreter::_invokeinterface_return_entry[TemplateInterpreter::number_of_return_addrs];
 address TemplateInterpreter::_invokedynamic_return_entry[TemplateInterpreter::number_of_return_addrs];
 
+/**
+ * 字节码指令分发表: 基于栈顶缓存实现
+ */
 DispatchTable TemplateInterpreter::_active_table;
 DispatchTable TemplateInterpreter::_normal_table;
 DispatchTable TemplateInterpreter::_safept_table;
@@ -650,19 +653,28 @@ static inline void copy_table(address* from, address* to, int size) {
   while (size-- > 0) *to++ = *from++;
 }
 
+/**
+ * 使得解释器能够感知到安全点
+ */
 void TemplateInterpreter::notice_safepoints() {
   if (!_notice_safepoints) {
     // switch to safepoint dispatch table
     _notice_safepoints = true;
+    // 拷贝字节码分发表
     copy_table((address*)&_safept_table, (address*)&_active_table, sizeof(_active_table) / sizeof(address));
   }
 }
 
-// switch from the dispatch table which notices safepoints back to the
-// normal dispatch table.  So that we can notice single stepping points,
-// keep the safepoint dispatch table if we are single stepping in JVMTI.
-// Note that the should_post_single_step test is exactly as fast as the
-// JvmtiExport::_enabled test and covers both cases.
+/**
+ *  switch from the dispatch table which notices safepoints back to the normal
+ * dispatch table.  So that we can notice single stepping points, keep the
+ * safepoint dispatch table if we are single stepping in JVMTI. Note that the
+ * should_post_single_step test is exactly as fast as the JvmtiExport::_enabled
+ * test and covers both
+ * cases.(从通知安全点的调度表切换回普通调度表。为了能够通知单步执行点，如果我们在
+ * JVMTI 中单步执行，请保留安全点调度表。请注意，should_post_single_step 测试与
+ * JvmtiExport::_enabled 测试速度完全相同，并且涵盖了这两种情况。)
+ */
 void TemplateInterpreter::ignore_safepoints() {
   if (_notice_safepoints) {
     if (!JvmtiExport::should_post_single_step()) {

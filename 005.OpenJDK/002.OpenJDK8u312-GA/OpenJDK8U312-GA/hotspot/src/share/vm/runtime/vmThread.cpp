@@ -275,7 +275,9 @@ void VMThread::run() {
   // possible to set the VM thread priority higher than any Java thread.
   os::set_native_priority( this, prio );
 
-  // Wait for VM_Operations until termination
+  /**
+   * Wait for VM_Operations until termination
+   */
   this->loop();
 
   // Note the intention to exit before safepointing.
@@ -436,8 +438,7 @@ void VMThread::loop() {
     // Wait for VM operation
     //
     // use no_safepoint_check to get lock without attempting to "sneak"
-    { MutexLockerEx mu_queue(VMOperationQueue_lock,
-                             Mutex::_no_safepoint_check_flag);
+    { MutexLockerEx mu_queue(VMOperationQueue_lock,Mutex::_no_safepoint_check_flag);
 
       // Look for new operation
       assert(_cur_vm_operation == NULL, "no current one should be executing");

@@ -534,6 +534,8 @@ void InterpreterMacroAssembler::dispatch_next(TosState state, int step) {
    * 
    * dispatch_table 是JVM内部所维护的跳转表，跳转表中记录了每个JVM字节码所对应的本地机器码实现。
    * JVM通过跳转表，完成第二级取指逻辑。
+   * 
+   * 居然调用的是 void InterpreterMacroAssembler::dispatch_base(TosState state, address* table, bool verifyoop);
    */
   dispatch_base(state, Interpreter::dispatch_table(state));
 }

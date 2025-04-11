@@ -445,6 +445,7 @@ JVM_handle_linux_signal(int sig,
       (sig == SIGSEGV || sig == SIGBUS) &&
       uc->uc_mcontext.gregs[REG_TRAPNO] == trap_page_fault) {
     int page_size = os::vm_page_size();
+    // 在信号处理（如 SIGSEGV 段错误信号）中，si_addr 通常用于存储导致错误的指令或内存访问的地址。
     address addr = (address) info->si_addr;
     address pc = os::Linux::ucontext_get_pc(uc);
     // Make sure the pc and the faulting address are sane.

@@ -40,6 +40,9 @@ class Linux {
 
   // For signal-chaining
 #define MAXSIGNUM 32
+ /**
+ *  提前安装的信号处理函数
+ */
   static struct sigaction sigact[MAXSIGNUM]; // saved preinstalled sigactions
   static unsigned int sigs;             // mask of signals that have
                                         // preinstalled signal handlers

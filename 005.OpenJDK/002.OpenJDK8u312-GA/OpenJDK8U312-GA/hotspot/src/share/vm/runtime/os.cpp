@@ -74,6 +74,7 @@ PRAGMA_FORMAT_MUTE_WARNINGS_FOR_GCC
 
 OSThread*         os::_starting_thread    = NULL;
 address           os::_polling_page       = NULL;
+// 004.OpenJDK(JVM)学习/022.JVM执行引擎/003._mem__serialize_page.md
 volatile int32_t* os::_mem_serialize_page = NULL;
 uintptr_t         os::_serialize_page_mask = 0;
 long              os::_rand_seed          = 1;

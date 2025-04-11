@@ -3378,6 +3378,9 @@ static bool linux_mprotect(char* addr, size_t size, int prot) {
   assert(addr == bottom, "sanity check");
 
   size = align_size_up(pointer_delta(addr, bottom, 1) + size, os::Linux::page_size());
+  /**
+   * mprotect Linux系统函数，修改一段区域的保护属性
+   */
   return ::mprotect(bottom, size, prot) == 0;
 }
 
@@ -4717,9 +4720,15 @@ void os::Linux::set_our_sigflags(int sig, int flags) {
   sigflags[sig] = flags;
 }
 
+/**
+ * 
+ */
 void os::Linux::set_signal_handler(int sig, bool set_installed) {
   // Check for overwrite.
   struct sigaction oldAct;
+  /**
+   * sigaction() 是一个 POSIX 标准 的系统调用（UNIX/Linux），用于更精细地控制进程对信号（signal）的处理方式。它比传统的 signal() 函数更强大、更灵活，是现代 Linux/UNIX 编程中推荐的信号处理方式。
+   */
   sigaction(sig, (struct sigaction*)NULL, &oldAct);
 
   void* oldhand = oldAct.sa_sigaction
@@ -4748,7 +4757,14 @@ void os::Linux::set_signal_handler(int sig, bool set_installed) {
   if (!set_installed) {
     sigAct.sa_flags = SA_SIGINFO|SA_RESTART;
   } else {
+    /**
+     * 设置真正的信号处理函数
+     */
     sigAct.sa_sigaction = signalHandler;
+    /**
+     * SA_SIGINFO：使用 sa_sigaction 而非 sa_handler
+     * SA_RESTART：被信号中断的系统调用自动重启
+     */
     sigAct.sa_flags = SA_SIGINFO|SA_RESTART;
   }
   // Save flags, which are set by ours
@@ -4789,7 +4805,11 @@ void os::Linux::install_signal_handlers() {
       // Tell libjsig jvm is setting signal handlers
       (*begin_signal_setting)();
     }
-
+    
+    /**
+     * SIGSEGV	处理 NullPointerException、堆外内存访问错误
+     * 内存访问错误会抛这个错误
+     */
     set_signal_handler(SIGSEGV, true);
     set_signal_handler(SIGPIPE, true);
     set_signal_handler(SIGBUS, true);
@@ -5287,7 +5307,12 @@ jint os::init_2(void)
   return JNI_OK;
 }
 
-// Mark the polling page as unreadable
+
+/**
+ * Mark the polling page as unreadable
+ * 
+ * 会调用 Linux系统函数 mprotect 将内存区域设置为不可访问
+ */
 void os::make_polling_page_unreadable(void) {
   if( !guard_memory((char*)_polling_page, Linux::page_size()) )
     fatal("Could not disable polling page");

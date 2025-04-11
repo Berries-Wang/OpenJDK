@@ -424,6 +424,7 @@ inline static bool checkOverflow(sigcontext* uc,
   return false;
 }
 
+
 inline static bool checkPollingPage(address pc, address fault, address* stub) {
   if (fault == os::get_polling_page()) {
     *stub = SharedRuntime::get_poll_stub(pc);
@@ -592,10 +593,12 @@ JVM_handle_linux_signal(int sig,
     pc = address(SIG_PC(uc));
     npc = address(SIG_NPC(uc));
 
-    // Check to see if we caught the safepoint code in the
-    // process of write protecting the memory serialization page.
-    // It write enables the page immediately after protecting it
-    // so we can just return to retry the write.
+    /**
+     * Check to see if we caught the safepoint code in the process of write
+     * protecting the memory serialization page. It write enables the page
+     * immediately after protecting it so we can just return to retry the write.
+     * （检查我们是否在对内存序列化页面进行写保护的过程中捕获了安全点代码。它在保护页面后立即启用了写入操作，因此我们可以返回重试写入操作。）
+     */
     if ((sig == SIGSEGV) && checkSerializePage(thread, (address)info->si_addr)) {
       // Block current thread until the memory serialize page permission restored.
       os::block_on_serialize_page_trap();
@@ -606,7 +609,9 @@ JVM_handle_linux_signal(int sig,
       return 1;
     }
 
-    // Handle ALL stack overflow variations here
+    /**
+     *  Handle ALL stack overflow variations here (在这里处理所有堆栈溢出变体)
+     */
     if (sig == SIGSEGV) {
       if (checkOverflow(uc, pc, (address)info->si_addr, thread, &stub)) {
         return 1;
@@ -619,11 +624,18 @@ JVM_handle_linux_signal(int sig,
       stub = StubRoutines::handler_for_unsafe_access();
     }
 
+    // 注意前提： 线程状态——在执行Java方法,怎么执行，当然是在Stub中执行了:004.OpenJDK(JVM)学习/022.JVM执行引擎/000.JVM例程.md 
     if (thread->thread_state() == _thread_in_Java) {
       do {
-        // Java thread running in Java code => find exception handler if any
-        // a fault inside compiled code, the interpreter, or a stub
-
+        /**
+         * Java thread running in Java code => find exception handler if any  a
+         * fault inside compiled code, the interpreter, or a stub
+         */
+        
+        /**
+         * 如果访问了 _polling_page (safepoint) 
+         * stub: 即 进入执行Java方法的Stub , 这个得回顾 "004.OpenJDK(JVM)学习/022.JVM执行引擎/000.JVM例程.md "
+         */
         if ((sig == SIGSEGV) && checkPollingPage(pc, (address)info->si_addr, &stub)) {
           break;
         }

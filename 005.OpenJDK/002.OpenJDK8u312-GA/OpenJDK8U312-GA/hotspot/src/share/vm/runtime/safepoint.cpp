@@ -276,13 +276,22 @@ void SafepointSynchronize::begin() {
     os::serialize_thread_states();
   }
 
-  // Make interpreter safepoint aware
+  /**
+   * Make interpreter safepoint aware(使解释器能够感知安全点)
+   */
   Interpreter::notice_safepoints();
 
   if (UseCompilerSafepoints && DeferPollingPageLoopCount < 0) {
     // Make polling safepoint aware
     guarantee (PageArmed == 0, "invariant") ;
+
+    /**
+     * 页面武装(arm)，即将页面设置为不可访问，通过信号处理函数进入安全点
+     * 信号处理函数:
+     * 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/os_cpu/linux_x86/vm/os_linux_x86.cpp
+     */
     PageArmed = 1 ;
+    // 设置页面不可访问
     os::make_polling_page_unreadable();
   }
 
