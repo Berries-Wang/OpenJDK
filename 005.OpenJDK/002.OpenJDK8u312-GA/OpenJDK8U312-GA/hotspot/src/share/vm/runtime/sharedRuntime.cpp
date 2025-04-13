@@ -97,6 +97,9 @@ RuntimeStub*        SharedRuntime::_resolve_virtual_call_blob;
 RuntimeStub*        SharedRuntime::_resolve_static_call_blob;
 
 DeoptimizationBlob* SharedRuntime::_deopt_blob;
+/**
+ * 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/code/codeBlob.hpp
+ */
 SafepointBlob*      SharedRuntime::_polling_page_vectors_safepoint_handler_blob;
 SafepointBlob*      SharedRuntime::_polling_page_safepoint_handler_blob;
 SafepointBlob*      SharedRuntime::_polling_page_return_handler_blob;
@@ -544,6 +547,10 @@ JRT_LEAF(address, SharedRuntime::exception_handler_for_return_address(JavaThread
 JRT_END
 
 
+/**
+ * 
+ * 
+ */
 address SharedRuntime::get_poll_stub(address pc) {
   address stub;
   // Look up the code blob

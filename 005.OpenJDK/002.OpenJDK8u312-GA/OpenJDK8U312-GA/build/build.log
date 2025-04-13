@@ -27,7 +27,7 @@ Note: Recompile with -Xlint:deprecation for details.
 Creating langtools/dist/lib/classes.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished langtools (build time 00:00:31)
+## Finished langtools (build time 00:00:59)
 
 ## Starting hotspot
 make[2]: warning: -j1 forced in submake: resetting jobserver mode.
@@ -106,8 +106,8 @@ Creating adlc.make ...
 Creating jvmti.make ...
 Creating jfr.make ...
 Creating sa.make ...
-Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/adlc/archDesc.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/adlc/adlparse.cpp
+Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/adlc/archDesc.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/adlc/arena.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/adlc/dfa.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/adlc/dict2.cpp
@@ -123,17 +123,17 @@ Making adlc
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/jvmtiEnv.hpp
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/jvmtiEnter.cpp
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/jvmtiEnterTrace.cpp
-Generating /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/jvmtiEnvRecommended.cpp
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/bytecodeInterpreterWithChecks.cpp
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/jvmti.h
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Generating /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/hotspot/linux_amd64_compiler2/debug/../generated/jvmtifiles/jvmtiEnvRecommended.cpp
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Generating jfrEventClasses.hpp
@@ -471,8 +471,8 @@ Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/opto/graphKit.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/utilities/growableArray.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/memory/guardedMemory.cpp
-Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/runtime/handles.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/shared/hSpaceCounters.cpp
+Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/runtime/handles.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/utilities/hashtable.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/memory/heap.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/services/heapDumper.cpp
@@ -749,8 +749,8 @@ Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/opto/regalloc.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/asm/register.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/cpu/x86/vm/register_definitions_x86.cpp
-Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/opto/regmask.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/cpu/x86/vm/register_x86.cpp
+Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/opto/regmask.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/code/relocInfo.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/cpu/x86/vm/relocInfo_x86.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/runtime/relocator.cpp
@@ -784,8 +784,8 @@ Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/cpu/x86/vm/sharedRuntime_x86_64.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/runtime/signature.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/runtime/simpleThresholdPolicy.cpp
-Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/utilities/sizes.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/memory/space.cpp
+Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/utilities/sizes.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/shared/spaceCounters.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/shared/spaceDecorator.cpp
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/gc_implementation/g1/sparsePRT.cpp
@@ -878,11 +878,11 @@ cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not
 Compiling /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/runtime/vm_version.cpp
 cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C
 cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C
-cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C
-cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C
-cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C
-cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C
 Linking vm...
+cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C
+cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C
+cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C
+cc1: warning: command line option '-std=gnu++98' is valid for C++/ObjC++ but not for C
 All done.
 INFO: ENABLE_FULL_DEBUG_SYMBOLS=1
 INFO: ALT_OBJCOPY=/usr/bin/objcopy
@@ -897,7 +897,7 @@ INFO: ALT_OBJCOPY=/usr/bin/objcopy
 INFO: /usr/bin/objcopy cmd found so will create .debuginfo files.
 INFO: STRIP_POLICY=no_strip
 INFO: ZIP_DEBUGINFO_FILES=0
-## Finished hotspot (build time 00:04:39)
+## Finished hotspot (build time 00:05:49)
 
 ## Starting corba
 Compiling 6 files for BUILD_LOGUTIL
@@ -958,9 +958,9 @@ Note: Some input files use or override a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
-Creating corba/dist/lib/classes.jar
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating corba/btjars/btcorba.jar
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Creating corba/dist/lib/classes.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -978,7 +978,7 @@ Note: Recompile with -Xlint:unchecked for details.
 Creating jaxp/dist/lib/classes.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished jaxp (build time 00:00:24)
+## Finished jaxp (build time 00:00:39)
 
 ## Starting jaxws
 Compiling 24 files for BUILD_JAF
@@ -996,7 +996,7 @@ Creating jaxws/dist/lib/classes.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished jaxws (build time 00:00:36)
+## Finished jaxws (build time 00:00:57)
 
 ## Starting jdk
 Importing CORBA classes.jar
@@ -1017,16 +1017,16 @@ Importing LANGTOOLS classes.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Importing LANGTOOLS src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Generating charsetmapping classes
-Generating buffer classes
-Generating exceptions classes
-Generating icon classes
 Compiling 165 files for BUILD_TOOLS
+Generating charsetmapping classes
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Generating buffer classes
+Generating icon classes
+Generating exceptions classes
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
-Copying and cleaning 53 properties
 Compiling 521 properties into resource bundles
+Copying and cleaning 53 properties
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating sun/util/LocaleDataMetaInfo.java from 423 found resources.
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -1045,14 +1045,14 @@ Generating sun/misc/Version.java compact3
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Aliases: Table size 1024 (10 bits), shift 0, max chain depth 3
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Classes: Table size 32 (5 bits), shift 1, max chain depth 3
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Cache: Table size 32 (5 bits), shift 1, max chain depth 3
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -1183,6 +1183,7 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 [Error] encoded value was less than 0: encode(-8.326673E-17, 5.0, 11.0, 16.0)
 [Error] encoded value was less than 0: encode(-0.05882353, 1.0, 24.0, 25.0)
 [Error] encoded value was greater than 3: encode(15.029411, 1.0, 14.0, 15.0)
@@ -1201,7 +1202,6 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 [Error] encoded value was less than 0: encode(-0.05882353, 1.0, 24.0, 25.0)
 [Error] Encountered Infinity: encode(-0.00877193, 0.0, 7.0, 7.0)
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Verifying /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/gensrc_x11wrappers/sizes.64.verification.tmp to /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/build/linux-x86_64-normal-server-slowdebug/jdk/gensrc_x11wrappers/sizes.64
 Generating HTML DTD file
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -1209,7 +1209,7 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Compiling 4 files for BUILD_BREAKITERATOR
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-[Parsed DTD html32 in 265ms]
+[Parsed DTD html32 in 217ms]
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -1235,6 +1235,10 @@ Note: Recompile with -Xlint:deprecation for details.
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/java/lang/fdlibm/src/e_pow.c:149:35: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
   149 |                     if((j<<(52-k))==ly) yisint = 2-(j&1);
       |                                   ^~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/java/lang/fdlibm/src/e_sqrt.c: In function '__j__ieee754_sqrt':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/java/lang/fdlibm/src/e_sqrt.c:174:30: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
+  174 |                 if(((t1&sign)==sign)&&(s1&sign)==0) s0 += 1;
+      |                              ^~
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/java/lang/fdlibm/src/k_rem_pio2.c: In function '__j__kernel_rem_pio2':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/java/lang/fdlibm/src/k_rem_pio2.c:201:13: warning: this 'for' clause does not guard... [-Wmisleading-indentation]
   201 |             for(j=0,fw=0.0;j<=jx;j++) fw += x[j]*f[jx+i-j]; q[i] = fw;
@@ -1242,10 +1246,6 @@ Note: Recompile with -Xlint:deprecation for details.
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/java/lang/fdlibm/src/k_rem_pio2.c:201:61: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'for'
   201 |             for(j=0,fw=0.0;j<=jx;j++) fw += x[j]*f[jx+i-j]; q[i] = fw;
       |                                                             ^
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/java/lang/fdlibm/src/e_sqrt.c: In function '__j__ieee754_sqrt':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/java/lang/fdlibm/src/e_sqrt.c:174:30: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
-  174 |                 if(((t1&sign)==sign)&&(s1&sign)==0) s0 += 1;
-      |                              ^~
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/java/lang/fdlibm/src/s_ceil.c: In function 'jceil':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/java/lang/fdlibm/src/s_ceil.c:81:29: warning: comparison of integer expressions of different signedness: 'unsigned int' and 'int' [-Wsign-compare]
    81 |                         if(j<i1) i0+=1; /* got a carry */
@@ -1267,10 +1267,6 @@ Note: Recompile with -Xlint:deprecation for details.
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/common/check_code.c:1387:5: note: here
  1387 |     case JVM_OPC_instanceof:
       |     ^~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/java/lang/UNIXProcess_md.c: In function 'throwIOException':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/java/lang/UNIXProcess_md.c:309:5: warning: format not a string literal, argument types not checked [-Wformat-nonliteral]
-  309 |     sprintf(errmsg, format, errnum, detail);
-      |     ^~~~~~~
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/java/util/TimeZone_md.c: In function 'findZoneinfoFile':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/java/util/TimeZone_md.c:161:5: warning: 'readdir64_r' is deprecated [-Wdeprecated-declarations]
   161 |     while (readdir64_r(dirp, entry, &dp) == 0 && dp != NULL) {
@@ -1279,6 +1275,10 @@ In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312
 /usr/include/dirent.h:201:12: note: declared here
   201 | extern int readdir64_r (DIR *__restrict __dirp,
       |            ^~~~~~~~~~~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/java/lang/UNIXProcess_md.c: In function 'throwIOException':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/java/lang/UNIXProcess_md.c:309:5: warning: format not a string literal, argument types not checked [-Wformat-nonliteral]
+  309 |     sprintf(errmsg, format, errnum, detail);
+      |     ^~~~~~~
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/java/io/UnixFileSystem_md.c: In function 'Java_java_io_UnixFileSystem_list':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/java/io/UnixFileSystem_md.c:316:5: warning: 'readdir64_r' is deprecated [-Wdeprecated-declarations]
   316 |     while ((readdir64_r(dir, ptr, &result) == 0)  && (result != NULL)) {
@@ -1428,6 +1428,10 @@ In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312
   313 |   CHECK_EXCEPTION_RETURN_VALUE(uPtr, NULL);
       |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/jni.cpp:313:3: warning: converting to non-pointer type 'long int' from NULL [-Wconversion-null]
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/utils.cpp: In function 'int assert_failed(const char*)':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/utils.cpp:84:21: warning: format not a string literal and no format arguments [-Wformat-security]
+   84 |   fprintf(stdout, 1+message);
+      |                     ^~~~~~~
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In member function 'void unpacker::read_file_header()':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:736:22: warning: comparison of integer expressions of different signedness: 'size_t' {aka 'long unsigned int'} and 'int' [-Wsign-compare]
   736 |     if (archive_size < header_size_1) {
@@ -1436,10 +1440,6 @@ In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:988:22: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
   988 |   for (int i = 0 ; i < maxentries ; i++)
       |                    ~~^~~~~~~~~~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/utils.cpp: In function 'int assert_failed(const char*)':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/utils.cpp:84:21: warning: format not a string literal and no format arguments [-Wformat-security]
-   84 |   fprintf(stdout, 1+message);
-      |                     ^~~~~~~
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In member function 'char* entry::string()':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:3719:44: warning: format not a string literal and no format arguments [-Wformat-security]
  3719 |       sprintf((char*)buf.ptr, TAG_NAME[tag]);
@@ -1455,24 +1455,6 @@ In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:1798:5: note: here
  1798 |     case 'F':
       |     ^~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In member function 'char* entry::string()':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:3700:5: warning: this statement may fall through [-Wimplicit-fallthrough=]
- 3700 |     if (value.b.ptr == null)
-      |     ^~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:3703:3: note: here
- 3703 |   case CONSTANT_Utf8:
-      |   ^~~~
-In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:58:
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In member function 'void unpacker::write_bc_ops()':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/defines.h:58:24: warning: this statement may fall through [-Wimplicit-fallthrough=]
-   58 | #define assert(p) ((p) || assert_failed(#p))
-      |                   ~~~~~^~~~~~~~~~~~~~~~~~~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:4205:18: note: in expansion of macro 'assert'
- 4205 |         default: assert(bc == _invokeinit_op+_invokeinit_new_option);
-      |                  ^~~~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:4206:9: note: here
- 4206 |         case _invokeinit_new_option:    classRef = newClass;   break;
-      |         ^~~~
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/java/util/zip/zlib/inflate.c: In function 'inflate':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/java/util/zip/zlib/inflate.c:766:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
   766 |             state->mode = EXLEN;
@@ -1554,6 +1536,10 @@ In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/java/util/zip/zlib/inflate.c:1126:25: warning: this statement may fall through [-Wimplicit-fallthrough=]
  1126 |             state->mode = DIST;
       |             ~~~~~~~~~~~~^~~~~~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In member function 'char* entry::string()':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:3700:5: warning: this statement may fall through [-Wimplicit-fallthrough=]
+ 3700 |     if (value.b.ptr == null)
+      |     ^~
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/java/util/zip/zlib/inflate.c:1127:9: note: here
  1127 |         case DIST:
       |         ^~~~
@@ -1580,6 +1566,20 @@ In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312
       |             ~~~~~~~~~~~~^~~~~~
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/java/util/zip/zlib/inflate.c:1258:9: note: here
  1258 |         case DONE:
+      |         ^~~~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:3703:3: note: here
+ 3703 |   case CONSTANT_Utf8:
+      |   ^~~~
+In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:58:
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In member function 'void unpacker::write_bc_ops()':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/defines.h:58:24: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   58 | #define assert(p) ((p) || assert_failed(#p))
+      |                   ~~~~~^~~~~~~~~~~~~~~~~~~~~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:4205:18: note: in expansion of macro 'assert'
+ 4205 |         default: assert(bc == _invokeinit_op+_invokeinit_new_option);
+      |                  ^~~~~~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:4206:9: note: here
+ 4206 |         case _invokeinit_new_option:    classRef = newClass;   break;
       |         ^~~~
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/java.c: In function 'parse_size':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/java.c:733:3: warning: format not a string literal, argument types not checked [-Wformat-nonliteral]
@@ -1734,6 +1734,59 @@ In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ec2_233.c:252:17: note: here
   252 |                 default:
       |                 ^~~~~~~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c: In function 'ec_GFp_nistp192_mod':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:179:28: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  179 |                         a5 = MP_DIGIT(a, 5);
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:180:17: note: here
+  180 |                 case 5:
+      |                 ^~~~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:181:28: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  181 |                         a4 = MP_DIGIT(a, 4);
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:182:17: note: here
+  182 |                 case 4:
+      |                 ^~~~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c: In function 'ec_GFp_nistp192_add':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:301:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  301 |                 a2 = MP_DIGIT(a,2);
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:302:9: note: here
+  302 |         case 2:
+      |         ^~~~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:303:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  303 |                 a1 = MP_DIGIT(a,1);
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:304:9: note: here
+  304 |         case 1:
+      |         ^~~~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:309:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  309 |                 r2 = MP_DIGIT(b,2);
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:310:9: note: here
+  310 |         case 2:
+      |         ^~~~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:311:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  311 |                 r1 = MP_DIGIT(b,1);
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:312:9: note: here
+  312 |         case 1:
+      |         ^~~~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c: In function 'ec_GFp_nistp192_sub':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:382:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  382 |                 r2 = MP_DIGIT(a,2);
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:383:9: note: here
+  383 |         case 2:
+      |         ^~~~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:384:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  384 |                 r1 = MP_DIGIT(a,1);
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:385:9: note: here
+  385 |         case 1:
+      |         ^~~~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:391:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  391 |                 b2 = MP_DIGIT(b,2);
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:392:9: note: here
+  392 |         case 2:
+      |         ^~~~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:393:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
+  393 |                 b1 = MP_DIGIT(b,1);
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:394:9: note: here
+  394 |         case 1:
+      |         ^~~~
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecl_gf.c: In function 'ec_GFp_add_3':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecl_gf.c:273:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
   273 |                 a2 = MP_DIGIT(a,2);
@@ -2022,59 +2075,6 @@ In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecl_gf.c:886:9: note: here
   886 |         case 1:
       |         ^~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c: In function 'ec_GFp_nistp192_mod':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:179:28: warning: this statement may fall through [-Wimplicit-fallthrough=]
-  179 |                         a5 = MP_DIGIT(a, 5);
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:180:17: note: here
-  180 |                 case 5:
-      |                 ^~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:181:28: warning: this statement may fall through [-Wimplicit-fallthrough=]
-  181 |                         a4 = MP_DIGIT(a, 4);
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:182:17: note: here
-  182 |                 case 4:
-      |                 ^~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c: In function 'ec_GFp_nistp192_add':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:301:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
-  301 |                 a2 = MP_DIGIT(a,2);
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:302:9: note: here
-  302 |         case 2:
-      |         ^~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:303:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
-  303 |                 a1 = MP_DIGIT(a,1);
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:304:9: note: here
-  304 |         case 1:
-      |         ^~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:309:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
-  309 |                 r2 = MP_DIGIT(b,2);
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:310:9: note: here
-  310 |         case 2:
-      |         ^~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:311:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
-  311 |                 r1 = MP_DIGIT(b,1);
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:312:9: note: here
-  312 |         case 1:
-      |         ^~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c: In function 'ec_GFp_nistp192_sub':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:382:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
-  382 |                 r2 = MP_DIGIT(a,2);
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:383:9: note: here
-  383 |         case 2:
-      |         ^~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:384:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
-  384 |                 r1 = MP_DIGIT(a,1);
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:385:9: note: here
-  385 |         case 1:
-      |         ^~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:391:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
-  391 |                 b2 = MP_DIGIT(b,2);
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:392:9: note: here
-  392 |         case 2:
-      |         ^~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:393:20: warning: this statement may fall through [-Wimplicit-fallthrough=]
-  393 |                 b1 = MP_DIGIT(b,1);
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_192.c:394:9: note: here
-  394 |         case 1:
-      |         ^~~~
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_224.c: In function 'ec_GFp_nistp224_mod':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/ecp_224.c:205:33: warning: this statement may fall through [-Wimplicit-fallthrough=]
   205 |                         a6a_a5b = a6 << 32;
@@ -2131,6 +2131,17 @@ In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/security/ec/impl/mpi.c:2984:18: warning: comparison of integer expressions of different signedness: 'int' and 'mp_size' {aka 'unsigned int'} [-Wsign-compare]
  2984 |   for(ix = 0; ix < p; ix++)
       |                  ^
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/back/eventFilter.c: In function 'eventFilterRestricted_passesFilter':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/back/eventFilter.c:522:48: warning: logical not is only applied to the left hand side of comparison [-Wlogical-not-parentheses]
+  522 |                            desiredNamePattern) == 1) {
+      |                                                ^~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/back/eventFilter.c:521:19: note: add parentheses around left hand side expression to silence this warning
+  521 |               if (!searchAllSourceNames(env, clazz,
+      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |                   (
+  522 |                            desiredNamePattern) == 1) {
+      |                            ~~~~~~~~~~~~~~~~~~~
+      |                                               )
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/back/error_messages.c: In function 'jvmtiErrorText':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/back/error_messages.c:137:32: warning: case value '181' not in enumerated type 'jvmtiError' {aka 'enum <anonymous>'} [-Wswitch]
   137 | #define CASE_RETURN_TEXT(name) case name: return #name;
@@ -2288,17 +2299,6 @@ In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/back/error_messages.c:216:9: note: in expansion of macro 'CASE_RETURN_TEXT'
   216 |         CASE_RETURN_TEXT(AGENT_ERROR_NO_MORE_FRAMES)
       |         ^~~~~~~~~~~~~~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/back/eventFilter.c: In function 'eventFilterRestricted_passesFilter':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/back/eventFilter.c:522:48: warning: logical not is only applied to the left hand side of comparison [-Wlogical-not-parentheses]
-  522 |                            desiredNamePattern) == 1) {
-      |                                                ^~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/back/eventFilter.c:521:19: note: add parentheses around left hand side expression to silence this warning
-  521 |               if (!searchAllSourceNames(env, clazz,
-      |                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      |                   (
-  522 |                            desiredNamePattern) == 1) {
-      |                            ~~~~~~~~~~~~~~~~~~~
-      |                                               )
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/tracing/dtrace/JVM.c: In function 'Java_sun_tracing_dtrace_JVM_defineClass0':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/tracing/dtrace/JVM.c:302:17: warning: comparison of integer expressions of different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
   302 |         if (len >= sizeof(buf)) {
@@ -3267,6 +3267,28 @@ In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LEGlyphStorage.cpp:491:16: warning: deleting object of polymorphic class type 'LEInsertionList' which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]
   491 |         delete fInsertionList;
       |                ^~~~~~~~~~~~~~
+In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LayoutEngine.cpp:33:
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LayoutEngine.cpp: In member function 'virtual le_int32 LayoutEngine::characterProcessing(const LEUnicode*, le_int32, le_int32, le_int32, le_bool, LEUnicode*&, LEGlyphStorage&, LEErrorCode&)':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LETypes.h:387:79: warning: comparison of integer expressions of different signedness: 'long unsigned int' and 'le_int32' {aka 'int'} [-Wsign-compare]
+  387 | #define LE_RANGE_CHECK(type, count, ptrfn) (( (LE_UINTPTR_MAX / sizeof(type)) < count ) ? NULL : (ptrfn))
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LETypes.h:409:45: note: in expansion of macro 'LE_RANGE_CHECK'
+  409 | #define LE_NEW_ARRAY(type, count) (type *)  LE_RANGE_CHECK(type,count,uprv_malloc((count) * sizeof(type)))
+      |                                             ^~~~~~~~~~~~~~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LayoutEngine.cpp:294:23: note: in expansion of macro 'LE_NEW_ARRAY'
+  294 |           reordered = LE_NEW_ARRAY(LEUnicode, count);
+      |                       ^~~~~~~~~~~~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LigatureSubstProc.cpp: In member function 'virtual ByteOffset LigatureSubstitutionProcessor::processStateEntry(LEGlyphStorage&, le_int32&, EntryTableIndex, LEErrorCode&)':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LigatureSubstProc.cpp:132:33: warning: comparison of integer expressions of different signedness: 'le_uint32' {aka 'unsigned int'} and 'le_int32' {aka 'int'} [-Wsign-compare]
+  132 |               if(componentGlyph >= glyphStorage.getGlyphCount()) {
+      |                  ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LETypes.h:387:79: warning: comparison of integer expressions of different signedness: 'long unsigned int' and 'le_int32' {aka 'int'} [-Wsign-compare]
+  387 | #define LE_RANGE_CHECK(type, count, ptrfn) (( (LE_UINTPTR_MAX / sizeof(type)) < count ) ? NULL : (ptrfn))
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LETypes.h:409:45: note: in expansion of macro 'LE_RANGE_CHECK'
+  409 | #define LE_NEW_ARRAY(type, count) (type *)  LE_RANGE_CHECK(type,count,uprv_malloc((count) * sizeof(type)))
+      |                                             ^~~~~~~~~~~~~~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LayoutEngine.cpp:345:20: note: in expansion of macro 'LE_NEW_ARRAY'
+  345 |         outChars = LE_NEW_ARRAY(LEUnicode, outCharCount);
+      |                    ^~~~~~~~~~~~
 In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LigatureSubstProc2.cpp:38:
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LigatureSubstProc2.h: In constructor 'LigatureSubstitutionProcessor2::LigatureSubstitutionProcessor2(const LEReferenceTo<MorphSubtableHeader2>&, LEErrorCode&)':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LigatureSubstProc2.h:92:54: warning: 'LigatureSubstitutionProcessor2::ligatureSubstitutionHeader' will be initialized after [-Wreorder]
@@ -3278,32 +3300,10 @@ In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LigatureSubstProc2.cpp:50:1: warning:   when initialized here [-Wreorder]
    50 | LigatureSubstitutionProcessor2::LigatureSubstitutionProcessor2(const LEReferenceTo<MorphSubtableHeader2> &morphSubtableHeader, LEErrorCode &success)
       | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LigatureSubstProc.cpp: In member function 'virtual ByteOffset LigatureSubstitutionProcessor::processStateEntry(LEGlyphStorage&, le_int32&, EntryTableIndex, LEErrorCode&)':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LigatureSubstProc.cpp:132:33: warning: comparison of integer expressions of different signedness: 'le_uint32' {aka 'unsigned int'} and 'le_int32' {aka 'int'} [-Wsign-compare]
-  132 |               if(componentGlyph >= glyphStorage.getGlyphCount()) {
-      |                  ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LigatureSubstProc2.cpp: In member function 'virtual le_uint16 LigatureSubstitutionProcessor2::processStateEntry(LEGlyphStorage&, le_int32&, EntryTableIndex2, LEErrorCode&)':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LigatureSubstProc2.cpp:134:35: warning: comparison of integer expressions of different signedness: 'le_uint32' {aka 'unsigned int'} and 'le_int32' {aka 'int'} [-Wsign-compare]
   134 |                 if(componentGlyph >= glyphStorage.getGlyphCount()) {
       |                    ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LayoutEngine.cpp:33:
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LayoutEngine.cpp: In member function 'virtual le_int32 LayoutEngine::characterProcessing(const LEUnicode*, le_int32, le_int32, le_int32, le_bool, LEUnicode*&, LEGlyphStorage&, LEErrorCode&)':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LETypes.h:387:79: warning: comparison of integer expressions of different signedness: 'long unsigned int' and 'le_int32' {aka 'int'} [-Wsign-compare]
-  387 | #define LE_RANGE_CHECK(type, count, ptrfn) (( (LE_UINTPTR_MAX / sizeof(type)) < count ) ? NULL : (ptrfn))
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LETypes.h:409:45: note: in expansion of macro 'LE_RANGE_CHECK'
-  409 | #define LE_NEW_ARRAY(type, count) (type *)  LE_RANGE_CHECK(type,count,uprv_malloc((count) * sizeof(type)))
-      |                                             ^~~~~~~~~~~~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LayoutEngine.cpp:294:23: note: in expansion of macro 'LE_NEW_ARRAY'
-  294 |           reordered = LE_NEW_ARRAY(LEUnicode, count);
-      |                       ^~~~~~~~~~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LETypes.h:387:79: warning: comparison of integer expressions of different signedness: 'long unsigned int' and 'le_int32' {aka 'int'} [-Wsign-compare]
-  387 | #define LE_RANGE_CHECK(type, count, ptrfn) (( (LE_UINTPTR_MAX / sizeof(type)) < count ) ? NULL : (ptrfn))
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LETypes.h:409:45: note: in expansion of macro 'LE_RANGE_CHECK'
-  409 | #define LE_NEW_ARRAY(type, count) (type *)  LE_RANGE_CHECK(type,count,uprv_malloc((count) * sizeof(type)))
-      |                                             ^~~~~~~~~~~~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LayoutEngine.cpp:345:20: note: in expansion of macro 'LE_NEW_ARRAY'
-  345 |         outChars = LE_NEW_ARRAY(LEUnicode, outCharCount);
-      |                    ^~~~~~~~~~~~
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LayoutEngine.cpp: In static member function 'static LayoutEngine* LayoutEngine::layoutEngineFactory(const LEFontInstance*, le_int32, le_int32, le_int32, LEErrorCode&)':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/sun/font/layout/LayoutEngine.cpp:649:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
   649 |               if (gsubTable->coversScriptAndLanguage(gsubTable, scriptTag, languageTag, success, TRUE)) {
@@ -3971,6 +3971,10 @@ In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/solaris/native/sun/awt/splashscreen/splashscreen_sys.c:80:11: note: in expansion of macro 'SAFE_SIZE_ARRAY_ALLOC'
    80 |     buf = SAFE_SIZE_ARRAY_ALLOC(malloc, inSize, 2);
       |           ^~~~~~~~~~~~~~~~~~~~~
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/main.cpp: In function 'void usage(unpacker*, const char*, bool)':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/main.cpp:164:49: warning: format not a string literal, argument types not checked [-Wformat-nonliteral]
+  164 |     fprintf(u->errstrm, usage_lines[i], progname);
+      |                                                 ^
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In member function 'void unpacker::read_file_header()':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:736:22: warning: comparison of integer expressions of different signedness: 'size_t' {aka 'long unsigned int'} and 'int' [-Wsign-compare]
   736 |     if (archive_size < header_size_1) {
@@ -3979,10 +3983,10 @@ In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:988:22: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
   988 |   for (int i = 0 ; i < maxentries ; i++)
       |                    ~~^~~~~~~~~~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/main.cpp: In function 'void usage(unpacker*, const char*, bool)':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/main.cpp:164:49: warning: format not a string literal, argument types not checked [-Wformat-nonliteral]
-  164 |     fprintf(u->errstrm, usage_lines[i], progname);
-      |                                                 ^
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/utils.cpp: In function 'int assert_failed(const char*)':
+/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/utils.cpp:84:21: warning: format not a string literal and no format arguments [-Wformat-security]
+   84 |   fprintf(stdout, 1+message);
+      |                     ^~~~~~~
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In member function 'char* entry::string()':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:3719:44: warning: format not a string literal and no format arguments [-Wformat-security]
  3719 |       sprintf((char*)buf.ptr, TAG_NAME[tag]);
@@ -3991,10 +3995,6 @@ In file included from /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:3736:65: warning: format not a string literal, argument types not checked [-Wformat-nonliteral]
  3736 |   sprintf(buf, ((uint)e.tag < CONSTANT_Limit)? TAG_NAME[e.tag]: "%d", e.tag);
       |                                                                 ^~~~
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/utils.cpp: In function 'int assert_failed(const char*)':
-/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/utils.cpp:84:21: warning: format not a string literal and no format arguments [-Wformat-security]
-   84 |   fprintf(stdout, 1+message);
-      |                     ^~~~~~~
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp: In member function 'const char* unpacker::attr_definitions::parseLayout(const char*, band**&, int)':
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/native/com/sun/java/util/jar/pack/unpack.cpp:1797:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
  1797 |       --lp; // reparse
@@ -4047,26 +4047,26 @@ stubs. See the documentation for java.rmi.server.UnicastRemoteObject.
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/jce/unsigned/sunpkcs11.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Creating jdk/jce/unsigned/policy/limited/local_policy.jar
+Creating jdk/jce/unsigned/sunec.jar
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/jce/unsigned/policy/unlimited/US_export_policy.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Creating jdk/jce/unsigned/policy/limited/local_policy.jar
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Creating jdk/jce/unsigned/sunjce_provider.jar
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Creating jdk/jce/unsigned/jce.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/jce/unsigned/policy/unlimited/local_policy.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Creating jdk/jce/unsigned/sunec.jar
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Creating jdk/jce/unsigned/sunjce_provider.jar
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Creating jdk/jce/unsigned/jce.jar
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished jdk (build time 00:04:28)
+## Finished jdk (build time 00:04:40)
 
 ## Starting demos
 Compiling 1 files for BUILD_DEMO_APPLET_ArcTest
@@ -4079,11 +4079,11 @@ Compiling 1 files for BUILD_DEMO_APPLET_CardTest
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Compiling 1 files for BUILD_DEMO_APPLET_Clock
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Compiling 1 files for BUILD_DEMO_APPLET_DitherTest
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Compiling 1 files for BUILD_DEMO_APPLET_DrawTest
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Compiling 1 files for BUILD_DEMO_APPLET_DitherTest
 Compiling 1 files for BUILD_DEMO_APPLET_Fractal
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Compiling 2 files for BUILD_DEMO_APPLET_GraphicsTest
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -4095,9 +4095,9 @@ Compiling 5 files for BUILD_DEMO_APPLET_SortDemo
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Compiling 1 files for BUILD_DEMO_APPLET_SpreadSheet
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Updating jdk/demo/jfc/CodePointIM/src.zip
 Compiling 3 files for BUILD_DEMO_CodePointIM
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Updating jdk/demo/jfc/CodePointIM/src.zip
 Updating jdk/demo/applets/MoleculeViewer/src.zip
 Compiling 2 files for BUILD_DEMO_MoleculeViewer
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -4106,8 +4106,8 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating jdk/demo/applets/WireFrame/src.zip
 Updating jdk/demo/jfc/SwingApplet/src.zip
 Compiling 1 files for BUILD_DEMO_SwingApplet
-Compiling 3 files for BUILD_DEMO_FileChooserDemo
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Compiling 3 files for BUILD_DEMO_FileChooserDemo
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating jdk/demo/jfc/FileChooserDemo/src.zip
 Updating jdk/demo/jfc/Font2DTest/src.zip
@@ -4136,28 +4136,28 @@ Updating jdk/demo/jfc/TableExample/src.zip
 Compiling 1 files for BUILD_DEMO_TransparentRuler
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating jdk/demo/jfc/TransparentRuler/src.zip
-Updating jdk/demo/scripting/jconsole-plugin/src.zip
 Compiling 3 files for BUILD_DEMO_jconsole-plugin
+Updating jdk/demo/scripting/jconsole-plugin/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Compiling 3 files for BUILD_DEMO_FullThreadDump
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Updating jdk/demo/management/FullThreadDump/src.zip
-Updating jdk/demo/management/JTop/src.zip
-Compiling 2 files for BUILD_DEMO_JTop
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Compiling 1 files for BUILD_DEMO_MemoryMonitor
-Updating jdk/demo/management/MemoryMonitor/src.zip
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Note: /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/demo/jfc/TableExample/TableExample4.java uses unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
+Updating jdk/demo/management/FullThreadDump/src.zip
+Compiling 2 files for BUILD_DEMO_JTop
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Updating jdk/demo/management/JTop/src.zip
+Compiling 1 files for BUILD_DEMO_MemoryMonitor
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Updating jdk/demo/management/MemoryMonitor/src.zip
 Updating jdk/demo/management/VerboseGC/src.zip
 Compiling 2 files for BUILD_DEMO_VerboseGC
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Compiling 12 files for BUILD_DEMO_zipfs
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating jdk/demo/nio/zipfs/src.zip
-Updating jdk/demo/jvmti/compiledMethodLoad/src.zip
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/demo/jvmti/compiledMethodLoad/compiledMethodLoad.c: In function 'print_inline_info_record':
+Updating jdk/demo/jvmti/compiledMethodLoad/src.zip
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/demo/jvmti/compiledMethodLoad/compiledMethodLoad.c:146:54: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
   146 |             fprintf(fp, "PcDescriptor(pc=0x%lx):\n", (jint)(pcrecord.pc));
       |                                                      ^
@@ -4177,11 +4177,11 @@ Updating jdk/demo/jvmti/heapViewer/src.zip
 /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/demo/jvmti/hprof/hprof_init.c:244:27: warning: comparison is always false due to limited range of data type [-Wtype-limits]
   244 |     if (port == 0 || port > 65535) {
       |                           ^
+Updating jdk/demo/jvmti/hprof/src.zip
 Note: /home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/demo/nio/zipfs/src/com/sun/nio/zipfs/ZipUtils.java uses or overrides a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 Note: Some input files use unchecked or unsafe operations.
 Note: Recompile with -Xlint:unchecked for details.
-Updating jdk/demo/jvmti/hprof/src.zip
 Compiling 1 files for BUILD_DEMO_JVMTI_minst_JAVA
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating jdk/demo/jvmti/minst/src.zip
@@ -4196,12 +4196,12 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/applets/MoleculeViewer/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/applets/WireFrame/src.zip
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jfc/SwingApplet/src.zip
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jfc/FileChooserDemo/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -4215,29 +4215,29 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jfc/Notepad/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jfc/SampleTree/src.zip
-Creating jdk/demo/jfc/TableExample/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Creating jdk/demo/jfc/TableExample/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jfc/TransparentRuler/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Creating jdk/demo/scripting/jconsole-plugin/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Creating jdk/demo/scripting/jconsole-plugin/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/management/FullThreadDump/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/management/JTop/src.zip
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/management/MemoryMonitor/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/management/VerboseGC/src.zip
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/nio/zipfs/src.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -4245,8 +4245,8 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jvmti/heapTracker/heapTracker.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jvmti/minst/minst.jar
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating jdk/demo/jvmti/mtrace/mtrace.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -4254,7 +4254,7 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished demos (build time 00:00:31)
+## Finished demos (build time 00:00:23)
 
 ## Starting nashorn
 Compiling 491 files for BUILD_NASHORN
@@ -4267,16 +4267,16 @@ Creating version.properties
 Creating nashorn/dist/nashorn.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished nashorn (build time 00:00:20)
+## Finished nashorn (build time 00:00:22)
 
 ## Starting images
 Creating images/lib/charsets.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Creating images/lib/jfr.jar
-Creating images/lib/ext/dnsns.jar
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating images/lib/ext/cldrdata.jar
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Creating images/lib/ext/dnsns.jar
+Creating images/lib/jfr.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -4303,16 +4303,17 @@ Creating images/lib/tools.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Creating images/lib/ext/jaccess.jar
+Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Updating images/sec-bin.zip
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+Updating images/src.zip
 WARNING: Path does not exist as file or directory: sun/misc/PostVMInitHook.class
 WARNING: Path does not exist as file or directory: sun/usagetracker/UsageTrackerClient.class
 WARNING: Path does not exist as file or directory: sun/usagetracker/UsageTrackerClient$1.class
 WARNING: Path does not exist as file or directory: sun/usagetracker/UsageTrackerClient$4.class
 WARNING: Path does not exist as file or directory: sun/usagetracker/UsageTrackerClient$3.class
-Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 WARNING: Path does not exist as file or directory: sun/dc/DuctusRenderingEngine.class
 WARNING: Path does not exist as file or directory: sun/font/T2KFontScaler.class
 WARNING: Path does not exist as file or directory: sun/font/T2KFontScaler$1.class
@@ -4323,9 +4324,8 @@ WARNING: Path does not exist as file or directory: sun/security/ec
 WARNING: Path does not exist as file or directory: sun/security/internal
 WARNING: Path does not exist as file or directory: sun/security/mscapi
 WARNING: Path does not exist as file or directory: sun/security/pkcs11
-Updating images/src.zip
-Creating resources.jar
 Creating rt.jar Compressed=false
+Creating resources.jar
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
@@ -4468,21 +4468,21 @@ Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
 Picked up JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
-## Finished images (build time 00:00:45)
+## Finished images (build time 00:00:37)
 
 ----- Build times -------
-Start 2025-04-11 08:00:38
-End   2025-04-11 08:13:37
+Start 2025-04-13 09:46:18
+End   2025-04-13 10:01:29
 00:00:44 corba
-00:00:31 demos
-00:04:39 hotspot
-00:00:45 images
-00:00:24 jaxp
-00:00:36 jaxws
-00:04:28 jdk
-00:00:31 langtools
-00:00:20 nashorn
-00:12:59 TOTAL
+00:00:23 demos
+00:05:49 hotspot
+00:00:37 images
+00:00:39 jaxp
+00:00:57 jaxws
+00:04:40 jdk
+00:00:59 langtools
+00:00:22 nashorn
+00:15:11 TOTAL
 -------------------------
 Finished building OpenJDK for target 'images'
 

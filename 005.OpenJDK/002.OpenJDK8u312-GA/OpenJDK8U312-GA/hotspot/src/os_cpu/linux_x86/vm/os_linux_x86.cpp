@@ -211,17 +211,23 @@ enum {
   trap_page_fault = 0xE
 };
 
+/**
+ *
+ * JVM 信号处理函数
+ *
+ *
+ */
 extern "C" JNIEXPORT int
-JVM_handle_linux_signal(int sig,
-                        siginfo_t* info,
-                        void* ucVoid,
-                        int abort_if_unrecognized) {
+JVM_handle_linux_signal(int sig, siginfo_t* info, void* ucVoid, int abort_if_unrecognized) {
   ucontext_t* uc = (ucontext_t*) ucVoid;
 
+  // 获取当前线程的JVM对象
   Thread* t = ThreadLocalStorage::get_thread_slow();
 
-  // Must do this before SignalHandlerMark, if crash protection installed we will longjmp away
-  // (no destructors can be run)
+  /**
+   *  Must do this before SignalHandlerMark, if crash protection installed we will longjmp away（必须在 SignalHandlerMark 之前执行此操作，如果安装了崩溃保护，我们将进行 longjmp 操作）
+   * (no destructors can be run)
+   */
   os::ThreadCrashProtection::check_crash_protection(sig, t);
 
   SignalHandlerMark shm(t);
@@ -268,7 +274,7 @@ JVM_handle_linux_signal(int sig,
     assert(sig == info->si_signo, "bad siginfo");
   }
 */
-  // decide if this trap can be handled by a stub
+  // decide if this trap(陷阱) can be handled by a stub
   address stub = NULL;
 
   address pc          = NULL;
@@ -276,8 +282,16 @@ JVM_handle_linux_signal(int sig,
   //%note os_trap_1
   if (info != NULL && uc != NULL && thread != NULL) {
     pc = (address) os::Linux::ucontext_get_pc(uc);
-
+    
+    /**
+     * 这里与安全点什么关系?
+     * 由安全获取(safefetch)操作引发的内存访问故障 (预期的错误，不是真正的错误?)
+     */
     if (StubRoutines::is_safefetch_fault(pc)) {
+      /**
+       * 计算返回继续执行的地址?
+       * 这是什么场景下的处理逻辑? 
+       */
       uc->uc_mcontext.gregs[REG_PC] = intptr_t(StubRoutines::continuation_for_safefetch_fault(pc));
       return 1;
     }
@@ -345,10 +359,15 @@ JVM_handle_linux_signal(int sig,
     }
 
     if (thread->thread_state() == _thread_in_Java) {
-      // Java thread running in Java code => find exception handler if any
-      // a fault inside compiled code, the interpreter, or a stub
 
-      if (sig == SIGSEGV && os::is_poll_address((address)info->si_addr)) {
+      /**
+       * (Java thread running in Java code => find exception handler if any  a
+       * fault inside compiled code, the interpreter, or a stub)Java
+       * 代码中运行的 Java 线程 =>
+       * 查找异常处理程序，以判断编译代码、解释器或存根中是否存在错误
+       */
+      if (sig == SIGSEGV && os::is_poll_address((address)info->si_addr)) { // 如果是安全点页面异常
+        // 这个stub有点意思
         stub = SharedRuntime::get_poll_stub(pc);
       } else if (sig == SIGBUS /* && info->si_code == BUS_OBJERR */) {
         // BugId 4454115: A read from a MappedByteBuffer can fault
@@ -513,7 +532,7 @@ JVM_handle_linux_signal(int sig,
   if (stub != NULL) {
     // save all thread context in case we need to restore it
     if (thread != NULL) thread->set_saved_exception_pc(pc);
-
+    // 在signal handler里找出能调用GC的stub入口，把这个入口设置在ucontext的PC字段里
     uc->uc_mcontext.gregs[REG_PC] = (greg_t)stub;
     return true;
   }

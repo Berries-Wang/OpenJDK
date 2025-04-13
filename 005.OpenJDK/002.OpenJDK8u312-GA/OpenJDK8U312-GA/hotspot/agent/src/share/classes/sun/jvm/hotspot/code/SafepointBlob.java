@@ -29,7 +29,7 @@ import sun.jvm.hotspot.debugger.*;
 import sun.jvm.hotspot.runtime.*;
 import sun.jvm.hotspot.types.*;
 
-/** SafepointBlob: handles illegal_instruction exceptions during a safepoint */
+/** SafepointBlob: handles illegal_instruction exceptions during a safepoint (SafepointBlob：处理安全点期间的非法指令异常)*/
 
 public class SafepointBlob extends SingletonBlob {
   static {

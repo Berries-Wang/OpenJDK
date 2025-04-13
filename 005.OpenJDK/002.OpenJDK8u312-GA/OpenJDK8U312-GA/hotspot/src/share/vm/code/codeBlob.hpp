@@ -501,7 +501,9 @@ class ExceptionBlob: public SingletonBlob {
 
 
 //----------------------------------------------------------------------------------------------------
-// SafepointBlob: handles illegal_instruction exceptions during a safepoint
+/**
+ * SafepointBlob: handles illegal_instruction exceptions during a safepoint  (SafepointBlob：处理安全点期间的非法指令异常)
+ */
 
 class SafepointBlob: public SingletonBlob {
   friend class VMStructs;

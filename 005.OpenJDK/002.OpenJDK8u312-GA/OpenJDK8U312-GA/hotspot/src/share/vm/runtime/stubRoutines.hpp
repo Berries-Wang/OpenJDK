@@ -426,6 +426,9 @@ class StubRoutines: AllStatic {
   static SafeFetch32Stub SafeFetch32_stub() { return CAST_TO_FN_PTR(SafeFetch32Stub, _safefetch32_entry); }
   static SafeFetchNStub  SafeFetchN_stub()  { return CAST_TO_FN_PTR(SafeFetchNStub,  _safefetchN_entry); }
 
+  /**
+   * 是否是安全点异常导致的段错误？
+   */
   static bool is_safefetch_fault(address pc) {
     return pc != NULL &&
           (pc == _safefetch32_fault_pc ||

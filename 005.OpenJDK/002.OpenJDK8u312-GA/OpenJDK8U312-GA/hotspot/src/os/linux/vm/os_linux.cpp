@@ -4599,6 +4599,9 @@ bool os::is_interrupted(Thread* thread, bool clear_interrupted) {
 // Note that the VM will print warnings if it detects conflicting signal
 // handlers, unless invoked with the option "-XX:+AllowUserSignalHandlers".
 //
+/**
+ * 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/os_cpu/linux_x86/vm/os_linux_x86.cpp
+ */
 extern "C" JNIEXPORT int
 JVM_handle_linux_signal(int signo, siginfo_t* siginfo,
                         void* ucontext, int abort_if_unrecognized);

@@ -150,6 +150,26 @@ double (* StubRoutines::_intrinsic_sin   )(double) = NULL;
 double (* StubRoutines::_intrinsic_cos   )(double) = NULL;
 double (* StubRoutines::_intrinsic_tan   )(double) = NULL;
 
+/**
+ *
+ * StubRoutines::_safefetch32_fault_pc 是 HotSpot JVM 中的一个安全读取例程（stub
+ * routine），主要用于安全地从可能引发故障（如段错误）的内存地址读取32位数据。
+ *
+ * ## 主要功能
+ *
+ * 安全读取：该例程允许JVM尝试从可能无效的内存地址读取32位值，而不会导致整个JVM崩溃。
+ * 故障恢复：如果读取操作确实引发了硬件异常（如访问无效内存），该例程能够捕获异常并优雅地恢复，而不是直接崩溃。
+ * 返回故障PC：当读取失败时，它会返回触发故障的程序计数器（PC）地址，这对于调试和分析非常有用。
+ *
+ * JVM中还有类似的安全读取例程，如：
+ *
+ *   + _safefetch32：安全读取32位值，返回读取状态
+ *   +
+ *   + _safefetchN：通用安全读取接口
+ *   +
+ *   + _safefetch32_fault_pc 是这些例程的一个变体，专门用于需要获取故障PC的场景。
+ *
+ */
 address StubRoutines::_safefetch32_entry                 = NULL;
 address StubRoutines::_safefetch32_fault_pc              = NULL;
 address StubRoutines::_safefetch32_continuation_pc       = NULL;
