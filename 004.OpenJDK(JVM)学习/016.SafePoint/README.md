@@ -1,4 +1,6 @@
-## JVM 安全点
+# JVM 安全点
+## 简要
+1. 编译代码执行线程是通过信号处理函数来到达安全点的： 阅读 [深入剖析Java虚拟机（基础卷）](../../006.BOOKs/深入剖析Java虚拟机（基础卷）.epub)
 
 ### JVM 信号处理函数
 > [005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/os_cpu/linux_x86/vm/os_linux_x86.cpp](../../005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/os_cpu/linux_x86/vm/os_linux_x86.cpp)
@@ -13,6 +15,8 @@ JVM_handle_linux_signal(int sig,
   // 02. 异常处理函数如何调用(进入安全点)
 
   // 内存访问异常会产生 SIGSEGV  信号
+
+  // 仔细分析代码，发现针对于安全点的信号处理逻辑
 ```
 
 ##### 信号处理函数安装调用流程
@@ -27,39 +31,4 @@ libjli.so!InitializeJVM(JavaVM ** pvm, JNIEnv ** penv, InvocationFunctions * ifn
 libjli.so!JavaMain(void * _args) (/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/bin/java.c:377)
 libpthread.so.0!start_thread(void * arg) (/build/glibc-FcRMwW/glibc-2.31/nptl/pthread_create.c:477)
 libc.so.6!clone() (/build/glibc-FcRMwW/glibc-2.31/sysdeps/unix/sysv/linux/x86_64/clone.S:95)
-```
-
-
-
-StubRoutines::call_stub()(
-        (address)&link,
-        // (intptr_t*)&(result->_value), // see NOTE above (compiler problem)
-        result_val_address,          // see NOTE above (compiler problem)
-        result_type,
-        method(),
-        entry_point,
-        args->parameters(),
-        args->size_of_parameters(),
-        CHECK
-      );
-
-
-https://zhuanlan.zhihu.com/p/559913612
-
-005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/runtime/javaCalls.cpp
-
-
-普通Java方法的entry point是这样生成出来的：
-```txt
-src/cpu/x86/vm/templateInterpreter_x86_64.cpp
-//
-// Generic interpreted method entry to (asm) interpreter
-//
-address InterpreterGenerator::generate_normal_entry(bool synchronized) 
-```
-
-其中一直要到这里才开始执行方法的第一条字节码：
-```txt
-address InterpreterGenerator::generate_normal_entry(bool synchronized) { 方法下的
-  __ dispatch_next(vtos);
 ```

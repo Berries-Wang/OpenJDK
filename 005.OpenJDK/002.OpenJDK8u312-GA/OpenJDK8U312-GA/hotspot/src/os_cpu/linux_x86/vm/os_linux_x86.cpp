@@ -532,7 +532,13 @@ JVM_handle_linux_signal(int sig, siginfo_t* info, void* ucVoid, int abort_if_unr
   if (stub != NULL) {
     // save all thread context in case we need to restore it
     if (thread != NULL) thread->set_saved_exception_pc(pc);
-    // 在signal handler里找出能调用GC的stub入口，把这个入口设置在ucontext的PC字段里
+    /**
+     * 在signal
+     * handler里找出能调用GC的stub入口，把这个入口设置在ucontext的PC字段里 >
+     * 修改当前线程的程序计数器（PC/Instruction Pointer）的值，使其指向 stub
+     * 函数的地址，从而在下一次恢复执行时，程序会从 stub
+     * 开始运行，而不是继续原来的执行流
+     */
     uc->uc_mcontext.gregs[REG_PC] = (greg_t)stub;
     return true;
   }

@@ -1095,7 +1095,11 @@ void ThreadSafepointState::print_on(outputStream *st) const {
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-// Block the thread at the safepoint poll or poll return.
+/**
+ *  Block the thread at the safepoint poll or poll return.
+ * 在安全点校验的 poll 或 poll return 阶段阻塞当前线程
+ * > 这个return ， 应该指的是 汇编指令的 return , 因为这个poll也是通过test指令来访问_poll_page
+ */
 void ThreadSafepointState::handle_polling_page_exception() {
 
   // Check state.  block() will set thread state to thread_in_vm which will
@@ -1143,7 +1147,9 @@ void ThreadSafepointState::handle_polling_page_exception() {
       assert(Universe::heap()->is_in_or_null(result), "must be heap pointer");
     }
 
-    // Block the thread
+    /**
+     * Block the thread(阻塞当前线程)
+     */
     SafepointSynchronize::block(thread());
 
     // restore oop result, if any
@@ -1159,7 +1165,9 @@ void ThreadSafepointState::handle_polling_page_exception() {
     // verify the blob built the "return address" correctly
     assert(real_return_addr == caller_fr.pc(), "must match");
 
-    // Block the thread
+    /**
+     * Block the thread (阻塞当前线程)
+     */
     SafepointSynchronize::block(thread());
     set_at_poll_safepoint(false);
 
