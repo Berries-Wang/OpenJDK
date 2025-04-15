@@ -1,16 +1,6 @@
-# VirtualThread
-> 先学习:[Continuation实现原理-1](./000.LESSONS/000.Continuation实现原理/continuation-001.mp4) & [Continuation实现原理-2](./000.LESSONS/000.Continuation实现原理/continuation-002.mp4)
-
-
-VirtualThread = Scheduler <sub>Java. Core Libraries</sub> + Continuation<sub>VM</sub>
-
-
-## VirtualThread 实现原理
-### Continuation 使用Demo
-> [ContinuationDemo.java](../../005.OpenJDK/003.prictice-code/ContinuationDemo.java)
-```java
 import jdk.internal.vm.Continuation;
 import jdk.internal.vm.ContinuationScope;
+
 /**
  * OpenJDK 21
  * VM Options: --add-exports java.base/jdk.internal.vm=ALL-UNNAMED
@@ -49,12 +39,3 @@ public class ContinuationDemo {
         return cont;
     }
 }
-```
-
-
-## Q&A
-### 1. GC Roots枚举问题
-+ 对于平台线程，当进行GC时，线程堆栈是GC Root, 所以开始一个GC周期时，需要扫描这些线程的堆栈，发现其中的oop，因为没有那么多线程，因此线程堆栈内存并没有那么大，因此这是可行的。
-+ 但是虚拟线程并不一样，可以有数百万个虚拟线程，虚拟线程可以在堆栈中存储相当多的数据，所以，虚拟线程的堆栈不会成为GC Root —— StackChunk , GC通过解析StackChunk来获取oop信息，
-  - 惰性复制StackChunk<sub>每次复制一两帧，再设置返回屏障 </sub> + 返回屏障<sub>触及返回屏障，就会解冻其他帧，然后再设置返回屏障...</sub> 来继续执行虚拟线程。
-  - GC 从StackChunk 中解析 oop
