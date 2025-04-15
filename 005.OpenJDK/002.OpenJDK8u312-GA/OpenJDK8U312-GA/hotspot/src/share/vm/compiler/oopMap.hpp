@@ -30,14 +30,20 @@
 #include "memory/allocation.hpp"
 #include "utilities/growableArray.hpp"
 
-// Interface for generating the frame map for compiled code.  A frame map
-// describes for a specific pc whether each register and frame stack slot is:
-//   Oop         - A GC root for current frame
-//   Value       - Live non-oop, non-float value: int, either half of double
-//   Dead        - Dead; can be Zapped for debugging
-//   CalleeXX    - Callee saved; also describes which caller register is saved
-//   DerivedXX   - A derived oop; original oop is described.
-//
+/**
+ * Interface for generating the frame map for compiled code.  A frame map
+ * describes for a specific pc whether each register and frame stack slot
+ * is:(用于生成已编译代码的帧映射的接口。帧映射针对特定的 PC
+ * 描述每个寄存器和帧堆栈槽是否是：)
+ * <p>
+ *    Oop         - A GC root for current frame
+ *    Value       - Live non-oop, non-float value: int, either half of double （存活的非对象、非浮点值：整型，或双精度浮点数的其中一半）
+ *    Dead        - Dead; can be Zapped for debugging （已死亡；可置零（用于调试））
+ *    CalleeXX    - Callee saved; also describes which caller register is saved （被调用者保存（Callee-saved）；同时说明哪些调用者寄存器被保存）
+ *    DerivedXX   - A derived oop; original oop is described. （派生对象指针（derived oop）；原始对象指针（original oop）已描述???）
+ * </p>
+ *
+ */
 // OopMapValue describes a single OopMap entry
 
 class frame;
