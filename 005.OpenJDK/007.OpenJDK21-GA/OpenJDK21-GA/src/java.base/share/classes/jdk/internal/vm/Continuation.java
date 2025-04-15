@@ -38,7 +38,7 @@ import jdk.internal.access.SharedSecrets;
 import jdk.internal.vm.annotation.Hidden;
 
 /**
- * A one-shot delimited continuation.
+ * A one-shot delimited continuation.(一次性分隔的延续。)
  */
 public class Continuation {
     private static final Unsafe U = Unsafe.getUnsafe();
