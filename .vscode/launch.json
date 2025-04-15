@@ -206,6 +206,23 @@
         },
         {
             "type": "java",
+            "name": "OpenJDK-Debug-ContinuationDemo",
+            "request": "launch",
+            "mainClass": "ContinuationDemo",
+            "vmArgs": "--add-exports java.base/jdk.internal.vm=ALL-UNNAMED",
+            "classPaths": [
+                "${workspaceFolder}/005.OpenJDK/007.OpenJDK21-GA/OpenJDK21-GA/build/linux-x86_64-server-slowdebug/jdk/modules",
+                "${workspaceFolder}/005.OpenJDK/007.OpenJDK21-GA/OpenJDK21-GA/build/linux-x86_64-server-slowdebug/jdk/lib",
+                "${workspaceFolder}/005.OpenJDK/003.prictice-code",
+                "."
+            ],
+            "sourcePaths": [
+                "${workspaceFolder}/005.OpenJDK/007.OpenJDK21-GA/OpenJDK21-GA/src",
+                "${workspaceFolder}/005.OpenJDK/003.prictice-code"
+            ]
+        },
+        {
+            "type": "java",
             "name": "OpenJDK-Debug-CompletableFutureSTUTWO",
             "request": "launch",
             "mainClass": "CompletableFutureSTUTWO",

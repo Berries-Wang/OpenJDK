@@ -92,8 +92,15 @@
         //     "sources": "/home/wei/WorkSpace/Open_Source/OpenJDK/005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/jdk/src/share/classes",
         //     "default": true
         // }
+        { // 配合 ‘"java.jdt.ls.java.home": "/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/007.OpenJDK21-GA/OpenJDK21-GA/build/linux-x86_64-server-slowdebug/jdk",’ 来调试OpenJDK21
+             "name": "JavaSE-21",
+             "path": "/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/007.OpenJDK21-GA/OpenJDK21-GA/build/linux-x86_64-server-slowdebug/jdk",
+             "sources": "/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/007.OpenJDK21-GA/OpenJDK21-GA/build/linux-x86_64-server-slowdebug/jdk/modules",
+             "default": true
+         }
     ],
    // "java.jdt.ls.java.home": "/home/wei/WorkSpace/TempLibs/jdk21/jdk-21.0.1", // 避免使用JDK21启动调试
+     "java.jdt.ls.java.home": "/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/007.OpenJDK21-GA/OpenJDK21-GA/build/linux-x86_64-server-slowdebug/jdk",
     "java.server.launchMode": "Standard",
     "java.debug.settings.onBuildFailureProceed": true,
     "editor.codeActionsOnSave": {
