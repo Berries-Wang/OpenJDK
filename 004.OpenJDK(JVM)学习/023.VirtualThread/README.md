@@ -1,6 +1,6 @@
 # VirtualThread
 > 先学习:[Continuation实现原理-1](./000.LESSONS/000.Continuation实现原理/continuation-001.mp4) & [Continuation实现原理-2](./000.LESSONS/000.Continuation实现原理/continuation-002.mp4)
-
+>> 学习视频后，个人理解: 平台线程执行的基础就是堆栈和寄存器，通过切换平台线程的堆栈，从而达到执行不同的虚拟线程的目的。
 
 VirtualThread = Scheduler <sub>Java. Core Libraries</sub> + Continuation<sub>VM</sub>
 
