@@ -34,7 +34,8 @@
  * Interface for generating the frame map for compiled code.  A frame map
  * describes for a specific pc whether each register and frame stack slot
  * is:(用于生成已编译代码的帧映射的接口。帧映射针对特定的 PC
- * 描述每个寄存器和帧堆栈槽是否是：)
+ * 描述每个寄存器和帧堆栈`槽`是否是：)
+ * <p>这个槽是不是很熟悉？回忆一下Java方法栈中的局部变量表的存储单元，是不是也是槽(slot)</p>
  * <p>
  *    Oop         - A GC root for current frame
  *    Value       - Live non-oop, non-float value: int, either half of double （存活的非对象、非浮点值：整型，或双精度浮点数的其中一半）

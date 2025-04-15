@@ -36,7 +36,7 @@
 
 //
 //
-// Compute stack layouts for each instruction in method.
+// Compute stack layouts for each instruction in method.(计算方法中每条指令的堆栈布局。)
 //
 //  Problems:
 //  - What to do about jsr with different types of local vars?
