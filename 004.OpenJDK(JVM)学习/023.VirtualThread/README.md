@@ -58,3 +58,10 @@ public class ContinuationDemo {
 + 但是虚拟线程并不一样，可以有数百万个虚拟线程，虚拟线程可以在堆栈中存储相当多的数据，所以，虚拟线程的堆栈不会成为GC Root —— StackChunk , GC通过解析StackChunk来获取oop信息，
   - 惰性复制StackChunk<sub>每次复制一两帧，再设置返回屏障 </sub> + 返回屏障<sub>触及返回屏障，就会解冻其他帧，然后再设置返回屏障...</sub> 来继续执行虚拟线程。
   - GC 从StackChunk 中解析 oop
+
+### 2. 为什么使用了StackChunk后，性能依旧比较强
+- GC has a "grace period" before objects must be stable.(GC 在对象必须稳定之前有一个“宽限期”)
+- Store multiple frames in a StackChunk.(在 StackChunk 中存储多个帧)
+- StackChunk is mutable inside the grace period and is fixed after it .(StackChunk 在宽限期内可变，宽限期过后固定)
+- Add a new StackChunk if the previous one is fixed. 如果前一个 StackChunk 已固定，则添加新的 StackChunk
+- copying itself is nearly free when done in the cache .（当在缓存中完成复制时，复制本身几乎是免费的。）
