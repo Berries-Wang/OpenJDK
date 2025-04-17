@@ -59,8 +59,15 @@ public class ContinuationDemo {
   - 惰性复制StackChunk<sub>每次复制一两帧，再设置返回屏障 </sub> + 返回屏障<sub>触及返回屏障，就会解冻其他帧，然后再设置返回屏障...</sub> 来继续执行虚拟线程。
   - GC 从StackChunk 中解析 oop
 
-### 2. 为什么使用了StackChunk后，性能依旧比较强
+### 2. 虚拟线程堆栈的GC问题：StackChunk
+#### 实现原理
+- Allocate a new object per frame 
+- The Object is always stable 
+- Let the GC find the metadata from the return address and parse the oopmap 
+- plenty<sub>充足</sub> of allocations;still need to walk stack
+#### 性能优化
 - GC has a "grace period" before objects must be stable.(GC 在对象必须稳定之前有一个“宽限期”)
+  - 宽限期: the time an object is created until the time the GC sees it.(宽限期就是 从对象创建完成到GC看到他)
 - Store multiple frames in a StackChunk.(在 StackChunk 中存储多个帧)
 - StackChunk is mutable inside the grace period and is fixed after it .(StackChunk 在宽限期内可变，宽限期过后固定)
 - Add a new StackChunk if the previous one is fixed. 如果前一个 StackChunk 已固定，则添加新的 StackChunk
