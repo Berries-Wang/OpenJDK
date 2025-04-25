@@ -141,7 +141,7 @@ class Klass : public Metadata {
   // [Ljava/lang/String;, etc.  Set to zero for all other kinds of classes.
   Symbol*     _name;
 
-  // Cache of last observed secondary supertype
+  // Cache of last observed secondary supertype (保存上一次查询父类的结果)
   Klass*      _secondary_super_cache;
   // Array of all secondary supertypes
   Array<Klass*>* _secondary_supers;

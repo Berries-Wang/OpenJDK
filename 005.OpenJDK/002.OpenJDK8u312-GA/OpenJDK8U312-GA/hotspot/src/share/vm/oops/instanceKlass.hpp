@@ -244,7 +244,18 @@ class InstanceKlass: public Klass {
   u2              _minor_version;        // minor version number of class file
   u2              _major_version;        // major version number of class file
   Thread*         _init_thread;          // Pointer to current thread doing initialization (to handle recursive initialization)
-  int             _vtable_len;           // length of Java vtable (in words)
+
+  /**
+   * 虚函数表所占用空间(字节)
+   * 
+   * 通过指针和偏移量计算出虚函数表
+   */
+  int             _vtable_len;           // length of Java vtable (in words)  
+  /**
+   *   (接口方法表占用空间(字节))
+   * 
+   * 通过指针和偏移量计算出接口函数表
+   */
   int             _itable_len;           // length of Java itable (in words)
   OopMapCache*    volatile _oop_map_cache;   // OopMapCache for all methods in the klass (allocated lazily)
   MemberNameTable* _member_names;        // Member names
@@ -265,6 +276,10 @@ class InstanceKlass: public Klass {
   // Place the _init_state here to utilize the unused 2-byte after
   // _idnum_allocated_count.
   u1              _init_state;                    // state of class
+
+  /**
+   * 引用类型
+   */
   u1              _reference_type;                // reference type
 
   JvmtiCachedClassFieldMap* _jvmti_cached_class_field_map;  // JVMTI: used during heap iteration

@@ -37,17 +37,26 @@
 // instances and need special logic for computing their size and for
 // iteration of their oops.
 
-
+/**
+ * InstanceMirrorKlass类实例表示特殊的java.lang.Class类，这个类中新增了一个静态属性_offset_of_static_fields，用来保存静态字段的起始偏移量
+ */
 class InstanceMirrorKlass: public InstanceKlass {
   friend class VMStructs;
   friend class InstanceKlass;
 
  private:
-  static int _offset_of_static_fields;
+   /**
+    * 保存静态字段的起始偏移量
+    */
+   static int _offset_of_static_fields;
 
-  // Constructor
-  InstanceMirrorKlass(int vtable_len, int itable_len, int static_field_size, int nonstatic_oop_map_size, ReferenceType rt, AccessFlags access_flags,  bool is_anonymous)
-    : InstanceKlass(vtable_len, itable_len, static_field_size, nonstatic_oop_map_size, rt, access_flags, is_anonymous) {}
+   // Constructor
+   InstanceMirrorKlass(int vtable_len, int itable_len, int static_field_size,
+                       int nonstatic_oop_map_size, ReferenceType rt,
+                       AccessFlags access_flags, bool is_anonymous)
+       : InstanceKlass(vtable_len, itable_len, static_field_size,
+                       nonstatic_oop_map_size, rt, access_flags, is_anonymous) {
+   }
 
  public:
   InstanceMirrorKlass() { assert(DumpSharedSpaces || UseSharedSpaces, "only for CDS"); }
