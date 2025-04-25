@@ -111,8 +111,10 @@ class FieldPrinter: public FieldClosure {
 };
 #endif  // !PRODUCT
 
-// ValueObjs embedded in klass. Describes where oops are located in instances of
-// this klass.
+/**
+ * ValueObjs embedded in klass. Describes where oops are located in instances of
+ * this klass.(嵌入在 klass 中的 ValueObjs。描述 oops 在该 klass 实例中的位置。)
+ */
 class OopMapBlock VALUE_OBJ_CLASS_SPEC {
  public:
   // Byte offset of the first oop mapped by this block.
@@ -125,8 +127,7 @@ class OopMapBlock VALUE_OBJ_CLASS_SPEC {
 
   // sizeof(OopMapBlock) in HeapWords.
   static const int size_in_words() {
-    return align_size_up(int(sizeof(OopMapBlock)), HeapWordSize) >>
-      LogHeapWordSize;
+    return align_size_up(int(sizeof(OopMapBlock)), HeapWordSize) >> LogHeapWordSize;
   }
 
  private:
@@ -136,6 +137,19 @@ class OopMapBlock VALUE_OBJ_CLASS_SPEC {
 
 struct JvmtiCachedClassFileData;
 
+/**
+ * InstanceKlass 与 Klass类中定义的这些属性来保存Java类元信息。
+ *
+ * 除了保存类元信息外，Klass具有方法分派的功能-通过Java虚函数表和Java接口函数表完成；
+ *
+ * 注意!
+ * --->
+ * C++并不像Java一样需要在保存信息时在类中定义相关属性，C++只需要在分配内存时为要存储的信息分配特定的内存，然后直接通过内存偏移来操作即可;
+ * _____如 Java vtable (Java虚函数表), Java itable (Java接口函数表), 非静态OopMapBlock 
+ * 、 host_klass (只在匿名类中存在,给匿名类生成一个host_klass(为了支持“JSR 292中的动态语言特性”)) 
+ *
+ *
+ */
 class InstanceKlass: public Klass {
   friend class VMStructs;
   friend class ClassFileParser;
@@ -222,6 +236,11 @@ class InstanceKlass: public Klass {
   u2              _source_file_name_index;
   u2              _static_oop_field_count;// number of static oop fields in this klass
   u2              _java_fields_count;    // The number of declared Java fields
+  /**
+   * OopMapBlock需要占用的内存空间,以字为单位。
+   * 使用<偏移量,数量>描述Java类中各个非静态对象(oop)类型的变量在Java对象中的具体位置。
+   * 这样垃圾回收时就能找到Java对象中引用的其他对象
+   */
   int             _nonstatic_oop_map_size;// size in words of nonstatic oop map blocks
 
   // _is_marked_dependent can be set concurrently, thus cannot be part of the
