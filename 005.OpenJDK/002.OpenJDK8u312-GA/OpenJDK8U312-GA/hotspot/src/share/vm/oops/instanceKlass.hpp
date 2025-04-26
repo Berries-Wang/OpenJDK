@@ -199,7 +199,11 @@ class InstanceKlass: public Klass {
  protected:
   // Annotations for this class
   Annotations*    _annotations;
-  // Array classes holding elements of this class.
+  
+  /**
+   * Array classes holding elements of this class. 《 2.1.6 ObjArrayKlass类 》
+   * 创建以当前InstanceKlass实例为基本类型的一维类型数组
+   */
   Klass*          _array_klasses;
   // Constant pool for this class.
   ConstantPool* _constants;

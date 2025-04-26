@@ -32,11 +32,19 @@
 
 // ObjArrayKlass is the klass for objArrays
 
+/**
+ * 二维基本类型数组使用ObjArrayKlass来表示，此时的ObjArrayKlass的_bottom_klass是TypeArray-Klass。
+ */
 class ObjArrayKlass : public ArrayKlass {
   friend class VMStructs;
  private:
-  Klass* _element_klass;            // The klass of the elements of this array type
-  Klass* _bottom_klass;             // The one-dimensional type (InstanceKlass or TypeArrayKlass)
+  Klass* _element_klass;            // The klass of the elements of this array type  组件类型
+  /**
+   * _bottom_klass：可以是InstanceKlass或者TypeArrayKlass，因此可能是元素类型或TypeArrayKlass，
+   * [一维基本类型数组]使用TypeArrayKlass表示，二维基本类型数组使用ObjArrayKlass来表示，此时的ObjArrayKlass的_bottom_klass是TypeArray-Klass。
+   *
+   */
+  Klass* _bottom_klass;             // The one-dimensional type (InstanceKlass or TypeArrayKlass) 元素类型 , 参考: hotspot/src/share/vm/oops/arrayKlass.hpp
 
   // Constructor
   ObjArrayKlass(int n, KlassHandle element_klass, Symbol* name);

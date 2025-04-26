@@ -30,11 +30,19 @@
 
 class ClassFileParser;
 
-// An InstanceClassLoaderKlass is a specialization of the InstanceKlass. It does
-// not add any field.  It is added to walk the dependencies for the class loader
-// key that this class loader points to.  This is how the loader_data graph is
-// walked and dependent class loaders are kept alive.  I thought we walked
-// the list later?
+/**
+ * An InstanceClassLoaderKlass is a specialization of the InstanceKlass. It does
+ * not add any field.  It is added to walk the dependencies for the class loader
+ * key that this class loader points to.  This is how the loader_data graph is
+ * walked and dependent class loaders are kept alive.  I thought we walked
+ * the list later?
+ * InstanceClassLoaderKlass 是 InstanceKlass
+ * 的一个特例。它不添加任何字段。它被添加来遍历该类加载器所指向的类加载器键的依赖项。这就是遍历
+ * loader_data 图并保持依赖类加载器活动的方式。我以为我们稍后会遍历列表？
+ *
+ *
+ * InstanceClassLoaderKlass类没有添加新的字段，但增加了新的oop遍历方法，在垃圾回收阶段遍历类加载器加载的所有类来标记引用的所有对象
+ */
 
 class InstanceClassLoaderKlass: public InstanceKlass {
   friend class VMStructs;

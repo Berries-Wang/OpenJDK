@@ -1192,6 +1192,10 @@ Klass* InstanceKlass::array_klass_impl(bool or_null, int n, TRAPS) {
   return array_klass_impl(this_oop, or_null, n, THREAD);
 }
 
+/**
+ * 创建数组类 n 表示n维
+ * > 这里存在递归调用,需要注意递归出口
+ */
 Klass* InstanceKlass::array_klass_impl(instanceKlassHandle this_oop, bool or_null, int n, TRAPS) {
   if (this_oop->array_klasses() == NULL) {
     if (or_null) return NULL;
@@ -1205,11 +1209,27 @@ Klass* InstanceKlass::array_klass_impl(instanceKlassHandle this_oop, bool or_nul
 
       // Check if update has already taken place
       if (this_oop->array_klasses() == NULL) {
-        Klass*    k = ObjArrayKlass::allocate_objArray_klass(this_oop->class_loader_data(), 1, this_oop, CHECK_NULL);
+        /**
+         * 创建以当前InstanceKlass实例为基本类型的一维类型数组，创建成功后保存到_array_klasses属性中，避免下次再重新创建
+         */
+        Klass *k = ObjArrayKlass::allocate_objArray_klass(
+            this_oop->class_loader_data(), 1, this_oop, CHECK_NULL);
         this_oop->set_array_klasses(k);
       }
     }
   }
+
+  /**
+   * 这里存在一个递归，就是直到创建到了第N维才会返回
+   * 
+   * this_oop->array_klasses() 这个返回值得细敲。
+   * 例如: 自定义Java Class A , 此时创建A[x][y][z]  , 那么this_oop->array_klasses()依次是A[] -> A[][] -> A[][][]
+   * 结合 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/oops/objArrayKlass.hpp 字段定义更好理解
+   * 
+   * this_oop 的值依次是A 对应的java.lang.Class 的oop , A[]对应的java.lang.Class 的 oop
+   * 
+   * 阅读: 《006.BOOKs/深入剖析Java虚拟机.epub》#2.1.6 ObjArrayKlass类
+   */
   // _this will always be set at this point
   ObjArrayKlass* oak = (ObjArrayKlass*)this_oop->array_klasses();
   if (or_null) {

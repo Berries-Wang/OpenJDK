@@ -147,7 +147,18 @@ class Klass : public Metadata {
   Array<Klass*>* _secondary_supers;
   // Ordered list of all primary supertypes
   Klass*      _primary_supers[_primary_super_limit];
-  // java/lang/Class instance mirroring this class
+  /**
+   * java/lang/Class instance mirroring this class
+   * 为什么称为"mirror"（镜像）
+   * ___反射：Class对象允许程序在运行时检查和操作类，就像镜子反射现实一样
+   * ___
+   * ___一一对应：每个类有且只有一个Class对象与之对应
+   * ___
+   * ___动态性：通过这个"镜像"可以在运行时动态了解类的结构
+   * 
+   * 这个字段指向 该Java类静态字段的oop对象，就是Java类对应的java.lang.Class的oo对象
+   * > 答案在:[深入剖析Java虚拟机.epub#2.1.3　InstanceKlass类的子类中]
+   */
   oop       _java_mirror;
   // Superclass
   Klass*      _super;

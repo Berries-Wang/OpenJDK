@@ -325,6 +325,10 @@ void ObjArrayKlass::copy_array(arrayOop s, int src_pos, arrayOop d,
 }
 
 
+/**
+ * 
+ * 
+ */
 Klass* ObjArrayKlass::array_klass_impl(bool or_null, int n, TRAPS) {
 
   assert(dimension() <= n, "check order of chain");
