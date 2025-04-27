@@ -131,8 +131,8 @@ class OopMapBlock VALUE_OBJ_CLASS_SPEC {
   }
 
  private:
-  int  _offset;
-  uint _count;
+  int  _offset; // 相对于栈帧/寄存器组的偏移量
+  uint _count;  // 连续的引用数量
 };
 
 struct JvmtiCachedClassFileData;
