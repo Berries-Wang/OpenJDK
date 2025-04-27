@@ -199,10 +199,11 @@ class InstanceKlass: public Klass {
  protected:
   // Annotations for this class
   Annotations*    _annotations;
-  
+
   /**
-   * Array classes holding elements of this class. 《 2.1.6 ObjArrayKlass类 》
-   * 创建以当前InstanceKlass实例为基本类型的一维类型数组
+   * Array classes holding elements of this class.
+   * 数组元素为该类型的数组Klass指针。如：
+   * 当ObjArrayKlass实例表示的是数组且元素类型是Object时，表示Object类的InstanceKass实例的_array_klasses就是执行ObjArrayKlass实例的指针
    */
   Klass*          _array_klasses;
   // Constant pool for this class.
@@ -224,22 +225,41 @@ class InstanceKlass: public Klass {
   // Specified as UTF-8 string without terminating zero byte in the classfile,
   // it is stored in the instanceklass as a NULL-terminated UTF-8 string
   char*           _source_debug_extension;
-  // Array name derived from this class which needs unreferencing
-  // if this class is unloaded.
+  /**
+   * Array name derived from this class which needs unreferencing if this class
+   * is unloaded. (从此类派生的数组名称，如果卸载此类，则需要取消引用。)
+   *
+   * 以该类型为数组组件类型(指的是数组去掉一个维度的类型)的数组名称，如果当前InstanceKlass实例表示Object类，则名称为'[Ljava/lang/Object;'
+   */
   Symbol*         _array_name;
 
-  // Number of heapOopSize words used by non-static fields in this klass
-  // (including inherited fields but after header_size()).
+  /**
+   *   // Number of heapOopSize words used by non-static fields in this klass
+   * (including inherited fields but after header_size()).(此 klass
+   * 中的非静态字段使用的 heapOopSize 字数（包括继承的字段，但在 header_size()
+   * 之后）。) 非静态字段需要占用的内存空间,以字节为单位
+   */
   int             _nonstatic_field_size;
+  
+  /**
+   * 静态字段需要占用的内存空间
+   * 为该InstanceKlass实例表示的Java类创建对应的java.lang.Class(使用oop表示)对象时，跟根据此属性的值分配内存.
+   *
+   * 所以，静态字段的值也是保存在oop中，只是这个oop的Klass指向Java类对应的java.lang.Class
+   */
   int             _static_field_size;    // number words used by static fields (oop and non-oop) in this klass
-  // Constant pool index to the utf8 entry of the Generic signature,
-  // or 0 if none.
+
+  // Constant pool index to the utf8 entry of the Generic signature, or 0 if none.(保存Java类的签名在常量池中的索引)
   u2              _generic_signature_index;
-  // Constant pool index to the utf8 entry for the name of source file
-  // containing this klass, 0 if not specified.
+
+  // Constant pool index to the utf8 entry for the name of source file  containing this klass, 0 if not specified.(Java类的源文件名在常量池中的索引)
   u2              _source_file_name_index;
-  u2              _static_oop_field_count;// number of static oop fields in this klass
-  u2              _java_fields_count;    // The number of declared Java fields
+  
+  // number of static oop fields in this klass (Java类包含的静态应用类型字段数量)
+  u2              _static_oop_field_count; 
+
+  // The number of declared Java fields( Java类包含的字段总数)
+  u2              _java_fields_count; 
   /**
    * OopMapBlock需要占用的内存空间,以字为单位。
    * 使用<偏移量,数量>描述Java类中各个非静态对象(oop)类型的变量在Java对象中的具体位置。
@@ -274,12 +294,14 @@ class InstanceKlass: public Klass {
    * 通过指针和偏移量计算出虚函数表
    */
   int             _vtable_len;           // length of Java vtable (in words)  
+  
   /**
    *   (接口方法表占用空间(字节))
    * 
    * 通过指针和偏移量计算出接口函数表
    */
   int             _itable_len;           // length of Java itable (in words)
+
   OopMapCache*    volatile _oop_map_cache;   // OopMapCache for all methods in the klass (allocated lazily)
   MemberNameTable* _member_names;        // Member names
   JNIid*          _jni_ids;              // First JNI identifier for static fields in this class
@@ -295,13 +317,16 @@ class InstanceKlass: public Klass {
 
   volatile u2     _idnum_allocated_count;         // JNI/JVMTI: increments with the addition of methods, old ids don't change
 
-  // Class states are defined as ClassState (see above).
-  // Place the _init_state here to utilize the unused 2-byte after
-  // _idnum_allocated_count.
+  /**
+   * Class states are defined as ClassState (see above).  Place the _init_state here to utilize the unused 2-byte after  _idnum_allocated_count.
+   * （类状态（Class states） 由 ClassState 枚举定义（参见上文）。将 _init_state 字段放置于此，是为了复用 _idnum_allocated_count 字段后未使用的 2 字节空间。）
+   * 
+   * 类的状态: 已分配内存、已经成功连接和校验、正在初始化...
+   */
   u1              _init_state;                    // state of class
 
   /**
-   * 引用类型
+   * 引用类型:表示当前的InstanceKlass实例的引用类型,可能是强引用 软引用  弱引用 
    */
   u1              _reference_type;                // reference type
 
@@ -309,16 +334,24 @@ class InstanceKlass: public Klass {
 
   NOT_PRODUCT(int _verify_count;)  // to avoid redundant verifies
 
-  // Method array.
-  Array<Method*>* _methods;
-  // Default Method Array, concrete methods inherited from interfaces
+  /**
+   * Method array.
+   * 保存方法的指针数组
+   */
+  Array<Method *> *_methods;
+
+  // Default Method Array, concrete methods inherited from interfaces (方法的指针数组，从接口继承的默认方法)
   Array<Method*>* _default_methods;
-  // Interface (Klass*s) this class declares locally to implement.
+
+  // Interface (Klass*s) this class declares locally to implement. (保存接口的指针数组，是直接实现的接口Klass)
   Array<Klass*>* _local_interfaces;
-  // Interface (Klass*s) this class implements transitively.
+
+  // Interface (Klass*s) this class implements transitively. (接口的指针数组，报含_local_interfaces和间接实现的接口)
   Array<Klass*>* _transitive_interfaces;
+
   // Int array containing the original order of method in the class file (for JVMTI).
   Array<int>*     _method_ordering;
+
   // Int array containing the vtable_indices for default_methods
   // offset matches _default_methods offset
   Array<int>*     _default_vtable_indices;

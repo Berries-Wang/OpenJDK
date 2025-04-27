@@ -49,7 +49,7 @@
 //  2: provide vm dispatch behavior for the object
 // Both functions are combined into one C++ class.
 
-// One reason for the oop/klass dichotomy in the implementation is
+// One reason for the oop/klass dichotomy(二分法) in the implementation is
 // that we don't want a C++ vtbl pointer in every object.  Thus,
 // normal oops don't have any virtual functions.  Instead, they
 // forward all "virtual" functions to their klass, which does have
@@ -101,34 +101,57 @@ class Klass : public Metadata {
   // for better cache behavior (may not make much of a difference but sure won't hurt)
   enum { _primary_super_limit = 8 };
 
-  // The "layout helper" is a combined descriptor of object layout.
-  // For klasses which are neither instance nor array, the value is zero.
-  //
-  // For instances, layout helper is a positive number, the instance size.
-  // This size is already passed through align_object_size and scaled to bytes.
-  // The low order bit is set if instances of this class cannot be
-  // allocated using the fastpath.
-  //
-  // For arrays, layout helper is a negative number, containing four
-  // distinct bytes, as follows:
-  //    MSB:[tag, hsz, ebt, log2(esz)]:LSB
-  // where:
-  //    tag is 0x80 if the elements are oops, 0xC0 if non-oops
-  //    hsz is array header size in bytes (i.e., offset of first element)
-  //    ebt is the BasicType of the elements
-  //    esz is the element size in bytes
-  // This packed word is arranged so as to be quickly unpacked by the
-  // various fast paths that use the various subfields.
-  //
-  // The esz bits can be used directly by a SLL instruction, without masking.
-  //
-  // Note that the array-kind tag looks like 0x00 for instance klasses,
-  // since their length in bytes is always less than 24Mb.
-  //
-  // Final note:  This comes first, immediately after C++ vtable,
-  // because it is frequently queried.
+  /**
+   * <p>
+   * The "layout helper" is a combined descriptor of object layout. For klasses
+   * which are neither instance nor array, the value is zero. “layout
+   * helper”是对象布局的组合描述符。对于「既」不是实例(InstanceKlass)「也」不是数组(ArrayKlass)的类，该值为零。
+   *
+   * <p>
+   * For instances, layout helper is a positive number, the instance size. This
+   * size is already passed through align_object_size and scaled to bytes. The
+   * low order bit is set if instances of this class cannot be allocated using
+   * the fastpath.
+   * 例如，当布局助手（layout helper）为正数时，它表示实例大小。该大小已经过以下处理：
+   * 1. 通过了align_object_size对齐操作
+   * 2. 按字节进行了缩放（单位为字节）
+   * 3. 其最低有效位（low order bit）被设置为1时，表示该类的实例不能通过快速路径（fastpath）进行分配
+   * 
+   * >>> 所以，当 _layout_helper 为正数(InstanceKlass)时，他表示对象的以字节为单位的内存占用量 , 也就是Java类创建的对象所需要的内存
+   *  
+   *  For arrays, layout helper is a negative number, containing four distinct bytes, as follows:
+   *  (对于数组(ArrayKlass)，布局助手是一个负数，包含四个不同的字节，如下所示：)
+   *     MSB:[tag, hsz, ebt, log2(esz)]:LSB
+   *  where:
+   *     tag is 0x80 if the elements are oops, 0xC0 if non-oops (如果元素是 oops，则标签为 0x80；如果元素不是 oops，则标签为 0xC0)
+   *     hsz is array header size in bytes (i.e., offset of first element) 表示数组头元素的字节数
+   *     ebt is the BasicType of the elements // 数组元素的类型
+   *     esz is the element size in bytes     // 数组元素的大小
+   *  This packed word is arranged so as to be quickly unpacked by the various fast paths that use the various subfields.(这个打包字被安排成能够通过使用各个子字段的各个快速路径来快速解包。)
+   * 
+   *  The esz bits can be used directly by a SLL instruction, without masking.(esz 位可由 SLL 指令直接使用，无需屏蔽。)
+   *  
+   *  Note that the array-kind tag looks like 0x00 for instance klasses,  since their length in bytes is always less than 24Mb.
+   * (需要注意的是，数组类型的标签值（array-kind tag） 在实例类（instance klass）中表现为 0x00，因为它们的字节长度始终小于 24MB。)
+   * 技术背景补充：
+   *  这是 HotSpot 内存子系统的重要特性：
+   *  + 普通实例对象（instance klass）的头部不会携带数组特征标记（因为不需要存储数组长度）
+   *  + 24MB 限制源于 HotSpot 对象头设计的优化：
+   *     - 普通对象大小被约束在 24MB 以内（1 << 24 bytes）
+   *     - 超过该大小的对象会触发特殊处理逻辑
+   *  + 零值标记（0x00）通过位运算可以高效区分数组/非数组对象
+   * 
+   * Final note:  This comes first, immediately after C++ vtable, because it is frequently queried.
+   * (特别注意：该字段（指上文讨论的布局助手 layout helper）位于内存布局的首位，紧接在 C++ 虚函数表（vtable）之后，因为需要被高频访问)
+   * >>> 与虚表的关系：在 Klass 对象结构中，字段排列顺序为：C++ 虚表指针 → layout helper → 其他元数据 ? 这个得分析一下,待确认 不用看代码了，看上面的注释'Klass layout:'就好了
+   */
   jint        _layout_helper;
 
+  /**
+   * _primary_supers、_super_check_offset、_secondary_supers、_secondary_super_cache
+   * 都是为了加快判断父子关系等逻辑而加入的
+   *
+   */
   // The fields _super_check_offset, _secondary_super_cache, _secondary_supers
   // and _primary_supers all help make fast subtype checks.  See big discussion
   // in doc/server_compiler/checktype.txt
@@ -145,21 +168,29 @@ class Klass : public Metadata {
   Klass*      _secondary_super_cache;
   // Array of all secondary supertypes
   Array<Klass*>* _secondary_supers;
-  // Ordered list of all primary supertypes
+  /**
+   * Ordered list of all primary supertypes(所有主要超类型的有序列表)
+   * 
+   * 当父类继承链中多余${_primary_super_limit}时，将多出来的父类放到 _secondary_supers 数组中
+   */
   Klass*      _primary_supers[_primary_super_limit];
   /**
    * java/lang/Class instance mirroring this class
    * 为什么称为"mirror"（镜像）
-   * ___反射：Class对象允许程序在运行时检查和操作类，就像镜子反射现实一样
-   * ___
-   * ___一一对应：每个类有且只有一个Class对象与之对应
-   * ___
-   * ___动态性：通过这个"镜像"可以在运行时动态了解类的结构
+   *   反射：Class对象允许程序在运行时检查和操作类，就像镜子反射现实一样
+   *   一一对应：每个类有且只有一个Class对象与之对应
+   *   动态性：通过这个"镜像"可以在运行时动态了解类的结构
    * 
    * 这个字段指向 该Java类静态字段的oop对象，就是Java类对应的java.lang.Class的oo对象
    * > 答案在:[深入剖析Java虚拟机.epub#2.1.3　InstanceKlass类的子类中]
    */
   oop       _java_mirror;
+
+  /**
+   * Java是单继承,可以通过_super、_subklass、_next_sibling
+   * 属性直接找到当前类型的父类或所有子类型.
+   *
+   */
   // Superclass
   Klass*      _super;
   // First subclass (NULL if none); _subklass->next_sibling() is next one

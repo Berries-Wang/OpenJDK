@@ -29,7 +29,14 @@
 #include "utilities/globalDefinitions.hpp"
 #include "utilities/ostream.hpp"
 
-// This is the base class for an internal Class related metadata
+/**
+ * This is the base class for an internal Class related metadata
+ * (这是内部类相关元数据的基类)
+ *
+ * “Metadata是元数据类的基类，除了Klass类会直接继承Metadata基类以外，表示方法的Method类与表示常量池的ConstantPool类也会直接继承Metadata基类”
+ *
+ * MetaspaceObj 内部有元空间存储的数据类型
+ */
 class Metadata : public MetaspaceObj {
   // Debugging hook to check that the metadata has not been deleted.
   NOT_PRODUCT(int _valid;)

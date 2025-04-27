@@ -296,10 +296,13 @@ class MetaspaceObj {
       return TypeArrayOtherType;
     }
   }
-
+  /**
+   *  重载 placement new ， 第一个参数一定是 size_t size;
+   */
   void* operator new(size_t size, ClassLoaderData* loader_data,
                      size_t word_size, bool read_only,
                      Type type, Thread* thread) throw();
+
                      // can't use TRAPS from this header file.
   void operator delete(void* p) { ShouldNotCallThis(); }
 };

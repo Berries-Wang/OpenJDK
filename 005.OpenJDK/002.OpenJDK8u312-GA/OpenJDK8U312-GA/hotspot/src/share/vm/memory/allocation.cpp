@@ -62,6 +62,9 @@ void  _ValueObj::operator delete(void* p)             { ShouldNotCallThis(); }
 void* _ValueObj::operator new [](size_t size) throw() { ShouldNotCallThis(); return 0; }
 void  _ValueObj::operator delete [](void* p)          { ShouldNotCallThis(); }
 
+/**
+ * 重载 placement new ， 第一个参数一定是 size_t size;
+ */
 void* MetaspaceObj::operator new(size_t size, ClassLoaderData* loader_data,
                                  size_t word_size, bool read_only,
                                  MetaspaceObj::Type type, TRAPS) throw() {

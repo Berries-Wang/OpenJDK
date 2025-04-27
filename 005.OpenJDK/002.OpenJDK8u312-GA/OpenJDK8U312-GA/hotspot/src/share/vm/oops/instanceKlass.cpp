@@ -197,6 +197,14 @@ InstanceKlass* InstanceKlass::allocate_instance_klass(
   InstanceKlass* ik;
   if (rt == REF_NONE) {
     if (name == vmSymbols::java_lang_Class()) {
+      /**
+       * ik = new (loader_data, size, THREAD) InstanceMirrorKlass(构造函数参数);
+       * 这行代码结合了 C++ 的 placement new 操作符和 JVM 内部的内存管理机制
+       *
+       * 意图: 在指定的内存区域分配对象 , 这里的placement new 是JVM结合内部的内存管理机制自定义的,
+       * 实现的代码:  005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/memory/allocation.cpp
+       *      语法:  009.辅助理解JVM/010.Cpp_placement-new.md
+       */
       ik = new (loader_data, size, THREAD) InstanceMirrorKlass(
         vtable_len, itable_len, static_field_size, nonstatic_oop_map_size, rt,
         access_flags, is_anonymous);
