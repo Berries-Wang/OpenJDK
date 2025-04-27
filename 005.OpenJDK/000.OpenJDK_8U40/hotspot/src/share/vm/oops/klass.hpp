@@ -191,10 +191,13 @@ protected:
 
   // Cache of last observed secondary supertype
   Klass *_secondary_super_cache;
+  
   // Array of all secondary supertypes
   Array<Klass *> *_secondary_supers;
+
   // Ordered list of all primary supertypes
   Klass *_primary_supers[_primary_super_limit];
+
   // java/lang/Class instance mirroring this class
   /**
    * hotspot/src/share/vm/oops/oopsHierarchy.hpp

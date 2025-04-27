@@ -165,7 +165,11 @@ Method* Klass::uncached_lookup_method(Symbol* name, Symbol* signature, OverpassL
   return NULL;
 }
 
+/**
+ * placement new 重载
+ */
 void* Klass::operator new(size_t size, ClassLoaderData* loader_data, size_t word_size, TRAPS) throw() {
+  // 从元空间中分配内存
   return Metaspace::allocate(loader_data, word_size, /*read_only*/false,
                              MetaspaceObj::ClassType, THREAD);
 }

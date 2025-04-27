@@ -61,8 +61,18 @@ Klass (抽象基类)
 ## QA
 ### 一个Java类,在C++的世界中，有几个Klass与之对应
 ```txt
-    1. 每个Java对象在堆中的对象头包含指向其Klass的指针(_klass字段)
-    2. Java层面的Class对象(如 String.class)是InstanceMirrorKlass的实例,而该Class对象内部又指向对应的InstanceKlass
+    + 1 个 InstanceKlass（元数据核心）。
+    + 1 个 java.lang.Class 对象（Java 层镜像）。
 
-    所以: C++ Klass : Java Class = 2 : 1
+    # Java类对象如何访问静态属性: 005.OpenJDK/002.OpenJDK8u312-GA/OpenJDK8U312-GA/hotspot/src/share/vm/oops/klass.hpp
+    /**
+     * java/lang/Class instance mirroring this class
+     * 
+     * 这个字段指向 该Java类静态字段的oop对象，就是Java类对应的java.lang.Class的oop对象
+     * > 答案在:[深入剖析Java虚拟机.epub#2.1.3　InstanceKlass类的子类中]
+     */
+    oop       _java_mirror;
 ```
+
+### Java类与一维、二维数组之间的关系
+![wechat_2025-04-28_072137_463.png](../999.IMGS/wechat_2025-04-28_072137_463.png)
