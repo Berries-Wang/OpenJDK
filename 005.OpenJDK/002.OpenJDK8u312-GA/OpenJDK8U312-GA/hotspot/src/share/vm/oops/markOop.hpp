@@ -27,12 +27,17 @@
 
 #include "oops/oop.hpp"
 
-// The markOop describes the header of an object.
-//
-// Note that the mark is not a real oop but just a word.
-// It is placed in the oop hierarchy for historical reasons.
-//
-// Bit-format of an object header (most significant first, big endian layout below):
+
+/**
+ * The markOop describes the header of an object. (markOop描述对象的header)
+ * 
+ * Note that the mark is not a real oop but just a word.  It is placed in the oop hierarchy for historical reasons.
+ * (这个标记（mark）并非真正的对象指针（oop），而仅仅是一个字（word）。出于历史原因，它被放置在 oop 的层级结构中。)
+ * 
+ * Bit-format of an object header (most significant first, big endian layout below):
+ * （JVM 对象头的位格式（最高位在前，下方为大端字节序布局）：）
+ * 
+ */
 //
 //  32 bits:
 //  --------

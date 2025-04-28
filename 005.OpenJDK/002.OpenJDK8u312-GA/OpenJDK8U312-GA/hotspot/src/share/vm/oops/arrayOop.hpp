@@ -28,9 +28,12 @@
 #include "memory/universe.inline.hpp"
 #include "oops/oop.hpp"
 
-// arrayOopDesc is the abstract baseclass for all arrays.  It doesn't
-// declare pure virtual to enforce this because that would allocate a vtbl
-// in each instance, which we don't want.
+/**
+ * arrayOopDesc is the abstract baseclass for all arrays.  It doesn't declare
+ * pure virtual to enforce this because that would allocate a vtbl in each
+ * instance, which we don't want. ( arrayOopDesc
+ * 是所有数组的抽象基类。它没有通过声明纯虚函数来强制实现抽象性，因为那样会在每个实例中分配虚函数表（vtbl），而这并非我们所期望的。)
+ */
 
 // The layout of array Oops is:
 //

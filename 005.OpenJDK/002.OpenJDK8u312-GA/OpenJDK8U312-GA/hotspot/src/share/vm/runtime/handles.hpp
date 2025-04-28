@@ -82,7 +82,7 @@ class Handle VALUE_OBJ_CLASS_SPEC {
   Handle(oop obj);
   Handle(Thread* thread, oop obj);
 
-  // General access
+  // General access(常规访问) , 运算符重载，使得 操作 操作句柄 和直接操作oop是一样的
   oop     operator () () const                   { return obj(); }
   oop     operator -> () const                   { return non_null_obj(); }
   bool    operator == (oop o) const              { return obj() == o; }

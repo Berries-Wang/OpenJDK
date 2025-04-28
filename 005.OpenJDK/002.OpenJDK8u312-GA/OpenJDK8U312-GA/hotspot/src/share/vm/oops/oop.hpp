@@ -57,9 +57,15 @@ class PSPromotionManager;
 class ParCompactionManager;
 
 /**
- *对象头，分为两部分: 大小 = 8 + 4(开启指针压缩)/8(未开启指针压缩) = 12/16
- * 1. Mark Word
- * 2. 元数据
+ * 对象头，分为两部分: 大小 = 8 + 4(开启指针压缩)/8(未开启指针压缩) = 12/16 (字节)
+ * 1. Mark Word (_mark)
+ * 2. 元数据  (_metadata)
+ * 
+ * Java对象的field没有在oopDesc中定义相关属性来存储，因此只能申请一定的内存空间，
+ * 然后按照一定的布局规则进行存储。对象字段存放在紧跟着oopDesc实例本身所占的内存空间之后，
+ * 在获取时只能通过偏移来取值。
+ * 
+ * 通过 inline void*     oopDesc::field_base(int offset); 函数来获取字段的值
  */
 class oopDesc {
   friend class VMStructs;

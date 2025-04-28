@@ -187,6 +187,11 @@ inline bool oopDesc::is_array()               const { return klass()->oop_is_arr
 inline bool oopDesc::is_objArray()            const { return klass()->oop_is_objArray(); }
 inline bool oopDesc::is_typeArray()           const { return klass()->oop_is_typeArray(); }
 
+/**
+ * 获取字段地址
+ * 
+ * @param offset 偏移量，通过相对于当前this的内存首地址的偏移量来存取字段的值.
+ */
 inline void*     oopDesc::field_base(int offset)        const { return (void*)&((char*)this)[offset]; }
 
 template <class T> inline T* oopDesc::obj_field_addr(int offset) const { return (T*)field_base(offset); }
