@@ -6,7 +6,7 @@
 |Serial|Memory Footprint|更少额外资源占用||
 |Parallel|Throughput|吞吐量||
 |G1|Throughput/Latency Balance|吞吐量/延迟 平衡||
-|ZGC|Low Latency|低延迟,吞吐量比G1低10%,查看:<br/>1.[ZGC来了](./024.GC-ZGC/005.LESSONS/1249236645-1-16.mp4)|>=16<sub>有了'Concurrent Thread-Stack Processing':[亚毫秒级别暂停的ZGC原理与极限情况性能测试(下)](./024.GC-ZGC/005.LESSONS/560287467-1-208.mp4/)再用,使得暂停不到毫秒时间</sub>|
+|ZGC|Low Latency <br/>< 1ms Max GC pauses time(并不是平均活P999)|低延迟,吞吐量比G1低15%,查看:<br/>1.[ZGC来了](./024.GC-ZGC/005.LESSONS/1249236645-1-16.mp4) <br/>2. [Java开发者日 - ZGC与下一代分代ZGC](./024.GC-ZGC/005.LESSONS/1167843939-1-192.mp4)|>=16<sub>有了'Concurrent Thread-Stack Processing':[亚毫秒级别暂停的ZGC原理与极限情况性能测试(下)](./024.GC-ZGC/005.LESSONS/560287467-1-208.mp4/)再用,使得暂停不到毫秒时间</sub>|
 
 ---
 
