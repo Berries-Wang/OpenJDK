@@ -14,6 +14,7 @@
 +  [Java开发者日 - ZGC与下一代分代ZGC](./005.LESSONS/1167843939-1-192.mp4)
    - ![wechat_2025-05-11_115358_878.png](./images/wechat_2025-05-11_115358_878.png)
 +  [深入讨论ZGC架构.png](./Docs/深入探讨%20ZGC%20的架构.png) & [深入讨论ZGC架构.pdf](./Docs/深入了解%20ZGC%20的架构.java.pdf) & [深入讨论ZGC架构-v2](./Docs/ZGC-Jfokus-2018.pdf)
++ [美团`新一代垃圾回收器ZGC的探索与实践`比较久远-未分代-需要注意](./Docs/tech.meituan.com_2020_08_06_new-zgc-practice-in-meituan.html.png)
 
 
 ---
