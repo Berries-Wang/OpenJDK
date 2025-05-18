@@ -39,6 +39,7 @@
 1. G1会将内存返还给操作系统，见:[022.OpenJDK8-18垃圾收集器的变化.md](../023.OpenJDK8-18垃圾收集器的变化.md)
 2. G1 Old GC 是单线程的，非常慢,见[G1-GC最初的设计思路#G1 General Advices](./010.Lessons/000.G1-GC最初的设计思路/G1-GC最初的设计思路.md)
 3. G1中SATB如何工作的:[Garbage First Garbage Collector Tuning.pdf#Remark phase](./Garbage%20First%20Garbage%20Collector%20Tuning.pdf)
+4. 新生代分区到新生代分区之间有引用关系，这无须记录，原因在于G1的YGC/Mixed GC/FGC回收算法都会全量处理新生代分区，所以它们都会被遍历，所以无须记录新生代到新生代之间的引用。:[新一代垃圾回收器ZGC设计与实现:G1](../../../006.BOOKs/新一代垃圾回收器ZGC设计与实现.epub)
 
 ---
 ## 参考资料
