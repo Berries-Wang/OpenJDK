@@ -1,88 +1,16 @@
 {
-    "launch": {
-        "configurations": [],
-        "compounds": []
+    "clang-format.executable": "clang-format", // 应该是会根据宿主机OS,从而选择 target.osx 或 target.linux的值
+    // 针对 macOS 系统的配置
+    "target.osx": {
+        "clang-format.executable": "/opt/homebrew/bin/clang-format"
+    },
+    // 针对 Linux 系统的配置
+    "target.linux": {
+        "clang-format.executable": "/usr/bin/clang-format"
     },
     "files.associations": {
-        "*.ic": "cpp",
-        "*.idl": "cpp",
-        "array": "cpp",
-        "atomic": "cpp",
-        "*.tcc": "cpp",
-        "cctype": "cpp",
-        "clocale": "cpp",
-        "cmath": "cpp",
-        "cstdarg": "cpp",
-        "cstdint": "cpp",
-        "cstdio": "cpp",
-        "cstdlib": "cpp",
-        "cwchar": "cpp",
-        "cwctype": "cpp",
-        "deque": "cpp",
-        "unordered_map": "cpp",
-        "vector": "cpp",
-        "exception": "cpp",
-        "fstream": "cpp",
-        "functional": "cpp",
-        "initializer_list": "cpp",
-        "iosfwd": "cpp",
-        "iostream": "cpp",
-        "istream": "cpp",
-        "limits": "cpp",
-        "new": "cpp",
-        "ostream": "cpp",
-        "numeric": "cpp",
-        "sstream": "cpp",
-        "stdexcept": "cpp",
-        "streambuf": "cpp",
-        "system_error": "cpp",
-        "cinttypes": "cpp",
-        "tuple": "cpp",
-        "type_traits": "cpp",
-        "utility": "cpp",
-        "typeinfo": "cpp",
-        "memory": "cpp",
-        "optional": "cpp",
-        "string_view": "cpp",
-        "string": "cpp",
-        "bitset": "cpp",
-        "random": "cpp",
-        "list": "cpp",
-        "typeindex": "cpp",
-        "ratio": "cpp",
-        "thread": "cpp",
-        "mutex": "cpp",
-        "shared_mutex": "cpp",
-        "algorithm": "cpp",
-        "strstream": "cpp",
-        "chrono": "cpp",
-        "complex": "cpp",
-        "condition_variable": "cpp",
-        "cstring": "cpp",
-        "ctime": "cpp",
-        "iomanip": "cpp",
-        "cfenv": "cpp",
-        "bit": "cpp",
-        "cstddef": "cpp",
-        "map": "cpp",
-        "set": "cpp",
-        "iterator": "cpp",
-        "memory_resource": "cpp",
-        "cerrno": "c",
-        "defines.h": "c",
-        "java.h": "c",
-        "version_comp.h": "c",
-        "jli_util.h": "c",
-        "manifest_info.h": "c",
-        "java_md.h": "c",
-        "types.h": "c",
-        "jni.h": "c",
-        "__mutex_base": "cpp",
-        "__hash_table": "cpp",
-        "__split_buffer": "cpp",
-        "__tree": "cpp",
-        "stack": "cpp",
-        "java_lang_thread.h": "c"
+        "*.h": "c",
+        "*.c": "c"
     },
     "java.import.maven.enabled": true,
     "java.configuration.runtimes": [
@@ -93,17 +21,15 @@
         //     "default": true
         // }
         { // 配合 ‘"java.jdt.ls.java.home": "/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/007.OpenJDK21-GA/OpenJDK21-GA/build/linux-x86_64-server-slowdebug/jdk",’ 来调试OpenJDK21
-             "name": "JavaSE-21",
-             "path": "/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/007.OpenJDK21-GA/OpenJDK21-GA/build/linux-x86_64-server-slowdebug/jdk",
-             "sources": "/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/007.OpenJDK21-GA/OpenJDK21-GA/build/linux-x86_64-server-slowdebug/jdk/modules",
-             "default": true
-         }
+            "name": "JavaSE-21",
+            "path": "/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/007.OpenJDK21-GA/OpenJDK21-GA/build/linux-x86_64-server-slowdebug/jdk",
+            "sources": "/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/007.OpenJDK21-GA/OpenJDK21-GA/build/linux-x86_64-server-slowdebug/jdk/modules",
+            "default": true
+        }
     ],
-   // "java.jdt.ls.java.home": "/home/wei/WorkSpace/TempLibs/jdk21/jdk-21.0.1", // 避免使用JDK21启动调试
-     "java.jdt.ls.java.home": "/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/007.OpenJDK21-GA/OpenJDK21-GA/build/linux-x86_64-server-slowdebug/jdk",
+    // "java.jdt.ls.java.home": "/home/wei/WorkSpace/TempLibs/jdk21/jdk-21.0.1", // 避免使用JDK21启动调试
+    "java.jdt.ls.java.home": "/home/wei/OPEN_SOURCE/OpenJDK/005.OpenJDK/007.OpenJDK21-GA/OpenJDK21-GA/build/linux-x86_64-server-slowdebug/jdk",
     "java.server.launchMode": "Standard",
     "java.debug.settings.onBuildFailureProceed": true,
-    "editor.codeActionsOnSave": {
-
-    }
+    "editor.codeActionsOnSave": {}
 }
